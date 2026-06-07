@@ -2,9 +2,9 @@
 
 [![Android](https://img.shields.io/badge/Android-Min:%2010%20(API%2029)%20|%20Target:%2016%20(API%2036)-green?logo=android)](https://developer.android.com/develop)
 [![iOS](https://img.shields.io/badge/iOS-Min:%2016.0%20|%20Target:%2026.0-%23000000?logo=ios)](https://developer.apple.com/documentation/)
-[![Flutter](https://img.shields.io/badge/Frontend-Flutter%20(3.44.0)-%2302569B?logo=flutter)](https://flutter.dev)
+[![Flutter](https://img.shields.io/badge/Frontend-Flutter%20(3.44.1)-%2302569B?logo=flutter)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/Frontend-Dart%20(3.12.0)-%2302569B?logo=dart)](https://dart.dev/)
-[![Rust](https://img.shields.io/badge/BackEnd-Rust%20(1.95.0)-orange?logo=rust)](https://www.rust-lang.org/)
+[![Rust](https://img.shields.io/badge/BackEnd-Rust%20(1.96.0)-orange?logo=rust)](https://www.rust-lang.org/)
 [![License](https://img.shields.io/badge/License-MIT-yellow?logo=legal)](https://opensource.org/licenses/MIT)
 
 **StillAlive** is a proactive personal safety application designed to mitigate the "silent emergency" – situations where a person becomes incapacitated (due to accidents, medical emergencies, or attacks) and is unable to manually call for help.
