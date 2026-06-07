@@ -1,8 +1,11 @@
 # StillAlive – Personal Safety Platform
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Flutter](https://img.shields.io/badge/Frontend-Flutter/Dart-%2302569B.svg)](https://flutter.dev)
-[![Rust](https://img.shields.io/badge/Core-Rust-%23000000.svg)](https://www.rust-lang.org/)
+[![Android](https://img.shields.io/badge/Android-Min:%2010%20(API%2029)%20|%20Target:%2016%20(API%2036)-green?logo=android)](https://developer.android.com/develop)
+[![iOS](https://img.shields.io/badge/iOS-Min:%2016.0%20|%20Target:%2026.0-%23000000?logo=ios)](https://developer.apple.com/documentation/)
+[![Flutter](https://img.shields.io/badge/Frontend-Flutter%20(3.44.0)-%2302569B?logo=flutter)](https://flutter.dev)
+[![Dart](https://img.shields.io/badge/Frontend-Dart%20(3.12.0)-%2302569B?logo=dart)](https://dart.dev/)
+[![Rust](https://img.shields.io/badge/BackEnd-Rust%20(1.95.0)-orange?logo=rust)](https://www.rust-lang.org/)
+[![License](https://img.shields.io/badge/License-MIT-yellow?logo=legal)](https://opensource.org/licenses/MIT)
 
 **StillAlive** is a proactive personal safety application designed to mitigate the "silent emergency" – situations where a person becomes incapacitated (due to accidents, medical emergencies, or attacks) and is unable to manually call for help.
 
@@ -29,7 +32,7 @@ People in vulnerable situations—such as solo hikers, travelers in unfamiliar a
 ## 🛠 Tech Stack
 
 * **Frontend:** [Flutter](https://flutter.dev/) (Dart) for a high-performance, cross-platform mobile experience.
-* **Core Engine:** [Rust](https://www.rust-lang.org/) for high-performance, memory-safe logic, integrated via `flutter_rust_bridge`.
+* **Core Engine:** [Rust](https://www.rust-lang.org/) for high-performance, memory-safe logic, integrated via [`flutter_rust_bridge`](https://github.com/fzyzcjy/flutter_rust_bridge).
 * **Local Database:** [SQLite](https://www.sqlite.org/) for robust, encrypted local data persistence.
 * **CI/CD:** [GitHub Actions](https://github.com/features/actions) for automated testing pipelines.
 * **Communication:** REST/JSON for backend/service integration.
@@ -40,7 +43,7 @@ The project follows a hybrid architecture:
 
 1. **UI Layer (Flutter):** Handles user interaction, maps, and visual feedback.
 2. **Logic Layer (Rust):** Handles the heavy lifting, timer precision, and sensitive cryptographic operations, ensuring maximum reliability.
-3. **Integration Layer:** Uses `flutter_rust_bridge` to allow seamless, type-safe communication between Dart and Rust.
+3. **Integration Layer:** Uses [`flutter_rust_bridge`](https://github.com/fzyzcjy/flutter_rust_bridge) to allow seamless, type-safe communication between Dart and Rust.
 
 ## 🚀 Roadmap
 
