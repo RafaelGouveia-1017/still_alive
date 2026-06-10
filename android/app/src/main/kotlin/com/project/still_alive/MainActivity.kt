@@ -1,4 +1,4 @@
-package com.example.still_alive
+package com.project.still_alive
 
 import io.flutter.embedding.android.FlutterActivity
 

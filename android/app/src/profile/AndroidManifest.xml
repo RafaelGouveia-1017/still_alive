@@ -1,7 +1,36 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-feature android:name="android.hardware.audio.output" android:required="true"/>
+    <uses-feature android:name="android.hardware.bluetooth" android:required="false"/>
+    <uses-feature android:name="android.hardware.location" android:required="false"/>
+    <uses-feature android:name="android.hardware.microphone" android:required="false"/>
+    <uses-feature android:name="android.hardware.screen.portrait" android:required="true"/>
+    <uses-feature android:name="android.software.app_widgets" android:required="false"/>
+
+    <!-- API <= 29 -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>                 <!-- API 1 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>                   <!-- API 1 -->
+    <uses-permission android:name="android.permission.BATTERY_STATS"/>                          <!-- API 1 -->
+    <uses-permission android:name="android.permission.BLUETOOTH"/>                              <!-- API 1 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>                     <!-- API 28 -->
+    <uses-permission android:name="android.permission.INTERNET"/>                               <!-- API 1 -->
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>                          <!-- API 1 -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>                           <!-- API 1 --> 
+    <uses-permission android:name="android.permission.SEND_SMS"/>                               <!-- API 1 -->
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>                 <!-- API 29 -->
+    <uses-permission android:name="android.permission.VIBRATE"/>                                <!-- API 1 -->
+
+    <!-- API > 29 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE"/>    <!-- API 34 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION"/>            <!-- API 34 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>      <!-- API 34 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE"/>          <!-- API 34 -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>                     <!-- API 33 -->
+    <uses-permission android:name="android.permission.READ_BASIC_PHONE_STATE"/>                 <!-- API 33 -->
+    <uses-permission android:name="android.permission.TURN_SCREEN_ON"/>                         <!-- API 34 -->
+
     <!-- The INTERNET permission is required for development. Specifically,
          the Flutter tool needs it to communicate with the running application
          to allow setting breakpoints, to provide hot reload, etc.
     -->
-    <uses-permission android:name="android.permission.INTERNET"/>
 </manifest>
