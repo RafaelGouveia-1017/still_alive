@@ -695,6 +695,7 @@ rustc-ice-*.txt
 /android/app/release
 
 
+/.kilo
 git-commit-ai.bat
 git_diff_temp.txt
 ollama_prompt_temp.txt
