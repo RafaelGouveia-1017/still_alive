@@ -172,8 +172,8 @@ flutter_native_splash:
 
   # general branding for all platform (except android 12+):
   # allows you to specify an image used as branding in the splash screen. should be png.
-  #branding: lib/assets/Logo.png
-  #branding_dark: assets/dart_dark.png
+  branding: lib/assets/branding.png
+  branding_dark: lib/assets/branding.png
   # platform-specific branding. will override general branding if active:
   #branding_android:      assets/brand-android.png
   #branding_dark_android: assets/dart_dark-android.png
@@ -185,8 +185,8 @@ flutter_native_splash:
   # branding position:
   # you can use bottom, bottomRight, and bottomLeft. The default values is
   # bottom if not specified or specified something else.
-  #branding_mode: bottom # default bottom
-  #branding_bottom_padding: 24 # default 0
+  branding_mode: bottom # default bottom
+  branding_bottom_padding: 100 # default 0
   #branding_bottom_padding_android: 24  # default 0
   #branding_bottom_padding_ios: 24      # default 0
   # branding bottom padding web is not available yet.
@@ -242,5 +242,5 @@ flutter_native_splash:
 
     # branding:
     # The branding image dimensions must be 800x320 px.
-    #branding:      assets/dart.png
-    #branding_dark: assets/dart_dark.png
+    branding: lib/assets/branding.png
+    branding_dark: lib/assets/branding.png
