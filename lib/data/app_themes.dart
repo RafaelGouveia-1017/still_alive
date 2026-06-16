@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:still_alive/src/rust/api/data/theme.dart';
 
-/// Material 3 theme definitions for the application.
+/// Material 3 theme color definitions for the application.
 ///
 /// Rust is responsible for storing and loading the selected theme.
 ///
@@ -21,22 +21,21 @@ class AppThemes {
   /// )
   /// ```
   ///
-  /// The generated theme includes:
-  /// - Material 3 support
-  /// - ColorScheme
-  /// - Card styling
-  /// - Scaffold background color
-  /// - Divider styling
-  static ThemeData themeData(CustomTheme theme) {
+  /// The returned theme applies design-system styling for:
+  /// * Material 3 support
+  /// * Color schemes
+  /// * Cards
+  /// * Scaffold background colors
+  static ThemeData getTheme(CustomTheme theme) {
     ColorScheme scheme = _scheme(theme);
 
     return ThemeData(
       useMaterial3: true,
       colorScheme: scheme,
       scaffoldBackgroundColor: scheme.surface,
-      dividerColor: scheme.outlineVariant,
-
-      cardTheme: CardThemeData(color: scheme.surfaceContainer),
+      canvasColor: scheme.surface,
+      splashFactory: InkRipple.splashFactory,
+      cardTheme: CardThemeData(color: scheme.surfaceContainer, elevation: 0),
     );
   }
 
@@ -64,9 +63,9 @@ class AppThemes {
           onSecondaryContainer: Color(0xFFE8EAF0),
 
           tertiary: Color(0xFF00C9A7),
-          onTertiary: Color(0xFFE8EAF0),
+          onTertiary: Color(0xFF062019),
           tertiaryContainer: Color(0xFF005E4E),
-          onTertiaryContainer: Color(0xFFE8EAF0),
+          onTertiaryContainer: Color(0xFF062019),
 
           // Error
           error: Color(0xFFEF5350),
@@ -79,6 +78,7 @@ class AppThemes {
           surface: Color(0xFF0E0F14),
           surfaceBright: Color(0xFF1B1D25),
           onSurface: Color(0xFFE8EAF0),
+          onSurfaceVariant: Color(0xFF8A8FA3),
 
           // Containers
           surfaceContainerLowest: Color(0xFF08090D),
@@ -87,8 +87,7 @@ class AppThemes {
           surfaceContainerHigh: Color(0xFF1B1D25),
           surfaceContainerHighest: Color(0xFF22242D),
 
-          // Variants
-          onSurfaceVariant: Color(0xFFB8BDC9),
+          // Outline
           outline: Color(0xFF444A59),
           outlineVariant: Color(0xFF2D313D),
         );

@@ -16,7 +16,7 @@ class ThemePage extends StatelessWidget {
         itemCount: CustomTheme.values.length,
         itemBuilder: (context, index) {
           final theme = CustomTheme.values[index];
-          final themeData = AppThemes.themeData(theme);
+          final themeData = AppThemes.getTheme(theme);
 
           return AbsorbPointer(
             absorbing: MyApp.of(context).widget.theme == themeData

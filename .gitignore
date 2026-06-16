@@ -701,3 +701,4 @@ git_diff_temp.txt
 ollama_prompt_temp.txt
 temp_ai_result.txt
 commit_message.txt
+/lib/views/flutter

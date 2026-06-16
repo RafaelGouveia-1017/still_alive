@@ -10,7 +10,7 @@ void main() {
   setUpAll(() async => await RustLib.init());
   testWidgets('Can call rust function', (WidgetTester tester) async {
     await tester.pumpWidget(
-      MyApp(theme: AppThemes.themeData(CustomTheme.default_)),
+      MyApp(theme: AppThemes.getTheme(CustomTheme.default_)),
     );
     expect(find.textContaining('Result: `Hello, Tom!`'), findsOneWidget);
   });

@@ -9,6 +9,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:still_alive/src/rust/api/main.dart';
 import 'package:still_alive/src/rust/api/data/db.dart';
 import 'package:still_alive/src/rust/api/data/theme.dart';
+import 'package:still_alive/data/app_design.dart';
 import 'package:still_alive/data/app_themes.dart';
 import 'package:still_alive/views/theme_page.dart';
 
@@ -25,8 +26,10 @@ Future<void> main() async {
 
   String label = await CustomTheme.load();
   CustomTheme theme = await CustomTheme.fromLabel(s: label);
+  ThemeData appTheme = AppThemes.getTheme(theme);
+  ThemeData appDesign = AppDesign.getDesign(appTheme);
 
-  runApp(MyApp(theme: AppThemes.themeData(theme)));
+  runApp(MyApp(theme: appDesign));
 }
 
 class MyApp extends StatefulWidget {
@@ -53,7 +56,7 @@ class MyAppState extends State<MyApp> {
 
   Future<void> changeTheme(CustomTheme theme) async {
     setState(() {
-      _themeData = AppThemes.themeData(theme);
+      _themeData = AppThemes.getTheme(theme);
     });
 
     await CustomTheme.save(label: await theme.label());
@@ -137,7 +140,7 @@ class MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text('You have pushed the button this many times:'),
-            Text('$_counter'),
+            Text('$_counter', style: TextStyle(fontWeight: FontWeight.bold)),
             FutureBuilder<String>(
               future: greet(name: "Tom"),
               builder: (context, snapshot) {
