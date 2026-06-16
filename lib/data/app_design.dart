@@ -224,6 +224,12 @@ class AppSpacing {
     horizontal: 16,
     vertical: 10,
   );
+
+  /// Default internal padding for primary buttons.
+  static const EdgeInsets primaryButton = EdgeInsets.symmetric(
+    horizontal: 20,
+    vertical: 16,
+  );
 }
 
 /// Border radius tokens used throughout the application.
@@ -307,6 +313,12 @@ class AppMotion {
 
   /// Standard animation duration.
   static const Duration medium = Duration(milliseconds: 300);
+
+  /// Slow animation duration.
+  static const Duration slow = Duration(milliseconds: 500);
+
+  /// Slowest animation duration.
+  static const Duration slowest = Duration(milliseconds: 1000);
 
   /// Route transition duration.
   ///
