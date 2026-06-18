@@ -66,3 +66,75 @@ pub fn purge_database() {
     let path = database_path_str();
     Database::purge(path);
 }
+
+/// Returns a single row.
+///
+/// Returns `None` if no matching row exists.
+pub fn select_one(sql: &str) -> String {
+    let db = db();
+    db.query_one(sql, [], |row| row.get::<_, String>(0))
+        .unwrap()
+        .unwrap()
+}
+
+/// Returns JSON with data of multiple rows.
+///
+/// # Example
+///
+/// ```rust
+/// let users = db.query_many(
+///     "SELECT id, name FROM users WHERE name LIKE %?%",
+///     [mark]
+/// )?;
+/// ```
+///
+/// Returns:
+///
+/// ```json
+/// [
+///   { "id": 2, "name": "Mark" },
+///   { "id": 5, "name": "Denmark" }
+/// ]
+/// ```
+///
+/// Usage in Dart:
+///
+/// ```dart
+/// import 'dart:convert';
+/// (...)
+/// final jsonStr = await query_many(...);
+/// final List data = jsonDecode(jsonStr);
+/// String name = data[0]['name'];
+/// ```
+pub fn select(sql: &str) -> String {
+    let db = db();
+    db.query_many(sql, []).unwrap()
+}
+
+/// Execute a SQL statement.
+pub fn execute_sql(sql: &str) -> Result<usize> {
+    let db = db();
+    db.execute(sql, [])
+}
+
+/// Execute multiple SQL statements.
+///
+/// Example:
+///
+/// ```rust
+/// db.execute_batch(
+///     "
+///     CREATE TABLE users (
+///         id INTEGER PRIMARY KEY,
+///         name TEXT NOT NULL
+///     );
+///
+///     CREATE INDEX idx_users_name
+///     ON users(name);
+///     "
+/// )?;
+/// ```
+pub fn execute_batch_sql(sql: &str) {
+    let db = db();
+    let _ = db.execute_batch(sql);
+}

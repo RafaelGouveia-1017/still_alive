@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:still_alive/src/rust/api/data/theme.dart';
+import 'package:still_alive/data/custom_theme.dart';
 
 /// Material 3 theme color definitions for the application.
 ///
@@ -46,7 +46,7 @@ class AppThemes {
   /// All theme-specific colors should be centralized here.
   static ColorScheme _scheme(CustomTheme theme) {
     switch (theme) {
-      case CustomTheme.default_:
+      case CustomTheme.smartBell:
         return ColorScheme.fromSeed(
           seedColor: const Color(0xFF3D6FFF),
           brightness: Brightness.dark,

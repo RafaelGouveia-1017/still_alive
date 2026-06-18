@@ -302,36 +302,36 @@ class AppShadows {
 
 /// Motion tokens used for animations and transitions.
 class AppMotion {
-  /// Fastest animation duration.
+  /// Fastest animation duration (10ms).
   static const Duration fastest = Duration(milliseconds: 10);
 
-  /// Very short animation duration.
+  /// Very short animation duration (50ms).
   static const Duration faster = Duration(milliseconds: 50);
 
-  /// Short animation duration.
+  /// Short animation duration (100ms).
   static const Duration fast = Duration(milliseconds: 100);
 
-  /// Standard animation duration.
+  /// Standard animation duration (300ms).
   static const Duration medium = Duration(milliseconds: 300);
 
-  /// Slow animation duration.
+  /// Slow animation duration (500ms).
   static const Duration slow = Duration(milliseconds: 500);
 
-  /// Slowest animation duration.
+  /// Slowest animation duration (1000ms).
   static const Duration slowest = Duration(milliseconds: 1000);
 
-  /// Route transition duration.
+  /// Route transition duration (220ms).
   ///
   /// Mirrors AnimatePresence screen transitions on the web.
   static const Duration screen = Duration(milliseconds: 220);
 
-  /// Countdown ring reveal animation duration.
+  /// Countdown ring reveal animation duration (1100ms).
   static const Duration ring = Duration(milliseconds: 1100);
 
-  /// Pulse animation cycle duration.
+  /// Pulse animation cycle duration (1400ms).
   static const Duration pulse = Duration(milliseconds: 1400);
 
-  /// Duration used for pre-alert countdown depletion.
+  /// Duration used for pre-alert countdown depletion (30s).
   static const Duration preAlert = Duration(seconds: 30);
 
   /// Emphasized easing curve.
@@ -343,6 +343,9 @@ class AppMotion {
   ///
   /// Used for route transitions and general UI animations.
   static const Curve standard = Cubic(0.4, 0.0, 0.2, 1.0);
+
+  /// Ease-out animation curve.
+  static const Curve easeIn = Curves.easeIn;
 
   /// Ease-out animation curve.
   static const Curve easeOut = Curves.easeOut;

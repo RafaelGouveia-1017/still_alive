@@ -1,0 +1,250 @@
+{
+  "name": "English",
+  "app_name": "StillAlive",
+  "navigation": ["Home", "History", "Contacts", "Plug-ins", "Settings"],
+  "welcome": {
+    "title": "Welcome",
+    "tagline": "Your silent guardian. Activate a safety timer — we'll alert your circle if you don't check in.",
+    "cta": "Get started"
+  },
+  "privacy": {
+    "title": "Privacy",
+    "subtitle": "Privacy First",
+    "description": "Your data never leaves your device unless you need it to.",
+    "items": [
+      "End-to-end encrypted alerts",
+      "Only your contacts can read your messages.",
+      "No background tracking",
+      "Location only shares when emergency triggers.",
+      "On-device timer logic",
+      "Works without an account or internet."
+    ],
+    "cta": "Continue"
+  },
+  "permissions": {
+    "title": "Permissions",
+    "description": "Grant access so we can act fast when it matters.",
+    "items": [
+      {
+        "name": "Location",
+        "detail": "Shared only during emergencies"
+      },
+      {
+        "name": "SMS",
+        "detail": "Send alerts to contacts"
+      },
+      {
+        "name": "Notifications",
+        "detail": "Critical timer warnings"
+      },
+      {
+        "name": "Contacts",
+        "detail": "Pick emergency contacts"
+      }
+    ],
+    "granted": "Granted",
+    "allow": "Allow",
+    "cta": "Finish"
+  },
+  "home": {
+    "status": "Monitoring inactive",
+    "safety_timer": "Safety Timer",
+    "tap_to_configure": "Tap to configure",
+    "online": "Online",
+    "offline": "Offline",
+    "actions": {
+      "start_timer": "Start safety timer",
+      "quick_contacts": "Quick contacts"
+    }
+  },
+  "timer_configuration": {
+    "title": "New Timer",
+    "fields": {
+      "duration": "Duration",
+      "time_format": "HRS MIN SEC",
+      "grace_period": "Grace period",
+      "warning": "Warning before alert",
+      "buzzer": "Buzzer + 60s to cancel"
+    },
+    "security": {
+      "title": "Security",
+      "cancel_password": "Cancel PIN",
+      "pin_requirement": {
+        "on": "Require PIN to cancel timer",
+        "off": "Don't require PIN to cancel timer"
+      },
+      "confirm_activation": "Confirm before activation"
+    },
+    "note": "After tapping Start, you'll see a final confirmation. Alerts dispatch automatically when the timer expires.",
+    "cta": "Activate safety timer"
+  },
+  "active_monitoring": {
+    "title": "Monitoring",
+    "status": "Live",
+    "description": "Safety monitoring active",
+    "labels": {
+      "time_remaining": "Time remaining",
+      "tap_to_configure": "Tap to configure",
+      "location_tracking": "Location tracking",
+      "live": "Live"
+    },
+    "location": "Updated 12s ago · ±5m accuracy",
+    "started": "Started at 9:18 AM",
+    "trigger_time": "Will trigger alert at 9:48 AM",
+    "actions": {
+      "pause": "Pause",
+      "cancel": "Cancel"
+    },
+    "pin_requirement": {
+      "on": "Cancelling requires your PIN",
+      "off": "Cancelling will NOT require your PIN"
+    }
+  },
+  "pre_alert_warning": {
+    "title": "PRE-ALERT WARNING",
+    "question": "Are you still safe?",
+    "message": "Your timer expired. Confirm now or emergency protocol will activate.",
+    "labels": {
+      "seconds_left": "seconds left"
+    },
+    "alert_info": "SMS, email & live location will be sent to 4 contacts.",
+    "actions": {
+      "safe_cancel": "I'm safe — Cancel",
+      "trigger_emergency": "Trigger emergency now"
+    }
+  },
+  "emergency_active": {
+    "title": "EMERGENCY ACTIVE",
+    "status": "Live",
+    "alert": "Alert dispatched",
+    "timer": "02:14 elapsed · Auto-recording audio",
+    "location": "Shared location",
+    "open": "Open",
+    "dispatch_status": {
+      "sms": "4 of 4 delivered",
+      "email": "4 of 4 sent",
+      "telegram": "Posted to safety group",
+      "discord": "Sending..."
+    },
+    "actions": {
+      "cancel": "Cancel emergency (Hold)"
+    }
+  },
+  "offline_emergency": {
+    "title": "Offline",
+    "message": "No internet / Local alarm activated",
+    "warning": "Cannot reach contacts. Siren is playing to attract attention.",
+    "queue": {
+      "sms": "SMS to 4 contacts",
+      "location": "Location snapshot"
+    },
+    "status": "Pending",
+    "action": "Stop alarm",
+    "retry": "Will retry sending when online"
+  },
+  "contacts_list": {
+    "title": "Contacts",
+    "subtitle": "Emergency Contacts",
+    "search": "Search contacts",
+    "sections": ["Starred", "All contacts"],
+    "edit": "Edit contact",
+    "is_emergency": {
+      "false": "Add to emergency contacts",
+      "true": "Remove from emergency contacts"
+    }
+  },
+  "contact_detail": {
+    "title": "Contact",
+    "actions": ["Call", "Text", "Email"],
+    "sections": ["Contact info", "Alert preferences"],
+    "preferences": [
+      "Share live location",
+      "Send SMS alert",
+      "Send Email alert",
+      "Send audio recording"
+    ],
+    "is_emergency": {
+      "false": "Add to emergency contacts",
+      "true": "Remove from emergency contacts"
+    }
+  },
+  "empty_state": {
+    "title": "Emergency Contacts",
+    "message": "No contacts yet",
+    "description": "Add at least one person you trust. They'll be alerted in an emergency.",
+    "cta": "Add first contact"
+  },
+  "integrations": {
+    "title": "Integrations",
+    "description": "Quick pair via QR",
+    "note": "Add a new device or bot in seconds",
+    "status": "Available"
+  },
+  "qr_pairing": {
+    "title": "Pair device",
+    "description": "Scan to link",
+    "instruction": "Open Telegram on another device and scan this code to authorize StillAlive bot.",
+    "manual_code": "Manual code",
+    "code": "X9F3 · 2K7Q",
+    "cancel": "Cancel pairing"
+  },
+  "history_logs": {
+    "title": "History",
+    "search": "Search events",
+    "filters": ["All", "Emergencies", "Completed", "Paused", "Offline"],
+    "sections": {
+      "today": "Today",
+      "yesterday": "Yesterday"
+    },
+    "events": {
+      "completed": "Timer completed safely",
+      "paused": "Timer paused",
+      "emergency": "Emergency triggered"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "sections": {
+      "customization": {
+        "title": "Customization",
+        "labels": ["Change color theme", "Current:", "Change language"]
+      },
+      "alerts": {
+        "title": "Alerts",
+        "labels": [
+          "Custom emergency message",
+          "Edit the text contacts receive",
+          "Pre-alert warnings",
+          "Vibrate + sound at expiry",
+          "Offline siren volume",
+          "Maximum"
+        ]
+      },
+      "privacy": {
+        "title": "Privacy & Location",
+        "labels": [
+          "Share live location",
+          "During active emergency",
+          "Auto audio recording",
+          "60s after trigger",
+          "App lock",
+          "Face ID + PIN"
+        ]
+      },
+      "backup": {
+        "title": "Backup",
+        "labels": ["Export data", "Settings, timers, history"]
+      },
+      "danger": {
+        "title": "Danger zone",
+        "labels": ["Delete all data", "Cannot be undone"]
+      }
+    }
+  },
+  "themes": {
+    "title": "Themes",
+    "subtitle": "Choose your palette",
+    "appearance": "Appearance",
+    "status": "Active"
+  }
+}

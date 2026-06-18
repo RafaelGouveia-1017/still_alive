@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:still_alive/data/app_themes.dart';
+import 'package:still_alive/data/custom_theme.dart';
 import 'package:still_alive/main.dart';
-import 'package:still_alive/src/rust/api/data/theme.dart';
 
 class ThemePage extends StatelessWidget {
   const ThemePage({super.key});
@@ -28,12 +27,7 @@ class ThemePage extends StatelessWidget {
                 onPressed: () {
                   MyApp.of(context).changeTheme(theme);
                 },
-                child: FutureBuilder<String>(
-                  future: theme.label(),
-                  builder: (context, snapshot) {
-                    return Text(snapshot.data ?? '...');
-                  },
-                ),
+                child: Text(theme.label()),
               ),
             ),
           );

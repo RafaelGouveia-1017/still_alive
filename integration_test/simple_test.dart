@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:still_alive/main.dart';
 import 'package:still_alive/data/app_themes.dart';
-import 'package:still_alive/src/rust/api/data/theme.dart';
+import 'package:still_alive/data/custom_theme.dart';
 import 'package:still_alive/src/rust/frb_generated.dart';
 import 'package:integration_test/integration_test.dart';
 
@@ -10,7 +10,7 @@ void main() {
   setUpAll(() async => await RustLib.init());
   testWidgets('Can call rust function', (WidgetTester tester) async {
     await tester.pumpWidget(
-      MyApp(theme: AppThemes.getTheme(CustomTheme.default_)),
+      MyApp(theme: AppThemes.getTheme(CustomTheme.smartBell)),
     );
     expect(find.textContaining('Result: `Hello, Tom!`'), findsOneWidget);
   });

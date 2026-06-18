@@ -1,0 +1,250 @@
+{
+  "name": "Português",
+  "app_name": "StillAlive",
+  "navigation": ["Início", "Histórico", "Contactos", "Plugins", "Definições"],
+  "welcome": {
+    "title": "Bem-vindo",
+    "tagline": "O teu guardião silencioso. Ativa um temporizador de segurança — iremos alertar os teus contactos se não deres check-in.",
+    "cta": "Começar"
+  },
+  "privacy": {
+    "title": "Privacidade",
+    "subtitle": "Privacidade em primeiro lugar",
+    "description": "Os teus dados nunca saem do teu dispositivo, só se precisares.",
+    "items": [
+      "Alertas encriptados de ponta a ponta",
+      "Apenas os teus contactos podem ler as mensagens.",
+      "Sem rastreamento em segundo plano",
+      "A localização só é partilhada quando o protocolo de emergência é ativado.",
+      "Lógica do temporizador no dispositivo",
+      "Funciona sem conta ou internet."
+    ],
+    "cta": "Continuar"
+  },
+  "permissions": {
+    "title": "Permissões",
+    "description": "Dá acesso para podermos agir rapidamente quando for necessário.",
+    "items": [
+      {
+        "name": "Localização",
+        "detail": "Partilhada apenas em emergências"
+      },
+      {
+        "name": "SMS",
+        "detail": "Enviar alertas aos contactos"
+      },
+      {
+        "name": "Notificações",
+        "detail": "Avisos críticos do temporizador"
+      },
+      {
+        "name": "Contactos",
+        "detail": "Escolher contactos de emergência"
+      }
+    ],
+    "granted": "Concedida",
+    "allow": "Permitir",
+    "cta": "Concluir"
+  },
+  "home": {
+    "status": "Monitorização inativa",
+    "safety_timer": "Temporizador de segurança",
+    "tap_to_configure": "Tocar para configurar",
+    "online": "Online",
+    "offline": "Offline",
+    "actions": {
+      "start_timer": "Iniciar temporizador",
+      "quick_contacts": "Contactos rápidos"
+    }
+  },
+  "timer_configuration": {
+    "title": "Novo temporizador",
+    "fields": {
+      "duration": "Duração",
+      "time_format": "HRS MIN SEG",
+      "grace_period": "Período de tolerância",
+      "warning": "Aviso antes do alerta",
+      "buzzer": "Alarme + 60s para cancelar"
+    },
+    "security": {
+      "title": "Segurança",
+      "cancel_password": "PIN de cancelamento",
+      "pin_requirement": {
+        "on": "Requer PIN para cancelar o temporizador",
+        "off": "Não requer PIN para cancelar o temporizador"
+      },
+      "confirm_activation": "Confirmar antes de ativar"
+    },
+    "note": "Depois de tocar em Iniciar, verás uma confirmação final. Os alertas são enviados automaticamente quando o temporizador expira.",
+    "cta": "Ativar temporizador de segurança"
+  },
+  "active_monitoring": {
+    "title": "Monitorização",
+    "status": "Em direto",
+    "description": "Monitorização de segurança ativa",
+    "labels": {
+      "time_remaining": "Tempo restante",
+      "tap_to_configure": "Tocar para configurar",
+      "location_tracking": "Localização",
+      "live": "Em direto"
+    },
+    "location": "Atualizado há 12s · precisão ±5m",
+    "started": "Iniciado às 9:18",
+    "trigger_time": "Ativará alerta às 9:48",
+    "actions": {
+      "pause": "Pausar",
+      "cancel": "Cancelar"
+    },
+    "pin_requirement": {
+      "on": "Cancelar requer PIN",
+      "off": "Cancelar NÃO requer PIN"
+    }
+  },
+  "pre_alert_warning": {
+    "title": "AVISO PRÉ-ALERTA",
+    "question": "Estás em segurança?",
+    "message": "O teu temporizador expirou. Confirma agora ou o protocolo de emergência será ativado.",
+    "labels": {
+      "seconds_left": "segundos restantes"
+    },
+    "alert_info": "SMS, email e localização em tempo real serão enviados a 4 contactos.",
+    "actions": {
+      "safe_cancel": "Estou em segurança — Cancelar",
+      "trigger_emergency": "Ativar protocolo agora"
+    }
+  },
+  "emergency_active": {
+    "title": "EMERGÊNCIA ATIVA",
+    "status": "Em direto",
+    "alert": "Alerta enviado",
+    "timer": "02:14 decorrido · gravação de áudio automática",
+    "location": "Localização partilhada",
+    "open": "Abrir",
+    "dispatch_status": {
+      "sms": "4 de 4 entregues",
+      "email": "4 de 4 enviados",
+      "telegram": "Publicado no grupo de segurança",
+      "discord": "A enviar..."
+    },
+    "actions": {
+      "cancel": "Cancelar emergência (Manter pressionado)"
+    }
+  },
+  "offline_emergency": {
+    "title": "Offline",
+    "message": "Sem internet / Alarme local ativado",
+    "warning": "Não é possível contactar os contactos. Uma sirene está a tocar para chamar atenção.",
+    "queue": {
+      "sms": "SMS para 4 contactos",
+      "location": "Captura de localização"
+    },
+    "status": "Pendente",
+    "action": "Parar alarme",
+    "retry": "Vou tentar reenviar quando estiver online"
+  },
+  "contacts_list": {
+    "title": "Contactos",
+    "subtitle": "Contactos de emergência",
+    "search": "Procurar contactos",
+    "sections": ["Favoritos", "Todos os contactos"],
+    "edit": "Editar contacto",
+    "is_emergency": {
+      "false": "Adicionar aos contactos de emergência",
+      "true": "Remover dos contactos de emergência"
+    }
+  },
+  "contact_detail": {
+    "title": "Contacto",
+    "actions": ["Ligar", "Mensagem", "Email"],
+    "sections": ["Informações do contacto", "Preferências de alerta"],
+    "preferences": [
+      "Partilhar localização em direto",
+      "Enviar alerta por SMS",
+      "Enviar alerta por email",
+      "Enviar gravação de áudio"
+    ],
+    "is_emergency": {
+      "false": "Adicionar aos contactos de emergência",
+      "true": "Remover dos contactos de emergência"
+    }
+  },
+  "empty_state": {
+    "title": "Contactos de emergência",
+    "message": "Ainda não há contactos",
+    "description": "Adiciona pelo menos uma pessoa em quem confies. Será alertada em caso de emergência.",
+    "cta": "Adicionar primeiro contacto"
+  },
+  "integrations": {
+    "title": "Integrações",
+    "description": "Emparelhamento rápido via QR",
+    "note": "Adiciona um novo dispositivo ou bot em segundos",
+    "status": "Disponível"
+  },
+  "qr_pairing": {
+    "title": "Emparelhar dispositivo",
+    "description": "Digitalizar para ligar",
+    "instruction": "Abre o Telegram noutro dispositivo e lê este código para autorizar o bot StillAlive.",
+    "manual_code": "Código manual",
+    "code": "X9F3 · 2K7Q",
+    "cancel": "Cancelar emparelhamento"
+  },
+  "history_logs": {
+    "title": "Histórico",
+    "search": "Procurar eventos",
+    "filters": ["Todos", "Emergências", "Concluídos", "Pausados", "Offline"],
+    "sections": {
+      "today": "Hoje",
+      "yesterday": "Ontem"
+    },
+    "events": {
+      "completed": "Temporizador concluído em segurança",
+      "paused": "Temporizador pausado",
+      "emergency": "Emergência ativada"
+    }
+  },
+  "settings": {
+    "title": "Definições",
+    "sections": {
+      "customization": {
+        "title": "Personalização",
+        "labels": ["Alterar tema de cor", "Atual: ", "Alterar idioma"]
+      },
+      "alerts": {
+        "title": "Alertas",
+        "labels": [
+          "Mensagem de emergência personalizada",
+          "Editar o texto enviado aos contactos",
+          "Avisos pré-alerta",
+          "Vibração + som no fim",
+          "Volume da sirene offline",
+          "Máximo"
+        ]
+      },
+      "privacy": {
+        "title": "Privacidade e Localização",
+        "labels": [
+          "Partilhar localização em direto",
+          "Durante emergência ativa",
+          "Gravação de áudio automática",
+          "60s após ativação",
+          "Bloqueio da app",
+          "Face ID + PIN"
+        ]
+      },
+      "backup": {
+        "title": "Cópia de segurança",
+        "labels": ["Exportar dados", "Definições, temporizadores, histórico"]
+      },
+      "danger": {
+        "title": "Zona de perigo",
+        "labels": ["Apagar todos os dados", "Não pode ser revertido"]
+      }
+    }
+  },
+  "themes": {
+    "title": "Temas",
+    "subtitle": "Escolhe a tua paleta",
+    "appearance": "Aparência",
+    "status": "Ativo"
+  }
+}

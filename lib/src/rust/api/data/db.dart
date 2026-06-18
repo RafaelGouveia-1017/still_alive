@@ -25,3 +25,65 @@ Future<void> databasePathStr() =>
 /// Delete the existing SQLite database.
 Future<void> purgeDatabase() =>
     RustLib.instance.api.crateApiDataDbPurgeDatabase();
+
+/// Returns a single row.
+///
+/// Returns `None` if no matching row exists.
+Future<String> selectOne({required String sql}) =>
+    RustLib.instance.api.crateApiDataDbSelectOne(sql: sql);
+
+/// Returns JSON with data of multiple rows.
+///
+/// # Example
+///
+/// ```rust
+/// let users = db.query_many(
+///     "SELECT id, name FROM users WHERE name LIKE %?%",
+///     [mark]
+/// )?;
+/// ```
+///
+/// Returns:
+///
+/// ```json
+/// [
+///   { "id": 2, "name": "Mark" },
+///   { "id": 5, "name": "Denmark" }
+/// ]
+/// ```
+///
+/// Usage in Dart:
+///
+/// ```dart
+/// import 'dart:convert';
+/// (...)
+/// final jsonStr = await query_many(...);
+/// final List data = jsonDecode(jsonStr);
+/// String name = data[0]['name'];
+/// ```
+Future<String> select({required String sql}) =>
+    RustLib.instance.api.crateApiDataDbSelect(sql: sql);
+
+/// Execute a SQL statement.
+Future<BigInt> executeSql({required String sql}) =>
+    RustLib.instance.api.crateApiDataDbExecuteSql(sql: sql);
+
+/// Execute multiple SQL statements.
+///
+/// Example:
+///
+/// ```rust
+/// db.execute_batch(
+///     "
+///     CREATE TABLE users (
+///         id INTEGER PRIMARY KEY,
+///         name TEXT NOT NULL
+///     );
+///
+///     CREATE INDEX idx_users_name
+///     ON users(name);
+///     "
+/// )?;
+/// ```
+Future<void> executeBatchSql({required String sql}) =>
+    RustLib.instance.api.crateApiDataDbExecuteBatchSql(sql: sql);

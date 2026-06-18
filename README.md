@@ -1,7 +1,7 @@
 <div align="center">
   <picture>
     <img alt="StillAlive"
-         src="./lib/assets/Logo.png"
+         src="./lib/assets/logo.png"
          width="15%">
   </picture>
 </div>
@@ -13,8 +13,8 @@
 [![Android](<https://img.shields.io/badge/Android-Min:%2010%20(API%2029)%20|%20Target:%2016%20(API%2036)-green?logo=android>)](https://developer.android.com/develop)
 [![iOS](https://img.shields.io/badge/iOS-Min:%2016.0%20|%20Target:%2026.0-%23000000?logo=ios)](https://developer.apple.com/documentation/)
 <br>
-[![Flutter](<https://img.shields.io/badge/Frontend-Flutter%20(3.44.1)-%2302569B?logo=flutter>)](https://flutter.dev)
-[![Dart](<https://img.shields.io/badge/Frontend-Dart%20(3.12.1)-%2302569B?logo=dart>)](https://dart.dev/)
+[![Flutter](<https://img.shields.io/badge/Frontend-Flutter%20(3.44.2)-%2302569B?logo=flutter>)](https://flutter.dev)
+[![Dart](<https://img.shields.io/badge/Frontend-Dart%20(3.12.2)-%2302569B?logo=dart>)](https://dart.dev/)
 [![Rust](<https://img.shields.io/badge/BackEnd-Rust%20(1.96.0)-orange?logo=rust>)](https://www.rust-lang.org/)
 <br>
 [![License](https://img.shields.io/badge/License-MIT-yellow?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1zY2FsZS1pY29uIGx1Y2lkZS1zY2FsZSI+PHBhdGggZD0iTTEyIDN2MTgiLz48cGF0aCBkPSJtMTkgOCAzIDhhNSA1IDAgMCAxLTYgMHpWNyIvPjxwYXRoIGQ9Ik0zIDdoMWExNyAxNyAwIDAgMCA4LTIgMTcgMTcgMCAwIDAgOCAyaDEiLz48cGF0aCBkPSJtNSA4IDMgOGE1IDUgMCAwIDEtNiAwelY3Ii8+PHBhdGggZD0iTTcgMjFoMTAiLz48L3N2Zz4=)](https://opensource.org/licenses/MIT)
