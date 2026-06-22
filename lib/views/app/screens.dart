@@ -7,7 +7,8 @@
 /// ```
 library;
 
-export 'welcome.dart';
+export 'onboarding/onboarding.dart';
+export 'home.dart';
 
 /*
 export 'privacy.dart';

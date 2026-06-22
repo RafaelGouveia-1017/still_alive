@@ -24,25 +24,32 @@
   "permissions": {
     "title": "Permissions",
     "description": "Grant access so we can act fast when it matters.",
-    "items": [
-      {
-        "name": "Location",
-        "detail": "Shared only during emergencies"
-      },
-      {
-        "name": "SMS",
-        "detail": "Send alerts to contacts"
-      },
-      {
-        "name": "Notifications",
-        "detail": "Critical timer warnings"
-      },
-      {
-        "name": "Contacts",
-        "detail": "Pick emergency contacts"
-      }
-    ],
-    "granted": "Granted",
+    "required": {
+      "title": "Required",
+      "items": [
+        {
+          "name": "SMS",
+          "detail": "Send alerts to contacts"
+        },
+        {
+          "name": "Contacts",
+          "detail": "Pick emergency contacts"
+        },
+        {
+          "name": "Notifications",
+          "detail": "Critical timer warnings"
+        }
+      ]
+    },
+    "optional": {
+      "title": "Optional",
+      "items": [
+        {
+          "name": "Location",
+          "detail": "Shared only during emergencies"
+        }
+      ]
+    },
     "allow": "Allow",
     "cta": "Finish"
   },

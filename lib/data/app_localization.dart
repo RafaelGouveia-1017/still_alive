@@ -108,6 +108,16 @@ class AppLocalizations {
   }
 }
 
+/// A language config model.
+///
+/// Stores a Locale object and its corresponding name in said locale.
+class AppLanguage {
+  final Locale locale;
+  final String label;
+
+  const AppLanguage(this.locale, this.label);
+}
+
 /// A [LocalizationsDelegate] implementation that integrates
 /// [AppLocalizations] with Flutter's localization system.
 ///
@@ -119,11 +129,18 @@ class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const AppLocalizationsDelegate();
 
   /// List of supported locales in the application.
-  static const List<Locale> supportedLocales = [Locale('en'), Locale('pt')];
+  static const List<AppLanguage> supportedLocales = [
+    AppLanguage(Locale('en'), "English"),
+    AppLanguage(Locale('pt'), "Português"),
+  ];
 
   @override
   bool isSupported(Locale locale) {
-    return supportedLocales.contains(locale);
+    return supportedLocales
+        .map((lang) {
+          return lang.locale;
+        })
+        .contains(locale);
   }
 
   @override
@@ -161,7 +178,7 @@ class LocaleProvider extends ChangeNotifier {
     );
 
     if (AppLocalizationsDelegate.supportedLocales.any(
-      (l) => l.languageCode == code,
+      (l) => l.locale.languageCode == code,
     )) {
       _locale = Locale(code);
     }

@@ -167,7 +167,7 @@ class AppText {
   ///
   /// Suitable for microcopy and low-emphasis labels.
   static TextStyle micro(ColorScheme scheme) =>
-      TextStyle(color: scheme.onSurfaceVariant);
+      TextStyle(fontSize: 11, color: scheme.onSurfaceVariant);
 
   /// Uppercase tracked label style.
   ///
@@ -302,23 +302,23 @@ class AppShadows {
 
 /// Motion tokens used for animations and transitions.
 class AppMotion {
-  /// Fastest animation duration (10ms).
-  static const Duration fastest = Duration(milliseconds: 10);
+  /// Fastest animation duration (100ms).
+  static const Duration fastest = Duration(milliseconds: 100);
 
-  /// Very short animation duration (50ms).
-  static const Duration faster = Duration(milliseconds: 50);
+  /// Very short animation duration (500ms).
+  static const Duration faster = Duration(milliseconds: 500);
 
-  /// Short animation duration (100ms).
-  static const Duration fast = Duration(milliseconds: 100);
+  /// Short animation duration (1s).
+  static const Duration fast = Duration(seconds: 1);
 
-  /// Standard animation duration (300ms).
-  static const Duration medium = Duration(milliseconds: 300);
+  /// Standard animation duration (2s).
+  static const Duration medium = Duration(seconds: 2);
 
-  /// Slow animation duration (500ms).
-  static const Duration slow = Duration(milliseconds: 500);
+  /// Slow animation duration (5s).
+  static const Duration slow = Duration(seconds: 5);
 
-  /// Slowest animation duration (1000ms).
-  static const Duration slowest = Duration(milliseconds: 1000);
+  /// Slowest animation duration (10s).
+  static const Duration slowest = Duration(seconds: 10);
 
   /// Route transition duration (220ms).
   ///
@@ -408,7 +408,7 @@ class AppRoute<T> extends PageRouteBuilder<T> {
                   position: Tween<Offset>(
                     begin: const Offset(0.05, 0),
                     end: Offset.zero,
-                  ).animate(curved),
+                  ).animate(animation),
                   child: child,
                 ),
               );
@@ -416,7 +416,7 @@ class AppRoute<T> extends PageRouteBuilder<T> {
             case AppRouteTransitionType.slideLeft:
               return SlideTransition(
                 position: Tween(
-                  begin: const Offset(1, 0),
+                  begin: const Offset(1.0, 0.0),
                   end: Offset.zero,
                 ).animate(animation),
                 child: child,
@@ -427,7 +427,7 @@ class AppRoute<T> extends PageRouteBuilder<T> {
                 position: Tween<Offset>(
                   begin: const Offset(1.0, 0.0),
                   end: Offset.zero,
-                ).animate(curved),
+                ).animate(animation),
                 child: child,
               );
 
@@ -436,7 +436,7 @@ class AppRoute<T> extends PageRouteBuilder<T> {
                 position: Tween<Offset>(
                   begin: const Offset(0.0, 1.0),
                   end: Offset.zero,
-                ).animate(curved),
+                ).animate(animation),
                 child: child,
               );
 
@@ -445,7 +445,7 @@ class AppRoute<T> extends PageRouteBuilder<T> {
                 position: Tween<Offset>(
                   begin: const Offset(0.0, -1.0),
                   end: Offset.zero,
-                ).animate(curved),
+                ).animate(animation),
                 child: child,
               );
           }

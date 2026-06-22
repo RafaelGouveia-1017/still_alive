@@ -1,5 +1,4 @@
 import 'package:still_alive/src/rust/api/data/db.dart';
-import 'dart:convert';
 
 /// Application theme selection.
 ///

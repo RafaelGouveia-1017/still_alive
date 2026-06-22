@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:path/path.dart' as p;
@@ -38,6 +39,8 @@ void main() async {
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   await RustLib.init();
+
+  SystemChrome.setEnabledSystemUIMode(.immersive);
 
   Directory documentDirectory = await getApplicationDocumentsDirectory();
   try {
@@ -147,7 +150,8 @@ class MyAppState extends State<MyApp> {
     else if permissons not OK => PermissionsScreen();
     else => HomeDashboardScreen();
     */
-    return WelcomeScreen();
+
+    return OnboardingScreen();
   }
 
   @override
@@ -157,7 +161,9 @@ class MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
 
       locale: localeProvider.locale,
-      supportedLocales: AppLocalizationsDelegate.supportedLocales,
+      supportedLocales: AppLocalizationsDelegate.supportedLocales.map((lang) {
+        return lang.locale;
+      }).toList(),
       localizationsDelegates: const [
         AppLocalizationsDelegate(),
         GlobalMaterialLocalizations.delegate,
@@ -176,7 +182,6 @@ class MyAppState extends State<MyApp> {
         backgroundColor: _themeData.colorScheme.surface,
       ),
     );
-
     FlutterNativeSplash.remove();
     return root;
   }

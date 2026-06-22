@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../data/app_design.dart';
 
@@ -308,7 +309,7 @@ class SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     ColorScheme scheme = colorScheme ?? Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.only(left: 4, right: 4, top: 20, bottom: 8),
+      padding: const EdgeInsets.only(left: 4, right: 4, top: 0, bottom: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -403,7 +404,7 @@ class AppHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     ColorScheme scheme = colorScheme ?? Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+      padding: const EdgeInsets.fromLTRB(0, 8, 0, 16),
       child: Row(
         children: [
           SizedBox(width: 36, child: left),
@@ -516,4 +517,82 @@ class CircleIconButton extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Displays a custom modal bottom sheet with a blurred background.
+///
+/// This bottom sheet appears from the bottom of the screen and applies a
+/// blur effect to the background. Tapping outside the sheet dismisses it.
+///
+/// The sheet content is fully customizable via the [child] widget and is
+/// styled using the provided [scheme] and horizontal margin.
+///
+/// The background interaction area is blurred and partially tinted using
+/// the surface color from the given [scheme].
+///
+/// Type parameter [T] is the return type of the bottom sheet result.
+///
+/// Returns a [Future] that completes with the value passed to
+/// `Navigator.pop(context, result)`, or `null` if dismissed.
+///
+/// Example:
+/// ```dart
+/// final result = await showBlurredBottomSheet<String>(
+///   context: context,
+///   scheme: Theme.of(context).colorScheme,
+///   marginHorizontal: 16,
+///   child: Text("Hello"),
+/// );
+/// ```
+///
+/// Parameters:
+/// - [context]: The build context used to display the bottom sheet.
+/// - [scheme]: The [ColorScheme] used for styling the sheet and backdrop.
+/// - [marginHorizontal]: Horizontal margin applied to the sheet container.
+/// - [child]: The widget displayed inside the bottom sheet.
+Future<T?> showBlurredBottomSheet<T>({
+  required BuildContext context,
+  required ColorScheme scheme,
+  required double marginHorizontal,
+  required Widget child,
+}) {
+  return showModalBottomSheet<T>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    barrierColor: Colors.transparent,
+    builder: (context) {
+      return SafeArea(
+        child: Stack(
+          children: [
+            GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 1.1, sigmaY: 1.1),
+                child: Container(color: scheme.surface.withAlpha(25)),
+              ),
+            ),
+
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: marginHorizontal),
+                child: Material(
+                  color: scheme.surfaceContainerHigh,
+                  elevation: 0,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(16),
+                    ),
+                    side: BorderSide(color: Colors.transparent),
+                  ),
+                  child: Padding(padding: AppSpacing.card, child: child),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    },
+  );
 }

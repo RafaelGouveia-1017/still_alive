@@ -23,26 +23,33 @@
   },
   "permissions": {
     "title": "Permissões",
-    "description": "Dá acesso para podermos agir rapidamente quando for necessário.",
-    "items": [
-      {
-        "name": "Localização",
-        "detail": "Partilhada apenas em emergências"
-      },
-      {
-        "name": "SMS",
-        "detail": "Enviar alertas aos contactos"
-      },
-      {
-        "name": "Notificações",
-        "detail": "Avisos críticos do temporizador"
-      },
-      {
-        "name": "Contactos",
-        "detail": "Escolher contactos de emergência"
-      }
-    ],
-    "granted": "Concedida",
+    "description": "Concede acesso para podermos agir rapidamente quando for necessário.",
+    "required": {
+      "title": "Necessárias",
+      "items": [
+        {
+          "name": "SMS",
+          "detail": "Enviar alertas aos contactos"
+        },
+        {
+          "name": "Contactos",
+          "detail": "Escolher contactos de emergência"
+        },
+        {
+          "name": "Notificações",
+          "detail": "Avisos críticos do temporizador"
+        }
+      ]
+    },
+    "optional": {
+      "title": "Opcionais",
+      "items": [
+        {
+          "name": "Localização",
+          "detail": "Partilhada apenas em emergências"
+        }
+      ]
+    },
     "allow": "Permitir",
     "cta": "Concluir"
   },
@@ -207,7 +214,7 @@
     "sections": {
       "customization": {
         "title": "Personalização",
-        "labels": ["Alterar tema de cor", "Atual: ", "Alterar idioma"]
+        "labels": ["Alterar tema de cor", "Atual:", "Alterar idioma"]
       },
       "alerts": {
         "title": "Alertas",
