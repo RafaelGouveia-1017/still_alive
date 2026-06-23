@@ -66,7 +66,7 @@ void main() async {
         provider.loadSavedLocale();
         return provider;
       },
-      child: MyApp(theme: appDesign),
+      child: MyApp(theme: appDesign, currentTheme: theme),
     ),
   );
 }
@@ -84,9 +84,10 @@ void main() async {
 class MyApp extends StatefulWidget {
   /// The theme applied to the application when it starts.
   final ThemeData theme;
+  final CustomTheme currentTheme;
 
   /// Creates the root application widget.
-  const MyApp({super.key, required this.theme});
+  const MyApp({super.key, required this.theme, required this.currentTheme});
 
   @override
   State<MyApp> createState() => MyAppState();
@@ -112,12 +113,16 @@ class MyApp extends StatefulWidget {
 /// visual configuration.
 class MyAppState extends State<MyApp> {
   late ThemeData _themeData;
+  late CustomTheme _currentTheme;
   bool _showLoader = false;
+
+  CustomTheme get currentTheme => _currentTheme;
 
   @override
   void initState() {
     super.initState();
     _themeData = widget.theme;
+    _currentTheme = widget.currentTheme;
 
     Future.delayed(Duration(milliseconds: 1300), () {
       if (mounted) {
@@ -135,6 +140,7 @@ class MyAppState extends State<MyApp> {
   Future<void> changeTheme(CustomTheme theme) async {
     setState(() {
       _themeData = AppThemes.getTheme(theme);
+      _currentTheme = theme;
     });
 
     await CustomTheme.save(theme.label());
@@ -151,7 +157,7 @@ class MyAppState extends State<MyApp> {
     else => HomeDashboardScreen();
     */
 
-    return OnboardingScreen();
+    return OnboardingScreen(startPage: 0);
   }
 
   @override

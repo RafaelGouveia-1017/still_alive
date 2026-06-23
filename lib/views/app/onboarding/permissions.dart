@@ -4,6 +4,11 @@ import 'package:still_alive/data/app_design.dart';
 import 'package:still_alive/data/app_localization.dart';
 import '../../widgets/primitives.dart';
 
+/// Immutable model representing a single application permission.
+///
+/// Stores the permission icon, localized title,
+/// descriptive text, and whether the permission
+/// has already been granted.
 class _Perm {
   const _Perm(this.icon, this.title, this.subtitle, this.granted);
   final IconData icon;
@@ -12,6 +17,12 @@ class _Perm {
   final bool granted;
 }
 
+/// Renders a collection of permission items as a styled list.
+///
+/// Each permission is displayed with its icon, title,
+/// description, and either:
+/// * A confirmation indicator when granted
+/// * An action button when access is still required
 class _PermBuilder extends StatelessWidget {
   const _PermBuilder({required this.items});
 
@@ -98,8 +109,13 @@ class _PermBuilder extends StatelessWidget {
   }
 }
 
-class PermissionsContent extends StatelessWidget {
-  const PermissionsContent({super.key});
+/// Onboarding page that explains and requests application permissions.
+///
+/// Permissions are grouped into required and optional categories
+/// to help users understand which capabilities are needed for
+/// core functionality and which features are optional enhancements.
+class PermissionsPage extends StatelessWidget {
+  const PermissionsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +151,7 @@ class PermissionsContent extends StatelessWidget {
     List<_Perm> optional = [location];
 
     return Padding(
-      padding: AppSpacing.screen,
+      padding: EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

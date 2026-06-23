@@ -1,6 +1,83 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../data/app_design.dart';
+
+/// A reusable base screen widget that defines the common layout structure
+/// for all screens in the application.
+///
+/// `ScreenBase` ensures a consistent visual and behavioral foundation by:
+/// * Wrapping content in a [SafeArea] to avoid system intrusions
+/// * Providing a [Scaffold] with theme-based background styling
+/// * Applying consistent padding around screen content
+/// * Configuring system UI appearance (status bar, navigation bar)
+///
+/// This widget is intended to be used as the root layout for individual screens
+/// to enforce design consistency across the app.
+///
+/// Example:
+/// ```dart
+/// ScreenBase(
+///   child: Center(
+///     child: Text('Hello World'),
+///   ),
+/// )
+/// ```
+class ScreenBase extends StatefulWidget {
+  const ScreenBase({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  State<ScreenBase> createState() => _ScreenBaseState();
+}
+
+/// State class for [ScreenBase].
+///
+/// Responsible for:
+/// * Computing system UI overlay style based on the active theme
+/// * Ensuring correct icon contrast for status/navigation bars
+/// * Building a layout that supports edge-to-edge rendering on Android 15+
+class _ScreenBaseState extends State<ScreenBase> {
+  /// Configures the system UI appearance based on the current theme.
+  ///
+  /// This method ensures the status bar color and icon brightness match
+  /// the active [ColorScheme].
+  SystemUiOverlayStyle _buildSystemUiStyle(BuildContext context) {
+    ColorScheme scheme = Theme.of(context).colorScheme;
+
+    Brightness iconBrightness = scheme.brightness == Brightness.dark
+        ? Brightness.light
+        : Brightness.dark;
+
+    return SystemUiOverlayStyle(
+      statusBarIconBrightness: iconBrightness,
+      systemNavigationBarIconBrightness: iconBrightness,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarContrastEnforced: false,
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    ColorScheme scheme = Theme.of(context).colorScheme;
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: _buildSystemUiStyle(context),
+      child: Scaffold(
+        backgroundColor: scheme.surface,
+        extendBodyBehindAppBar: true,
+        body: SafeArea(child: widget.child),
+      ),
+    );
+  }
+}
 
 /// A reusable rounded container used as the base surface for grouped content.
 ///
@@ -404,10 +481,10 @@ class AppHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     ColorScheme scheme = colorScheme ?? Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 8, 0, 16),
+      padding: const EdgeInsets.fromLTRB(0, 20, 0, 26),
       child: Row(
         children: [
-          SizedBox(width: 36, child: left),
+          SizedBox(width: 50, child: left),
           Expanded(
             child: Column(
               children: [
@@ -422,7 +499,7 @@ class AppHeader extends StatelessWidget {
             ),
           ),
           SizedBox(
-            width: 36,
+            width: 50,
             child: Align(alignment: Alignment.centerRight, child: right),
           ),
         ],
@@ -507,13 +584,13 @@ class CircleIconButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 36,
-        height: 36,
+        width: 50,
+        height: 50,
         decoration: BoxDecoration(
           color: (background ?? scheme.surfaceContainer),
           shape: BoxShape.circle,
         ),
-        child: Icon(icon, size: 18, color: (foreground ?? scheme.onSurface)),
+        child: Icon(icon, size: 24, color: (foreground ?? scheme.onSurface)),
       ),
     );
   }

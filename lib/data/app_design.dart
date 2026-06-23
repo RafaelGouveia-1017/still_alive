@@ -217,7 +217,7 @@ class AppSpacing {
   static const double xxxl = 32;
 
   /// Standard horizontal padding applied to application screens.
-  static const EdgeInsets screen = EdgeInsets.symmetric(horizontal: 20);
+  static const EdgeInsets screen = EdgeInsets.symmetric(horizontal: 28);
 
   /// Default internal padding for cards and card-like surfaces.
   static const EdgeInsets card = EdgeInsets.symmetric(

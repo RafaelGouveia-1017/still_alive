@@ -251,7 +251,7 @@
   "themes": {
     "title": "Themes",
     "subtitle": "Choose your palette",
-    "appearance": "Appearance",
-    "status": "Active"
+    "status": "Active",
+    "footer": "Theme applies instantly across the app"
   }
 }

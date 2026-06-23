@@ -250,8 +250,8 @@
   },
   "themes": {
     "title": "Temas",
-    "subtitle": "Escolhe a tua paleta",
-    "appearance": "Aparência",
-    "status": "Ativo"
+    "subtitle": "Escolhe a tua paleta de cores",
+    "status": "Ativo",
+    "footer": "O tema é aplicado instantaneamente em toda a aplicação"
   }
 }

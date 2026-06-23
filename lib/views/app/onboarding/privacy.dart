@@ -4,8 +4,13 @@ import 'package:still_alive/data/app_design.dart';
 import 'package:still_alive/data/app_localization.dart';
 import '../../widgets/primitives.dart';
 
-class PrivacyContent extends StatelessWidget {
-  const PrivacyContent({super.key});
+/// Onboarding page that summarizes the application's privacy principles.
+///
+/// Presents key privacy commitments in a concise, easy-to-read format,
+/// helping users understand how their data is handled before they
+/// continue using the application.
+class PrivacyPage extends StatelessWidget {
+  const PrivacyPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +24,7 @@ class PrivacyContent extends StatelessWidget {
     ];
 
     return Padding(
-      padding: AppSpacing.screen,
+      padding: EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

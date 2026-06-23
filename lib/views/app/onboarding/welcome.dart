@@ -5,11 +5,16 @@ import 'package:still_alive/data/app_design.dart';
 import 'package:still_alive/data/app_localization.dart';
 import 'package:still_alive/data/custom_theme.dart';
 import '../../widgets/primitives.dart';
+import '../themes.dart';
 
-import 'package:still_alive/views/theme_page.dart';
-
-class WelcomeContent extends StatelessWidget {
-  const WelcomeContent({super.key});
+/// Initial onboarding page introducing the application.
+///
+/// Displays branding, a short description of the app,
+/// and quick access to personalization settings such as
+/// theme selection and language preferences before the
+/// user proceeds through the onboarding flow.
+class WelcomePage extends StatelessWidget {
+  const WelcomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +29,7 @@ class WelcomeContent extends StatelessWidget {
         );
 
     return Padding(
-      padding: AppSpacing.screen,
+      padding: EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -68,14 +73,12 @@ class WelcomeContent extends StatelessWidget {
                     children: [
                       GestureDetector(
                         behavior: HitTestBehavior.opaque,
-                        onTap: () => {
-                          Navigator.of(context).push(
-                            AppRoute(
-                              page: ThemePage(),
-                              transition: AppRouteTransitionType.slideRight,
-                            ),
+                        onTap: () => Navigator.of(context).push(
+                          AppRoute(
+                            page: ThemesScreen(tutorial: false),
+                            transition: AppRouteTransitionType.slideRight,
                           ),
-                        },
+                        ),
                         child: FutureBuilder<String>(
                           future: CustomTheme.load(),
                           builder: (context, snapshot) {
