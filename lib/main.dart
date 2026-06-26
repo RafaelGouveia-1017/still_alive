@@ -108,6 +108,9 @@ class MyApp extends StatefulWidget {
 /// * Splash screen loading state.
 /// * Runtime theme changes.
 /// * Resolution of the application's landing page.
+/// * Computing system UI overlay style based on the active theme
+/// * Ensuring correct icon contrast for status/navigation bars
+/// * Building a layout that supports edge-to-edge rendering on Android 15+
 ///
 /// This state object serves as the central controller for app-wide
 /// visual configuration.
@@ -160,6 +163,21 @@ class MyAppState extends State<MyApp> {
     return OnboardingScreen(startPage: 0);
   }
 
+  /// Configures the system UI appearance based on the current theme.
+  ///
+  /// This method ensures the status bar color and icon brightness match
+  /// the active [ColorScheme].
+  SystemUiOverlayStyle _buildSystemUiStyle(BuildContext context) {
+    ColorScheme scheme = Theme.of(context).colorScheme;
+
+    return SystemUiOverlayStyle(
+      statusBarIconBrightness: scheme.brightness,
+      systemNavigationBarIconBrightness: scheme.brightness,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarContrastEnforced: false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final localeProvider = Provider.of<LocaleProvider>(context);
@@ -179,13 +197,16 @@ class MyAppState extends State<MyApp> {
 
       title: 'StillAlive',
       theme: _themeData,
-      home: AnimatedSplashScreen.withScreenFunction(
-        splashIconSize: MediaQuery.of(context).size.longestSide,
-        splash: CustomSplash().splash(_showLoader, _themeData.colorScheme),
-        screenFunction: () => getLandingPage(),
-        splashTransition: SplashTransition.fadeTransition,
-        pageTransitionType: PageTransitionType.rightToLeft,
-        backgroundColor: _themeData.colorScheme.surface,
+      home: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: _buildSystemUiStyle(context),
+        child: AnimatedSplashScreen.withScreenFunction(
+          splashIconSize: MediaQuery.of(context).size.longestSide,
+          splash: CustomSplash().splash(_showLoader, _themeData.colorScheme),
+          screenFunction: () => getLandingPage(),
+          splashTransition: SplashTransition.fadeTransition,
+          pageTransitionType: PageTransitionType.rightToLeft,
+          backgroundColor: _themeData.colorScheme.surface,
+        ),
       ),
     );
     FlutterNativeSplash.remove();

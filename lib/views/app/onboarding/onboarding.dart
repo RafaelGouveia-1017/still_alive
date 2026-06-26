@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../widgets/primitives.dart';
 import 'package:still_alive/data/app_design.dart';
 import 'package:still_alive/data/app_localization.dart';
@@ -39,6 +40,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   void initState() {
     super.initState();
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
     currentPage = widget.startPage;
 
@@ -64,7 +66,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       // onboarding complete
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (_) => ScreenBase(child: HomeScreen())),
+        MaterialPageRoute(builder: (_) => HomeScreen()),
         (route) => false,
       );
     }
@@ -91,7 +93,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
     return ScreenBase(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 32, 20, 32),
+        padding: const EdgeInsets.fromLTRB(0, 32, 0, 32),
         child: Column(
           children: [
             Expanded(

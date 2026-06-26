@@ -75,7 +75,7 @@ class WelcomePage extends StatelessWidget {
                         behavior: HitTestBehavior.opaque,
                         onTap: () => Navigator.of(context).push(
                           AppRoute(
-                            page: ThemesScreen(tutorial: false),
+                            page: ThemesScreen(),
                             transition: AppRouteTransitionType.slideRight,
                           ),
                         ),

@@ -1,6 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'bottom_nav.dart';
 import '../../data/app_design.dart';
 
 /// A reusable base screen widget that defines the common layout structure
@@ -24,56 +24,55 @@ import '../../data/app_design.dart';
 /// )
 /// ```
 class ScreenBase extends StatefulWidget {
-  const ScreenBase({super.key, required this.child});
+  const ScreenBase({
+    super.key,
+    required this.child,
+    this.bottomNavDestination = '',
+  });
 
   final Widget child;
+  final String bottomNavDestination;
 
   @override
   State<ScreenBase> createState() => _ScreenBaseState();
 }
 
 /// State class for [ScreenBase].
-///
-/// Responsible for:
-/// * Computing system UI overlay style based on the active theme
-/// * Ensuring correct icon contrast for status/navigation bars
-/// * Building a layout that supports edge-to-edge rendering on Android 15+
 class _ScreenBaseState extends State<ScreenBase> {
-  /// Configures the system UI appearance based on the current theme.
-  ///
-  /// This method ensures the status bar color and icon brightness match
-  /// the active [ColorScheme].
-  SystemUiOverlayStyle _buildSystemUiStyle(BuildContext context) {
-    ColorScheme scheme = Theme.of(context).colorScheme;
-
-    Brightness iconBrightness = scheme.brightness == Brightness.dark
-        ? Brightness.light
-        : Brightness.dark;
-
-    return SystemUiOverlayStyle(
-      statusBarIconBrightness: iconBrightness,
-      systemNavigationBarIconBrightness: iconBrightness,
-      systemNavigationBarColor: Colors.transparent,
-      systemNavigationBarContrastEnforced: false,
-    );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-  }
-
   @override
   Widget build(BuildContext context) {
     ColorScheme scheme = Theme.of(context).colorScheme;
 
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: _buildSystemUiStyle(context),
-      child: Scaffold(
-        backgroundColor: scheme.surface,
-        extendBodyBehindAppBar: true,
-        body: SafeArea(child: widget.child),
+    return Scaffold(
+      backgroundColor: scheme.surface,
+      extendBodyBehindAppBar: true,
+      body: SafeArea(
+        child: (widget.bottomNavDestination == '')
+            ? Padding(padding: AppSpacing.screen, child: widget.child)
+            : Column(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: AppSpacing.screen,
+                      child: widget.child,
+                    ),
+                  ),
+                  Hero(
+                    tag: 'nav',
+                    curve: AppMotion.easeInOut,
+                    flightShuttleBuilder:
+                        (context, animation, direction, from, to) {
+                          return Material(
+                            type: MaterialType.transparency,
+                            child: direction == HeroFlightDirection.push
+                                ? to.widget
+                                : from.widget,
+                          );
+                        },
+                    child: BottomNav(active: widget.bottomNavDestination),
+                  ),
+                ],
+              ),
       ),
     );
   }
@@ -481,7 +480,7 @@ class AppHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     ColorScheme scheme = colorScheme ?? Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 20, 0, 26),
+      padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
       child: Row(
         children: [
           SizedBox(width: 50, child: left),

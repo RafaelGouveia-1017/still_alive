@@ -20,10 +20,13 @@ enum CustomTheme {
   smartBell,
   dracula,
   alucard,
-  solarized,
   nord,
   monokai,
-  gruvbox,
+  colbalt2,
+  solarizedDark,
+  solarizedLight,
+  gruvboxDark,
+  gruvboxLight,
   catppuccinLatte,
   catppuccinFrappe,
   catppuccinMacchiato,
@@ -38,14 +41,20 @@ enum CustomTheme {
         return "Dracula";
       case CustomTheme.alucard:
         return "Alucard";
-      case CustomTheme.solarized:
-        return "Solarized";
+      case CustomTheme.colbalt2:
+        return "Colbalt2";
+      case CustomTheme.solarizedDark:
+        return "Solarized Dark";
+      case CustomTheme.solarizedLight:
+        return "Solarized Light";
       case CustomTheme.nord:
         return "Nord";
       case CustomTheme.monokai:
         return "Monokai";
-      case CustomTheme.gruvbox:
-        return "Gruvbox";
+      case CustomTheme.gruvboxDark:
+        return "Gruvbox Dark";
+      case CustomTheme.gruvboxLight:
+        return "Gruvbox Light";
       case CustomTheme.catppuccinLatte:
         return "Catppuccin Latte";
       case CustomTheme.catppuccinFrappe:
@@ -68,14 +77,18 @@ enum CustomTheme {
         return CustomTheme.dracula;
       case "Alucard":
         return CustomTheme.alucard;
-      case "Solarized":
-        return CustomTheme.solarized;
+      case "Solarized Dark":
+        return CustomTheme.solarizedDark;
+      case "Solarized Light":
+        return CustomTheme.solarizedLight;
       case "Nord":
         return CustomTheme.nord;
       case "Monokai":
         return CustomTheme.monokai;
-      case "Gruvbox":
-        return CustomTheme.gruvbox;
+      case "Gruvbox Dark":
+        return CustomTheme.gruvboxDark;
+      case "Gruvbox Light":
+        return CustomTheme.gruvboxLight;
       case "Catppuccin Latte":
         return CustomTheme.catppuccinLatte;
       case "Catppuccin Frappé":

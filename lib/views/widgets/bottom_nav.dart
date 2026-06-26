@@ -21,7 +21,7 @@ class NavDestination {
   final IconData icon;
 
   /// Application screen widget associated with this destination.
-  final StatelessWidget screen;
+  final Widget screen;
 }
 
 /// A bottom navigation bar widget with 5 fixed destinations.
@@ -59,7 +59,7 @@ class BottomNav extends StatelessWidget {
         'contacts',
         local.translate("navigation.2"),
         LucideIcons.users,
-        HomeScreen(),
+        HomeScreen2(),
       ),
       NavDestination(
         'integrations',
@@ -91,7 +91,7 @@ class BottomNav extends StatelessWidget {
               onTap: () => Navigator.of(context).push(
                 AppRoute(
                   page: d.screen,
-                  transition: AppRouteTransitionType.fade,
+                  transition: AppRouteTransitionType.slideLeft,
                 ),
               ),
               child: Padding(

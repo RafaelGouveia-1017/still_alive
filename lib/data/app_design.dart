@@ -344,11 +344,14 @@ class AppMotion {
   /// Used for route transitions and general UI animations.
   static const Curve standard = Cubic(0.4, 0.0, 0.2, 1.0);
 
-  /// Ease-out animation curve.
+  /// Ease-in animation curve.
   static const Curve easeIn = Curves.easeIn;
 
   /// Ease-out animation curve.
   static const Curve easeOut = Curves.easeOut;
+
+  /// Ease-in-out animation curve.
+  static const Curve easeInOut = Curves.easeInOut;
 
   /// Linear animation curve.
   ///
