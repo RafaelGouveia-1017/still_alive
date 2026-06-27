@@ -11,9 +11,6 @@ export 'onboarding/onboarding.dart';
 export 'home.dart';
 
 /*
-export 'privacy.dart';
-export 'permissions.dart';
-export 'home_dashboard.dart';
 export 'timer_config.dart';
 export 'active_monitoring.dart';
 export 'pre_alert_warning.dart';

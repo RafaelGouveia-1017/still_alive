@@ -1,6 +1,7 @@
 use anyhow::Result;
 use rusqlite::{types::Value, Connection, OptionalExtension, Params, Row};
 use serde_json::{self, json};
+use std::fs;
 use std::path::PathBuf;
 
 /// Thin SQLite wrapper built on top of rusqlite.
@@ -55,12 +56,15 @@ impl Database {
         if is_empty {
             conn.execute_batch(
                 r#"
-                    CREATE TABLE settings (
-                        key TEXT PRIMARY KEY,
-                        value TEXT NOT NULL
-                    );
+                    CREATE TABLE
+                        settings (key TEXT PRIMARY KEY, value TEXT NOT NULL);
 
-                    INSERT INTO settings VALUES ('theme', 'SmartBell'), ('lang', 'en');
+                    INSERT INTO
+                        settings
+                    VALUES
+                        ('tutorial', 'true'),
+                        ('theme', 'SmartBell'),
+                        ('lang', 'en');
                 "#,
             )?;
         }
@@ -80,13 +84,13 @@ impl Database {
     ///
     /// The application MUST restart after this function is called.
     pub fn purge(path: &str) {
-        let _ = std::fs::remove_file(path);
+        let _ = fs::remove_file(path);
 
         let wal_path = PathBuf::from(format!("{}-wal", path));
         let shm_path = PathBuf::from(format!("{}-shm", path));
 
-        let _ = std::fs::remove_file(wal_path);
-        let _ = std::fs::remove_file(shm_path);
+        let _ = fs::remove_file(wal_path);
+        let _ = fs::remove_file(shm_path);
     }
 
     /// Execute a SQL statement.
@@ -290,14 +294,8 @@ mod tests {
     fn can_create_table_and_query() -> Result<()> {
         let db = Database::open(":memory:")?;
 
-        db.execute_batch(
-            r#"
-            CREATE TABLE users (
-                id   INTEGER PRIMARY KEY,
-                name TEXT NOT NULL
-            );
-            "#,
-        )?;
+        db.execute_batch("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT NOT NULL);")?;
+
         db.execute("INSERT INTO users (name) VALUES (?)", ["Alice"])?;
         db.execute("INSERT INTO users (name) VALUES (?)", ["Bob"])?;
 

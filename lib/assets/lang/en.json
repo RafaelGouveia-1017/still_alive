@@ -47,10 +47,19 @@
         {
           "name": "Location",
           "detail": "Shared only during emergencies"
+        },
+        {
+          "name": "Route",
+          "detail": "Record path travelled during active timer"
+        },
+        {
+          "name": "Microfone",
+          "detail": "Record sound during emergencies"
         }
       ]
     },
     "allow": "Allow",
+    "error": "Not all required permissions were granted.",
     "cta": "Finish"
   },
   "home": {

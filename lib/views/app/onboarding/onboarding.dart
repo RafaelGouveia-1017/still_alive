@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:still_alive/data/all.dart';
 import '../../widgets/primitives.dart';
-import 'package:still_alive/data/app_design.dart';
-import 'package:still_alive/data/app_localization.dart';
 import 'welcome.dart';
 import 'privacy.dart';
 import 'permissions.dart';
@@ -32,8 +31,9 @@ class OnboardingScreen extends StatefulWidget {
 ///
 /// Manages page navigation, onboarding progress,
 /// swipe gestures, and completion of the onboarding flow.
-class _OnboardingScreenState extends State<OnboardingScreen> {
+class _OnboardingScreenState extends State<OnboardingScreen> with RouteAware {
   late final PageController _controller;
+  final tracker = PermissionRouteTracker.instance;
 
   int currentPage = 0;
 
@@ -51,24 +51,48 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    tracker.subscribe(context);
+  }
+
+  @override
   void dispose() {
+    tracker.unsubscribe();
     _controller.dispose();
     super.dispose();
   }
 
-  void _nextPage() {
+  void _nextPage() async {
     if (currentPage < 2) {
       _controller.nextPage(
         duration: AppMotion.fast,
         curve: AppMotion.emphasized,
       );
     } else {
-      // onboarding complete
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (_) => HomeScreen()),
-        (route) => false,
-      );
+      if (await PermissionManager.instance.hasAllNeededPermissions() &&
+          mounted) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => HomeScreen()),
+          (route) => false,
+        );
+      } else {
+        ColorScheme scheme = Theme.of(context).colorScheme;
+        AppLocalizations local = AppLocalizations.of(context)!;
+        showBlurredBottomSheet(
+          scheme: scheme,
+          context: context,
+          marginHorizontal: 30,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
+            child: Text(
+              local.translate("permissions.error"),
+              style: AppText.body(scheme),
+            ),
+          ),
+        );
+      }
     }
   }
 

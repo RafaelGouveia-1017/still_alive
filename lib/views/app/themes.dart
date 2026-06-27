@@ -127,6 +127,7 @@ class _ThemesScreenState extends State<ThemesScreen> {
 
           Expanded(
             child: ScrollablePositionedList.builder(
+              physics: const ClampingScrollPhysics(),
               itemCount: themeOptions.length + 1,
               itemScrollController: scrollController,
               itemBuilder: (context, index) {

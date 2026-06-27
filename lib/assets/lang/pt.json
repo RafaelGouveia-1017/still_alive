@@ -47,10 +47,19 @@
         {
           "name": "Localização",
           "detail": "Partilhada apenas em emergências"
+        },
+        {
+          "name": "Percurso",
+          "detail": "Gravar caminho percorrido durante temporizador ativo"
+        },
+        {
+          "name": "Microfone",
+          "detail": "Gravar som apenas em emergências"
         }
       ]
     },
     "allow": "Permitir",
+    "error": "Nem todas as permissões necessárias foram concedidas.",
     "cta": "Concluir"
   },
   "home": {

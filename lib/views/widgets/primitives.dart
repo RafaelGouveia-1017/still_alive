@@ -583,8 +583,8 @@ class CircleIconButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 50,
-        height: 50,
+        width: 45,
+        height: 45,
         decoration: BoxDecoration(
           color: (background ?? scheme.surfaceContainer),
           shape: BoxShape.circle,
@@ -629,7 +629,7 @@ class CircleIconButton extends StatelessWidget {
 Future<T?> showBlurredBottomSheet<T>({
   required BuildContext context,
   required ColorScheme scheme,
-  required double marginHorizontal,
+  double marginHorizontal = 10,
   required Widget child,
 }) {
   return showModalBottomSheet<T>(

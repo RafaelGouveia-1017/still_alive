@@ -11,7 +11,6 @@
 <div align="center">
 
 [![Android](<https://img.shields.io/badge/Android-Min:%2010%20(API%2029)%20|%20Target:%2016%20(API%2036)-green?logo=android>)](https://developer.android.com/develop)
-[![iOS](https://img.shields.io/badge/iOS-Min:%2016.0%20|%20Target:%2026.0-%23000000?logo=ios)](https://developer.apple.com/documentation/)
 <br>
 [![Flutter](<https://img.shields.io/badge/Frontend-Flutter%20(3.44.4)-%2302569B?logo=flutter>)](https://flutter.dev)
 [![Dart](<https://img.shields.io/badge/Frontend-Dart%20(3.12.2)-%2302569B?logo=dart>)](https://dart.dev/)

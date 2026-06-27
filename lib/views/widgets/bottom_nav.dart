@@ -59,7 +59,7 @@ class BottomNav extends StatelessWidget {
         'contacts',
         local.translate("navigation.2"),
         LucideIcons.users,
-        HomeScreen2(),
+        HomeScreen(),
       ),
       NavDestination(
         'integrations',

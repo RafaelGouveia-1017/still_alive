@@ -15,10 +15,7 @@ import 'package:animated_splash_screen/animated_splash_screen.dart';
 
 import 'package:still_alive/src/rust/api/data/db.dart';
 
-import 'package:still_alive/data/app_design.dart';
-import 'package:still_alive/data/app_localization.dart';
-import 'package:still_alive/data/app_themes.dart';
-import 'package:still_alive/data/custom_theme.dart';
+import 'package:still_alive/data/all.dart';
 
 import 'package:still_alive/views/app/screens.dart';
 import 'package:still_alive/views/widgets/custom_splash.dart';
@@ -28,7 +25,9 @@ import 'package:still_alive/views/widgets/custom_splash.dart';
 /// Performs all startup initialization including:
 /// * Flutter framework initialization.
 /// * Native splash screen preservation.
+/// * Permission observation initialization.
 /// * Rust library initialization.
+/// * System UI fullscreen setup.
 /// * Database initialization.
 /// * Theme loading and restoration.
 /// * Localization provider setup.
@@ -37,6 +36,7 @@ import 'package:still_alive/views/widgets/custom_splash.dart';
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  widgetsBinding.addObserver(PermissionObserver());
 
   await RustLib.init();
 
@@ -154,13 +154,17 @@ class MyAppState extends State<MyApp> {
   /// Intended to evaluate onboarding, permissions, and application
   /// state before routing the user to the appropriate destination.
   Future<Widget> getLandingPage() async {
-    /* 
-    if tutorial = false => WelcomeScreen();
-    else if permissons not OK => PermissionsScreen();
-    else => HomeDashboardScreen();
-    */
+    String tutorialMode = await selectOne(
+      sql: "SELECT value FROM settings WHERE key = 'tutorial'",
+    );
 
-    return OnboardingScreen(startPage: 0);
+    if (tutorialMode == 'true') {
+      return OnboardingScreen(startPage: 0);
+    } else if (!await PermissionManager.instance.hasAllNeededPermissions()) {
+      return OnboardingScreen(startPage: 2);
+    } else {
+      return HomeScreen();
+    }
   }
 
   /// Configures the system UI appearance based on the current theme.
@@ -182,6 +186,8 @@ class MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     final localeProvider = Provider.of<LocaleProvider>(context);
     MaterialApp root = MaterialApp(
+      navigatorObservers: [routeObserver],
+      navigatorKey: PermissionManager.instance.navigatorKey,
       debugShowCheckedModeBanner: false,
 
       locale: localeProvider.locale,
@@ -213,3 +219,5 @@ class MyAppState extends State<MyApp> {
     return root;
   }
 }
+
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
