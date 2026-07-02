@@ -71,14 +71,18 @@ jobs:
 
       # =======================================================
       # Install Flutter.
-      #
-      # cache: true avoids re-downloading Flutter SDK every run
       # =======================================================
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          cache: true
+      - name: Setup Flutter manually
+        shell: pwsh
+        run: |
+          $flutterPath = "$env:USERPROFILE\.flutter\flutter"
+          if (-not (Test-Path "$flutterPath\.git")) {
+              git clone https://github.com/flutter/flutter.git -b stable $flutterPath
+          } else {
+              Write-Host "Flutter already installed, skipping clone"
+          }
+          echo "$env:USERPROFILE\.flutter\flutter\bin" >> $env:GITHUB_PATH
+          flutter doctor
 
       # =======================================================
       # Install Rust toolchain.
@@ -99,7 +103,6 @@ jobs:
       # Install Fastlane package.
       # =======================================================
       - name: Install Fastlane
-        shell: pwsh
         run: gem install fastlane
 
       # =======================================================
@@ -109,6 +112,8 @@ jobs:
       # =======================================================
       - name: Cache Cargo dependencies
         uses: Swatinem/rust-cache@v2
+        env:
+          CARGO_HOME: ${{ env.USERPROFILE }}\.cargo
 
       # ========================================================
       # Cache Flutter pub packages. (~/.pub-cache)
@@ -117,7 +122,9 @@ jobs:
       - name: Cache Flutter pub dependencies
         uses: actions/cache@v4
         with:
-          path: ${{ env.LOCALAPPDATA }}\Pub\Cache
+          path: |
+            ${{ env.LOCALAPPDATA }}\Pub\Cache
+            ${{ env.APPDATA }}\Pub\Cache
           key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
           restore-keys: |
             ${{ runner.os }}-pub-
@@ -127,6 +134,8 @@ jobs:
       # ========================================================
       - name: Cache Gradle
         uses: actions/cache@v4
+        env:
+          GRADLE_USER_HOME: ${{ env.USERPROFILE }}\.gradle
         with:
           path: |
             ${{ env.USERPROFILE }}\.gradle\caches
@@ -264,7 +273,6 @@ jobs:
       # Upload to Google Play (Internal track example)
       # ======================================================
       #- name: Upload to Play Store
-      #  shell: pwsh
       #  env:
       #    SUPPLY_JSON_KEY: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
       #  run: |
