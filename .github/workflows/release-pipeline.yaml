@@ -12,6 +12,12 @@ on:
       - main
 
 # ============================================================
+# Environment variables.
+# ============================================================
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+# ============================================================
 # Required so the workflow can:
 # - push the version bump commit
 # - create GitHub Releases
