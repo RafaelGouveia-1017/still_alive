@@ -62,39 +62,48 @@ jobs:
       - name: Verify toolchain
         shell: pwsh
         run: |
+          $rubyBin = Get-ChildItem "C:\Ruby*-x64\bin" -ErrorAction SilentlyContinue | Select-Object -First 1
+
+          if ($rubyBin) {
+              Add-Content -Path $env:GITHUB_PATH -Value $rubyBin.FullName
+              Write-Host "Added Ruby to PATH: $($rubyBin.FullName)"
+          } else {
+              Write-Host "Ruby not found on disk"
+          }
+
           Write-Host "Checking tools..."
           Write-Host "::group::Tool check results"
           $tools = @{
             "git" = @{
-              cmd = "git --version"
+              cmd = "git"
               install = "https://git-scm.com/downloads"
             }
             "java" = @{
-              cmd = "java --version"
+              cmd = "java"
               install = "https://www.oracle.com/java/technologies/downloads/"
             }
             "python" = @{
-              cmd = "python --version"
+              cmd = "python"
               install = "https://www.python.org/downloads/"
             }
             "flutter" = @{
-              cmd = "flutter --version"
+              cmd = "flutter"
               install = "https://docs.flutter.dev/get-started/install/windows"
             }
             "cargo" = @{
-              cmd = "cargo --version"
+              cmd = "cargo"
               install = "https://www.rust-lang.org/tools/install"
             }
             "ruby" = @{
-              cmd = "ruby --version"
+              cmd = "ruby"
               install = "https://rubyinstaller.org/downloads/"
             }
             "gem" = @{
-              cmd = "gem --version"
+              cmd = "gem"
               install = "https://rubygems.org/pages/download"
             }
             "fastlane" = @{
-              cmd = "fastlane --version"
+              cmd = "fastlane"
               install = "https://rubygems.org/gems/fastlane/"
             }
           }
@@ -102,13 +111,13 @@ jobs:
           $failed = @()
 
           foreach ($tool in $tools.Keys) {
-            $exe = ($tools[$tool].cmd -split " ")[0]
+            $exe = $tools[$tool].cmd
             $link = $tools[$tool].install
 
             if (Get-Command $exe -ErrorAction SilentlyContinue) {
               Write-Host "OK: $tool"
             } else {
-              Write-Host "MISSING/BROKEN: $tool"
+              Write-Host "ISSING/BROKEN: $tool"
               Write-Host "Install here: $link"
               $failed += "$tool -> $link"
             }
