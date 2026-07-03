@@ -102,14 +102,12 @@ jobs:
           $failed = @()
 
           foreach ($tool in $tools.Keys) {
-            $cmd = $tools[$tool].cmd
+            $exe = ($tools[$tool].cmd -split " ")[0]
             $link = $tools[$tool].install
 
-            try {
-              Invoke-Expression $cmd | Out-Null
+            if (Get-Command $exe -ErrorAction SilentlyContinue) {
               Write-Host "OK: $tool"
-            }
-            catch {
+            } else {
               Write-Host "MISSING/BROKEN: $tool"
               Write-Host "Install here: $link"
               $failed += "$tool -> $link"
