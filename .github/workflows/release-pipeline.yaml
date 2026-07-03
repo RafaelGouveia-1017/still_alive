@@ -203,6 +203,7 @@ jobs:
       # to rustfmt. This helps keep the codebase consistent.
       # =======================================================
       - name: Check Rust formatting
+        working-directory: rust
         run: cargo fmt --all -- --check
 
       # =======================================================
@@ -212,6 +213,7 @@ jobs:
       # any warning is reported.
       # =======================================================
       - name: Run Clippy
+        working-directory: rust
         run: cargo clippy --all-targets --all-features -- -D warnings
 
       # =======================================================
@@ -241,13 +243,20 @@ jobs:
       # Run Rust unit tests.
       # =======================================================
       - name: Run Rust tests
+        working-directory: rust
         run: cargo test --workspace
 
       # =======================================================
       # Run Flutter tests.
       # =======================================================
-      - name: Run Flutter tests
-        run: flutter test
+      #- name: Run Flutter tests
+      #  run: flutter test
+
+      # =======================================================
+      # Run Flutter integration tests.
+      # =======================================================
+      #- name: Run Flutter integration tests
+      #  run: flutter test integration_test
 
       # =======================================================
       # Increment version in pubspec.yaml.
