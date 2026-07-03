@@ -65,10 +65,14 @@ jobs:
           $rubyBin = Get-ChildItem "C:\Ruby*-x64\bin" -ErrorAction SilentlyContinue | Select-Object -First 1
 
           if ($rubyBin) {
-              Add-Content -Path $env:GITHUB_PATH -Value $rubyBin.FullName
-              Write-Host "Added Ruby to PATH: $($rubyBin.FullName)"
+              $rubyPath = $rubyBin.FullName
+
+              Add-Content -Path $env:GITHUB_PATH -Value $rubyPath
+              $env:Path = "$rubyPath;$env:Path"
+
+              Write-Host "Added Ruby to workflow PATH: $rubyPath"
           } else {
-              Write-Host "Ruby not found on disk"
+              throw "Ruby not found on disk."
           }
 
           Write-Host "Checking tools..."
@@ -117,7 +121,7 @@ jobs:
             if (Get-Command $exe -ErrorAction SilentlyContinue) {
               Write-Host "OK: $tool"
             } else {
-              Write-Host "ISSING/BROKEN: $tool"
+              Write-Host "MISSING/BROKEN: $tool"
               Write-Host "Install here: $link"
               $failed += "$tool -> $link"
             }
@@ -127,7 +131,7 @@ jobs:
           if ($failed.Count -gt 0) {
             Write-Host ""
             Write-Host "❌ TOOLCHAIN CHECK FAILED"
-            Write-Host "Missing or broken tools:"
+            Write-Host "Missing or broken tools: (Not in PATH)"
 
             foreach ($f in $failed) {
               Write-Host "- $f"
