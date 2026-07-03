@@ -2,6 +2,7 @@ name: Release Pipeline (Android only)
 
 # ============================================================
 # Trigger:
+#
 # Run whenever a commit is pushed to the main branch.
 # Commits created by this workflow contain "[skip ci]" so they
 # won't trigger the workflow again.
@@ -44,6 +45,7 @@ jobs:
     steps:
       # =======================================================
       # Checkout repository.
+      #
       # fetch-depth: 0 is required because we'll push commits
       # back to the repository later.
       # =======================================================
@@ -52,58 +54,90 @@ jobs:
         with:
           fetch-depth: 0
 
-      # =======================================================
-      # Install Java. (required for Android builds)
-      # =======================================================
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: "17"
-
-      # =======================================================
-      # Install Python.
-      # =======================================================
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      # =======================================================
-      # Install Flutter.
-      # =======================================================
-      - name: Setup Flutter manually
+      # ============================================================
+      # Toolchain verification.
+      #
+      # Checks required tools are available in PATH.
+      # ============================================================
+      - name: Verify toolchain
         shell: pwsh
         run: |
-          $flutterPath = "$env:USERPROFILE\.flutter\flutter"
-          if (-not (Test-Path "$flutterPath\.git")) {
-              git clone https://github.com/flutter/flutter.git -b stable $flutterPath
-          } else {
-              Write-Host "Flutter already installed, skipping clone"
+          Write-Host "Checking tools..."
+          Write-Host "::group::Tool check results"
+          $tools = @{
+            "git" = @{
+              cmd = "git --version"
+              install = "https://git-scm.com/downloads"
+            }
+            "java" = @{
+              cmd = "java --version"
+              install = "https://www.oracle.com/java/technologies/downloads/"
+            }
+            "python" = @{
+              cmd = "python --version"
+              install = "https://www.python.org/downloads/"
+            }
+            "flutter" = @{
+              cmd = "flutter --version"
+              install = "https://docs.flutter.dev/get-started/install/windows"
+            }
+            "cargo" = @{
+              cmd = "cargo --version"
+              install = "https://www.rust-lang.org/tools/install"
+            }
+            "ruby" = @{
+              cmd = "ruby --version"
+              install = "https://rubyinstaller.org/downloads/"
+            }
+            "gem" = @{
+              cmd = "gem --version"
+              install = "https://rubygems.org/pages/download"
+            }
+            "fastlane" = @{
+              cmd = "fastlane --version"
+              install = "https://rubygems.org/gems/fastlane/"
+            }
           }
-          echo "$env:USERPROFILE\.flutter\flutter\bin" >> $env:GITHUB_PATH
-          flutter doctor
+
+          $failed = @()
+
+          foreach ($tool in $tools.Keys) {
+            $cmd = $tools[$tool].cmd
+            $link = $tools[$tool].install
+
+            try {
+              Invoke-Expression $cmd | Out-Null
+              Write-Host "OK: $tool"
+            }
+            catch {
+              Write-Host "MISSING/BROKEN: $tool"
+              Write-Host "Install here: $link"
+              $failed += "$tool -> $link"
+            }
+          }
+          Write-Host "::endgroup::"
+
+          if ($failed.Count -gt 0) {
+            Write-Host ""
+            Write-Host "❌ TOOLCHAIN CHECK FAILED"
+            Write-Host "Missing or broken tools:"
+
+            foreach ($f in $failed) {
+              Write-Host "- $f"
+            }
+
+            throw "Toolchain verification failed."
+          }
+
+          Write-Host ""
+          Write-Host "✅ All tools verified successfully"
+          Write-Host "::endgroup::"
 
       # =======================================================
-      # Install Rust toolchain.
+      # Run Flutter doctor.
       # =======================================================
-      - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
-
-      # =======================================================
-      # Install Ruby.
-      # =======================================================
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "3.3"
-          bundler-cache: true
-
-      # =======================================================
-      # Install Fastlane package.
-      # =======================================================
-      - name: Install Fastlane
-        run: gem install fastlane
+      - name: Check Flutter
+        run: flutter doctor
 
       # =======================================================
       # Cache Cargo dependencies and build artifacts.
@@ -117,6 +151,7 @@ jobs:
 
       # ========================================================
       # Cache Flutter pub packages. (~/.pub-cache)
+      #
       # Avoids re-downloading dependencies every run.
       # ========================================================
       - name: Cache Flutter pub dependencies
@@ -182,7 +217,6 @@ jobs:
       #
       # Detects many programming errors before compilation,
       # including:
-      #
       # - undefined variables
       # - unused imports
       # - invalid null-safety usage
