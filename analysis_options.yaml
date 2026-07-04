@@ -34,3 +34,4 @@ analyzer:
     - "**.gr.dart"
     - "**/generated_plugin_registrant.dart"
     - lib/views/flutter
+    - rust_builder/**
