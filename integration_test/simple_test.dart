@@ -13,10 +13,12 @@ void main() {
     await RustLib.init();
 
     Directory documentDirectory = await getApplicationDocumentsDirectory();
+    String databasePath = p.join(documentDirectory.path, 'DB_for_tests.db');
+
+    if (await File(databasePath).exists()) await purgeDatabase();
+
     try {
-      await initDatabase(
-        path: p.join(documentDirectory.path, await getDatabaseName()),
-      );
+      await initDatabase(path: databasePath);
     } catch (e) {
       throw ('Database Error: $e');
     }

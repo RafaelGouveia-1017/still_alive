@@ -110,6 +110,10 @@ jobs:
               cmd = "fastlane"
               install = "https://rubygems.org/gems/fastlane/"
             }
+            "github cli" = @{
+              cmd = "gh"
+              install = "https://cli.github.com/"
+            }
           }
 
           $failed = @()
