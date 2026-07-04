@@ -24,14 +24,14 @@ class PrivacyPage extends StatelessWidget {
     ];
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Icon(LucideIcons.lock, size: 16, color: scheme.tertiary),
-              const SizedBox(width: 8),
+              const SizedBox(width: AppSpacing.sm),
               Text(
                 local.translate("privacy.subtitle").toUpperCase(),
                 style: AppText.pillLabel.copyWith(
@@ -41,12 +41,12 @@ class PrivacyPage extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
           Text(
             local.translate("privacy.description"),
             style: AppText.h2(scheme),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: AppSpacing.xxxl),
           for (final p in points) ...[
             AppCard(
               child: Row(
@@ -55,7 +55,7 @@ class PrivacyPage extends StatelessWidget {
                   Container(
                     width: 32,
                     height: 32,
-                    margin: const EdgeInsets.only(top: 2),
+                    margin: const EdgeInsets.only(top: AppSpacing.xxxs),
                     decoration: BoxDecoration(
                       color: scheme.tertiary.withAlpha(38),
                       shape: BoxShape.circle,
@@ -66,13 +66,13 @@ class PrivacyPage extends StatelessWidget {
                       color: scheme.tertiary,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: AppSpacing.md),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(p.$1, style: AppText.body(scheme)),
-                        const SizedBox(height: 2),
+                        const SizedBox(height: AppSpacing.xxxs),
                         Text(p.$2, style: AppText.caption(scheme)),
                       ],
                     ),
@@ -80,7 +80,7 @@ class PrivacyPage extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.md),
           ],
         ],
       ),

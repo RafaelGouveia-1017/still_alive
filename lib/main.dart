@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:path/path.dart' as p;
 import 'package:provider/provider.dart';
@@ -50,9 +51,6 @@ void main() async {
   } catch (e) {
     log('Database Error: $e');
   }
-
-  //TODO Delete this line when in production
-  //await purgeDatabase();
 
   String label = await CustomTheme.load();
   CustomTheme theme = CustomTheme.fromLabel(label);
@@ -117,7 +115,6 @@ class MyApp extends StatefulWidget {
 class MyAppState extends State<MyApp> {
   late ThemeData _themeData;
   late CustomTheme _currentTheme;
-  bool _showLoader = false;
 
   CustomTheme get currentTheme => _currentTheme;
 
@@ -126,14 +123,6 @@ class MyAppState extends State<MyApp> {
     super.initState();
     _themeData = widget.theme;
     _currentTheme = widget.currentTheme;
-
-    Future.delayed(Duration(milliseconds: 1300), () {
-      if (mounted) {
-        setState(() {
-          _showLoader = true;
-        });
-      }
-    });
   }
 
   /// Updates the application's active theme.
@@ -207,13 +196,14 @@ class MyAppState extends State<MyApp> {
         value: _buildSystemUiStyle(context),
         child: AnimatedSplashScreen.withScreenFunction(
           splashIconSize: MediaQuery.of(context).size.longestSide,
-          splash: CustomSplash().splash(_showLoader, _themeData.colorScheme),
+          splash: CustomSplash().splash(_themeData.colorScheme),
           screenFunction: () => getLandingPage(),
           splashTransition: SplashTransition.fadeTransition,
           pageTransitionType: PageTransitionType.rightToLeft,
           backgroundColor: _themeData.colorScheme.surface,
         ),
       ),
+      builder: FToastBuilder(),
     );
     FlutterNativeSplash.remove();
     return root;

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:still_alive/data/all.dart';
+import 'package:still_alive/src/rust/api/data/db.dart';
 import '../../widgets/primitives.dart';
 import 'welcome.dart';
 import 'privacy.dart';
@@ -70,29 +72,58 @@ class _OnboardingScreenState extends State<OnboardingScreen> with RouteAware {
         curve: AppMotion.emphasized,
       );
     } else {
-      if (await PermissionManager.instance.hasAllNeededPermissions() &&
-          mounted) {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (_) => HomeScreen()),
-          (route) => false,
-        );
-      } else {
-        ColorScheme scheme = Theme.of(context).colorScheme;
-        AppLocalizations local = AppLocalizations.of(context)!;
-        showBlurredBottomSheet(
-          scheme: scheme,
-          context: context,
-          marginHorizontal: 30,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
-            child: Text(
-              local.translate("permissions.error"),
-              style: AppText.body(scheme),
+      ColorScheme scheme = Theme.of(context).colorScheme;
+      AppLocalizations local = AppLocalizations.of(context)!;
+
+      if (await PermissionManager.instance.hasAllNeededPermissions()) {
+        try {
+          int result = (await executeSql(
+            sql: "UPDATE settings SET value = 'false' WHERE key = 'tutorial'",
+          )).toInt();
+
+          if (!mounted) return;
+
+          if (result >= 1) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              AppRoute(
+                page: HomeScreen(),
+                transition: AppRouteTransitionType.slideRight,
+              ),
+              (route) => false,
+            );
+            return;
+          } else {
+            throw Exception("SQL didn't work somehow.");
+          }
+        } catch (e) {
+          showToast(
+            scheme: scheme,
+            toast: Text(
+              e.toString(),
+              style: AppText.bodySm(scheme),
+              textAlign: TextAlign.center,
             ),
-          ),
-        );
+            secs: 10,
+          );
+          return;
+        }
       }
+
+      if (!mounted) return;
+
+      showToast(
+        scheme: scheme,
+        toast: Text(
+          local.translate("permissions.error"),
+          style: AppText.bodySm(scheme),
+          textAlign: TextAlign.center,
+        ),
+        gravity: ToastGravity.BOTTOM,
+        position: (context, child, gravity) {
+          return Positioned(bottom: 170, left: 30, right: 30, child: child);
+        },
+      );
     }
   }
 
@@ -117,7 +148,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> with RouteAware {
 
     return ScreenBase(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(0, 32, 0, 32),
+        padding: const EdgeInsets.fromLTRB(
+          0,
+          AppSpacing.xxxl,
+          0,
+          AppSpacing.xxxl,
+        ),
         child: Column(
           children: [
             Expanded(
@@ -153,7 +189,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with RouteAware {
               label: buttonLabels[currentPage],
               onPressed: _nextPage,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.lg),
             ProgressDots(active: currentPage),
           ],
         ),

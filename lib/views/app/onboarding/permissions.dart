@@ -6,10 +6,13 @@ import 'package:still_alive/data/app_localization.dart';
 import 'package:still_alive/data/app_permissions.dart';
 import '../../widgets/primitives.dart';
 
-/// Immutable model representing a single application permission.
+/// A [_Perm] encapsulates all presentation data required to render a
+/// permission entry within [PermissionsPage], including:
 ///
-/// Stores the permission icon, localized title,
-/// descriptive text, and type of permission.
+/// * the icon displayed to the user;
+/// * the localized permission name;
+/// * a short description explaining why the permission is needed; and
+/// * the underlying [Permission] from `permission_handler`.
 class _Perm {
   const _Perm(this.icon, this.title, this.subtitle, this.permission);
   final IconData icon;
@@ -18,6 +21,16 @@ class _Perm {
   final Permission permission;
 }
 
+/// Displays and manages the UI for requesting a single application permission.
+///
+/// This widget observes the current permission state, updates automatically
+/// when the application returns to the foreground, and allows the user to
+/// request the permission by tapping the card.
+///
+/// For the background location permission ([Permission.locationAlways]),
+/// the widget requires the foreground location permission to be granted
+/// first and temporarily disables interaction until that prerequisite
+/// has been satisfied.
 class _PermBuilder extends StatefulWidget {
   const _PermBuilder({required this.item});
 
@@ -33,6 +46,7 @@ class _PermBuilderState extends State<_PermBuilder>
   _PermBuilderState();
 
   PermissionStatus _permissionStatus = PermissionStatus.denied;
+  bool _locationWhenInUsePermissionGranted = false;
 
   @override
   void initState() {
@@ -42,9 +56,17 @@ class _PermBuilderState extends State<_PermBuilder>
   }
 
   void _currentPermissionStatus() async {
+    bool granted = false;
+    if (widget.item.permission == Permission.locationAlways) {
+      granted = await Permission.locationWhenInUse.isGranted;
+    }
+
     final status = await widget.item.permission.status;
     if (!mounted) return;
-    setState(() => _permissionStatus = status);
+    setState(() {
+      _permissionStatus = status;
+      _locationWhenInUsePermissionGranted = granted;
+    });
   }
 
   void _requestStatus() async {
@@ -73,73 +95,101 @@ class _PermBuilderState extends State<_PermBuilder>
     ColorScheme scheme = Theme.of(context).colorScheme;
     AppLocalizations local = AppLocalizations.of(context)!;
 
-    return AppCard(
-      child: Row(
-        children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: scheme.surfaceContainerHigh,
-              borderRadius: BorderRadius.circular(AppRadius.md),
-            ),
-            child: Icon(
-              widget.item.icon,
-              size: 20,
-              color: switch (_permissionStatus) {
-                PermissionStatus.granted => scheme.tertiary,
-                _ => scheme.onSurface,
-              },
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(widget.item.title, style: AppText.body(scheme)),
-                Text(widget.item.subtitle, style: AppText.caption(scheme)),
-              ],
-            ),
-          ),
-          if (_permissionStatus.isGranted)
-            Container(
-              width: 32,
-              height: 32,
-              margin: const EdgeInsets.only(top: 2),
-              decoration: BoxDecoration(
-                color: scheme.tertiary.withAlpha(38),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(LucideIcons.check, size: 16, color: scheme.tertiary),
-            )
-          else
-            GestureDetector(
-              onTap: () => _requestStatus(),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: scheme.primary,
-                  borderRadius: AppRadius.chip,
-                ),
-                child: Text(
-                  switch (_permissionStatus) {
-                    PermissionStatus.denied => local.translate(
-                      "permissions.allow",
+    return Stack(
+      children: [
+        AbsorbPointer(
+          absorbing: (widget.item.permission == Permission.locationAlways)
+              ? !_locationWhenInUsePermissionGranted
+              : false,
+          child: Pressable(
+            onTap: () {
+              if (!_permissionStatus.isGranted) _requestStatus();
+            },
+            child: AppCard(
+              child: Row(
+                children: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: scheme.surfaceContainerHigh,
+                      borderRadius: BorderRadius.circular(AppRadius.md),
                     ),
-                    _ => local.translate("settings.title"),
-                  },
-                  style: AppText.caption(
-                    scheme,
-                  ).copyWith(color: scheme.onPrimary),
-                ),
+                    child: Icon(
+                      widget.item.icon,
+                      size: 20,
+                      color: switch (_permissionStatus) {
+                        PermissionStatus.granted => scheme.tertiary,
+                        _ => scheme.onSurface,
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.md),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(widget.item.title, style: AppText.body(scheme)),
+                        Text(
+                          widget.item.subtitle,
+                          style: AppText.caption(scheme),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (_permissionStatus.isGranted)
+                    Container(
+                      width: 32,
+                      height: 32,
+                      margin: const EdgeInsets.only(top: AppSpacing.xxxs),
+                      decoration: BoxDecoration(
+                        color: scheme.tertiary.withAlpha(38),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        LucideIcons.check,
+                        size: 16,
+                        color: scheme.tertiary,
+                      ),
+                    )
+                  else
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.md,
+                        vertical: AppSpacing.xs,
+                      ),
+                      decoration: BoxDecoration(
+                        color: scheme.primary,
+                        borderRadius: AppRadius.chip,
+                      ),
+                      child: Text(
+                        switch (_permissionStatus) {
+                          PermissionStatus.denied => local.translate(
+                            "permissions.allow",
+                          ),
+                          _ => local.translate("settings.title"),
+                        },
+                        style: AppText.caption(
+                          scheme,
+                        ).copyWith(color: scheme.onPrimary),
+                      ),
+                    ),
+                ],
               ),
             ),
-        ],
-      ),
+          ),
+        ),
+        if (widget.item.permission == Permission.locationAlways &&
+            _locationWhenInUsePermissionGranted == false)
+          Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: scheme.surfaceBright.withAlpha(155),
+                borderRadius: AppRadius.card,
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
@@ -198,14 +248,14 @@ class PermissionsPage extends StatelessWidget {
     List<_Perm> optional = [location, route, mic];
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Icon(LucideIcons.keySquare, size: 16, color: scheme.tertiary),
-              const SizedBox(width: 8),
+              const SizedBox(width: AppSpacing.sm),
               Text(
                 local.translate("permissions.title").toUpperCase(),
                 style: AppText.pillLabel.copyWith(
@@ -215,44 +265,46 @@ class PermissionsPage extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
           Text(
             local.translate("permissions.description"),
             style: AppText.h2(scheme),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: AppSpacing.ms),
           Expanded(
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               child: Column(
                 children: [
-                  const SizedBox(height: 10),
+                  const SizedBox(height: AppSpacing.ms),
                   SectionTitle(local.translate("permissions.required.title")),
                   ListView.separated(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: required.length,
-                    separatorBuilder: (_, _) => const SizedBox(height: 10),
+                    separatorBuilder: (_, _) =>
+                        const SizedBox(height: AppSpacing.ms),
                     itemBuilder: (context, i) =>
                         _PermBuilder(item: required[i]),
                   ),
 
-                  const SizedBox(height: 20),
+                  const SizedBox(height: AppSpacing.xl),
                   SectionTitle(local.translate("permissions.optional.title")),
                   ListView.separated(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: optional.length,
-                    separatorBuilder: (_, _) => const SizedBox(height: 10),
+                    separatorBuilder: (_, _) =>
+                        const SizedBox(height: AppSpacing.ms),
                     itemBuilder: (context, i) =>
                         _PermBuilder(item: optional[i]),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: AppSpacing.ms),
                 ],
               ),
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: AppSpacing.ms),
         ],
       ),
     );

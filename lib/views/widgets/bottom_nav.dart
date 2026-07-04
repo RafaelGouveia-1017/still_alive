@@ -53,30 +53,30 @@ class BottomNav extends StatelessWidget {
         'history',
         local.translate("navigation.1"),
         LucideIcons.history,
-        HomeScreen(),
+        HistoryScreen(),
       ),
       NavDestination(
         'contacts',
         local.translate("navigation.2"),
         LucideIcons.users,
-        HomeScreen(),
+        ContactsScreen(),
       ),
       NavDestination(
         'integrations',
         local.translate("navigation.3"),
         LucideIcons.blocks,
-        HomeScreen(),
+        IntegrationsScreen(),
       ),
       NavDestination(
         'settings',
         local.translate("navigation.4"),
         LucideIcons.slidersHorizontal,
-        HomeScreen(),
+        SettingsScreen(),
       ),
     ];
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+      padding: const EdgeInsets.fromLTRB(0, AppSpacing.sm, 0, 0),
       decoration: BoxDecoration(
         color: scheme.surface,
         border: Border(top: BorderSide(color: scheme.outlineVariant)),
@@ -91,23 +91,23 @@ class BottomNav extends StatelessWidget {
               onTap: () => Navigator.of(context).push(
                 AppRoute(
                   page: d.screen,
-                  transition: AppRouteTransitionType.slideLeft,
+                  transition: AppRouteTransitionType.slideRight,
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
+                padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxs),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(d.icon, size: 20, color: color),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: AppSpacing.xxs),
                     Text(
                       d.label,
                       style: const TextStyle(
                         fontSize: 10,
                       ).copyWith(color: color),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: AppSpacing.xxs),
                     Container(
                       width: 4,
                       height: 4,

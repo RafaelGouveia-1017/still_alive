@@ -5,7 +5,7 @@ import 'package:still_alive/data/app_design.dart';
 import 'package:still_alive/data/app_localization.dart';
 import 'package:still_alive/data/custom_theme.dart';
 import '../../widgets/primitives.dart';
-import '../themes.dart';
+import '../settings/themes.dart';
 
 /// Initial onboarding page introducing the application.
 ///
@@ -29,7 +29,7 @@ class WelcomePage extends StatelessWidget {
         );
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -47,9 +47,9 @@ class WelcomePage extends StatelessWidget {
             ),
             child: Icon(LucideIcons.shield, size: 48, color: scheme.onPrimary),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: AppSpacing.xxxl),
           Text(local.translate("app_name"), style: AppText.h1(scheme)),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
           ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 280),
             child: Text(
@@ -68,15 +68,17 @@ class WelcomePage extends StatelessWidget {
                   local.translate("settings.sections.customization.title"),
                 ),
                 AppCard(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: AppSpacing.lg,
+                    vertical: AppSpacing.xxs,
+                  ),
                   child: Column(
                     children: [
-                      GestureDetector(
-                        behavior: HitTestBehavior.opaque,
+                      Pressable(
                         onTap: () => Navigator.of(context).push(
                           AppRoute(
                             page: ThemesScreen(),
-                            transition: AppRouteTransitionType.slideRight,
+                            transition: AppRouteTransitionType.slideLeft,
                           ),
                         ),
                         child: FutureBuilder<String>(
@@ -98,8 +100,7 @@ class WelcomePage extends StatelessWidget {
                         ),
                       ),
                       Divider(height: 1, color: scheme.outlineVariant),
-                      GestureDetector(
-                        behavior: HitTestBehavior.opaque,
+                      Pressable(
                         onTap: () {
                           showBlurredBottomSheet(
                             scheme: scheme,
@@ -119,17 +120,21 @@ class WelcomePage extends StatelessWidget {
                                 final lang = AppLocalizationsDelegate
                                     .supportedLocales[index];
 
-                                return ListTile(
-                                  splashColor: null,
-                                  tileColor: null,
-                                  title: Text(
-                                    lang.label,
-                                    style: AppText.body(scheme),
-                                  ),
+                                return Pressable(
+                                  factory: InkSparkle.splashFactory,
                                   onTap: () {
                                     localeProvider.setLocale(lang.locale);
                                     Navigator.pop(context);
                                   },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(
+                                      AppSpacing.lg,
+                                    ),
+                                    child: Text(
+                                      lang.label,
+                                      style: AppText.body(scheme),
+                                    ),
+                                  ),
                                 );
                               },
                             ),

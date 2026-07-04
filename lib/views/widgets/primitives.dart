@@ -1,7 +1,9 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'bottom_nav.dart';
 import '../../data/app_design.dart';
+import '../../data/app_permissions.dart';
 
 /// A reusable base screen widget that defines the common layout structure
 /// for all screens in the application.
@@ -96,6 +98,7 @@ class AppCard extends StatelessWidget {
     super.key,
     required this.child,
     this.padding = AppSpacing.card,
+    this.margin = const EdgeInsets.all(0),
     this.color,
     this.borderColor,
     this.gradient,
@@ -103,6 +106,7 @@ class AppCard extends StatelessWidget {
 
   final Widget child;
   final EdgeInsetsGeometry padding;
+  final EdgeInsetsGeometry margin;
   final Color? color;
   final Color? borderColor;
   final Gradient? gradient;
@@ -113,6 +117,7 @@ class AppCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: padding,
+      margin: margin,
       decoration: BoxDecoration(
         color: gradient == null ? (color ?? scheme.surfaceContainer) : null,
         gradient: gradient,
@@ -233,11 +238,85 @@ class PrimaryButton extends StatelessWidget {
               children: [
                 if (icon != null) ...[
                   Icon(icon, size: 18, color: fg),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AppSpacing.sm),
                 ],
                 Text(label, style: AppText.body(scheme).copyWith(color: fg)),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A widget that provides a subtle press animation for its [child] when
+/// interacted with.
+///
+/// [Pressable] scales its child down while pressed, creating lightweight
+/// visual feedback similar to a button press. It supports tap, long press,
+/// and double tap gestures through the corresponding callback properties.
+///
+/// Unlike [InkWell], this widget does not display a Material ripple effect.
+class Pressable extends StatefulWidget {
+  const Pressable({
+    super.key,
+    required this.onTap,
+    required this.child,
+    this.borderRadius = AppRadius.card,
+    this.factory = NoSplash.splashFactory,
+  });
+
+  final VoidCallback? onTap;
+  final Widget child;
+  final BorderRadius borderRadius;
+  final InteractiveInkFeatureFactory factory;
+
+  @override
+  State<Pressable> createState() => _PressableState();
+}
+
+/// State implementation for [Pressable].
+class _PressableState extends State<Pressable> {
+  bool _pressed = false;
+
+  void _setPressed(bool value) {
+    if (_pressed != value) {
+      setState(() => _pressed = value);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      borderRadius: widget.borderRadius,
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTapDown: (_) => _setPressed(true),
+        onTapUp: (_) async {
+          await Future.delayed(AppMotion.fastest);
+          _setPressed(false);
+        },
+        onTapCancel: () async {
+          await Future.delayed(AppMotion.fastest);
+          _setPressed(false);
+        },
+        onTap: () async {
+          await Future.delayed(const Duration(milliseconds: 150));
+          widget.onTap?.call();
+        },
+        highlightColor: Colors.transparent,
+        splashFactory: widget.factory,
+        child: AnimatedSlide(
+          offset: _pressed ? const Offset(0, 0.015) : Offset.zero,
+          duration: AppMotion.fastest,
+          curve: Curves.easeOut,
+          child: AnimatedScale(
+            scale: _pressed ? 0.96 : 1.0,
+            duration: AppMotion.fastest,
+            curve: Curves.easeOut,
+            child: widget.child,
           ),
         ),
       ),
@@ -268,7 +347,10 @@ class Pill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.ms,
+        vertical: AppSpacing.xxs,
+      ),
       decoration: BoxDecoration(
         color: color.withAlpha(38),
         borderRadius: AppRadius.chip,
@@ -276,7 +358,10 @@ class Pill extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (leading != null) ...[leading!, const SizedBox(width: 6)],
+          if (leading != null) ...[
+            leading!,
+            const SizedBox(width: AppSpacing.xs),
+          ],
           Text(
             label.toUpperCase(),
             style: AppText.pillLabel.copyWith(color: color),
@@ -320,7 +405,7 @@ class AppRow extends StatelessWidget {
   Widget build(BuildContext context) {
     ColorScheme scheme = colorScheme ?? Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
       child: Row(
         children: [
           if (icon != null) ...[
@@ -339,7 +424,7 @@ class AppRow extends StatelessWidget {
                 color: danger ? scheme.error : scheme.onSurface,
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AppSpacing.md),
           ],
           Expanded(
             child: Column(
@@ -385,7 +470,12 @@ class SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     ColorScheme scheme = colorScheme ?? Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.only(left: 4, right: 4, top: 0, bottom: 8),
+      padding: const EdgeInsets.only(
+        left: AppSpacing.xxs,
+        right: AppSpacing.xxs,
+        top: 0,
+        bottom: AppSpacing.sm,
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -428,7 +518,7 @@ class AppToggle extends StatelessWidget {
         duration: AppMotion.medium,
         width: 40,
         height: 24,
-        padding: const EdgeInsets.all(2),
+        padding: const EdgeInsets.all(AppSpacing.xxxs),
         alignment: on ? Alignment.centerRight : Alignment.centerLeft,
         decoration: BoxDecoration(
           color: on ? scheme.tertiary : scheme.surfaceContainerHighest,
@@ -480,7 +570,7 @@ class AppHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     ColorScheme scheme = colorScheme ?? Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+      padding: const EdgeInsets.fromLTRB(0, AppSpacing.ms, 0, AppSpacing.ms),
       child: Row(
         children: [
           SizedBox(width: 50, child: left),
@@ -493,7 +583,13 @@ class AppHeader extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 if (subtitle != null)
-                  Text(subtitle!, style: AppText.micro(scheme)),
+                  Text(subtitle!, style: AppText.micro(scheme))
+                else
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AppSpacing.xxs,
+                    ),
+                  ),
               ],
             ),
           ),
@@ -535,7 +631,7 @@ class ProgressDots extends StatelessWidget {
       children: List.generate(count, (i) {
         final on = i == active;
         return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 2),
+          margin: const EdgeInsets.symmetric(horizontal: AppSpacing.xxxs),
           width: on ? 24 : 6,
           height: 4,
           decoration: BoxDecoration(
@@ -580,9 +676,8 @@ class CircleIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ColorScheme scheme = colorScheme ?? Theme.of(context).colorScheme;
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
+    if (onTap == null) {
+      return Container(
         width: 45,
         height: 45,
         decoration: BoxDecoration(
@@ -590,8 +685,21 @@ class CircleIconButton extends StatelessWidget {
           shape: BoxShape.circle,
         ),
         child: Icon(icon, size: 24, color: (foreground ?? scheme.onSurface)),
-      ),
-    );
+      );
+    } else {
+      return Pressable(
+        onTap: onTap,
+        child: Container(
+          width: 45,
+          height: 45,
+          decoration: BoxDecoration(
+            color: (background ?? scheme.surfaceContainer),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, size: 24, color: (foreground ?? scheme.onSurface)),
+        ),
+      );
+    }
   }
 }
 
@@ -670,5 +778,60 @@ Future<T?> showBlurredBottomSheet<T>({
         ),
       );
     },
+  );
+}
+
+/// Displays a custom toast using the `fluttertoast` package.
+///
+/// The toast is shown using an [FToast] instance attached to the current
+/// navigator context. Any currently visible toast and any queued toasts are
+/// removed before displaying the new one, ensuring that only a single toast is
+/// shown at a time.
+///
+/// The toast content is wrapped in a full-width container using the provided
+/// [scheme] for its background color and the application's default card border
+/// radius.
+///
+/// Parameters:
+/// * [scheme]: The [ColorScheme] used to style the toast container.
+/// * [toast]: The widget displayed as the toast content.
+/// * [gravity]: Controls where the toast appears on the screen. Defaults to
+///   [ToastGravity.TOP].
+/// * [position]: An optional custom builder for positioning the toast. When
+///   provided, it overrides the default positioning behavior.
+/// * [secs]: The duration, in seconds, that the toast remains visible.
+///   Defaults to `2`.
+///
+/// Throws if no valid navigator context is available from
+/// `PermissionManager.instance.navigatorKey.currentContext`.
+
+/// shown toast using the fluttertoast package
+void showToast({
+  required ColorScheme scheme,
+  required Widget toast,
+  ToastGravity gravity = ToastGravity.TOP,
+  Widget Function(BuildContext, Widget, ToastGravity?)? position,
+  int secs = 2,
+}) {
+  FToast fToast = FToast();
+  fToast.init(PermissionManager.instance.navigatorKey.currentContext!);
+
+  fToast.removeCustomToast();
+  fToast.removeQueuedCustomToasts();
+
+  fToast.showToast(
+    child: Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainerHighest,
+        borderRadius: AppRadius.card,
+      ),
+      child: toast,
+    ),
+    toastDuration: Duration(seconds: secs),
+    fadeDuration: AppMotion.screen,
+    gravity: gravity,
+    positionedToastBuilder: position,
   );
 }

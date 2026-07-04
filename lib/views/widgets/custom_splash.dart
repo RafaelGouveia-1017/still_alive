@@ -10,17 +10,20 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 class CustomSplash {
   /// Builds the splash screen widget.
   ///
-  /// The [showLoader] parameter controls the visibility of the loading
-  /// indicator displayed at the bottom of the screen.
   ///
   /// The [scheme] parameter provides the active [ColorScheme] used to style
   /// the splash screen text according to the application's theme.
   ///
   /// Returns a widget containing the splash screen layout.
-  Widget splash(bool showLoader, ColorScheme scheme) {
+  Widget splash(ColorScheme scheme) {
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(50, 32, 50, 32),
+        padding: const EdgeInsets.fromLTRB(
+          50,
+          AppSpacing.xxxl,
+          50,
+          AppSpacing.xxxl,
+        ),
         child: Column(
           children: [
             Expanded(
@@ -45,18 +48,18 @@ class CustomSplash {
                       color: scheme.onPrimary,
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: AppSpacing.xxxl),
                   Text('StillAlive', style: AppText.h1(scheme)),
                 ],
               ),
             ),
             AnimatedOpacity(
-              opacity: showLoader ? 1.0 : 0.0,
-              duration: AppMotion.faster,
+              opacity: 1.0,
+              duration: AppMotion.medium,
               curve: AppMotion.easeIn,
               child: const LinearProgressIndicator(minHeight: 3),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: AppSpacing.xxxl),
           ],
         ),
       ),

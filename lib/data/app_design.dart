@@ -32,7 +32,10 @@ class AppDesign {
           backgroundColor: scheme.primary,
           foregroundColor: scheme.onPrimary,
           elevation: 0,
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.xl,
+            vertical: AppSpacing.lg,
+          ),
           textStyle: AppText.body(scheme),
           shape: const RoundedRectangleBorder(borderRadius: AppRadius.button),
         ),
@@ -60,7 +63,10 @@ class AppDesign {
           borderSide: BorderSide.none,
         ),
         hintStyle: TextStyle(color: scheme.onSurfaceVariant, fontSize: 14),
-        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: AppSpacing.lg,
+          vertical: AppSpacing.md,
+        ),
       ),
 
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
@@ -195,11 +201,20 @@ class AppText {
 /// These values should be used instead of hardcoded spacing to ensure
 /// consistent layouts throughout the application.
 class AppSpacing {
-  /// Extra-small spacing (4px).
-  static const double xs = 4;
+  /// Triple extra-small spacing (2px).
+  static const double xxxs = 2;
+
+  /// Double extra-small spacing (4px).
+  static const double xxs = 4;
+
+  /// Extra-small spacing (6px).
+  static const double xs = 6;
 
   /// Small spacing (8px).
   static const double sm = 8;
+
+  /// Medium-small spacing (10px).
+  static const double ms = 10;
 
   /// Medium spacing (12px).
   static const double md = 12;
@@ -221,14 +236,14 @@ class AppSpacing {
 
   /// Default internal padding for cards and card-like surfaces.
   static const EdgeInsets card = EdgeInsets.symmetric(
-    horizontal: 16,
-    vertical: 10,
+    horizontal: lg,
+    vertical: ms,
   );
 
   /// Default internal padding for primary buttons.
   static const EdgeInsets primaryButton = EdgeInsets.symmetric(
-    horizontal: 20,
-    vertical: 16,
+    horizontal: xl,
+    vertical: lg,
   );
 }
 
@@ -320,10 +335,10 @@ class AppMotion {
   /// Slowest animation duration (10s).
   static const Duration slowest = Duration(seconds: 10);
 
-  /// Route transition duration (220ms).
+  /// Route transition duration (250ms).
   ///
   /// Mirrors AnimatePresence screen transitions on the web.
-  static const Duration screen = Duration(milliseconds: 220);
+  static const Duration screen = Duration(milliseconds: 250);
 
   /// Countdown ring reveal animation duration (1100ms).
   static const Duration ring = Duration(milliseconds: 1100);
@@ -363,7 +378,7 @@ class AppMotion {
 ///
 /// Used by [AppRoute] to determine how a new page enters the screen.
 enum AppRouteTransitionType {
-  /// Fade with a slight horizontal slide.
+  /// Fade without movement.
   fade,
 
   /// Slide from right to left.
@@ -405,51 +420,54 @@ class AppRoute<T> extends PageRouteBuilder<T> {
           );
           switch (transition) {
             case AppRouteTransitionType.fade:
+              return FadeTransition(opacity: curved, child: child);
+
+            case AppRouteTransitionType.slideLeft:
               return FadeTransition(
                 opacity: curved,
                 child: SlideTransition(
                   position: Tween<Offset>(
-                    begin: const Offset(0.05, 0),
+                    begin: const Offset(1.0, 0.0),
                     end: Offset.zero,
                   ).animate(animation),
                   child: child,
                 ),
               );
 
-            case AppRouteTransitionType.slideLeft:
-              return SlideTransition(
-                position: Tween(
-                  begin: const Offset(1.0, 0.0),
-                  end: Offset.zero,
-                ).animate(animation),
-                child: child,
-              );
-
             case AppRouteTransitionType.slideRight:
-              return SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(1.0, 0.0),
-                  end: Offset.zero,
-                ).animate(animation),
-                child: child,
+              return FadeTransition(
+                opacity: curved,
+                child: SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(-1.0, 0.0),
+                    end: Offset.zero,
+                  ).animate(animation),
+                  child: child,
+                ),
               );
 
             case AppRouteTransitionType.slideUp:
-              return SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(0.0, 1.0),
-                  end: Offset.zero,
-                ).animate(animation),
-                child: child,
+              return FadeTransition(
+                opacity: curved,
+                child: SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(0.0, 1.0),
+                    end: Offset.zero,
+                  ).animate(animation),
+                  child: child,
+                ),
               );
 
             case AppRouteTransitionType.slideDown:
-              return SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(0.0, -1.0),
-                  end: Offset.zero,
-                ).animate(animation),
-                child: child,
+              return FadeTransition(
+                opacity: curved,
+                child: SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(0.0, -1.0),
+                    end: Offset.zero,
+                  ).animate(animation),
+                  child: child,
+                ),
               );
           }
         },

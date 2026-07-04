@@ -5,7 +5,7 @@ import 'package:still_alive/data/app_themes.dart';
 import 'package:still_alive/data/app_design.dart';
 import 'package:still_alive/data/app_localization.dart';
 import 'package:still_alive/data/custom_theme.dart';
-import '../widgets/primitives.dart';
+import '../../widgets/primitives.dart';
 import 'package:still_alive/main.dart';
 
 /// Represents a selectable theme option in the theme picker UI.
@@ -133,7 +133,10 @@ class _ThemesScreenState extends State<ThemesScreen> {
               itemBuilder: (context, index) {
                 if (index == themeOptions.length) {
                   return Padding(
-                    padding: const EdgeInsets.only(top: 10, bottom: 20),
+                    padding: const EdgeInsets.only(
+                      top: AppSpacing.ms,
+                      bottom: AppSpacing.xl,
+                    ),
                     child: Center(
                       child: Text(
                         local.translate("themes.footer"),
@@ -154,7 +157,7 @@ class _ThemesScreenState extends State<ThemesScreen> {
                         }
                       },
                       child: Container(
-                        padding: const EdgeInsets.all(15),
+                        padding: const EdgeInsets.all(AppSpacing.lg),
                         decoration: BoxDecoration(
                           color: t.active
                               ? scheme.tertiary.withAlpha(15)
@@ -179,7 +182,7 @@ class _ThemesScreenState extends State<ThemesScreen> {
                                       style: AppText.body(scheme),
                                     ),
                                     if (t.active) ...[
-                                      const SizedBox(width: 8),
+                                      const SizedBox(width: AppSpacing.sm),
                                       Pill(
                                         label: local.translate("themes.status"),
                                         color: scheme.tertiary,
@@ -195,11 +198,12 @@ class _ThemesScreenState extends State<ThemesScreen> {
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 12),
+                            const SizedBox(height: AppSpacing.md),
                             Row(
                               children: [
                                 for (int i = 0; i < t.swatches.length; i++) ...[
-                                  if (i > 0) const SizedBox(width: 6),
+                                  if (i > 0)
+                                    const SizedBox(width: AppSpacing.xs),
                                   Expanded(
                                     child: Container(
                                       height: 30,
@@ -221,7 +225,7 @@ class _ThemesScreenState extends State<ThemesScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: AppSpacing.ms),
                   ],
                 );
               },

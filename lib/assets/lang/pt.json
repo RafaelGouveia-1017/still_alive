@@ -59,7 +59,7 @@
       ]
     },
     "allow": "Permitir",
-    "error": "Nem todas as permissões necessárias foram concedidas.",
+    "error": "As permissões necessárias não foram todas concedidas.",
     "cta": "Concluir"
   },
   "home": {

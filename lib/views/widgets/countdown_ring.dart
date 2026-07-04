@@ -123,13 +123,13 @@ class _CountdownRingState extends State<CountdownRing>
                     scheme,
                   ).copyWith(letterSpacing: 2),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.sm),
                 Text(
                   widget.time,
                   style: widget.timeStyle ?? AppText.display(scheme),
                 ),
                 if (widget.caption != null) ...[
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AppSpacing.sm),
                   Text(widget.caption!, style: AppText.caption(scheme)),
                 ],
               ],

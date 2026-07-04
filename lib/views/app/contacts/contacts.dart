@@ -1,29 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import '../../data/app_design.dart';
-import '../widgets/primitives.dart';
+import '../../../data/app_design.dart';
+import '../../widgets/primitives.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class ContactsScreen extends StatefulWidget {
+  const ContactsScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<ContactsScreen> createState() => _ContactsScreenState();
 }
 
-/// State implementation for [HomeScreen].
-class _HomeScreenState extends State<HomeScreen> {
+/// State implementation for [ContactsScreen].
+class _ContactsScreenState extends State<ContactsScreen> {
   @override
   void initState() {
     super.initState();
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   }
 
   @override
   Widget build(BuildContext context) {
     ColorScheme scheme = Theme.of(context).colorScheme;
     return ScreenBase(
-      bottomNavDestination: 'home',
+      bottomNavDestination: 'contacts',
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -50,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: AppSpacing.xxxl),
               Text(
-                "Home Screen: Under construction",
+                "Contacts Screen: Under construction",
                 style: AppText.body(scheme),
               ),
             ],

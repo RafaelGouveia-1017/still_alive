@@ -249,14 +249,14 @@ jobs:
       # =======================================================
       # Run Flutter tests.
       # =======================================================
-      #- name: Run Flutter tests
-      #  run: flutter test
+      - name: Run Flutter tests
+        run: flutter test
 
       # =======================================================
       # Run Flutter integration tests.
       # =======================================================
-      #- name: Run Flutter integration tests
-      #  run: flutter test integration_test
+      - name: Run Flutter integration tests
+        run: flutter test integration_test
 
       # =======================================================
       # Increment version in pubspec.yaml.
