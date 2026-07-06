@@ -48,7 +48,9 @@ dependencies:
   scrollable_positioned_list: ^0.3.8
   flutter_sms: ^3.0.1
   fluttertoast: ^9.1.0
-  package_info_plus: ^10.2.0
+  package_info_plus: 9.0.1
+  restart_app: ^1.8.3
+  file_picker: ^11.0.2
 
 dev_dependencies:
   flutter_test:

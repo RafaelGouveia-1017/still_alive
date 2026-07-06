@@ -71,7 +71,17 @@ class PermissionManager {
         openAppSettings();
         return await permission.status;
       default:
-        return await permission.request();
+        if (permission == Permission.locationAlways) {
+          PermissionStatus status = await permission.request();
+          if (status == PermissionStatus.denied) {
+            openAppSettings();
+            return await permission.status;
+          } else {
+            return status;
+          }
+        } else {
+          return await permission.request();
+        }
     }
   }
 

@@ -387,6 +387,7 @@ class AppRow extends StatelessWidget {
   const AppRow({
     super.key,
     this.icon,
+    this.rotateAngle = 0,
     required this.title,
     this.subtitle,
     this.trailing,
@@ -395,6 +396,7 @@ class AppRow extends StatelessWidget {
   });
 
   final IconData? icon;
+  final double rotateAngle;
   final String title;
   final String? subtitle;
   final Widget? trailing;
@@ -407,7 +409,7 @@ class AppRow extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
       child: Row(
-        children: [
+        children: <Widget>[
           if (icon != null) ...[
             Container(
               width: 40,
@@ -418,10 +420,13 @@ class AppRow extends StatelessWidget {
                     : scheme.surfaceContainerHigh,
                 borderRadius: BorderRadius.circular(AppRadius.md),
               ),
-              child: Icon(
-                icon,
-                size: 18,
-                color: danger ? scheme.error : scheme.onSurface,
+              child: Transform.rotate(
+                angle: rotateAngle,
+                child: Icon(
+                  icon,
+                  size: 18,
+                  color: danger ? scheme.error : scheme.onSurface,
+                ),
               ),
             ),
             const SizedBox(width: AppSpacing.md),
@@ -430,21 +435,14 @@ class AppRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: AppText.body(scheme),
-                  overflow: TextOverflow.ellipsis,
-                ),
+                Text(title, style: AppText.body(scheme)),
                 if (subtitle != null)
-                  Text(
-                    subtitle!,
-                    style: AppText.caption(scheme),
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                  Text(subtitle!, style: AppText.caption(scheme)),
               ],
             ),
           ),
-          ?trailing,
+          if (trailing != null)
+            Container(margin: const EdgeInsets.only(left: 10), child: trailing),
         ],
       ),
     );
@@ -515,21 +513,32 @@ class AppToggle extends StatelessWidget {
     return GestureDetector(
       onTap: onChanged == null ? null : () => onChanged!(!on),
       child: AnimatedContainer(
-        duration: AppMotion.medium,
+        duration: AppMotion.fastest,
+        curve: AppMotion.easeInOut,
         width: 40,
         height: 24,
         padding: const EdgeInsets.all(AppSpacing.xxxs),
         alignment: on ? Alignment.centerRight : Alignment.centerLeft,
         decoration: BoxDecoration(
           color: on ? scheme.tertiary : scheme.surfaceContainerHighest,
+          border: BoxBorder.all(
+            color: on ? scheme.tertiary : scheme.onSurfaceVariant,
+            width: 1.2,
+            style: BorderStyle.solid,
+          ),
           borderRadius: AppRadius.chip,
         ),
-        child: Container(
-          width: 20,
-          height: 20,
-          decoration: BoxDecoration(
-            color: scheme.onSurface,
-            shape: BoxShape.circle,
+        child: AnimatedScale(
+          duration: AppMotion.fastest,
+          scale: on ? 1.0 : 0.75,
+          curve: Curves.easeInOut,
+          child: Container(
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+              color: on ? scheme.onSurface : scheme.onSurfaceVariant,
+              shape: BoxShape.circle,
+            ),
           ),
         ),
       ),
@@ -746,6 +755,7 @@ Future<T?> showBlurredBottomSheet<T>({
     backgroundColor: Colors.transparent,
     barrierColor: Colors.transparent,
     builder: (context) {
+      final bottomInset = MediaQuery.of(context).viewInsets.bottom;
       return SafeArea(
         child: Stack(
           children: [
@@ -757,20 +767,25 @@ Future<T?> showBlurredBottomSheet<T>({
               ),
             ),
 
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                margin: EdgeInsets.symmetric(horizontal: marginHorizontal),
-                child: Material(
-                  color: scheme.surfaceContainerHigh,
-                  elevation: 0,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(16),
+            AnimatedPadding(
+              duration: AppMotion.fastest,
+              curve: Curves.easeOut,
+              padding: EdgeInsets.only(bottom: bottomInset),
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: marginHorizontal),
+                  child: Material(
+                    color: scheme.surfaceContainerHigh,
+                    elevation: 0,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(16),
+                      ),
+                      side: BorderSide(color: Colors.transparent),
                     ),
-                    side: BorderSide(color: Colors.transparent),
+                    child: Padding(padding: AppSpacing.card, child: child),
                   ),
-                  child: Padding(padding: AppSpacing.card, child: child),
                 ),
               ),
             ),
@@ -811,7 +826,7 @@ void showToast({
   required Widget toast,
   ToastGravity gravity = ToastGravity.TOP,
   Widget Function(BuildContext, Widget, ToastGravity?)? position,
-  int secs = 2,
+  int secs = 3,
 }) {
   FToast fToast = FToast();
   fToast.init(PermissionManager.instance.navigatorKey.currentContext!);

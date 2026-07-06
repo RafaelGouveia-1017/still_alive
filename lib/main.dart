@@ -43,6 +43,11 @@ void main() async {
 
   SystemChrome.setEnabledSystemUIMode(.immersive);
 
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+
   Directory documentDirectory = await getApplicationDocumentsDirectory();
   try {
     await initDatabase(

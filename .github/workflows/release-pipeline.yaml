@@ -353,9 +353,14 @@ jobs:
         run: |
           $tag = "v${{ steps.version.outputs.SHORT }}"
 
+          $notes = @"
+          Changelog:
+          ${{ steps.changelog.outputs.CHANGELOG }}
+          "@
+
           gh release create `
             $tag `
             "build/app/outputs/flutter-apk/app-release.apk#StillAlive.apk" `
             --title $tag `
-            --notes "Changelog:\n${{ steps.changelog.outputs.CHANGELOG }}" `
-            --draft --prerelease
+            --notes $notes `
+            --prerelease

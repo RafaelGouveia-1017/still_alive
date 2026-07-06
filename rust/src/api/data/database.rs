@@ -1,4 +1,5 @@
-use anyhow::Result;
+use anyhow::{anyhow, Result};
+use flutter_rust_bridge::frb;
 use rusqlite::{types::Value, Connection, OptionalExtension, Params, Row};
 use serde_json::{self, json};
 use std::fs;
@@ -22,7 +23,7 @@ use std::path::PathBuf;
 /// SQLite performs checkpoints automatically as needed.
 ///
 /// Use [`Database::checkpoint`] if you need to force a checkpoint.
-#[flutter_rust_bridge::frb(ignore)]
+#[frb(ignore)]
 #[derive(Debug)]
 pub struct Database {
     conn: Connection,
@@ -64,12 +65,86 @@ impl Database {
                     VALUES
                         ('tutorial', 'true'),
                         ('theme', 'SmartBell'),
-                        ('lang', 'en');
+                        ('lang', 'en'),
+                        ('location','true'),
+                        ('route','true'),
+                        ('microphone','true'),
+                        ('lock','true'),
+                        ('volume','100'), 
+                        ('message', '');
                 "#,
             )?;
         }
 
         Ok(Self { conn })
+    }
+
+    /// Close the SQLite connection.
+    ///
+    /// This cleanly closes the underlying SQLite connection.
+    ///
+    /// After this method returns successfully:
+    /// - all pending transactions have been committed or rolled back
+    /// - the connection becomes unusable
+    ///
+    /// This method is primarily intended for administrative operations
+    /// such as importing a database backup, where the database file must
+    /// be replaced on disk.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if SQLite cannot close the connection.
+    /// This can occur if prepared statements are still active.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// let db = Database::open("app.db")?;
+    /// db.close()?;
+    /// ```
+    pub fn close(self) -> Result<()> {
+        self.conn.close().map_err(|(_, err)| anyhow!(err))
+    }
+
+    /// Export the current SQLite database.
+    ///
+    /// Before copying the database file, this method performs a
+    /// `wal_checkpoint(TRUNCATE)` to flush all committed changes from the
+    /// WAL file into the main database.
+    ///
+    /// The resulting copy is therefore a complete and consistent snapshot.
+    ///
+    /// The database connection remains open throughout the operation.
+    ///
+    /// # Arguments
+    ///
+    /// - `destination` - Destination path of the exported database.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if:
+    ///
+    /// - the WAL checkpoint fails
+    /// - the database file cannot be copied
+    ///
+    /// # Notes
+    ///
+    /// This function only exports the SQLite database file.
+    ///
+    /// Additional backup files (such as `metadata.json`) are created
+    /// by higher-level backup functions.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// db.export("/tmp/backup.db")?;
+    /// ```
+    pub fn export(&self, destination: &str) -> Result<()> {
+        self.checkpoint()?;
+
+        std::fs::copy(crate::api::data::db::database_path_str(), destination)?;
+
+        Ok(())
     }
 
     /// Delete an existing SQLite database.

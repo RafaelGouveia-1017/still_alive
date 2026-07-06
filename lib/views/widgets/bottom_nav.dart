@@ -88,12 +88,14 @@ class BottomNav extends StatelessWidget {
           return Expanded(
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
-              onTap: () => Navigator.of(context).push(
-                AppRoute(
-                  page: d.screen,
-                  transition: AppRouteTransitionType.slideRight,
-                ),
-              ),
+              onTap: () => isActive
+                  ? null
+                  : Navigator.of(context).push(
+                      AppRoute(
+                        page: d.screen,
+                        transition: AppRouteTransitionType.slideRight,
+                      ),
+                    ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxs),
                 child: Column(

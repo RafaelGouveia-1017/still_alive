@@ -2,6 +2,7 @@
   "name": "Português",
   "app_name": "StillAlive",
   "navigation": ["Início", "Histórico", "Contactos", "Plugins", "Definições"],
+  "generic_error": "Aconteceu um erro...",
   "welcome": {
     "title": "Bem-vindo",
     "tagline": "O teu guardião silencioso. Ativa um temporizador de segurança — iremos alertar os teus contactos se não deres check-in.",
@@ -226,14 +227,18 @@
         "labels": ["Alterar tema de cor", "Atual:", "Alterar idioma"]
       },
       "alerts": {
-        "title": "Alertas",
+        "title": "Temporazidor e Alertas",
         "labels": [
           "Mensagem de emergência personalizada",
           "Editar o texto enviado aos contactos",
-          "Avisos pré-alerta",
-          "Vibração + som no fim",
+          "Mensagem de emergência:",
+          "Escreve uma nova mensagem",
+          "Mesagem salva com sucesso!",
           "Volume da sirene offline",
-          "Máximo"
+          "Máximo",
+          "Silêncio",
+          "Bloqueio do temporizador",
+          "Requer PIN para parar"
         ]
       },
       "privacy": {
@@ -241,19 +246,35 @@
         "labels": [
           "Partilhar localização em direto",
           "Durante emergência ativa",
+          "Partilhar rota em direto",
+          "Gravar caminho percorrido durante temporizador ativo",
           "Gravação de áudio automática",
-          "60s após ativação",
-          "Bloqueio da app",
-          "Face ID + PIN"
+          "Durante emergência ativa"
         ]
       },
       "backup": {
         "title": "Cópia de segurança",
-        "labels": ["Exportar dados", "Definições, temporizadores, histórico"]
+        "export": [
+          "Exportar dados",
+          "Definições, temporizadores, histórico",
+          "Seleciona a pasta de destino para o backup:",
+          "Backup exportado com sucesso!"
+        ],
+        "import": [
+          "Importar dados",
+          "Irá substituir TODOS os dados presentes!!!",
+          "Seleciona o zip de backup:",
+          "Backup importado com sucesso!"
+        ]
       },
       "danger": {
-        "title": "Zona de perigo",
-        "labels": ["Apagar todos os dados", "Não pode ser revertido"]
+        "title": "Zona de Perigo",
+        "labels": [
+          "Apagar TODOS os dados",
+          "Não pode ser revertido",
+          "Tens acerteza? Todos os teus dados serão PERMANENTEMENTE apagados.",
+          "Dados apagados com sucesso!"
+        ]
       }
     }
   },

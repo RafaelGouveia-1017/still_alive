@@ -22,6 +22,92 @@ Future<void> initDatabase({required String path}) =>
 Future<void> databasePathStr() =>
     RustLib.instance.api.crateApiDataDbDatabasePathStr();
 
+/// Open connection to application database.
+///
+/// Opens the database located at the configured database path and stores
+/// it in the global database instance.
+///
+/// # Errors
+///
+/// Returns an error if:
+///
+/// - the database file cannot be opened
+/// - SQLite initialization fails
+Future<void> openDatabase() =>
+    RustLib.instance.api.crateApiDataDbOpenDatabase();
+
+/// Close connection to application database.
+///
+/// After calling this function, any attempt to access the database
+/// must first reopen it using [`open_database`].
+///
+/// Closing the database is required before replacing the underlying
+/// database file during an import operation.
+///
+/// Calling this function multiple times is safe.
+///
+/// # Errors
+///
+/// Returns an error if SQLite fails to close the connection.
+Future<void> closeDatabase() =>
+    RustLib.instance.api.crateApiDataDbCloseDatabase();
+
+/// Export the application database.
+///
+/// Performs a consistent export of the current SQLite database by:
+///
+/// 1. Performing a WAL checkpoint.
+/// 2. Copying the database file.
+///
+/// The database connection remains open during the export.
+///
+/// # Arguments
+///
+/// * `path` - Destination path of the exported database.
+///
+/// # Errors
+///
+/// Returns an error if the checkpoint or file copy fails.
+///
+/// # Notes
+///
+/// This function only exports the SQLite database.
+///
+/// Metadata generation and ZIP creation should be handled by
+/// higher-level backup functions.
+Future<void> exportDatabase({required String path}) =>
+    RustLib.instance.api.crateApiDataDbExportDatabase(path: path);
+
+/// Import a SQLite database.
+///
+/// Replaces the current application database with an imported one.
+///
+/// The import procedure is:
+///
+/// 1. Close the current database.
+/// 2. Replace the database file.
+/// 3. Reopen the database.
+///
+/// # Arguments
+///
+/// * `path` - Path to the imported database.
+///
+/// # Errors
+///
+/// Returns an error if:
+///
+/// - the current database cannot be closed
+/// - the database file cannot be copied
+/// - the imported database cannot be opened
+///
+/// # Warning
+///
+/// The imported database completely replaces the existing one.
+///
+/// Existing data cannot be recovered unless a backup exists.
+Future<void> importDatabase({required String path}) =>
+    RustLib.instance.api.crateApiDataDbImportDatabase(path: path);
+
 /// Delete the existing SQLite database.
 Future<void> purgeDatabase() =>
     RustLib.instance.api.crateApiDataDbPurgeDatabase();

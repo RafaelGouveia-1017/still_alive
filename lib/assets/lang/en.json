@@ -2,6 +2,7 @@
   "name": "English",
   "app_name": "StillAlive",
   "navigation": ["Home", "History", "Contacts", "Plug-ins", "Settings"],
+  "generic_error": "An error ocurred...",
   "welcome": {
     "title": "Welcome",
     "tagline": "Your silent guardian. Activate a safety timer — we'll alert your circle if you don't check in.",
@@ -226,14 +227,18 @@
         "labels": ["Change color theme", "Current:", "Change language"]
       },
       "alerts": {
-        "title": "Alerts",
+        "title": "Timer & Alerts",
         "labels": [
           "Custom emergency message",
           "Edit the text contacts receive",
-          "Pre-alert warnings",
-          "Vibrate + sound at expiry",
+          "Emergency message:",
+          "Enter a new message",
+          "Message saved successfully!",
           "Offline siren volume",
-          "Maximum"
+          "Maximum",
+          "Muted",
+          "Timer lock",
+          "Require PIN to stop"
         ]
       },
       "privacy": {
@@ -241,19 +246,35 @@
         "labels": [
           "Share live location",
           "During active emergency",
+          "Share live route",
+          "Record path travelled during active timer",
           "Auto audio recording",
-          "60s after trigger",
-          "App lock",
-          "Face ID + PIN"
+          "During active emergency"
         ]
       },
       "backup": {
         "title": "Backup",
-        "labels": ["Export data", "Settings, timers, history"]
+        "export": [
+          "Export data",
+          "Settings, timers, history",
+          "Select destination for backup:",
+          "Backup exported successfully!"
+        ],
+        "import": [
+          "Import data",
+          "Will replace ALL current data!!!",
+          "Select backup zip:",
+          "Backup imported successfully!"
+        ]
       },
       "danger": {
-        "title": "Danger zone",
-        "labels": ["Delete all data", "Cannot be undone"]
+        "title": "Danger Zone",
+        "labels": [
+          "Delete ALL data",
+          "Cannot be undone",
+          "Are you sure? All your data will be PERMENANTLY deleted.",
+          "Data deleted sucessfully!"
+        ]
       }
     }
   },
