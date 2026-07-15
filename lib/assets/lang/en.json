@@ -64,15 +64,16 @@
     "cta": "Finish"
   },
   "home": {
-    "status": "Monitoring inactive",
+    "inactive": "Monitoring inactive",
+    "active": "Monitoring active",
     "safety_timer": "Safety Timer",
     "tap_to_configure": "Tap to configure",
     "online": "Online",
     "offline": "Offline",
-    "actions": {
-      "start_timer": "Start safety timer",
-      "quick_contacts": "Quick contacts"
-    }
+    "contacts": "contacts",
+    "plugins": "plug-ins",
+    "start_timer": "Start safety timer",
+    "quick_contacts": "Quick contacts"
   },
   "timer_configuration": {
     "title": "New Timer",

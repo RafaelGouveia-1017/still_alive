@@ -33,9 +33,9 @@ dependencies:
 
   rust_lib_still_alive:
     path: rust_builder
-  flutter_rust_bridge: 2.13.0-beta.4
+  flutter_rust_bridge: 2.13.0-beta.5
 
-  lucide_icons_flutter: ^3.1.14+2
+  lucide_icons_flutter: ^3.1.15
   path_provider: ^2.1.6
   path: ^1.9.1
   flutter_localizations:
@@ -51,6 +51,10 @@ dependencies:
   package_info_plus: 9.0.1
   restart_app: ^1.8.3
   file_picker: ^11.0.2
+  battery_plus: ^7.1.0
+  connectivity_plus: ^7.2.0
+  internet_connection_checker_plus: ^3.1.1
+  flutter_reorderable_grid_view: ^5.7.0
 
 dev_dependencies:
   flutter_test:

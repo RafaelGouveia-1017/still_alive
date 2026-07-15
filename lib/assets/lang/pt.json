@@ -64,15 +64,16 @@
     "cta": "Concluir"
   },
   "home": {
-    "status": "Monitorização inativa",
+    "inactive": "Monitorização inativa",
+    "active": "Monitorização ativa",
     "safety_timer": "Temporizador de segurança",
     "tap_to_configure": "Tocar para configurar",
     "online": "Online",
     "offline": "Offline",
-    "actions": {
-      "start_timer": "Iniciar temporizador",
-      "quick_contacts": "Contactos rápidos"
-    }
+    "contacts": "contactos",
+    "plugins": "plugins",
+    "start_timer": "Iniciar temporizador",
+    "quick_contacts": "Contactos rápidos"
   },
   "timer_configuration": {
     "title": "Novo temporizador",
@@ -161,7 +162,7 @@
   },
   "contacts_list": {
     "title": "Contactos",
-    "subtitle": "Contactos de emergência",
+    "subtitle": "Contactos de Emergência",
     "search": "Procurar contactos",
     "sections": ["Favoritos", "Todos os contactos"],
     "edit": "Editar contacto",

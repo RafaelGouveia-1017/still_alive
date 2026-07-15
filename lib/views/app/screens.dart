@@ -8,7 +8,7 @@
 library;
 
 export 'onboarding/onboarding.dart';
-export 'home.dart';
+export 'home/home.dart';
 
 export 'history.dart';
 

@@ -7,7 +7,7 @@ import '../../widgets/primitives.dart';
 import 'welcome.dart';
 import 'privacy.dart';
 import 'permissions.dart';
-import '../home.dart';
+import '../home/home.dart';
 
 /// Root onboarding flow that guides users through the initial
 /// application setup experience.

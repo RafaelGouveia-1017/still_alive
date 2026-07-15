@@ -108,7 +108,7 @@ class _CountdownRingState extends State<CountdownRing>
           ),
           TweenAnimationBuilder<double>(
             tween: Tween(begin: 0, end: 1),
-            duration: AppMotion.medium,
+            duration: AppMotion.fast,
             curve: AppMotion.easeOut,
             builder: (context, t, child) => Opacity(
               opacity: t,

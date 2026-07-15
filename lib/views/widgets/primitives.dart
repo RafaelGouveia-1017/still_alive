@@ -349,7 +349,7 @@ class Pill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.ms,
-        vertical: AppSpacing.xxs,
+        vertical: AppSpacing.xxxs,
       ),
       decoration: BoxDecoration(
         color: color.withAlpha(38),
@@ -360,7 +360,7 @@ class Pill extends StatelessWidget {
         children: [
           if (leading != null) ...[
             leading!,
-            const SizedBox(width: AppSpacing.xs),
+            const SizedBox(width: AppSpacing.xxxs),
           ],
           Text(
             label.toUpperCase(),
@@ -685,30 +685,21 @@ class CircleIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ColorScheme scheme = colorScheme ?? Theme.of(context).colorScheme;
-    if (onTap == null) {
-      return Container(
-        width: 45,
-        height: 45,
-        decoration: BoxDecoration(
-          color: (background ?? scheme.surfaceContainer),
-          shape: BoxShape.circle,
-        ),
-        child: Icon(icon, size: 24, color: (foreground ?? scheme.onSurface)),
-      );
-    } else {
-      return Pressable(
-        onTap: onTap,
-        child: Container(
-          width: 45,
-          height: 45,
-          decoration: BoxDecoration(
-            color: (background ?? scheme.surfaceContainer),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(icon, size: 24, color: (foreground ?? scheme.onSurface)),
-        ),
-      );
-    }
+
+    final container = Container(
+      width: 45,
+      height: 45,
+      decoration: BoxDecoration(
+        color: background ?? scheme.surfaceContainer,
+        shape: BoxShape.circle,
+      ),
+      alignment: Alignment.center,
+      child: Icon(icon, size: 24, color: (foreground ?? scheme.onSurface)),
+    );
+
+    return onTap == null
+        ? container
+        : Pressable(onTap: onTap, child: container);
   }
 }
 
@@ -774,7 +765,9 @@ Future<T?> showBlurredBottomSheet<T>({
               child: Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: marginHorizontal),
+                  margin: EdgeInsets.symmetric(
+                    horizontal: marginHorizontal,
+                  ).add(EdgeInsetsGeometry.only(top: 200)),
                   child: Material(
                     color: scheme.surfaceContainerHigh,
                     elevation: 0,
