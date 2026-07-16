@@ -51,10 +51,11 @@ dependencies:
   package_info_plus: 9.0.1
   restart_app: ^1.8.3
   file_picker: ^11.0.2
-  battery_plus: ^7.1.0
-  connectivity_plus: ^7.2.0
+  battery_plus: ^7.1.1
+  connectivity_plus: ^7.3.0
   internet_connection_checker_plus: ^3.1.1
   flutter_reorderable_grid_view: ^5.7.0
+  flutter_contacts: ^2.2.2
 
 dev_dependencies:
   flutter_test:

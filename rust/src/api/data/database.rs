@@ -58,7 +58,7 @@ impl Database {
             conn.execute_batch(
                 r#"
                     CREATE TABLE
-                        settings (key TEXT PRIMARY KEY, value TEXT NOT NULL);
+                        settings (key VARCHAR(200) PRIMARY KEY, value TEXT NOT NULL);
 
                     INSERT INTO
                         settings
@@ -72,6 +72,15 @@ impl Database {
                         ('lock','true'),
                         ('volume','100'), 
                         ('message', '');
+
+                    CREATE TABLE
+                        contacts (key VARCHAR(200) PRIMARY KEY, value TEXT NOT NULL);
+
+                    INSERT INTO 
+                        contacts
+                    VALUES
+                        ('quick', '{"count": 0, "ids": []}'),
+                        ('emergency', '{"count": 0, "ids": []}');
                 "#,
             )?;
         }

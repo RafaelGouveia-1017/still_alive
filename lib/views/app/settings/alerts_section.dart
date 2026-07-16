@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../../../src/rust/api/data/db.dart';
@@ -100,6 +101,8 @@ class _AlertsSectionState extends State<AlertsSection> {
                             cursorColor: widget.scheme.primary,
                             scrollPadding: const EdgeInsets.all(0),
                             maxLines: 12,
+                            maxLength: 800,
+                            maxLengthEnforcement: MaxLengthEnforcement.enforced,
                             decoration: InputDecoration(
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: AppSpacing.xxxs,

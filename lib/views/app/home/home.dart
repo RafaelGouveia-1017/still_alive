@@ -60,14 +60,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     itemBuilder: (context, index) {
                       return Pressable(
                         factory: InkSparkle.splashFactory,
-                        onTap: () {
-                          Navigator.of(context).push(
-                            AppRoute(
-                              page: HistoryScreen(),
-                              transition: AppRouteTransitionType.slideRight,
-                            ),
-                          );
-                        },
+                        onTap: () => Navigator.of(context).push(
+                          AppRoute(
+                            page: HistoryScreen(),
+                            transition: AppRouteTransitionType.slideRight,
+                          ),
+                        ),
                         child: Padding(
                           padding: const EdgeInsets.all(AppSpacing.lg),
                           child: Text(

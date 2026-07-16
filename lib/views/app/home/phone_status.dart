@@ -10,6 +10,11 @@ import '../integrations/integrations.dart';
 import '../../../data/all.dart';
 import '../../widgets/primitives.dart';
 
+/// Displays a summary of the device's current status.
+///
+/// The widget monitors battery level, charging state, network connectivity,
+/// and internet availability in real time. It also displays the number of
+/// configured emergency contacts and integrations.
 class PhoneStatus extends StatefulWidget {
   const PhoneStatus({super.key, this.contacts = 0, this.integrations = 0});
 
@@ -213,6 +218,11 @@ class _PhoneStatusState extends State<PhoneStatus> {
   }
 }
 
+/// A compact card displaying a single device status.
+///
+/// Consists of an icon and label, with an optional icon rotation, and is
+/// used by [PhoneStatus] to present battery, connectivity, contacts,
+/// and integrations information.
 class _StatCard extends StatelessWidget {
   const _StatCard({
     required this.icon,
