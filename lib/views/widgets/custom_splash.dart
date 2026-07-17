@@ -20,9 +20,9 @@ class CustomSplash {
       child: Padding(
         padding: const EdgeInsets.fromLTRB(
           50,
-          AppSpacing.xxxl,
+          AppSpacing.xxxxl,
           50,
-          AppSpacing.xxxl,
+          AppSpacing.xxxxl,
         ),
         child: Column(
           children: [
@@ -48,7 +48,7 @@ class CustomSplash {
                       color: scheme.onPrimary,
                     ),
                   ),
-                  const SizedBox(height: AppSpacing.xxxl),
+                  const SizedBox(height: AppSpacing.xxxxl),
                   Text('StillAlive', style: AppText.h1(scheme)),
                 ],
               ),
@@ -59,7 +59,7 @@ class CustomSplash {
               curve: AppMotion.easeIn,
               child: const LinearProgressIndicator(minHeight: 3),
             ),
-            const SizedBox(height: AppSpacing.xxxl),
+            const SizedBox(height: AppSpacing.xxxxl),
           ],
         ),
       ),

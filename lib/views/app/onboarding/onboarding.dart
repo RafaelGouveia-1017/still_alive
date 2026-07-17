@@ -150,9 +150,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> with RouteAware {
       child: Padding(
         padding: const EdgeInsets.fromLTRB(
           0,
-          AppSpacing.xxxl,
+          AppSpacing.xxxxl,
           0,
-          AppSpacing.xxxl,
+          AppSpacing.xxxxl,
         ),
         child: Column(
           children: [

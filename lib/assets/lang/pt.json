@@ -162,9 +162,9 @@
   },
   "contacts_list": {
     "title": "Contactos",
-    "subtitle": "Contactos de Emergência",
     "search": "Procurar contactos",
     "sections": ["Favoritos", "Todos os contactos"],
+    "not_found": "Nenhum contacto encontrado.",
     "edit": "Editar contacto",
     "is_emergency": {
       "false": "Adicionar aos contactos de emergência",

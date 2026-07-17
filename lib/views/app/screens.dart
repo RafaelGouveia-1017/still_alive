@@ -25,7 +25,5 @@ export 'active_monitoring.dart';
 export 'pre_alert_warning.dart';
 export 'emergency_active.dart';
 export 'offline_emergency.dart';
-export 'contact_detail.dart';
-export 'contacts_empty.dart';
 export 'qr_code.dart';
 */

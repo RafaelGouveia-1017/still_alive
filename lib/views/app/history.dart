@@ -46,7 +46,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   color: scheme.onPrimary,
                 ),
               ),
-              const SizedBox(height: AppSpacing.xxxl),
+              const SizedBox(height: AppSpacing.xxxxl),
               Text(
                 "History Screen: Under construction",
                 style: AppText.body(scheme),

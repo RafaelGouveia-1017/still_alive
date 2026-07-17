@@ -1,5 +1,6 @@
 import 'dart:convert';
-import 'dart:math';
+import 'dart:math' hide log;
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
@@ -38,8 +39,6 @@ class _QuickContactsState extends State<QuickContacts> {
   void didChangeDependencies() async {
     super.didChangeDependencies();
 
-    ColorScheme scheme = Theme.of(context).colorScheme;
-
     final String jsonString = await selectOne(
       sql: "SELECT value FROM contacts WHERE key = 'quick'",
     );
@@ -47,56 +46,34 @@ class _QuickContactsState extends State<QuickContacts> {
     final Map<String, dynamic> jsonQuick = jsonDecode(jsonString);
 
     if (jsonQuick['count'] != 0) {
-      List<({List<Color> gradient, Color text})> colorOptions = [
-        (
-          gradient: [scheme.primary, scheme.primaryContainer],
-          text: scheme.onPrimary,
-        ),
-        (
-          gradient: [scheme.secondary, scheme.secondaryContainer],
-          text: scheme.onSecondary,
-        ),
-        (
-          gradient: [scheme.tertiary, scheme.tertiaryContainer],
-          text: scheme.onTertiary,
-        ),
-        (gradient: [scheme.error, scheme.errorContainer], text: scheme.onError),
-        (
-          gradient: rotateHue([scheme.primary, scheme.primaryContainer]),
-          text: scheme.onPrimary,
-        ),
-        (
-          gradient: rotateHue([scheme.secondary, scheme.secondaryContainer]),
-          text: scheme.onSecondary,
-        ),
-        (
-          gradient: rotateHue([scheme.tertiary, scheme.tertiaryContainer]),
-          text: scheme.onTertiary,
-        ),
-        (
-          gradient: rotateHue([scheme.error, scheme.errorContainer]),
-          text: scheme.onError,
-        ),
-      ];
+      if (!mounted) return;
+      List<({List<Color> gradient, Color text})> colorOpts = colorOptions(
+        context,
+      );
 
       for (String id in jsonQuick['ids']) {
-        Contact? contact = await FlutterContacts.get(
-          id,
-          properties: {ContactProperty.name, ContactProperty.photoThumbnail},
-        );
-        if (contact != null) {
-          final colors = colorOptions[Random().nextInt(colorOptions.length)];
-
-          quickContacts.add(
-            _QuickContactData(
-              id: id,
-              name: contact.name,
-              image: contact.photo,
-              gradient: colors.gradient,
-              textColor: colors.text,
-              destination: ContactDetailScreen(contactID: id),
-            ),
+        try {
+          Contact? contact = await FlutterContacts.get(
+            id,
+            properties: {ContactProperty.name, ContactProperty.photoThumbnail},
           );
+          if (contact != null) {
+            final colors = colorOpts[Random().nextInt(colorOpts.length)];
+
+            quickContacts.add(
+              _QuickContactData(
+                id: id,
+                name: contact.displayName,
+                image: contact.photo,
+                gradient: colors.gradient,
+                textColor: colors.text,
+                destination: ContactDetailScreen(contactID: id),
+              ),
+            );
+          }
+        } catch (e) {
+          log(e.toString());
+          continue;
         }
       }
     }
@@ -104,7 +81,7 @@ class _QuickContactsState extends State<QuickContacts> {
     quickContacts.add(
       _QuickContactData(
         id: '+',
-        name: Name(first: '+'),
+        name: '+',
         image: null,
         gradient: [Colors.transparent, Colors.transparent],
         textColor: Colors.transparent,
@@ -115,16 +92,6 @@ class _QuickContactsState extends State<QuickContacts> {
     setState(() {
       _isLoading = false;
     });
-  }
-
-  List<Color> rotateHue(List<Color> gradient) {
-    double rand = Random().nextDouble() * 360;
-    HSVColor hsv0 = HSVColor.fromColor(gradient[0]);
-    HSVColor hsv1 = HSVColor.fromColor(gradient[1]);
-    return [
-      hsv0.withHue((hsv0.hue + rand) % 360).toColor(),
-      hsv1.withHue((hsv1.hue + rand) % 360).toColor(),
-    ];
   }
 
   @override
@@ -176,7 +143,7 @@ class _QuickContactsState extends State<QuickContacts> {
                 crossAxisCount: 5,
                 mainAxisSpacing: AppSpacing.sm,
                 crossAxisSpacing: AppSpacing.sm,
-                childAspectRatio: .75,
+                childAspectRatio: 0.75,
               ),
               children: [
                 ...children,
@@ -188,11 +155,12 @@ class _QuickContactsState extends State<QuickContacts> {
           children: [
             for (final contact in movableContacts)
               KeyedSubtree(
-                key: ValueKey(contact.hashCode.toString()),
+                key: ValueKey(contact.id + contact.hashCode.toString()),
                 child: _QuickContact(data: contact),
               ),
           ],
         ),
+        if (movableContacts.isNotEmpty) const SizedBox(height: AppSpacing.sm),
       ],
     );
   }
@@ -213,7 +181,7 @@ class _QuickContactData {
   });
 
   final String id;
-  final Name? name;
+  final String? name;
   final Photo? image;
   final List<Color> gradient;
   final Color textColor;
@@ -233,23 +201,12 @@ class _QuickContact extends StatelessWidget {
   Widget build(BuildContext context) {
     ColorScheme scheme = Theme.of(context).colorScheme;
 
-    String first = data.name?.first ?? '';
-    String middle = data.name?.middle ?? '';
-    String last = data.name?.last ?? '';
-    String name = [first, middle, last].where((s) => s.isNotEmpty).join(' ');
-
-    String letter = '?';
-
-    if (first != '') {
-      letter = first[0];
-    } else if (middle != '') {
-      letter = middle[0];
-    } else if (last != '') {
-      letter = last[0];
-    }
+    String letter = (data.name == null || data.name == '')
+        ? '?'
+        : data.name![0];
 
     bool hasImage = data.image?.thumbnail != null;
-    bool isAdd = first == '+';
+    bool isAdd = data.name![0] == '+';
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
@@ -265,6 +222,7 @@ class _QuickContact extends StatelessWidget {
           Container(
             width: 56,
             height: 56,
+            clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
@@ -294,7 +252,12 @@ class _QuickContact extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs),
           isAdd
               ? Text("", style: AppText.micro(scheme))
-              : Text(name, style: AppText.micro(scheme)),
+              : Text(
+                  data.name ?? '?',
+                  style: AppText.micro(scheme),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
         ],
       ),
     );

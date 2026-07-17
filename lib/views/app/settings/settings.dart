@@ -130,12 +130,17 @@ class _SettingsScreenState extends State<SettingsScreen>
 
     return ScreenBase(
       bottomNavDestination: 'settings',
+      header: AppHeader(title: local.translate('settings.title')),
       child: Column(
         children: [
-          AppHeader(title: local.translate('settings.title')),
           Expanded(
             child: ListView(
-              padding: const EdgeInsets.fromLTRB(0, 0, 0, AppSpacing.lg),
+              padding: const EdgeInsets.fromLTRB(
+                0,
+                AppSpacing.lg,
+                0,
+                AppSpacing.lg,
+              ),
               children: [
                 // Customization Section
                 CustomizationSection(
@@ -442,13 +447,14 @@ class _SettingsScreenState extends State<SettingsScreen>
                         );
                       } else {
                         return Text(
-                          '${local.translate('app_name')} v${snapshot.data!.version} · Build ${snapshot.data!.buildNumber}',
+                          '${local.translate('app_name')} v${snapshot.data!.version} • Build ${snapshot.data!.buildNumber}',
                           style: AppText.micro(scheme),
                         );
                       }
                     },
                   ),
                 ),
+                const SizedBox(height: AppSpacing.xxs),
               ],
             ),
           ),

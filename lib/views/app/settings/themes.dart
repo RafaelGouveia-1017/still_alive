@@ -109,24 +109,24 @@ class _ThemesScreenState extends State<ThemesScreen> {
     }
 
     return ScreenBase(
+      header: AppHeader(
+        title: local.translate("themes.title"),
+        subtitle: local.translate("themes.subtitle"),
+        left: CircleIconButton(
+          icon: LucideIcons.chevronLeft,
+          onTap: () => Navigator.of(context).pop(),
+        ),
+        right: CircleIconButton(
+          icon: LucideIcons.palette,
+          background: scheme.secondary.withAlpha(38),
+          foreground: scheme.secondary,
+        ),
+      ),
       child: Column(
         children: [
-          AppHeader(
-            title: local.translate("themes.title"),
-            subtitle: local.translate("themes.subtitle"),
-            left: CircleIconButton(
-              icon: LucideIcons.chevronLeft,
-              onTap: () => Navigator.of(context).pop(),
-            ),
-            right: CircleIconButton(
-              icon: LucideIcons.palette,
-              background: scheme.secondary.withAlpha(38),
-              foreground: scheme.secondary,
-            ),
-          ),
-
           Expanded(
             child: ScrollablePositionedList.builder(
+              padding: const EdgeInsets.only(top: AppSpacing.lg),
               physics: const ClampingScrollPhysics(),
               itemCount: themeOptions.length + 1,
               itemScrollController: scrollController,

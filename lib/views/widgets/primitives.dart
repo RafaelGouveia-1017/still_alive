@@ -1,6 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'bottom_nav.dart';
 import '../../data/app_design.dart';
 import '../../data/app_permissions.dart';
@@ -12,7 +14,7 @@ import '../../data/app_permissions.dart';
 /// * Wrapping content in a [SafeArea] to avoid system intrusions
 /// * Providing a [Scaffold] with theme-based background styling
 /// * Applying consistent padding around screen content
-/// * Configuring system UI appearance (status bar, navigation bar)
+/// * Configuring system UI appearance (status bar, navigation bar, etc)
 ///
 /// This widget is intended to be used as the root layout for individual screens
 /// to enforce design consistency across the app.
@@ -30,10 +32,12 @@ class ScreenBase extends StatefulWidget {
     super.key,
     required this.child,
     this.bottomNavDestination = '',
+    this.header,
   });
 
   final Widget child;
   final String bottomNavDestination;
+  final AppHeader? header;
 
   @override
   State<ScreenBase> createState() => _ScreenBaseState();
@@ -45,34 +49,38 @@ class _ScreenBaseState extends State<ScreenBase> {
   Widget build(BuildContext context) {
     ColorScheme scheme = Theme.of(context).colorScheme;
 
+    final keyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
+
     return Scaffold(
       backgroundColor: scheme.surface,
       extendBodyBehindAppBar: true,
       body: SafeArea(
-        child: (widget.bottomNavDestination == '')
+        child: (widget.bottomNavDestination == '' && widget.header == null)
             ? Padding(padding: AppSpacing.screen, child: widget.child)
             : Column(
                 children: [
+                  ?widget.header,
                   Expanded(
                     child: Padding(
                       padding: AppSpacing.screen,
                       child: widget.child,
                     ),
                   ),
-                  Hero(
-                    tag: 'nav',
-                    curve: AppMotion.easeInOut,
-                    flightShuttleBuilder:
-                        (context, animation, direction, from, to) {
-                          return Material(
-                            type: MaterialType.transparency,
-                            child: direction == HeroFlightDirection.push
-                                ? to.widget
-                                : from.widget,
-                          );
-                        },
-                    child: BottomNav(active: widget.bottomNavDestination),
-                  ),
+                  if (widget.bottomNavDestination != '' && !keyboardVisible)
+                    Hero(
+                      tag: 'nav',
+                      curve: AppMotion.easeInOut,
+                      flightShuttleBuilder:
+                          (context, animation, direction, from, to) {
+                            return Material(
+                              type: MaterialType.transparency,
+                              child: direction == HeroFlightDirection.push
+                                  ? to.widget
+                                  : from.widget,
+                            );
+                          },
+                      child: BottomNav(active: widget.bottomNavDestination),
+                    ),
                 ],
               ),
       ),
@@ -98,7 +106,7 @@ class AppCard extends StatelessWidget {
     super.key,
     required this.child,
     this.padding = AppSpacing.card,
-    this.margin = const EdgeInsets.all(0),
+    this.margin = EdgeInsets.zero,
     this.color,
     this.borderColor,
     this.gradient,
@@ -409,7 +417,7 @@ class AppRow extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
       child: Row(
-        children: <Widget>[
+        children: [
           if (icon != null) ...[
             Container(
               width: 40,
@@ -442,7 +450,10 @@ class AppRow extends StatelessWidget {
             ),
           ),
           if (trailing != null)
-            Container(margin: const EdgeInsets.only(left: 10), child: trailing),
+            Container(
+              margin: const EdgeInsets.only(left: AppSpacing.ms),
+              child: trailing,
+            ),
         ],
       ),
     );
@@ -546,17 +557,26 @@ class AppToggle extends StatelessWidget {
   }
 }
 
-/// A centered screen header with optional left and right action slots.
+/// A screen header with a centered title and optional navigation,
+/// actions, search, and filtering.
 ///
 /// Commonly used at the top of screens to display:
 /// * Page title (required)
 /// * Optional subtitle
 /// * Navigation or action buttons (left/right)
+/// * Optional search bar
+/// * Optional filter bar
 ///
 /// Layout:
-/// * Left slot: fixed width (typically back button)
-/// * Center: title + subtitle
+/// * Left slot: fixed width (typically a back button)
+/// * Center: title and optional subtitle
 /// * Right slot: contextual actions
+///
+/// Uses Hero animations to smoothly transition the title, subtitle,
+/// and action slots between routes.
+///
+/// An optional bottom divider can be displayed to separate the header
+/// from the page content.
 ///
 /// Ensures consistent alignment across all screens.
 class AppHeader extends StatelessWidget {
@@ -566,46 +586,203 @@ class AppHeader extends StatelessWidget {
     this.subtitle,
     this.left,
     this.right,
+    this.searchBar,
+    this.filterBar,
     this.colorScheme,
+    this.bottomLine = true,
   });
 
   final String title;
   final String? subtitle;
   final Widget? left;
   final Widget? right;
+  final AppSearchBar? searchBar;
+  final Widget? filterBar;
   final ColorScheme? colorScheme;
+  final bool bottomLine;
+
+  Widget flight(
+    BuildContext context,
+    Animation<double> animation,
+    HeroFlightDirection direction,
+    BuildContext from,
+    BuildContext to,
+  ) {
+    final fadeOut = CurvedAnimation(
+      parent: animation,
+      curve: const Interval(0.0, 0.4, curve: AppMotion.easeOut),
+    );
+
+    final fadeIn = CurvedAnimation(
+      parent: animation,
+      curve: const Interval(0.6, 1.0, curve: AppMotion.easeIn),
+    );
+
+    final isPush = direction == HeroFlightDirection.push;
+
+    final fromWidget = isPush ? from.widget : to.widget;
+    final toWidget = isPush ? to.widget : from.widget;
+
+    return Material(
+      type: MaterialType.transparency,
+      child: AnimatedBuilder(
+        animation: animation,
+        builder: (_, _) {
+          return Stack(
+            fit: StackFit.loose,
+            children: [
+              Opacity(opacity: 1.0 - fadeOut.value, child: fromWidget),
+              Opacity(opacity: fadeIn.value, child: toWidget),
+            ],
+          );
+        },
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     ColorScheme scheme = colorScheme ?? Theme.of(context).colorScheme;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0, AppSpacing.ms, 0, AppSpacing.ms),
-      child: Row(
+
+    return Container(
+      decoration: (bottomLine)
+          ? BoxDecoration(
+              border: Border(
+                bottom: BorderSide(color: scheme.outlineVariant, width: 1),
+              ),
+            )
+          : null,
+      child: Column(
         children: [
-          SizedBox(width: 50, child: left),
-          Expanded(
-            child: Column(
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              0,
+              AppSpacing.ms,
+              0,
+              AppSpacing.ms,
+            ),
+            child: Row(
               children: [
-                Text(
-                  title,
-                  style: AppText.title(scheme),
-                  textAlign: TextAlign.center,
-                ),
-                if (subtitle != null)
-                  Text(subtitle!, style: AppText.micro(scheme))
-                else
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: AppSpacing.xxs,
+                Padding(
+                  padding: const EdgeInsets.only(left: AppSpacing.xl),
+                  child: SizedBox(
+                    height: 45,
+                    width: 45,
+                    child: Hero(
+                      tag: 'header-left',
+                      flightShuttleBuilder:
+                          (context, animation, direction, from, to) =>
+                              flight(context, animation, direction, from, to),
+                      child: Material(
+                        type: MaterialType.transparency,
+                        child: left ?? ColoredBox(color: scheme.surface),
+                      ),
                     ),
                   ),
+                ),
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Hero(
+                        tag: 'header-title',
+                        flightShuttleBuilder:
+                            (context, animation, direction, from, to) =>
+                                flight(context, animation, direction, from, to),
+                        child: Material(
+                          type: MaterialType.transparency,
+                          child: Text(
+                            title,
+                            maxLines: 1,
+                            softWrap: false,
+                            overflow: TextOverflow.visible,
+                            style: AppText.title(scheme),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                      Hero(
+                        tag: 'header-subtitle',
+                        flightShuttleBuilder:
+                            (context, animation, direction, from, to) =>
+                                flight(context, animation, direction, from, to),
+                        child: Material(
+                          type: MaterialType.transparency,
+                          child: subtitle == null
+                              ? const SizedBox(height: 0)
+                              : Text(
+                                  subtitle!,
+                                  maxLines: 1,
+                                  softWrap: false,
+                                  overflow: TextOverflow.visible,
+                                  style: AppText.micro(scheme),
+                                ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: AppSpacing.xl),
+                  child: SizedBox(
+                    width: 45,
+                    height: 45,
+                    child: Hero(
+                      tag: 'header-right',
+                      flightShuttleBuilder:
+                          (context, animation, direction, from, to) =>
+                              flight(context, animation, direction, from, to),
+                      child: Material(
+                        type: MaterialType.transparency,
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: right ?? ColoredBox(color: scheme.surface),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
-          SizedBox(
-            width: 50,
-            child: Align(alignment: Alignment.centerRight, child: right),
-          ),
+          if (searchBar != null)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.xxxl,
+                0,
+                AppSpacing.xxxl,
+                AppSpacing.ms,
+              ),
+              child: Hero(
+                tag: 'header-search',
+                flightShuttleBuilder:
+                    (context, animation, direction, from, to) =>
+                        flight(context, animation, direction, from, to),
+                child: Material(
+                  type: MaterialType.transparency,
+                  child: searchBar!,
+                ),
+              ),
+            ),
+          if (filterBar != null)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.xxxl,
+                0,
+                AppSpacing.xxxl,
+                AppSpacing.ms,
+              ),
+              child: Hero(
+                tag: 'header-filter',
+                flightShuttleBuilder:
+                    (context, animation, direction, from, to) =>
+                        flight(context, animation, direction, from, to),
+                child: Material(
+                  type: MaterialType.transparency,
+                  child: filterBar!,
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -842,4 +1019,97 @@ void showToast({
     gravity: gravity,
     positionedToastBuilder: position,
   );
+}
+
+/// A reusable search bar widget with a styled input field.
+///
+/// The [AppSearchBar] provides a consistent search input UI across the app,
+/// including an icon, hint text, input formatting, and focus handling.
+///
+/// The entire search bar container is tappable and will request focus for the
+/// underlying text field, opening the keyboard.
+///
+/// The [hint] text is displayed when the search field is empty.
+/// The optional [onChanged] callback is called whenever the input changes.
+///
+/// Example:
+/// ```dart
+/// AppSearchBar(
+///   hint: 'Search products',
+///   onChanged: (query) {
+///     // Perform search
+///   },
+/// )
+/// ```
+class AppSearchBar extends StatefulWidget {
+  const AppSearchBar({super.key, required this.hint, this.onChanged});
+
+  final String hint;
+  final ValueChanged<String>? onChanged;
+
+  @override
+  State<AppSearchBar> createState() => _AppSearchBarState();
+}
+
+/// State implementation for [AppSearchBar].
+class _AppSearchBarState extends State<AppSearchBar> {
+  final FocusNode _focusNode = FocusNode();
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    ColorScheme scheme = Theme.of(context).colorScheme;
+
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        _focusNode.requestFocus();
+      },
+      child: Container(
+        padding: AppSpacing.searchBar,
+        decoration: BoxDecoration(
+          color: scheme.surfaceContainer,
+          borderRadius: AppRadius.card,
+          border: Border.all(color: scheme.outlineVariant),
+        ),
+        child: Row(
+          children: [
+            Icon(LucideIcons.search, size: 16, color: scheme.onSurfaceVariant),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: TextField(
+                focusNode: _focusNode,
+                autofocus: false,
+                onChanged: widget.onChanged,
+                onTapOutside: (_) {
+                  _focusNode.unfocus();
+                },
+                style: AppText.bodySm(scheme),
+                decoration: InputDecoration(
+                  isDense: true,
+                  filled: false,
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.zero,
+                  hintText: widget.hint,
+                  hintStyle: AppText.bodySm(
+                    scheme,
+                  ).copyWith(color: scheme.onSurfaceVariant),
+                ),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(
+                    RegExp(r'[\p{L}\p{N} ]', unicode: true),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

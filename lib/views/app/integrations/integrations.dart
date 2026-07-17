@@ -46,7 +46,7 @@ class _IntegrationsScreenState extends State<IntegrationsScreen> {
                   color: scheme.onPrimary,
                 ),
               ),
-              const SizedBox(height: AppSpacing.xxxl),
+              const SizedBox(height: AppSpacing.xxxxl),
               Text(
                 "Integrations Screen: Under construction",
                 style: AppText.body(scheme),

@@ -63,10 +63,7 @@ class AppDesign {
           borderSide: BorderSide.none,
         ),
         hintStyle: TextStyle(color: scheme.onSurfaceVariant, fontSize: 14),
-        contentPadding: EdgeInsets.symmetric(
-          horizontal: AppSpacing.lg,
-          vertical: AppSpacing.md,
-        ),
+        contentPadding: AppSpacing.searchBar,
       ),
 
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
@@ -228,11 +225,14 @@ class AppSpacing {
   /// Double extra-large spacing (24px).
   static const double xxl = 24;
 
-  /// Triple extra-large spacing (32px).
-  static const double xxxl = 32;
+  /// Triple extra-large spacing (28px).
+  static const double xxxl = 28;
+
+  /// Quadruple extra-large spacing (32px).
+  static const double xxxxl = 32;
 
   /// Standard horizontal padding applied to application screens.
-  static const EdgeInsets screen = EdgeInsets.symmetric(horizontal: 28);
+  static const EdgeInsets screen = EdgeInsets.symmetric(horizontal: xxxl);
 
   /// Default internal padding for cards and card-like surfaces.
   static const EdgeInsets card = EdgeInsets.symmetric(
@@ -244,6 +244,12 @@ class AppSpacing {
   static const EdgeInsets primaryButton = EdgeInsets.symmetric(
     horizontal: xl,
     vertical: lg,
+  );
+
+  /// Default internal padding for search bars.
+  static const EdgeInsets searchBar = EdgeInsets.symmetric(
+    horizontal: lg,
+    vertical: md,
   );
 }
 

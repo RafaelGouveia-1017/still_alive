@@ -162,9 +162,9 @@
   },
   "contacts_list": {
     "title": "Contacts",
-    "subtitle": "Emergency Contacts",
     "search": "Search contacts",
     "sections": ["Starred", "All contacts"],
+    "not_found": "No contact found.",
     "edit": "Edit contact",
     "is_emergency": {
       "false": "Add to emergency contacts",

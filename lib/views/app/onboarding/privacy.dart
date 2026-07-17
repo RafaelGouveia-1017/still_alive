@@ -46,7 +46,7 @@ class PrivacyPage extends StatelessWidget {
             local.translate("privacy.description"),
             style: AppText.h2(scheme),
           ),
-          const SizedBox(height: AppSpacing.xxxl),
+          const SizedBox(height: AppSpacing.xxxxl),
           for (final p in points) ...[
             AppCard(
               child: Row(

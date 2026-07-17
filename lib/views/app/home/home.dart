@@ -36,50 +36,47 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return ScreenBase(
       bottomNavDestination: 'home',
+      header: AppHeader(
+        title: local.translate('app_name'),
+        left: CircleIconButton(
+          icon: LucideIcons
+              .shieldOff, //TODO change to LucideIcons.shield while timer is active
+          foreground: scheme.primary,
+        ),
+        right: CircleIconButton(
+          icon: LucideIcons.list,
+          onTap: () {
+            showBlurredBottomSheet(
+              scheme: scheme,
+              context: context,
+              marginHorizontal: 40,
+              child: ListView.separated(
+                shrinkWrap: true,
+                itemCount: 25, //TODO number of timers created
+                separatorBuilder: (context, index) =>
+                    Divider(height: 1, color: scheme.outlineVariant),
+                itemBuilder: (context, index) {
+                  return Pressable(
+                    factory: InkSparkle.splashFactory,
+                    onTap: () => Navigator.of(context).push(
+                      AppRoute(
+                        page: HistoryScreen(),
+                        transition: AppRouteTransitionType.slideRight,
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(AppSpacing.lg),
+                      child: Text("Timer $index", style: AppText.body(scheme)),
+                    ),
+                  );
+                },
+              ),
+            );
+          },
+        ),
+      ),
       child: Column(
         children: [
-          AppHeader(
-            title: local.translate('app_name'),
-            left: CircleIconButton(
-              icon: LucideIcons
-                  .shieldOff, //TODO change to LucideIcons.shield while timer is active
-              foreground: scheme.primary,
-            ),
-            right: CircleIconButton(
-              icon: LucideIcons.list,
-              onTap: () {
-                showBlurredBottomSheet(
-                  scheme: scheme,
-                  context: context,
-                  marginHorizontal: 40,
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    itemCount: 25, //TODO number of timers created
-                    separatorBuilder: (context, index) =>
-                        Divider(height: 1, color: scheme.outlineVariant),
-                    itemBuilder: (context, index) {
-                      return Pressable(
-                        factory: InkSparkle.splashFactory,
-                        onTap: () => Navigator.of(context).push(
-                          AppRoute(
-                            page: HistoryScreen(),
-                            transition: AppRouteTransitionType.slideRight,
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(AppSpacing.lg),
-                          child: Text(
-                            "Timer $index",
-                            style: AppText.body(scheme),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                );
-              },
-            ),
-          ),
           Expanded(
             child: Center(
               child: ListView(
@@ -117,7 +114,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: AppSpacing.xl),
                   QuickContacts(),
-                  const SizedBox(height: AppSpacing.sm),
                 ],
               ),
             ),

@@ -47,7 +47,7 @@ class WelcomePage extends StatelessWidget {
             ),
             child: Icon(LucideIcons.shield, size: 48, color: scheme.onPrimary),
           ),
-          const SizedBox(height: AppSpacing.xxxl),
+          const SizedBox(height: AppSpacing.xxxxl),
           Text(local.translate("app_name"), style: AppText.h1(scheme)),
           const SizedBox(height: AppSpacing.md),
           ConstrainedBox(
