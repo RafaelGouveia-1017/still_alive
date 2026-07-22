@@ -7,6 +7,15 @@ import re
 import sys
 
 # ------------------------------------------------------------
+# Get argument(s) to indicate what should be bumped.
+#
+# Example:
+# python bump_version.py patch
+# python bump_version.py build
+# ------------------------------------------------------------
+mode = sys.argv[1] if len(sys.argv) > 1 else "both"
+
+# ------------------------------------------------------------
 # Read the contents of pubspec.yaml.
 #
 # Expected version format:
@@ -40,7 +49,7 @@ if match is None:
 major, minor, patch, build = map(int, match.groups())
 
 # ------------------------------------------------------------
-# Versioning strategy:
+# Versioning strategy (in 'both' mode):
 #
 # - Increment PATCH on every successful release.
 # - Increment BUILD on every successful release.
@@ -50,8 +59,16 @@ major, minor, patch, build = map(int, match.groups())
 # becomes
 # 1.0.5+16
 # ------------------------------------------------------------
-patch += 1
-build += 1
+if mode == "patch":
+    patch += 1
+elif mode == "build":
+    build += 1
+elif mode == "both":
+    patch += 1
+    build += 1
+else:
+    print(f"Unknown mode: {mode}", file=sys.stderr)
+    sys.exit(1)
 
 # Full version used by Flutter.
 VERSION = f"{major}.{minor}.{patch}+{build}"
