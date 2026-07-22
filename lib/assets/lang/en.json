@@ -166,9 +166,9 @@
     "sections": ["Starred", "All contacts"],
     "not_found": "No contact found.",
     "edit": "Edit contact",
-    "is_emergency": {
-      "false": "Add to emergency contacts",
-      "true": "Remove from emergency contacts"
+    "is_quick": {
+      "false": "Add to quick contacts",
+      "true": "Remove from quick contacts"
     }
   },
   "contact_detail": {
@@ -176,21 +176,20 @@
     "actions": ["Call", "Text", "Email"],
     "sections": ["Contact info", "Alert preferences"],
     "preferences": [
-      "Share live location",
       "Send SMS alert",
       "Send Email alert",
+      "Share live location",
       "Send audio recording"
     ],
-    "is_emergency": {
-      "false": "Add to emergency contacts",
-      "true": "Remove from emergency contacts"
+    "is_quick": {
+      "false": "Add to quick contacts",
+      "true": "Remove from quick contacts"
     }
   },
-  "empty_state": {
+  "contacts_emergency": {
     "title": "Emergency Contacts",
     "message": "No contacts yet",
-    "description": "Add at least one person you trust. They'll be alerted in an emergency.",
-    "cta": "Add first contact"
+    "description": "Add at least one person you trust to a timer.\nThey'll be alerted in an emergency."
   },
   "integrations": {
     "title": "Integrations",
@@ -257,7 +256,7 @@
         "title": "Backup",
         "export": [
           "Export data",
-          "Settings, timers, history",
+          "Settings, timers, history, logs",
           "Select destination for backup:",
           "Backup exported successfully!"
         ],

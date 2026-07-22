@@ -4,8 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'bottom_nav.dart';
-import '../../data/app_design.dart';
-import '../../data/app_permissions.dart';
+import '../../data/all.dart';
 
 /// A reusable base screen widget that defines the common layout structure
 /// for all screens in the application.
@@ -299,7 +298,6 @@ class _PressableState extends State<Pressable> {
     return Material(
       color: Colors.transparent,
       borderRadius: widget.borderRadius,
-      clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTapDown: (_) => _setPressed(true),
         onTapUp: (_) async {
@@ -601,7 +599,7 @@ class AppHeader extends StatelessWidget {
   final ColorScheme? colorScheme;
   final bool bottomLine;
 
-  Widget flight(
+  static Widget flight(
     BuildContext context,
     Animation<double> animation,
     HeroFlightDirection direction,
@@ -1018,6 +1016,30 @@ void showToast({
     fadeDuration: AppMotion.screen,
     gravity: gravity,
     positionedToastBuilder: position,
+  );
+}
+
+/// Displays a custom generic error toast.
+///
+/// Mainly used to inform the user that something went wrong.
+///
+/// [bottom] is the distance that the toast's bottom edge is inset from the
+/// bottom of the screen.
+void showGenericErrorMessage(BuildContext context, double? bottom) {
+  bottom ??= 170;
+  ColorScheme scheme = Theme.of(context).colorScheme;
+  AppLocalizations local = AppLocalizations.of(context)!;
+  showToast(
+    scheme: scheme,
+    toast: Text(
+      local.translate("generic_error"),
+      style: AppText.bodySm(scheme),
+      textAlign: TextAlign.center,
+    ),
+    gravity: ToastGravity.BOTTOM,
+    position: (context, child, gravity) {
+      return Positioned(bottom: bottom, left: 100, right: 100, child: child);
+    },
   );
 }
 

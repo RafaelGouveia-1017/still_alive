@@ -166,9 +166,9 @@
     "sections": ["Favoritos", "Todos os contactos"],
     "not_found": "Nenhum contacto encontrado.",
     "edit": "Editar contacto",
-    "is_emergency": {
-      "false": "Adicionar aos contactos de emergência",
-      "true": "Remover dos contactos de emergência"
+    "is_quick": {
+      "false": "Adicionar aos contactos rápidos",
+      "true": "Remover dos contactos rápidos"
     }
   },
   "contact_detail": {
@@ -176,21 +176,20 @@
     "actions": ["Ligar", "Mensagem", "Email"],
     "sections": ["Informações do contacto", "Preferências de alerta"],
     "preferences": [
-      "Partilhar localização em direto",
       "Enviar alerta por SMS",
       "Enviar alerta por email",
+      "Partilhar localização em direto",
       "Enviar gravação de áudio"
     ],
-    "is_emergency": {
-      "false": "Adicionar aos contactos de emergência",
-      "true": "Remover dos contactos de emergência"
+    "is_quick": {
+      "false": "Adicionar aos contactos rápidos",
+      "true": "Remover dos contactos rápidos"
     }
   },
-  "empty_state": {
+  "contacts_emergency": {
     "title": "Contactos de emergência",
     "message": "Ainda não há contactos",
-    "description": "Adiciona pelo menos uma pessoa em quem confies. Será alertada em caso de emergência.",
-    "cta": "Adicionar primeiro contacto"
+    "description": "Adiciona pelo menos uma pessoa em quem confies num temporizador.\nSerá alertada em caso de emergência."
   },
   "integrations": {
     "title": "Integrações",
@@ -257,7 +256,7 @@
         "title": "Cópia de segurança",
         "export": [
           "Exportar dados",
-          "Definições, temporizadores, histórico",
+          "Definições, temporizadores, histórico, logs",
           "Seleciona a pasta de destino para o backup:",
           "Backup exportado com sucesso!"
         ],

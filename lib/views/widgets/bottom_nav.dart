@@ -90,11 +90,13 @@ class BottomNav extends StatelessWidget {
               behavior: HitTestBehavior.opaque,
               onTap: () => isActive
                   ? null
-                  : Navigator.of(context).push(
+                  : Navigator.of(context).pushAndRemoveUntil(
                       AppRoute(
                         page: d.screen,
                         transition: AppRouteTransitionType.slideRight,
                       ),
+                      (route) =>
+                          (d.screen is HomeScreen) ? false : route.isFirst,
                     ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxs),

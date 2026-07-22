@@ -121,6 +121,7 @@ class _AlertsSectionState extends State<AlertsSection> {
                     final tempMessage = _messageController.text;
                     if (tempMessage == widget.messageFeature) return;
 
+                    //TODO prevent SQL injection
                     await executeSql(
                       sql:
                           "UPDATE settings SET value = '$tempMessage' WHERE key = 'message'",

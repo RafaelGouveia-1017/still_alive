@@ -80,7 +80,8 @@ impl Database {
                         contacts
                     VALUES
                         ('quick', '{"count": 0, "ids": []}'),
-                        ('emergency', '{"count": 0, "ids": []}');
+                        ('emergency', '{"count": 0, "ids": []}'),
+                        ('preferences', '{"count": 1, "contacts": [{"id": "example", "sms": true, "email": true, "location": true, "audio": true}]}');
                 "#,
             )?;
         }

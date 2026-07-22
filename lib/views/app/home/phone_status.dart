@@ -109,10 +109,10 @@ class _PhoneStatusState extends State<PhoneStatus> {
 
   @override
   void dispose() {
-    super.dispose();
     _batteryStateSubscription?.cancel();
     _connectivitySubscription?.cancel();
     _internetSubscription?.cancel();
+    super.dispose();
   }
 
   IconData get _batteryIcon {

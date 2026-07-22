@@ -41,18 +41,22 @@ class _PermBuilder extends StatefulWidget {
 }
 
 /// State implementation for [_PermBuilder].
-class _PermBuilderState extends State<_PermBuilder>
-    with WidgetsBindingObserver {
+class _PermBuilderState extends State<_PermBuilder> {
   _PermBuilderState();
 
   PermissionStatus _permissionStatus = PermissionStatus.denied;
   bool _locationWhenInUsePermissionGranted = false;
 
+  late final AppLifecycleListener _lifecycleListener;
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
     _currentPermissionStatus();
+
+    _lifecycleListener = AppLifecycleListener(
+      onResume: () => _currentPermissionStatus(),
+    );
   }
 
   void _currentPermissionStatus() async {
@@ -78,15 +82,8 @@ class _PermBuilderState extends State<_PermBuilder>
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      _currentPermissionStatus();
-    }
-  }
-
-  @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
+    _lifecycleListener.dispose();
     super.dispose();
   }
 

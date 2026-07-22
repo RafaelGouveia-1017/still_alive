@@ -1,12 +1,13 @@
 import 'dart:convert';
-import 'dart:math' hide log;
-import 'dart:developer';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_reorderable_grid_view/widgets/widgets.dart';
 import 'package:still_alive/src/rust/api/data/db.dart';
+import 'package:still_alive/main.dart';
 
+import '../contacts/contact_helpers.dart';
 import '../contacts/contacts.dart';
 import '../contacts/contact_detail.dart';
 import '../../../data/all.dart';
@@ -26,18 +27,25 @@ class QuickContacts extends StatefulWidget {
 }
 
 /// State implementation for [QuickContacts].
-class _QuickContactsState extends State<QuickContacts> {
+class _QuickContactsState extends State<QuickContacts> with RouteAware {
   late List<_QuickContactData> quickContacts = [];
   bool _isLoading = true;
+
+  late final AppLifecycleListener _lifecycleListener;
 
   @override
   void initState() {
     super.initState();
+    loadQuickContacts();
+
+    _lifecycleListener = AppLifecycleListener(onResume: () => didPopNext());
   }
 
-  @override
-  void didChangeDependencies() async {
-    super.didChangeDependencies();
+  void loadQuickContacts() async {
+    setState(() {
+      quickContacts = [];
+      _isLoading = true;
+    });
 
     final String jsonString = await selectOne(
       sql: "SELECT value FROM contacts WHERE key = 'quick'",
@@ -67,12 +75,12 @@ class _QuickContactsState extends State<QuickContacts> {
                 image: contact.photo,
                 gradient: colors.gradient,
                 textColor: colors.text,
-                destination: ContactDetailScreen(contactID: id),
               ),
             );
           }
         } catch (e) {
-          log(e.toString());
+          AppLogger.log.info('Contact not found.', e);
+          deleteQuickContact(id);
           continue;
         }
       }
@@ -85,7 +93,6 @@ class _QuickContactsState extends State<QuickContacts> {
         image: null,
         gradient: [Colors.transparent, Colors.transparent],
         textColor: Colors.transparent,
-        destination: ContactsScreen(),
       ),
     );
 
@@ -95,7 +102,25 @@ class _QuickContactsState extends State<QuickContacts> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final route = ModalRoute.of(context);
+    if (route is PageRoute) {
+      routeObserver.subscribe(this, route);
+    }
+  }
+
+  @override
+  void didPopNext() {
+    loadQuickContacts();
+    super.didPopNext();
+  }
+
+  @override
   void dispose() {
+    _lifecycleListener.dispose();
+    routeObserver.unsubscribe(this);
     super.dispose();
   }
 
@@ -177,7 +202,6 @@ class _QuickContactData {
     required this.image,
     required this.gradient,
     required this.textColor,
-    required this.destination,
   });
 
   final String id;
@@ -185,7 +209,6 @@ class _QuickContactData {
   final Photo? image;
   final List<Color> gradient;
   final Color textColor;
-  final Widget destination;
 }
 
 /// Displays an individual quick contact tile.
@@ -212,42 +235,57 @@ class _QuickContact extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       onTap: () => Navigator.of(context).push(
         AppRoute(
-          page: data.destination,
+          page: (isAdd)
+              ? ContactsScreen()
+              : ContactDetailScreen(
+                  contactID: data.id,
+                  heroID: 'contact-pic-${data.id}',
+                  gradient: data.gradient,
+                  textColor: data.textColor,
+                ),
           transition: AppRouteTransitionType.slideRight,
         ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            width: 56,
-            height: 56,
-            clipBehavior: Clip.antiAlias,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: data.gradient,
-              ),
-              borderRadius: BorderRadius.circular(AppRadius.lg),
-            ),
-            alignment: Alignment.center,
-            child: isAdd
-                ? CircleIconButton(
-                    icon: LucideIcons.plus,
-                    background: scheme.surfaceContainer,
-                  )
-                : (hasImage)
-                ? Image.memory(
-                    data.image!.thumbnail!,
-                    filterQuality: FilterQuality.high,
-                  )
-                : Text(
-                    letter,
-                    style: AppText.title(
-                      scheme,
-                    ).copyWith(color: data.textColor),
+          Hero(
+            tag: 'contact-pic-${data.id}',
+            flightShuttleBuilder: (context, animation, direction, from, to) =>
+                AppHeader.flight(context, animation, direction, from, to),
+            child: Material(
+              type: MaterialType.transparency,
+              child: Container(
+                width: 56,
+                height: 56,
+                clipBehavior: Clip.antiAlias,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: data.gradient,
                   ),
+                  borderRadius: BorderRadius.circular(AppRadius.lg),
+                ),
+                alignment: Alignment.center,
+                child: isAdd
+                    ? CircleIconButton(
+                        icon: LucideIcons.plus,
+                        background: scheme.surfaceContainer,
+                      )
+                    : (hasImage)
+                    ? Image.memory(
+                        data.image!.thumbnail!,
+                        filterQuality: FilterQuality.high,
+                      )
+                    : Text(
+                        letter,
+                        style: AppText.title(
+                          scheme,
+                        ).copyWith(color: data.textColor),
+                      ),
+              ),
+            ),
           ),
           const SizedBox(height: AppSpacing.xs),
           isAdd

@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -37,8 +36,8 @@ import 'package:still_alive/views/widgets/custom_splash.dart';
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-  widgetsBinding.addObserver(PermissionObserver());
 
+  await AppLogger.init();
   await RustLib.init();
 
   SystemChrome.setEnabledSystemUIMode(.immersive);
@@ -53,8 +52,9 @@ void main() async {
     await initDatabase(
       path: p.join(documentDirectory.path, await getDatabaseName()),
     );
-  } catch (e) {
-    log('Database Error: $e');
+  } catch (e, st) {
+    AppLogger.log.severe('Database Error', e, st);
+    return;
   }
 
   String label = await CustomTheme.load();
@@ -121,6 +121,8 @@ class MyAppState extends State<MyApp> {
   late ThemeData _themeData;
   late CustomTheme _currentTheme;
 
+  late final AppLifecycleListener _lifecycleListener;
+
   CustomTheme get currentTheme => _currentTheme;
 
   @override
@@ -128,6 +130,16 @@ class MyAppState extends State<MyApp> {
     super.initState();
     _themeData = widget.theme;
     _currentTheme = widget.currentTheme;
+
+    _lifecycleListener = AppLifecycleListener(
+      onResume: () => PermissionManager.instance.verifyPermissions(),
+    );
+  }
+
+  @override
+  void dispose() {
+    _lifecycleListener.dispose();
+    super.dispose();
   }
 
   /// Updates the application's active theme.

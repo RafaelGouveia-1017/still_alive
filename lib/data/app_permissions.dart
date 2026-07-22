@@ -107,7 +107,7 @@ class PermissionManager {
   ///
   /// This helps ensure users cannot continue using the app
   /// without granting required permissions.
-  Future<void> verifyPermissions() async {
+  void verifyPermissions() async {
     if (await hasAllNeededPermissions()) return;
 
     if (PermissionRouteTracker.instance.isPermissionScreenActive) return;
@@ -119,18 +119,5 @@ class PermissionManager {
       ),
       (route) => false,
     );
-  }
-}
-
-/// Observes application lifecycle changes to re-check permission state.
-///
-/// When the app returns to the foreground, it triggers a permission
-/// validation check to ensure required permissions are still granted.
-class PermissionObserver extends WidgetsBindingObserver {
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) async {
-    if (state == AppLifecycleState.resumed) {
-      await PermissionManager.instance.verifyPermissions();
-    }
   }
 }

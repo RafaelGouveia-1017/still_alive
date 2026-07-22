@@ -73,6 +73,15 @@ pub fn export_backup(app_version: &str) -> Result<Vec<u8>> {
     zip.start_file("metadata.json", options)?;
     zip.write_all(metadata_json.as_bytes())?;
 
+    let log_path = database_path_str()
+        .split(&get_database_name())
+        .next()
+        .unwrap();
+    let log_bytes = fs::read(log_path.to_owned() + "app.log")?;
+
+    zip.start_file("app.log", options)?;
+    zip.write_all(&log_bytes)?;
+
     let cursor = zip.finish()?;
     let zip_buffer = cursor.into_inner().to_vec();
 

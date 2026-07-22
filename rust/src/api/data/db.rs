@@ -184,8 +184,8 @@ pub fn select_one(sql: &str) -> String {
     db.as_ref()
         .unwrap()
         .query_one(sql, [], |row| row.get::<_, String>(0))
-        .unwrap()
-        .unwrap()
+        .unwrap_or_else(|err| panic!("Database query failed: {err}"))
+        .unwrap_or_else(|| String::from("None"))
 }
 
 /// Returns JSON with data of multiple rows.

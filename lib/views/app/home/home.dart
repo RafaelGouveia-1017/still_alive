@@ -5,6 +5,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'quick_contacts.dart';
 import 'phone_status.dart';
 import '../history.dart';
+import '../../../main.dart';
 import '../../../data/all.dart';
 import '../../widgets/primitives.dart';
 import '../../widgets/countdown_ring.dart';
@@ -17,15 +18,37 @@ class HomeScreen extends StatefulWidget {
 }
 
 /// State implementation for [HomeScreen].
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with RouteAware {
+  late final AppLifecycleListener _lifecycleListener;
+
   @override
   void initState() {
     super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+
+    _lifecycleListener = AppLifecycleListener(onResume: () => didPopNext());
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final route = ModalRoute.of(context);
+    if (route is PageRoute) {
+      routeObserver.subscribe(this, route);
+    }
+  }
+
+  @override
+  void didPopNext() {
+    //TODO something
+    super.didPopNext();
   }
 
   @override
   void dispose() {
+    _lifecycleListener.dispose();
+    routeObserver.unsubscribe(this);
     super.dispose();
   }
 

@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
@@ -13,6 +12,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../../src/rust/api/data/db.dart';
 import '../../../src/rust/api/backup.dart';
 
+import '../../../main.dart';
 import '../../../data/all.dart';
 import '../../widgets/primitives.dart';
 import 'themes.dart';
@@ -39,8 +39,7 @@ class SettingsScreen extends StatefulWidget {
 /// Manages the current settings state, synchronizes feature preferences with
 /// the local database, monitors permission changes, and coordinates user
 /// interactions across each settings section.
-class _SettingsScreenState extends State<SettingsScreen>
-    with WidgetsBindingObserver {
+class _SettingsScreenState extends State<SettingsScreen> with RouteAware {
   PermissionStatus _locationWhenInUsePermissionStatus = PermissionStatus.denied;
   PermissionStatus _locationAlwaysPermissionStatus = PermissionStatus.denied;
   PermissionStatus _microphonePermissionStatus = PermissionStatus.denied;
@@ -55,12 +54,17 @@ class _SettingsScreenState extends State<SettingsScreen>
   String _messageFeature = "";
   final TextEditingController _messageController = TextEditingController();
 
+  late final AppLifecycleListener _lifecycleListener;
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
     _permissionsStatuses();
     _featureStatuses();
+
+    _lifecycleListener = AppLifecycleListener(
+      onResume: () => _permissionsStatuses(),
+    );
   }
 
   void _permissionsStatuses() async {
@@ -109,15 +113,25 @@ class _SettingsScreenState extends State<SettingsScreen>
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      _permissionsStatuses();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final route = ModalRoute.of(context);
+    if (route is PageRoute) {
+      routeObserver.subscribe(this, route);
     }
   }
 
   @override
+  void didPopNext() {
+    _permissionsStatuses();
+    super.didPopNext();
+  }
+
+  @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
+    _lifecycleListener.dispose();
+    routeObserver.unsubscribe(this);
     _messageController.dispose();
     super.dispose();
   }
@@ -255,25 +269,11 @@ class _SettingsScreenState extends State<SettingsScreen>
                       bytes = await exportBackup(
                         appVersion: packageInfo.version,
                       );
-                    } catch (e) {
-                      log('Export Error: $e');
-                      showToast(
-                        scheme: scheme,
-                        toast: Text(
-                          local.translate("generic_error"),
-                          style: AppText.bodySm(scheme),
-                          textAlign: TextAlign.center,
-                        ),
-                        gravity: ToastGravity.BOTTOM,
-                        position: (context, child, gravity) {
-                          return Positioned(
-                            bottom: 170,
-                            left: 100,
-                            right: 100,
-                            child: child,
-                          );
-                        },
-                      );
+                    } catch (e, st) {
+                      AppLogger.log.warning('Export Error', e, st);
+                      if (context.mounted) {
+                        showGenericErrorMessage(context, null);
+                      }
                       return;
                     }
 
@@ -327,25 +327,11 @@ class _SettingsScreenState extends State<SettingsScreen>
                         zipPath: result.files.single.path!,
                         appVersion: packageInfo.version,
                       );
-                    } catch (e) {
-                      log('Import Error: $e');
-                      showToast(
-                        scheme: scheme,
-                        toast: Text(
-                          local.translate("generic_error"),
-                          style: AppText.bodySm(scheme),
-                          textAlign: TextAlign.center,
-                        ),
-                        gravity: ToastGravity.BOTTOM,
-                        position: (context, child, gravity) {
-                          return Positioned(
-                            bottom: 170,
-                            left: 100,
-                            right: 100,
-                            child: child,
-                          );
-                        },
-                      );
+                    } catch (e, st) {
+                      AppLogger.log.warning('Import Error', e, st);
+                      if (context.mounted) {
+                        showGenericErrorMessage(context, null);
+                      }
                       return;
                     }
 
@@ -380,25 +366,11 @@ class _SettingsScreenState extends State<SettingsScreen>
                   onPurge: () async {
                     try {
                       await purgeDatabase();
-                    } catch (e) {
-                      log('Purge Error: $e');
-                      showToast(
-                        scheme: scheme,
-                        toast: Text(
-                          local.translate("generic_error"),
-                          style: AppText.bodySm(scheme),
-                          textAlign: TextAlign.center,
-                        ),
-                        gravity: ToastGravity.BOTTOM,
-                        position: (context, child, gravity) {
-                          return Positioned(
-                            bottom: 210,
-                            left: 100,
-                            right: 100,
-                            child: child,
-                          );
-                        },
-                      );
+                    } catch (e, st) {
+                      AppLogger.log.severe('Purge Error', e, st);
+                      if (context.mounted) {
+                        showGenericErrorMessage(context, null);
+                      }
                       return;
                     }
 
