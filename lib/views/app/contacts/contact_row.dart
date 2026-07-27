@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:still_alive/services/contact_service.dart';
 
-import 'contact_helpers.dart';
 import 'contact_detail.dart';
 import '../../../data/all.dart';
 import '../../widgets/primitives.dart';
@@ -354,9 +354,9 @@ class ContactQuickSheet extends StatelessWidget {
 
                     try {
                       if (isQuick) {
-                        deleteQuickContact(contactID);
+                        ContactService.deleteQuickContact(contactID);
                       } else {
-                        insertQuickContact(contactID);
+                        ContactService.insertQuickContact(contactID);
                       }
 
                       controller.isQuick.value = !isQuick;

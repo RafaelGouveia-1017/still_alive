@@ -5,6 +5,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:battery_plus/battery_plus.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+import 'package:still_alive/views/app/contacts/emergency_contacts.dart';
 
 import '../integrations/integrations.dart';
 import '../../../data/all.dart';
@@ -187,7 +188,12 @@ class _PhoneStatusState extends State<PhoneStatus> {
         const SizedBox(width: AppSpacing.sm),
         Expanded(
           child: Pressable(
-            onTap: null, //TODO open emergency contacts list
+            onTap: () => Navigator.of(context).push(
+              AppRoute(
+                page: EmergencyContactsScreen(),
+                transition: AppRouteTransitionType.slideRight,
+              ),
+            ),
             child: _StatCard(
               icon: LucideIcons.userStar,
               label: '${widget.contacts} ${local.translate('home.contacts')}',

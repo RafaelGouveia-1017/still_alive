@@ -123,9 +123,8 @@ Future<String> selectOne({required String sql}) =>
 /// # Example
 ///
 /// ```rust
-/// let users = db.query_many(
-///     "SELECT id, name FROM users WHERE name LIKE %?%",
-///     [mark]
+/// let users = db.select(
+///     "SELECT id, name FROM users WHERE name LIKE %?%"
 /// )?;
 /// ```
 ///
@@ -143,8 +142,8 @@ Future<String> selectOne({required String sql}) =>
 /// ```dart
 /// import 'dart:convert';
 /// (...)
-/// final jsonStr = await query_many(...);
-/// final List data = jsonDecode(jsonStr);
+/// String jsonStr = await select(...);
+/// List<dynamic> data = jsonDecode(jsonStr);
 /// String name = data[0]['name'];
 /// ```
 Future<String> select({required String sql}) =>

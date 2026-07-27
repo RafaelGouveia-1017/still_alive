@@ -193,9 +193,8 @@ pub fn select_one(sql: &str) -> String {
 /// # Example
 ///
 /// ```rust
-/// let users = db.query_many(
-///     "SELECT id, name FROM users WHERE name LIKE %?%",
-///     [mark]
+/// let users = db.select(
+///     "SELECT id, name FROM users WHERE name LIKE %?%"
 /// )?;
 /// ```
 ///
@@ -213,8 +212,8 @@ pub fn select_one(sql: &str) -> String {
 /// ```dart
 /// import 'dart:convert';
 /// (...)
-/// final jsonStr = await query_many(...);
-/// final List data = jsonDecode(jsonStr);
+/// String jsonStr = await select(...);
+/// List<dynamic> data = jsonDecode(jsonStr);
 /// String name = data[0]['name'];
 /// ```
 pub fn select(sql: &str) -> String {

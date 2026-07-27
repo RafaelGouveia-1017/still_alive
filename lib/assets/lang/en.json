@@ -209,14 +209,61 @@
     "title": "History",
     "search": "Search events",
     "filters": ["All", "Emergencies", "Completed", "Paused", "Offline"],
+    "not_found": "No records found.",
     "sections": {
       "today": "Today",
-      "yesterday": "Yesterday"
+      "yesterday": "Yesterday",
+      "months": [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"
+      ]
     },
     "events": {
-      "completed": "Timer completed safely",
+      "started": "Timer started",
+      "warning": "Pre-trigger warning issued",
       "paused": "Timer paused",
-      "emergency": "Emergency triggered"
+      "cancelled": "Timer completed safely",
+      "expired": "Emergency triggered",
+      "alert": "alert",
+      "sent": "sent",
+      "details": {
+        "type": "Type",
+        "timer": "Timer",
+        "started": "Started",
+        "ended": "Ended",
+        "duration": "Duration",
+        "grace": "Grace Period",
+        "remaining": "Remaining",
+        "pin_protected": "PIN Protected",
+        "pin_verified": "PIN Verified",
+        "alarm": "Alarm Triggered",
+        "audio": "Audio Recorded",
+        "location": "Location",
+        "route": "Route",
+        "sms_length": "SMS Sent",
+        "emails_length": "Emails Sent",
+        "channels_length": "Channels Notified",
+        "channel": "Channel"
+      },
+      "polyline_copy": "Polyline copied!",
+      "filters": [
+        "All",
+        "Started",
+        "Warnings",
+        "Paused",
+        "Completed",
+        "Emergencies"
+      ]
     }
   },
   "settings": {

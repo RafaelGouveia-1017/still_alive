@@ -382,6 +382,7 @@ class Pill extends StatelessWidget {
 ///
 /// Structure:
 /// * Optional leading icon container
+/// * Icon container settings (background, foreground)
 /// * Title (required)
 /// * Optional subtitle
 /// * Optional trailing widget (switch, chevron, button, etc.)
@@ -394,19 +395,21 @@ class AppRow extends StatelessWidget {
     super.key,
     this.icon,
     this.rotateAngle = 0,
+    this.iconColor,
+    this.iconBackground,
     required this.title,
     this.subtitle,
     this.trailing,
-    this.danger = false,
     this.colorScheme,
   });
 
   final IconData? icon;
   final double rotateAngle;
+  final Color? iconColor;
+  final Color? iconBackground;
   final String title;
   final String? subtitle;
   final Widget? trailing;
-  final bool danger;
   final ColorScheme? colorScheme;
 
   @override
@@ -421,9 +424,7 @@ class AppRow extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: danger
-                    ? scheme.error.withAlpha(31)
-                    : scheme.surfaceContainerHigh,
+                color: iconBackground ?? scheme.surfaceContainerHigh,
                 borderRadius: BorderRadius.circular(AppRadius.md),
               ),
               child: Transform.rotate(
@@ -431,7 +432,7 @@ class AppRow extends StatelessWidget {
                 child: Icon(
                   icon,
                   size: 18,
-                  color: danger ? scheme.error : scheme.onSurface,
+                  color: iconColor ?? scheme.onSurface,
                 ),
               ),
             ),
@@ -763,22 +764,13 @@ class AppHeader extends StatelessWidget {
               ),
             ),
           if (filterBar != null)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.xxxl,
-                0,
-                AppSpacing.xxxl,
-                AppSpacing.ms,
-              ),
-              child: Hero(
-                tag: 'header-filter',
-                flightShuttleBuilder:
-                    (context, animation, direction, from, to) =>
-                        flight(context, animation, direction, from, to),
-                child: Material(
-                  type: MaterialType.transparency,
-                  child: filterBar!,
-                ),
+            Hero(
+              tag: 'header-filter',
+              flightShuttleBuilder: (context, animation, direction, from, to) =>
+                  flight(context, animation, direction, from, to),
+              child: Material(
+                type: MaterialType.transparency,
+                child: filterBar!,
               ),
             ),
         ],
@@ -1013,7 +1005,7 @@ void showToast({
       child: toast,
     ),
     toastDuration: Duration(seconds: secs),
-    fadeDuration: AppMotion.screen,
+    fadeDuration: AppMotion.fasterer,
     gravity: gravity,
     positionedToastBuilder: position,
   );
@@ -1130,6 +1122,128 @@ class _AppSearchBarState extends State<AppSearchBar> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Represents a single filter option displayed by an [AppFilterBar].
+///
+/// Each option consists of a text [label], an [active] state that determines
+/// whether the filter is visually highlighted, and an optional [onPressed]
+/// callback that is invoked when the filter is selected.
+class AppFilterBarOption {
+  const AppFilterBarOption({
+    required this.id,
+    required this.label,
+    required this.active,
+    this.onPressed,
+  });
+
+  final String id;
+  final String label;
+  final bool active;
+  final VoidCallback? onPressed;
+
+  AppFilterBarOption copyWith({
+    String? id,
+    String? label,
+    bool? active,
+    VoidCallback? onPressed,
+  }) {
+    return AppFilterBarOption(
+      id: id ?? this.id,
+      label: label ?? this.label,
+      active: active ?? this.active,
+      onPressed: onPressed ?? this.onPressed,
+    );
+  }
+}
+
+/// A horizontally scrollable filter bar.
+///
+/// Displays a collection of [AppFilterBarOption] chips that indicate the
+/// available filters and their active states.
+///
+/// When [searchBarAbove] is `true`, the filter bar is rendered immediately
+/// below an external search bar. Otherwise, additional top spacing is applied.
+class AppFilterBar extends StatefulWidget {
+  const AppFilterBar({
+    super.key,
+    required this.filters,
+    this.searchBarAbove = true,
+  });
+
+  final List<AppFilterBarOption> filters;
+  final bool searchBarAbove;
+
+  @override
+  State<AppFilterBar> createState() => _AppFilterBarState();
+}
+
+/// State implementation for [AppFilterBar].
+class _AppFilterBarState extends State<AppFilterBar> {
+  final FocusNode _focusNode = FocusNode();
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    ColorScheme scheme = Theme.of(context).colorScheme;
+
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        0,
+        (widget.searchBarAbove) ? 0 : AppSpacing.md,
+        0,
+        AppSpacing.md,
+      ),
+      child: SizedBox(
+        height: 32,
+        child: Center(
+          child: ListView.separated(
+            shrinkWrap: true,
+            scrollDirection: Axis.horizontal,
+            physics: const ClampingScrollPhysics(),
+            itemCount: widget.filters.length + 2,
+            separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.sm),
+            itemBuilder: (context, i) {
+              if (i == 0 || i == widget.filters.length + 1) {
+                return const SizedBox(width: AppSpacing.xl);
+              }
+
+              final filter = widget.filters[i - 1];
+
+              return Pressable(
+                onTap: filter.onPressed,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md,
+                  ),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: (filter.active)
+                        ? scheme.primary
+                        : scheme.surfaceContainerHigh,
+                    borderRadius: AppRadius.chip,
+                  ),
+                  child: Text(
+                    filter.label,
+                    style: AppText.caption(scheme).copyWith(
+                      color: (filter.active)
+                          ? scheme.onSurface
+                          : scheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
         ),
       ),
     );

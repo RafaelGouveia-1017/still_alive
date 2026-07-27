@@ -6,8 +6,8 @@ import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_reorderable_grid_view/widgets/widgets.dart';
 import 'package:still_alive/src/rust/api/data/db.dart';
 import 'package:still_alive/main.dart';
+import 'package:still_alive/services/contact_service.dart';
 
-import '../contacts/contact_helpers.dart';
 import '../contacts/contacts.dart';
 import '../contacts/contact_detail.dart';
 import '../../../data/all.dart';
@@ -55,9 +55,8 @@ class _QuickContactsState extends State<QuickContacts> with RouteAware {
 
     if (jsonQuick['count'] != 0) {
       if (!mounted) return;
-      List<({List<Color> gradient, Color text})> colorOpts = colorOptions(
-        context,
-      );
+      List<({List<Color> gradient, Color text})> colorOpts =
+          ContactService.colorOptions(context);
 
       for (String id in jsonQuick['ids']) {
         try {
@@ -80,7 +79,7 @@ class _QuickContactsState extends State<QuickContacts> with RouteAware {
           }
         } catch (e) {
           AppLogger.log.info('Contact not found.', e);
-          deleteQuickContact(id);
+          ContactService.deleteQuickContact(id);
           continue;
         }
       }

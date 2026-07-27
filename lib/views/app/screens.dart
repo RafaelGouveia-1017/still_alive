@@ -10,7 +10,7 @@ library;
 export 'onboarding/onboarding.dart';
 export 'home/home.dart';
 
-export 'history.dart';
+export 'history/history.dart';
 
 export 'contacts/contacts.dart';
 

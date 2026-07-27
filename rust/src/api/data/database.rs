@@ -82,6 +82,35 @@ impl Database {
                         ('quick', '{"count": 0, "ids": []}'),
                         ('emergency', '{"count": 0, "ids": []}'),
                         ('preferences', '{"count": 1, "contacts": [{"id": "example", "sms": true, "email": true, "location": true, "audio": true}]}');
+                    
+                    CREATE TABLE
+                        history (created_at DATE PRIMARY KEY DEFAULT CURRENT_DATE, value TEXT NOT NULL);
+
+                    INSERT INTO 
+                        history
+                    VALUES
+                        (date('now', '-1 year'), '{"count": 5, "events": [
+                            {"type": "started", "severity": "primary", "timer_name": "Walk Home", "started_at": "2023-05-12T11:00:00.000", "ended_at": null, "details": { "duration_seconds": 1800, "grace_period_seconds": 60, "password_protected": true }},
+                            {"type": "warning", "severity": "warning", "timer_name": "Walk Home", "started_at": "2023-05-12T00:00:00.000", "ended_at": "2023-05-12T11:00:00.000", "details": { "remaining_seconds": 60 }},
+                            {"type": "paused", "severity": "muted", "timer_name": "Walk Home", "started_at": "2023-05-12T00:00:00.000", "ended_at": "2023-05-12T11:00:00.000", "details": { "remaining_seconds": 542, "password_verified": true }},
+                            {"type": "cancelled", "severity": "safe", "timer_name": "Walk Home", "started_at": "2023-05-12T00:00:00.000", "ended_at": "2023-05-12T11:00:00.000", "details": { "remaining_seconds": 542, "password_verified": true }},
+                            {"type": "expired", "severity": "danger", "timer_name": "Walk Home", "started_at": "2023-05-12T00:00:00.000", "ended_at": "2023-05-12T11:00:00.000", "details": { 
+                                "location": { "latitude": 38.7369, "longitude": -9.1427 }, 
+                                "polyline": "null or big string with GPS points that somehow occupies less space", 
+                                "sms": [{ "recipient": "+351912345678", "status": "sent" }, {"recipient": "+351987654321", "status": "failed" }],
+                                "emails": [{ "recipient": "john@example.com", "status": "sent" }],
+                                "channels": [{ "platform": "Telegram", "status": "sent" }, { "platform": "Discord", "status": "sent" }],
+                                "alarm_triggered": true,
+                                "audio_recorded": false
+                            }}
+                        ]}');
+
+                    CREATE TRIGGER cleanup_old_history
+                        AFTER INSERT ON history
+                        BEGIN
+                            DELETE FROM history
+                            WHERE created_at < datetime('now', '-1 month');
+                        END;
                 "#,
             )?;
         }

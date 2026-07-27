@@ -209,14 +209,61 @@
     "title": "Histórico",
     "search": "Procurar eventos",
     "filters": ["Todos", "Emergências", "Concluídos", "Pausados", "Offline"],
+    "not_found": "Nenhum registo encontrado.",
     "sections": {
       "today": "Hoje",
-      "yesterday": "Ontem"
+      "yesterday": "Ontem",
+      "months": [
+        "Janeiro",
+        "Fevereiro",
+        "Março",
+        "Abril",
+        "Maio",
+        "Junho",
+        "Julho",
+        "Agosto",
+        "Setembro",
+        "Outubro",
+        "Novembro",
+        "Dezembro"
+      ]
     },
     "events": {
-      "completed": "Temporizador concluído em segurança",
-      "paused": "Temporizador pausado",
-      "emergency": "Emergência ativada"
+      "started": "Temporizador iniciado",
+      "warning": "Aviso prévio de gatilho emitido",
+      "paused": "Temporizador interrompido",
+      "cancelled": "Temporizador concluído em segurança",
+      "expired": "Emergência acionada",
+      "alert": "alerta",
+      "sent": "enviado",
+      "details": {
+        "type": "Tipo",
+        "timer": "Temporizador",
+        "started": "Começou",
+        "ended": "Terminou",
+        "duration": "Duração",
+        "grace": "Tolerância",
+        "remaining": "Restante",
+        "pin_protected": "Protegido por PIN",
+        "pin_verified": "PIN Verificado",
+        "alarm": "Alarme Ativado",
+        "audio": "Áudio Gravado",
+        "location": "Localização",
+        "route": "Rota",
+        "sms_length": "SMS Enviados",
+        "emails_length": "Emails Enviados",
+        "channels_length": "Canais Notificados",
+        "channel": "Canal"
+      },
+      "polyline_copy": "Polyline copiada!",
+      "filters": [
+        "Tudo",
+        "Iniciado",
+        "Avisos",
+        "Interrompido",
+        "Completo",
+        "Emergências"
+      ]
     }
   },
   "settings": {

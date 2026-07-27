@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:still_alive/src/rust/api/data/db.dart';
+import 'package:still_alive/services/contact_service.dart';
 
-import 'contact_helpers.dart';
 import 'contact_row.dart';
 import 'emergency_contacts.dart';
 import '../../../data/all.dart';
@@ -37,8 +37,8 @@ class _ContactsScreenState extends State<ContactsScreen> with RouteAware {
   late List<String> quickContacts = [];
   late List<String> emergencyContacts = [];
   late List<ContactData> contacts = [];
-  bool _isLoading = true;
 
+  bool _isLoading = true;
   String searchQuery = '';
 
   late final AppLifecycleListener _lifecycleListener;
@@ -99,9 +99,8 @@ class _ContactsScreenState extends State<ContactsScreen> with RouteAware {
 
     if (allContacts.isNotEmpty) {
       if (!mounted) return;
-      List<({List<Color> gradient, Color text})> colorOpts = colorOptions(
-        context,
-      );
+      List<({List<Color> gradient, Color text})> colorOpts =
+          ContactService.colorOptions(context);
 
       for (Contact? contact in allContacts) {
         if (contact != null) {

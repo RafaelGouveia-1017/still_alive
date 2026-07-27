@@ -326,10 +326,13 @@ class AppMotion {
   /// Fastest animation duration (100ms).
   static const Duration fastest = Duration(milliseconds: 100);
 
-  /// Very short animation duration (500ms).
+  /// Very fast animation duration (250ms).
+  static const Duration fasterer = Duration(milliseconds: 250);
+
+  /// Very fast animation duration (500ms).
   static const Duration faster = Duration(milliseconds: 500);
 
-  /// Short animation duration (1s).
+  /// Fast animation duration (1s).
   static const Duration fast = Duration(seconds: 1);
 
   /// Standard animation duration (2s).
@@ -341,10 +344,8 @@ class AppMotion {
   /// Slowest animation duration (10s).
   static const Duration slowest = Duration(seconds: 10);
 
-  /// Route transition duration (250ms).
-  ///
-  /// Mirrors AnimatePresence screen transitions on the web.
-  static const Duration screen = Duration(milliseconds: 250);
+  /// Route transition duration (300ms).
+  static const Duration screen = Duration(milliseconds: 300);
 
   /// Countdown ring reveal animation duration (1100ms).
   static const Duration ring = Duration(milliseconds: 1100);

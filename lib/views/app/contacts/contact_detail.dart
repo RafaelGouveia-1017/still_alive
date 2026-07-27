@@ -6,8 +6,8 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:still_alive/src/rust/api/data/db.dart';
+import 'package:still_alive/services/contact_service.dart';
 
-import 'contact_helpers.dart';
 import '../../../data/all.dart';
 import '../../widgets/primitives.dart';
 
@@ -166,9 +166,9 @@ class _ContactDetailState extends State<ContactDetailScreen> {
           _preferences["email"] == true &&
           _preferences["location"] == true &&
           _preferences["audio"] == true) {
-        deleteContactPrefs(widget.contactID);
+        ContactService.deleteContactPrefs(widget.contactID);
       } else {
-        insertContactPrefs(_preferences);
+        ContactService.insertContactPrefs(_preferences);
       }
     } catch (e, st) {
       AppLogger.log.severe('SQL failed', e, st);
@@ -609,9 +609,9 @@ class _ContactDetailState extends State<ContactDetailScreen> {
 
                       try {
                         if (_isQuick) {
-                          deleteQuickContact(widget.contactID);
+                          ContactService.deleteQuickContact(widget.contactID);
                         } else {
-                          insertQuickContact(widget.contactID);
+                          ContactService.insertQuickContact(widget.contactID);
                         }
 
                         setState(() {

@@ -28,6 +28,7 @@ class DangerSection extends StatefulWidget {
 class _DangerSectionState extends State<DangerSection> {
   @override
   Widget build(BuildContext context) {
+    ColorScheme scheme = Theme.of(context).colorScheme;
     return Column(
       children: [
         SectionTitle(widget.local.translate("settings.sections.danger.title")),
@@ -36,7 +37,7 @@ class _DangerSectionState extends State<DangerSection> {
             horizontal: AppSpacing.lg,
             vertical: AppSpacing.xxs,
           ),
-          margin: EdgeInsets.only(bottom: AppRadius.xl),
+          margin: const EdgeInsets.only(bottom: AppRadius.xl),
           child: Pressable(
             onTap: () {
               showBlurredBottomSheet(
@@ -71,8 +72,9 @@ class _DangerSectionState extends State<DangerSection> {
               );
             },
             child: AppRow(
-              danger: true,
               icon: LucideIcons.trash2,
+              iconColor: scheme.error,
+              iconBackground: scheme.error.withAlpha(31),
               title: widget.local.translate(
                 "settings.sections.danger.labels.0",
               ),

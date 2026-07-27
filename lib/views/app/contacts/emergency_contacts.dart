@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:still_alive/src/rust/api/data/db.dart';
+import 'package:still_alive/services/contact_service.dart';
 
-import 'contact_helpers.dart';
 import 'contact_detail.dart';
 import '../../../data/all.dart';
 import '../../widgets/primitives.dart';
@@ -73,6 +73,8 @@ class _EmergencyContactsState extends State<EmergencyContactsScreen> {
   Widget build(BuildContext context) {
     ColorScheme scheme = Theme.of(context).colorScheme;
     AppLocalizations local = AppLocalizations.of(context)!;
+
+    //TODO show contacts that are in timers and what they receive
 
     return ScreenBase(
       header: AppHeader(
@@ -165,7 +167,7 @@ class EmergencyContactRow extends StatelessWidget {
   Widget build(BuildContext context) {
     ColorScheme scheme = Theme.of(context).colorScheme;
 
-    final colorOpts = colorOptions(context);
+    final colorOpts = ContactService.colorOptions(context);
     final colors = colorOpts[Random().nextInt(colorOpts.length)];
 
     String letter = (contact.name == null || contact.displayName == '')
