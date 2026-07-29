@@ -1,7 +1,7 @@
 {
   "cmake.ignoreCMakeListsMissing": true,
   "java.compile.nullAnalysis.mode": "disabled",
-  "java.configuration.updateBuildConfiguration": "interactive",
+  "java.configuration.updateBuildConfiguration": "automatic",
   "java.import.gradle.version": "8.14",
   "java.import.gradle.wrapper.enabled": true,
   "java.import.gradle.enabled": true,

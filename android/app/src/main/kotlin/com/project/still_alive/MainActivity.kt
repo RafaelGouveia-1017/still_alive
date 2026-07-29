@@ -1,4 +1,4 @@
-package com.project.still_alive
+package com.appsbyrafa.stillalive
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -352,6 +352,37 @@ jobs:
         run: python .github/scripts/bump_version.py build
 
       # =======================================================
+      # Recreate keystore from base64 string.
+      #
+      # Contains upload key necessary for signing APK & Bundle.
+      # =======================================================
+      - name: Decode upload keystore
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          $bytes = [Convert]::FromBase64String($env:ANDROID_KEYSTORE_BASE64)
+          [IO.File]::WriteAllBytes(
+            "android/upload-keystore.jks",
+            $bytes
+          )
+
+      # =======================================================
+      # Generate key.properties file.
+      #
+      # Used with keystore as part of the signing process.
+      # =======================================================
+      - name: Create key.properties
+        run: |
+          @"
+          storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}
+          keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}
+          storeFile=upload-keystore.jks
+          "@ | Out-File `
+            -FilePath android/key.properties `
+            -Encoding utf8
+
+      # =======================================================
       # Build release APK.
       #
       # If this fails, no version commit or Release is created.
@@ -361,9 +392,11 @@ jobs:
 
       # ======================================================
       # Build Android App Bundle (required for Play Store)
+      #
+      # If this fails, no version commit or Release is created.
       # ======================================================
-      #- name: Build AAB
-      #  run: flutter build appbundle --release
+      - name: Build AAB
+        run: flutter build appbundle --release
 
       # =======================================================
       # Commit the updated pubspec.yaml.
@@ -377,7 +410,7 @@ jobs:
 
           git add pubspec.yaml
 
-          git commit -m "Bump version to ${{ steps.version.outputs.VERSION }}" -m "[skip bump] [skip ci]"
+          git commit -m "Bump build version to ${{ steps.version.outputs.VERSION }}" -m "[skip bump] [skip ci]"
 
           if ($LASTEXITCODE -eq 0) {
               git push
@@ -403,21 +436,21 @@ jobs:
           "EOF" >> $env:GITHUB_OUTPUT
 
       # ======================================================
-      # Upload to Google Play (Internal track example)
+      # Upload to Google Play
       # ======================================================
-      #- name: Upload to Play Store
-      #  env:
-      #    SUPPLY_JSON_KEY: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
-      #  run: |
-      #    $env:SUPPLY_JSON_KEY | Out-File `
-      #      -FilePath service_account.json `
-      #      -Encoding utf8
+      - name: Upload to Play Store
+        env:
+          SUPPLY_JSON_KEY: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+        run: |
+          $env:SUPPLY_JSON_KEY | Out-File `
+            -FilePath service_account.json `
+            -Encoding utf8
 
-      #    fastlane supply `
-      #        --aab build/app/outputs/bundle/release/app-release.aab `
-      #        --track internal `
-      #        --json_key service_account.json `
-      #        --package_name com.project.still_alive
+          fastlane supply `
+              --aab build/app/outputs/bundle/release/app-release.aab `
+              --track internal `
+              --json_key service_account.json `
+              --package_name com.appsbyrafa.stillalive
 
       # =======================================================
       # Create the GitHub Release and upload the APK.
@@ -428,8 +461,32 @@ jobs:
         run: |
           $tag = "v${{ steps.version.outputs.VERSION }}"
 
+          $logo = "https://lh3.googleusercontent.com/kewa78VhdxECe_P9m5CenxAQ29ElE5SkF2WDqRsOFWH9SKK6pP4gCRk4FeMsjvyQEN8LREGJ_so20ZcT0lbrjlk=s0?imgmax=0"
+
           $notes = @"
-          Changelog:
+          <div align="center">
+            <picture>
+              <img alt="StillAlive" src="$logo" width="15%">
+            </picture>
+          </div>
+          <div align="center">
+          <h1>StillAlive - Personal Safety Platform</h1>
+          </div>
+          <div align="center">
+
+          [![Android](<https://img.shields.io/badge/Android-Min:%2010%20(API%2029)%20|%20Target:%2016%20(API%2036)-green?logo=android>)](https://developer.android.com/develop)
+          <br>
+          [![Flutter](<https://img.shields.io/badge/Frontend-Flutter-%2302569B?logo=flutter>)](https://flutter.dev)
+          [![Dart](<https://img.shields.io/badge/Frontend-Dart-%2302569B?logo=dart>)](https://dart.dev/)
+          [![Rust](<https://img.shields.io/badge/BackEnd-Rust-orange?logo=rust>)](https://www.rust-lang.org/)
+          <br>
+          [![License](https://img.shields.io/badge/License-MIT-yellow?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1zY2FsZS1pY29uIGx1Y2lkZS1zY2FsZSI+PHBhdGggZD0iTTEyIDN2MTgiLz48cGF0aCBkPSJtMTkgOCAzIDhhNSA1IDAgMCAxLTYgMHpWNyIvPjxwYXRoIGQ9Ik0zIDdoMWExNyAxNyAwIDAgMCA4LTIgMTcgMTcgMCAwIDAgOCAyaDEiLz48cGF0aCBkPSJtNSA4IDMgOGE1IDUgMCAwIDEtNiAwelY3Ii8+PHBhdGggZD0iTTcgMjFoMTAiLz48L3N2Zz4=)](https://opensource.org/licenses/MIT)
+
+          </div>
+
+          ---
+
+          **Changelog:**
           ${{ steps.changelog.outputs.CHANGELOG }}
           "@
 

@@ -29,12 +29,31 @@ pub struct Database {
     conn: Connection,
 }
 
+/// Tracks current database version.
+#[frb(ignore)]
+const DB_VERSION: i32 = 1;
+
 impl Database {
-    /// Open or create a SQLite database.
-    /// If the database is empty (no tables exist),
-    /// the provided `base_schema` SQL will be executed.
+    /// Opens (or creates) the SQLite database located at `path`.
     ///
-    /// WAL mode is enabled automatically.
+    /// This function is the main entry point for interacting with the database.
+    /// It performs the following steps:
+    ///
+    /// 1. Opens or creates the database file.
+    /// 2. Configures SQLite PRAGMAs (WAL mode, foreign keys, etc.).
+    /// 3. Applies any pending schema and data migrations.
+    ///
+    /// After this function returns successfully, the database is guaranteed to
+    /// match the latest schema version (`DB_VERSION`), regardless of which
+    /// application version originally created it.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if:
+    ///
+    /// - The database cannot be opened.
+    /// - SQLite configuration fails.
+    /// - Any migration fails.
     pub fn open(path: &str) -> Result<Self> {
         let conn = Connection::open(path)
             .inspect_err(|e| panic!("\n\n\nDB connection error: {e}\npath: {}\n\n\n", path))
@@ -44,75 +63,22 @@ impl Database {
             r#"
             PRAGMA journal_mode = WAL;
             PRAGMA synchronous = NORMAL;
+            PRAGMA foreign_keys = ON;
             "#,
         )?;
 
-        // Ensure schema exists.
-        let is_empty: bool = conn.query_row(
-            "SELECT COUNT(*) FROM sqlite_master WHERE type='table'",
-            [],
-            |row| row.get::<_, i64>(0),
-        )? == 0;
+        let mut version = conn.query_row("PRAGMA user_version;", [], |row| row.get(0))?;
+        while version < DB_VERSION {
+            println!("\nMigrating database: {} -> {}\n", version, version + 1);
 
-        if is_empty {
-            conn.execute_batch(
-                r#"
-                    CREATE TABLE
-                        settings (key VARCHAR(200) PRIMARY KEY, value TEXT NOT NULL);
+            match version {
+                0 => conn.execute_batch(include_str!("../../schema/base_v1.0.28.sql"))?,
+                //1 => conn.execute_batch(include_str!("../../schema/migration_v1.0.32.sql"))?,
+                _ => return Err(anyhow!("Unknown database version {}", version)),
+            }
 
-                    INSERT INTO
-                        settings
-                    VALUES
-                        ('tutorial', 'true'),
-                        ('theme', 'SmartBell'),
-                        ('lang', 'en'),
-                        ('location','true'),
-                        ('route','true'),
-                        ('microphone','true'),
-                        ('lock','true'),
-                        ('volume','100'), 
-                        ('message', '');
-
-                    CREATE TABLE
-                        contacts (key VARCHAR(200) PRIMARY KEY, value TEXT NOT NULL);
-
-                    INSERT INTO 
-                        contacts
-                    VALUES
-                        ('quick', '{"count": 0, "ids": []}'),
-                        ('emergency', '{"count": 0, "ids": []}'),
-                        ('preferences', '{"count": 1, "contacts": [{"id": "example", "sms": true, "email": true, "location": true, "audio": true}]}');
-                    
-                    CREATE TABLE
-                        history (created_at DATE PRIMARY KEY DEFAULT CURRENT_DATE, value TEXT NOT NULL);
-
-                    INSERT INTO 
-                        history
-                    VALUES
-                        (date('now', '-1 year'), '{"count": 5, "events": [
-                            {"type": "started", "severity": "primary", "timer_name": "Walk Home", "started_at": "2023-05-12T11:00:00.000", "ended_at": null, "details": { "duration_seconds": 1800, "grace_period_seconds": 60, "password_protected": true }},
-                            {"type": "warning", "severity": "warning", "timer_name": "Walk Home", "started_at": "2023-05-12T00:00:00.000", "ended_at": "2023-05-12T11:00:00.000", "details": { "remaining_seconds": 60 }},
-                            {"type": "paused", "severity": "muted", "timer_name": "Walk Home", "started_at": "2023-05-12T00:00:00.000", "ended_at": "2023-05-12T11:00:00.000", "details": { "remaining_seconds": 542, "password_verified": true }},
-                            {"type": "cancelled", "severity": "safe", "timer_name": "Walk Home", "started_at": "2023-05-12T00:00:00.000", "ended_at": "2023-05-12T11:00:00.000", "details": { "remaining_seconds": 542, "password_verified": true }},
-                            {"type": "expired", "severity": "danger", "timer_name": "Walk Home", "started_at": "2023-05-12T00:00:00.000", "ended_at": "2023-05-12T11:00:00.000", "details": { 
-                                "location": { "latitude": 38.7369, "longitude": -9.1427 }, 
-                                "polyline": "null or big string with GPS points that somehow occupies less space", 
-                                "sms": [{ "recipient": "+351912345678", "status": "sent" }, {"recipient": "+351987654321", "status": "failed" }],
-                                "emails": [{ "recipient": "john@example.com", "status": "sent" }],
-                                "channels": [{ "platform": "Telegram", "status": "sent" }, { "platform": "Discord", "status": "sent" }],
-                                "alarm_triggered": true,
-                                "audio_recorded": false
-                            }}
-                        ]}');
-
-                    CREATE TRIGGER cleanup_old_history
-                        AFTER INSERT ON history
-                        BEGIN
-                            DELETE FROM history
-                            WHERE created_at < datetime('now', '-1 month');
-                        END;
-                "#,
-            )?;
+            version += 1;
+            conn.execute(&format!("PRAGMA user_version = {}", version), [])?;
         }
 
         Ok(Self { conn })
