@@ -319,6 +319,37 @@ jobs:
         run: flutter analyze
 
       # =======================================================
+      # Recreate keystore from base64 string.
+      #
+      # Contains upload key necessary for signing APK & Bundle.
+      # =======================================================
+      - name: Decode keystore
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          $bytes = [Convert]::FromBase64String($env:ANDROID_KEYSTORE_BASE64)
+          [IO.File]::WriteAllBytes(
+            "android/upload-keystore.jks",
+            $bytes
+          )
+
+      # =======================================================
+      # Generate key.properties file.
+      #
+      # Used with keystore as part of the signing process.
+      # =======================================================
+      - name: Create key.properties
+        run: |
+          @"
+          storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}
+          keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}
+          storeFile=upload-keystore.jks
+          "@ | Out-File `
+            -FilePath android/key.properties `
+            -Encoding utf8
+
+      # =======================================================
       # Run Rust unit tests.
       # =======================================================
       - name: Run Rust tests
@@ -350,37 +381,6 @@ jobs:
       - name: Bump build version
         id: version
         run: python .github/scripts/bump_version.py build
-
-      # =======================================================
-      # Recreate keystore from base64 string.
-      #
-      # Contains upload key necessary for signing APK & Bundle.
-      # =======================================================
-      - name: Decode upload keystore
-        env:
-          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-        run: |
-          $bytes = [Convert]::FromBase64String($env:ANDROID_KEYSTORE_BASE64)
-          [IO.File]::WriteAllBytes(
-            "android/upload-keystore.jks",
-            $bytes
-          )
-
-      # =======================================================
-      # Generate key.properties file.
-      #
-      # Used with keystore as part of the signing process.
-      # =======================================================
-      - name: Create key.properties
-        run: |
-          @"
-          storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-          keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}
-          keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}
-          storeFile=upload-keystore.jks
-          "@ | Out-File `
-            -FilePath android/key.properties `
-            -Encoding utf8
 
       # =======================================================
       # Build release APK.
