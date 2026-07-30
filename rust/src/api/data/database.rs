@@ -72,7 +72,7 @@ impl Database {
             println!("\nMigrating database: {} -> {}\n", version, version + 1);
 
             match version {
-                0 => conn.execute_batch(include_str!("../../schema/base_v1.0.28.sql"))?,
+                0 => conn.execute_batch(include_str!("../../schema/base.sql"))?,
                 //1 => conn.execute_batch(include_str!("../../schema/migration_v1.0.32.sql"))?,
                 _ => return Err(anyhow!("Unknown database version {}", version)),
             }
