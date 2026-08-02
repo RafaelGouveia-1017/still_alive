@@ -5,8 +5,8 @@ name: Bump & Release Pipeline
 #
 # Run whenever a commit is pushed to the main branch.
 # Commits created by this workflow contain "[skip bump]" and
-# "[skip ci]" so they won't trigger their respective workflows
-# again.
+# "[skip release]" so they won't trigger their respective
+# workflows again.
 # ============================================================
 on:
   push:
@@ -133,7 +133,7 @@ jobs:
     #   because the commit contained "[skip bump]".
     # - Do not run after workflow cancellation.
     # - Avoid running for GitHub Actions bot-triggered workflow runs.
-    # - Skip release when the commit contains "[skip ci]".
+    # - Skip release when the commit contains "[skip release]".
     #
     # Results:
     # Normal commit:
@@ -142,16 +142,16 @@ jobs:
     # "[skip bump]":
     #   bump_patch ❌ -> release ✅
     #
-    # "[skip ci]":
+    # "[skip release]":
     #   bump_patch ✅ -> release ❌
     #
-    # "[skip bump] [skip ci]":
+    # "[skip bump] [skip release]":
     #   bump_patch ❌ -> release ❌
     if: |
       !cancelled() &&
       (needs.bump_patch.result == 'success' || needs.bump_patch.result == 'skipped') &&
       github.actor != 'github-actions[bot]' &&
-      !contains(github.event.head_commit.message, '[skip ci]')
+      !contains(github.event.head_commit.message, '[skip release]')
 
     runs-on: [self-hosted, Windows]
 
