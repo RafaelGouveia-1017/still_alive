@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:file_picker/file_picker.dart';
 
 /// Provides centralized application logging.
 ///
@@ -72,4 +73,13 @@ class AppLogger {
   /// This can be used to share the log file with the user, attach it to bug
   /// reports, or inspect its contents.
   static File getLogFile() => _logFile;
+
+  /// Save log file in custom location.
+  static Future<String?> saveLogFile() async => await FilePicker.saveFile(
+    dialogTitle: "Save log file",
+    fileName: 'StillAlive_Log_${DateTime.now().toIso8601String()}.log',
+    type: FileType.custom,
+    allowedExtensions: ['log'],
+    bytes: await getLogFile().readAsBytes(),
+  );
 }

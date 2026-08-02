@@ -7,7 +7,10 @@
 /// ```
 library;
 
+export 'global_error.dart';
+
 export 'onboarding/onboarding.dart';
+
 export 'home/home.dart';
 
 export 'history/history.dart';
@@ -25,5 +28,4 @@ export 'active_monitoring.dart';
 export 'pre_alert_warning.dart';
 export 'emergency_active.dart';
 export 'offline_emergency.dart';
-export 'qr_code.dart';
 */

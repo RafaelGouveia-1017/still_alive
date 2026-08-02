@@ -58,6 +58,27 @@ VALUES
 CREATE TRIGGER cleanup_old_history AFTER INSERT ON history BEGIN
 DELETE FROM history
 WHERE
-    created_at < datetime ('now', '-1 month');
+    created_at < datetime ('now', '-3 month');
 
 END;
+
+CREATE TABLE
+    integrations (key VARCHAR(200) PRIMARY KEY, value TEXT NOT NULL);
+
+INSERT INTO
+    integrations
+VALUES
+    (
+        'discord',
+        '{
+            "users": [], 
+            "channels": [{ guild_id: "id", channel_ids: []}]
+        }'
+    ),
+    (
+        'telegram',
+        '{
+            "users": [], 
+            "channels": [{ guild_id: "id", channel_ids: []}]
+        }'
+    );

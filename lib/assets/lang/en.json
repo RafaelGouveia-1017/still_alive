@@ -3,6 +3,14 @@
   "app_name": "StillAlive",
   "navigation": ["Home", "History", "Contacts", "Plug-ins", "Settings"],
   "generic_error": "An error ocurred...",
+  "unexpected_error": {
+    "title": "Unexpected Error",
+    "description": "The application encountered an unexpected error and cannot continue normally.\n\nYou can save a diagnostic log to help us investigate the problem.",
+    "saved": "Diagnostic log has been saved.\nYou can create an issue on Github with the info.",
+    "save": "Save",
+    "exit": "Exit",
+    "restart": "Restart"
+  },
   "welcome": {
     "title": "Welcome",
     "tagline": "Your silent guardian. Activate a safety timer — we'll alert your circle if you don't check in.",
@@ -193,8 +201,10 @@
   },
   "integrations": {
     "title": "Integrations",
-    "description": "Quick pair via QR",
-    "note": "Add a new device or bot in seconds",
+    "soon": "More options coming soon...",
+    "qr_title": "Quick pair via QR",
+    "qr_note": "Add a new plug-in in seconds",
+    "connected": "Connected",
     "status": "Available"
   },
   "qr_pairing": {

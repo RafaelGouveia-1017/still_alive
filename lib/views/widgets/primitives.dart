@@ -342,12 +342,12 @@ class Pill extends StatelessWidget {
   const Pill({
     super.key,
     required this.label,
-    required this.color,
+    required this.backColor,
     this.leading,
   });
 
   final String label;
-  final Color color;
+  final Color backColor;
   final Widget? leading;
 
   @override
@@ -358,7 +358,7 @@ class Pill extends StatelessWidget {
         vertical: AppSpacing.xxxs,
       ),
       decoration: BoxDecoration(
-        color: color.withAlpha(38),
+        color: backColor.withAlpha(38),
         borderRadius: AppRadius.chip,
       ),
       child: Row(
@@ -370,7 +370,7 @@ class Pill extends StatelessWidget {
           ],
           Text(
             label.toUpperCase(),
-            style: AppText.pillLabel.copyWith(color: color),
+            style: AppText.pillLabel.copyWith(color: backColor),
           ),
         ],
       ),
@@ -394,7 +394,8 @@ class AppRow extends StatelessWidget {
   const AppRow({
     super.key,
     this.icon,
-    this.rotateAngle = 0,
+    this.iconSize = 18,
+    this.iconRotateAngle = 0,
     this.iconColor,
     this.iconBackground,
     required this.title,
@@ -404,7 +405,8 @@ class AppRow extends StatelessWidget {
   });
 
   final IconData? icon;
-  final double rotateAngle;
+  final double iconSize;
+  final double iconRotateAngle;
   final Color? iconColor;
   final Color? iconBackground;
   final String title;
@@ -428,10 +430,10 @@ class AppRow extends StatelessWidget {
                 borderRadius: BorderRadius.circular(AppRadius.md),
               ),
               child: Transform.rotate(
-                angle: rotateAngle,
+                angle: iconRotateAngle,
                 child: Icon(
                   icon,
-                  size: 18,
+                  size: iconSize,
                   color: iconColor ?? scheme.onSurface,
                 ),
               ),

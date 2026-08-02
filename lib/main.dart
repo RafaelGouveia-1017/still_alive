@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -34,43 +36,66 @@ import 'package:still_alive/views/widgets/custom_splash.dart';
 ///
 /// After initialization completes, the root [MyApp] widget is launched.
 void main() async {
-  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  runZonedGuarded(
+    () async {
+      WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+      FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
-  await AppLogger.init();
-  await RustLib.init();
+      await AppLogger.init();
+      await RustLib.init();
+      AppLogger.log.info("AppLogger & RustLib loaded.");
 
-  SystemChrome.setEnabledSystemUIMode(.immersive);
+      SystemChrome.setEnabledSystemUIMode(.immersive);
+      await SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ]);
+      AppLogger.log.info("SystemChrome setup finish.");
 
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
+      FlutterError.onError = (FlutterErrorDetails details) {
+        AppLogger.log.severe("Flutter Error", details.exception, details.stack);
+        GlobalErrorDialog.show();
+      };
+      PlatformDispatcher.instance.onError = (error, stack) {
+        AppLogger.log.severe("Platform Error", error, stack);
+        GlobalErrorDialog.show();
+        return true;
+      };
+      AppLogger.log.info("GlobalError setup finish.");
 
-  Directory documentDirectory = await getApplicationDocumentsDirectory();
-  try {
-    await initDatabase(
-      path: p.join(documentDirectory.path, await getDatabaseName()),
-    );
-  } catch (e, st) {
-    AppLogger.log.severe('Database Error', e, st);
-    return;
-  }
+      Directory documentDirectory = await getApplicationDocumentsDirectory();
+      try {
+        await initDatabase(
+          path: p.join(documentDirectory.path, await getDatabaseName()),
+        );
+      } catch (e, st) {
+        AppLogger.log.severe('Database Error', e, st);
+        return;
+      }
+      AppLogger.log.info("Database loaded.");
 
-  String label = await CustomTheme.load();
-  CustomTheme theme = CustomTheme.fromLabel(label);
-  ThemeData appTheme = AppThemes.getTheme(theme);
-  ThemeData appDesign = AppDesign.getDesign(appTheme);
+      String label = await CustomTheme.load();
+      CustomTheme theme = CustomTheme.fromLabel(label);
+      ThemeData appTheme = AppThemes.getTheme(theme);
+      ThemeData appDesign = AppDesign.getDesign(appTheme);
+      AppLogger.log.info("App design loaded.");
 
-  runApp(
-    ChangeNotifierProvider(
-      create: (_) {
-        final provider = LocaleProvider();
-        provider.loadSavedLocale();
-        return provider;
-      },
-      child: MyApp(theme: appDesign, currentTheme: theme),
-    ),
+      AppLogger.log.info("Starting app...");
+      runApp(
+        ChangeNotifierProvider(
+          create: (_) {
+            final provider = LocaleProvider();
+            provider.loadSavedLocale();
+            return provider;
+          },
+          child: MyApp(theme: appDesign, currentTheme: theme),
+        ),
+      );
+    },
+    (error, stack) {
+      AppLogger.log.severe("Zone Error", error, stack);
+      GlobalErrorDialog.show();
+    },
   );
 }
 
@@ -134,6 +159,10 @@ class MyAppState extends State<MyApp> {
     _lifecycleListener = AppLifecycleListener(
       onResume: () => PermissionManager.instance.verifyPermissions(),
     );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (GlobalErrorDialog.hasPendingError) GlobalErrorDialog.show();
+    });
   }
 
   @override
@@ -222,6 +251,7 @@ class MyAppState extends State<MyApp> {
       ),
       builder: FToastBuilder(),
     );
+
     FlutterNativeSplash.remove();
     return root;
   }

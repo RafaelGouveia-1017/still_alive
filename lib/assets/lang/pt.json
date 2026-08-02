@@ -3,6 +3,14 @@
   "app_name": "StillAlive",
   "navigation": ["Início", "Histórico", "Contactos", "Plugins", "Definições"],
   "generic_error": "Aconteceu um erro...",
+  "unexpected_error": {
+    "title": "Erro Inesperado",
+    "description": "Ocoreu um erro inesperado e a aplicação não pode continuar normalmente.\n\nPodes criar um registo de diagnóstico para nos ajudar a investigar o problema.",
+    "saved": "O registo de diagnóstico foi salvo.\nPodes abrir um \"issue\" no GitHub com essas informações.",
+    "save": "Criar",
+    "exit": "Sair",
+    "restart": "Reiniciar"
+  },
   "welcome": {
     "title": "Bem-vindo",
     "tagline": "O teu guardião silencioso. Ativa um temporizador de segurança — iremos alertar os teus contactos se não deres check-in.",
@@ -193,8 +201,10 @@
   },
   "integrations": {
     "title": "Integrações",
-    "description": "Emparelhamento rápido via QR",
-    "note": "Adiciona um novo dispositivo ou bot em segundos",
+    "soon": "Mais opções em breve...",
+    "qr_title": "Emparelhamento rápido via QR",
+    "qr_note": "Adiciona um novo plugin em segundos",
+    "connected": "Conectado",
     "status": "Disponível"
   },
   "qr_pairing": {

@@ -66,7 +66,7 @@ class _BackupSectionState extends State<BackupSection> {
                 onTap: widget.onImport,
                 child: AppRow(
                   icon: LucideIcons.import,
-                  rotateAngle: math.pi / 2,
+                  iconRotateAngle: math.pi / 2,
                   title: widget.local.translate(
                     "settings.sections.backup.import.0",
                   ),

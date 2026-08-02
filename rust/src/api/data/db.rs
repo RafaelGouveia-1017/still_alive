@@ -19,15 +19,17 @@ pub fn get_database_name() -> String {
 ///
 /// Must be called exactly once during app startup.
 pub fn init_database(path: String) -> Result<()> {
-    DATABASE_PATH
-        .set(PathBuf::from(&path))
-        .map_err(|_| anyhow!("database path already initialized"))?;
+    if let Some(existing) = DATABASE_PATH.get() {
+        if existing == Path::new(&path) {
+            return Ok(());
+        }
+        return Err(anyhow!("database already initialized with different path"));
+    }
+
+    DATABASE_PATH.set(PathBuf::from(&path)).unwrap();
 
     let db = Some(Database::open(&path)?);
-
-    DATABASE
-        .set(Mutex::new(db))
-        .map_err(|_| anyhow!("database already initialized"))?;
+    DATABASE.set(Mutex::new(db)).unwrap();
 
     Ok(())
 }

@@ -81,14 +81,6 @@ The project follows a hybrid architecture:
 2. **Logic Layer (Rust):** Handles the heavy lifting, timer precision, and sensitive cryptographic operations, ensuring maximum reliability.
 3. **Integration Layer:** Uses [`flutter_rust_bridge`](https://github.com/fzyzcjy/flutter_rust_bridge) to allow seamless, type-safe communication between Dart and Rust.
 
-## 🚀 Roadmap
-
-- **Phase 1: Analysis** (Requirements, Mockups, Research)
-- **Phase 2: Development** (Core functionality, UI Implementation, Unit/Integration Tests)
-- **Phase 3: Testing & Documentation** (System testing, Manuals, Final Report)
-
-Target Completion: July 2026
-
 ## 🛡 Privacy & Security
 
 StillAlive is built on the principle of **Privacy by Design**. We minimize data retention and never require unnecessary personal information. All communications are encrypted, and the app is designed to function with the absolute minimum of data exposure required to ensure safety.

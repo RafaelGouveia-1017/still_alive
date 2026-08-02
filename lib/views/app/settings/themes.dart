@@ -185,7 +185,7 @@ class _ThemesScreenState extends State<ThemesScreen> {
                                       const SizedBox(width: AppSpacing.sm),
                                       Pill(
                                         label: local.translate("themes.status"),
-                                        color: scheme.tertiary,
+                                        backColor: scheme.tertiary,
                                       ),
                                     ],
                                   ],

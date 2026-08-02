@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:still_alive/src/rust/api/data/db.dart';
 
-import '../../../services/history_services.dart';
+import '../../../services/history_service.dart';
 import '../../../data/all.dart';
 import '../../widgets/primitives.dart';
 

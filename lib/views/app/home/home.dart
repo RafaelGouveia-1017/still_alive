@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import 'package:still_alive/views/app/global_error.dart';
+
 import 'quick_contacts.dart';
 import 'phone_status.dart';
 import '../history/history.dart';
@@ -111,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
                       label: local.translate(
                         "home.inactive",
                       ), //TODO change to local.translate("home.active") while timer is active
-                      color: scheme
+                      backColor: scheme
                           .onSurfaceVariant, //TODO change to scheme.tertiary while timer is active
                     ),
                   ),
