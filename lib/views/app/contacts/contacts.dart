@@ -166,6 +166,7 @@ class _ContactsScreenState extends State<ContactsScreen> with RouteAware {
       );
     }
 
+    if (!mounted) return;
     setState(() {
       _isLoading = false;
     });

@@ -205,7 +205,11 @@
     "qr_title": "Emparelhamento rápido via QR",
     "qr_note": "Adiciona um novo plugin em segundos",
     "connected": "Conectado",
-    "status": "Disponível"
+    "user": "contacto",
+    "users": "contactos",
+    "channel": "canal",
+    "channels": "canais",
+    "not_found": "Nenhuma integração conectada encontrada."
   },
   "qr_pairing": {
     "title": "Emparelhar dispositivo",

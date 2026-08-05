@@ -58,6 +58,7 @@ class _EmergencyContactsState extends State<EmergencyContactsScreen> {
       }
     }
 
+    if (!mounted) return;
     setState(() {
       _isLoading = false;
     });

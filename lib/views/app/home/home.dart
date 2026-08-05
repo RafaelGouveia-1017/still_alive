@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-import 'package:still_alive/views/app/global_error.dart';
-
 import 'quick_contacts.dart';
 import 'phone_status.dart';
 import '../history/history.dart';

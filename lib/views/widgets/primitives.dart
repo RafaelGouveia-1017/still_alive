@@ -1251,3 +1251,352 @@ class _AppFilterBarState extends State<AppFilterBar> {
     );
   }
 }
+
+/// A controller widget that manages a group of expandable sections.
+///
+/// This widget provides accordion behavior by ensuring that at most one
+/// expandable item is open at any given time.
+///
+/// Tapping an already expanded item collapses it, while tapping another
+/// item automatically closes the previously expanded one before opening
+/// the selected item.
+///
+/// Expandable sections are provided through [AppExpandableItem]
+/// implementations.
+class AppExpandableGroup extends StatefulWidget {
+  const AppExpandableGroup({
+    super.key,
+    required this.children,
+    this.spacing = AppSpacing.md,
+  });
+
+  final List<AppExpandableItem> children;
+  final double spacing;
+
+  @override
+  State<AppExpandableGroup> createState() => _AppExpandableGroupState();
+}
+
+/// State implementation for [AppExpandableGroup].
+///
+/// Stores the index of the currently expanded item and rebuilds expandable
+/// children with the updated expansion state.
+class _AppExpandableGroupState extends State<AppExpandableGroup> {
+  int? expandedIndex;
+
+  void _toggle(int index) {
+    setState(() {
+      expandedIndex = expandedIndex == index ? null : index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        for (int i = 0; i < widget.children.length; i++) ...[
+          widget.children[i].build(
+            expanded: expandedIndex == i,
+            onPressed: () => _toggle(i),
+          ),
+          if (i != widget.children.length - 1) SizedBox(height: widget.spacing),
+        ],
+      ],
+    );
+  }
+}
+
+/// Defines a section that can be managed by [AppExpandableGroup].
+///
+/// Implementations are responsible for creating their own expandable UI
+/// while receiving the current expansion state and interaction callback
+/// from the parent group.
+///
+/// This allows multiple expandable widget types to coexist in the same
+/// group while keeping expansion logic centralized.
+sealed class AppExpandableItem {
+  const AppExpandableItem();
+
+  /// Builds the expandable widget.
+  ///
+  /// The [expanded] value is controlled by [AppExpandableGroup].
+  /// The [onPressed] callback should be attached to the widget's trigger
+  /// element to notify the group when expansion changes.
+  Widget build({required bool expanded, required VoidCallback onPressed});
+}
+
+/// A reusable expandable card that behaves like a dropdown section.
+///
+/// The widget displays a tappable header and reveals its child with a
+/// smooth animated expansion.
+///
+/// Features:
+/// * Smooth height animation
+/// * Fade animation for expanded content
+/// * Rotating chevron indicating expanded/collapsed state
+/// * Supports optional leading icon and subtitle
+/// * Uses [AppCard] styling for visual consistency
+///
+/// This widget is intended to be used inside [AppExpandableGroup], where
+/// expansion state is controlled externally.
+class AppExpandableCard extends AppExpandableItem {
+  const AppExpandableCard({
+    required this.title,
+    required this.child,
+    this.subtitle,
+    this.cardPadding = AppSpacing.card,
+    this.cardMargin = EdgeInsets.zero,
+    this.cardColor,
+    this.cardBorderColor,
+    this.cardGradient,
+    this.icon,
+    this.iconSize = 26,
+    this.iconRotateAngle = 0,
+    this.iconColor,
+    this.iconBackground,
+    this.iconGradient,
+  });
+
+  final String title;
+  final String? subtitle;
+  final Widget child;
+  final EdgeInsetsGeometry cardPadding;
+  final EdgeInsetsGeometry cardMargin;
+  final Color? cardColor;
+  final Color? cardBorderColor;
+  final Gradient? cardGradient;
+  final IconData? icon;
+  final double iconSize;
+  final double iconRotateAngle;
+  final Color? iconColor;
+  final Color? iconBackground;
+  final List<Color>? iconGradient;
+
+  @override
+  Widget build({required bool expanded, required VoidCallback onPressed}) {
+    return _AppExpandableCardView(
+      title: title,
+      subtitle: subtitle,
+      expanded: expanded,
+      onPressed: onPressed,
+      cardPadding: cardPadding,
+      cardMargin: cardMargin,
+      cardColor: cardColor,
+      cardBorderColor: cardBorderColor,
+      cardGradient: cardGradient,
+      icon: icon,
+      iconSize: iconSize,
+      iconRotateAngle: iconRotateAngle,
+      iconColor: iconColor,
+      iconBackground: iconBackground,
+      iconGradient: iconGradient,
+      child: child,
+    );
+  }
+}
+
+/// Internal stateful implementation of [AppExpandableCard].
+///
+/// This widget is responsible for rendering the expandable card UI and
+/// managing the animation lifecycle required for expanding and collapsing
+/// the content section.
+///
+/// The parent [AppExpandableCard] provides the current expansion state and
+/// rebuilds this widget whenever the state changes. This separation allows
+/// [AppExpandableCard] to remain a lightweight configuration object while
+/// keeping animation state inside a stateful widget.
+class _AppExpandableCardView extends StatefulWidget {
+  const _AppExpandableCardView({
+    required this.title,
+    required this.child,
+    required this.expanded,
+    required this.onPressed,
+    this.subtitle,
+    this.cardPadding = AppSpacing.card,
+    this.cardMargin = EdgeInsets.zero,
+    this.cardColor,
+    this.cardBorderColor,
+    this.cardGradient,
+    this.icon,
+    this.iconSize = 26,
+    this.iconRotateAngle = 0,
+    this.iconColor,
+    this.iconBackground,
+    this.iconGradient,
+  });
+
+  final String title;
+  final String? subtitle;
+  final Widget child;
+  final bool expanded;
+  final VoidCallback onPressed;
+  final EdgeInsetsGeometry cardPadding;
+  final EdgeInsetsGeometry cardMargin;
+  final Color? cardColor;
+  final Color? cardBorderColor;
+  final Gradient? cardGradient;
+  final IconData? icon;
+  final double iconSize;
+  final double iconRotateAngle;
+  final Color? iconColor;
+  final Color? iconBackground;
+  final List<Color>? iconGradient;
+
+  @override
+  State<_AppExpandableCardView> createState() => _AppExpandableCardViewState();
+}
+
+/// State implementation for [_AppExpandableCardView].
+///
+/// Controls the expand/collapse animations using a shared
+/// [AnimationController].
+///
+/// The controller drives both:
+/// * A [SizeTransition] animation for the expandable content height.
+/// * A [FadeTransition] animation for the content visibility.
+///
+/// The animation direction is updated whenever the parent's [expanded]
+/// value changes.
+class _AppExpandableCardViewState extends State<_AppExpandableCardView>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _size;
+  late final Animation<double> _fade;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: AppMotion.faster,
+      value: widget.expanded ? 1 : 0,
+    );
+
+    _size = CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic);
+
+    _fade = CurvedAnimation(
+      parent: _controller,
+      curve: const Interval(0.15, 1, curve: AppMotion.easeInOut),
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant _AppExpandableCardView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.expanded != oldWidget.expanded) {
+      widget.expanded ? _controller.forward() : _controller.reverse();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
+    return AppCard(
+      padding: EdgeInsets.zero,
+      margin: widget.cardMargin,
+      color: widget.cardColor,
+      borderColor: widget.cardBorderColor,
+      gradient: widget.cardGradient,
+      child: Column(
+        children: [
+          InkWell(
+            borderRadius: AppRadius.card,
+            onTap: widget.onPressed,
+            child: Padding(
+              padding: widget.cardPadding,
+              child: Row(
+                children: [
+                  if (widget.icon != null) ...[
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color:
+                            widget.iconBackground ??
+                            ((widget.iconGradient == null)
+                                ? scheme.surfaceContainerHigh
+                                : null),
+                        gradient: (widget.iconGradient != null)
+                            ? LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: widget.iconGradient!,
+                              )
+                            : null,
+                        borderRadius: BorderRadius.circular(AppRadius.lg),
+                      ),
+                      child: Transform.rotate(
+                        angle: widget.iconRotateAngle,
+                        child: Icon(
+                          widget.icon,
+                          size: widget.iconSize,
+                          color:
+                              widget.iconColor ??
+                              ((widget.iconGradient == null)
+                                  ? scheme.onSurface
+                                  : Colors.white),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.md),
+                  ],
+
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(widget.title, style: AppText.body(scheme)),
+                        if (widget.subtitle != null)
+                          Text(
+                            widget.subtitle!,
+                            style: AppText.caption(scheme),
+                          ),
+                      ],
+                    ),
+                  ),
+
+                  Container(
+                    margin: const EdgeInsets.only(left: AppSpacing.ms),
+                    child: AnimatedRotation(
+                      turns: widget.expanded ? 0.5 : 0,
+                      duration: AppMotion.fasterer,
+                      curve: AppMotion.easeInOut,
+                      child: const Icon(LucideIcons.chevronDown, size: 18),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          ClipRect(
+            child: SizeTransition(
+              sizeFactor: _size,
+              alignment: Alignment.topCenter,
+              child: FadeTransition(
+                opacity: _fade,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    left: widget.cardPadding.horizontal / 2,
+                    right: widget.cardPadding.horizontal / 2,
+                    bottom: AppSpacing.card.vertical / 2,
+                  ),
+                  child: widget.child,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

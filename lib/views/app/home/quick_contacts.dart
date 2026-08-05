@@ -95,6 +95,7 @@ class _QuickContactsState extends State<QuickContacts> with RouteAware {
       ),
     );
 
+    if (!mounted) return;
     setState(() {
       _isLoading = false;
     });

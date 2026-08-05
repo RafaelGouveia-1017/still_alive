@@ -125,6 +125,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
       return _Group(row["created_at"] as String, events);
     }).toList();
 
+    if (!mounted) return;
     setState(() {
       _groups = groups;
       _isLoading = false;

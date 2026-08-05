@@ -5,6 +5,7 @@
 
 import 'api/backup.dart';
 import 'api/data/db.dart';
+import 'api/integrations/traits.dart';
 import 'api/main.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -27,7 +28,40 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   String dco_decode_String(dynamic raw);
 
   @protected
+  bool dco_decode_bool(dynamic raw);
+
+  @protected
+  IntegrationChannel dco_decode_integration_channel(dynamic raw);
+
+  @protected
+  IntegrationGradient dco_decode_integration_gradient(dynamic raw);
+
+  @protected
+  IntegrationInfo dco_decode_integration_info(dynamic raw);
+
+  @protected
+  IntegrationTestResult dco_decode_integration_test_result(dynamic raw);
+
+  @protected
+  IntegrationUser dco_decode_integration_user(dynamic raw);
+
+  @protected
+  List<IntegrationChannel> dco_decode_list_integration_channel(dynamic raw);
+
+  @protected
+  List<IntegrationInfo> dco_decode_list_integration_info(dynamic raw);
+
+  @protected
+  List<IntegrationUser> dco_decode_list_integration_user(dynamic raw);
+
+  @protected
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
+
+  @protected
+  String? dco_decode_opt_String(dynamic raw);
+
+  @protected
+  int dco_decode_u_32(dynamic raw);
 
   @protected
   int dco_decode_u_8(dynamic raw);
@@ -45,7 +79,52 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   String sse_decode_String(SseDeserializer deserializer);
 
   @protected
+  bool sse_decode_bool(SseDeserializer deserializer);
+
+  @protected
+  IntegrationChannel sse_decode_integration_channel(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  IntegrationGradient sse_decode_integration_gradient(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  IntegrationInfo sse_decode_integration_info(SseDeserializer deserializer);
+
+  @protected
+  IntegrationTestResult sse_decode_integration_test_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  IntegrationUser sse_decode_integration_user(SseDeserializer deserializer);
+
+  @protected
+  List<IntegrationChannel> sse_decode_list_integration_channel(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  List<IntegrationInfo> sse_decode_list_integration_info(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  List<IntegrationUser> sse_decode_list_integration_user(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
+
+  @protected
+  String? sse_decode_opt_String(SseDeserializer deserializer);
+
+  @protected
+  int sse_decode_u_32(SseDeserializer deserializer);
 
   @protected
   int sse_decode_u_8(SseDeserializer deserializer);
@@ -60,9 +139,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   int sse_decode_i_32(SseDeserializer deserializer);
 
   @protected
-  bool sse_decode_bool(SseDeserializer deserializer);
-
-  @protected
   void sse_encode_AnyhowException(
     AnyhowException self,
     SseSerializer serializer,
@@ -72,10 +148,67 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_String(String self, SseSerializer serializer);
 
   @protected
+  void sse_encode_bool(bool self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_integration_channel(
+    IntegrationChannel self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_integration_gradient(
+    IntegrationGradient self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_integration_info(
+    IntegrationInfo self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_integration_test_result(
+    IntegrationTestResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_integration_user(
+    IntegrationUser self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_integration_channel(
+    List<IntegrationChannel> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_integration_info(
+    List<IntegrationInfo> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_integration_user(
+    List<IntegrationUser> self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_list_prim_u_8_strict(
     Uint8List self,
     SseSerializer serializer,
   );
+
+  @protected
+  void sse_encode_opt_String(String? self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_u_32(int self, SseSerializer serializer);
 
   @protected
   void sse_encode_u_8(int self, SseSerializer serializer);
@@ -88,9 +221,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_i_32(int self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_bool(bool self, SseSerializer serializer);
 }
 
 // Section: wire_class

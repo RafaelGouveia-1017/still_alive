@@ -71,14 +71,62 @@ VALUES
     (
         'discord',
         '{
-            "users": [], 
-            "channels": [{ guild_id: "id", channel_ids: []}]
+            "users": [
+                {
+                    "id": "123",
+                    "username": "Alice"
+                },
+                {
+                    "id": "1233",
+                    "username": "Alice"
+                },
+                                {
+                    "id": "12423",
+                    "username": "Alice"
+                }
+            ],
+            "guilds": [
+                {
+                    "id": "456",
+                    "name": "Still Alive",
+                    "channels": [
+                        {
+                            "id": "789",
+                            "name": "general"
+                        },
+                        {
+                            "id": "78329",
+                            "name": "general2"
+                        }
+                    ]
+                },
+                {
+                    "id": "45ew6",
+                    "name": "Still Dead",
+                    "channels": [
+                        {
+                            "id": "783229",
+                            "name": "emergency"
+                        }
+                    ]
+                }
+            ]
         }'
     ),
     (
         'telegram',
         '{
-            "users": [], 
-            "channels": [{ guild_id: "id", channel_ids: []}]
+            "users": [
+                {
+                    "id": "123",
+                    "username": "Tom"
+                }
+            ],
+            "groups": [
+                {
+                    "id": "456",
+                    "name": "Still Alive"
+                }
+            ]
         }'
     );

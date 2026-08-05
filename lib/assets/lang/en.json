@@ -205,7 +205,11 @@
     "qr_title": "Quick pair via QR",
     "qr_note": "Add a new plug-in in seconds",
     "connected": "Connected",
-    "status": "Available"
+    "user": "user",
+    "users": "users",
+    "channel": "channel",
+    "channels": "channels",
+    "not_found": "No connected integrations found."
   },
   "qr_pairing": {
     "title": "Pair device",
