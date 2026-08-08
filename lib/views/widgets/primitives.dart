@@ -401,6 +401,7 @@ class AppRow extends StatelessWidget {
     required this.title,
     this.subtitle,
     this.trailing,
+    this.padding = const EdgeInsets.symmetric(vertical: AppSpacing.md),
     this.colorScheme,
   });
 
@@ -412,13 +413,14 @@ class AppRow extends StatelessWidget {
   final String title;
   final String? subtitle;
   final Widget? trailing;
+  final EdgeInsetsGeometry padding;
   final ColorScheme? colorScheme;
 
   @override
   Widget build(BuildContext context) {
     ColorScheme scheme = colorScheme ?? Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+      padding: padding,
       child: Row(
         children: [
           if (icon != null) ...[
@@ -1586,8 +1588,6 @@ class _AppExpandableCardViewState extends State<_AppExpandableCardView>
                 opacity: _fade,
                 child: Padding(
                   padding: EdgeInsets.only(
-                    left: widget.cardPadding.horizontal / 2,
-                    right: widget.cardPadding.horizontal / 2,
                     bottom: AppSpacing.card.vertical / 2,
                   ),
                   child: widget.child,

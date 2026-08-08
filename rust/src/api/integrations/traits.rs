@@ -212,14 +212,8 @@ pub fn load_all_integrations() -> Result<Vec<IntegrationInfo>> {
 /// * The updated configuration cannot be saved.
 pub fn delete_integration_record(key: String, id: String) -> Result<()> {
     match key.as_str() {
-        "discord" => {
-            let mut integration = DiscordIntegration::load()?;
-            integration.delete(&id)
-        }
-        "telegram" => {
-            let mut integration = TelegramIntegration::load()?;
-            integration.delete(&id)
-        }
+        "discord" => DiscordIntegration::load()?.delete(&id),
+        "telegram" => TelegramIntegration::load()?.delete(&id),
         _ => Err(anyhow!("unknown integration")),
     }
 }
