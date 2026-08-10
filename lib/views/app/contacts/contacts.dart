@@ -328,6 +328,7 @@ class _ContactsScreenState extends State<ContactsScreen> with RouteAware {
                               style: AppText.bodySm(
                                 scheme,
                               ).copyWith(color: scheme.onSurfaceVariant),
+                              textAlign: TextAlign.center,
                             ),
                           ],
                         ),

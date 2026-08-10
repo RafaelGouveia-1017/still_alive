@@ -212,12 +212,10 @@
     "not_found": "No connected integrations found."
   },
   "qr_pairing": {
-    "title": "Pair device",
-    "description": "Scan to link",
-    "instruction": "Open Telegram on another device and scan this code to authorize StillAlive bot.",
-    "manual_code": "Manual code",
-    "code": "X9F3 · 2K7Q",
-    "cancel": "Cancel pairing"
+    "title": "Pair Integration",
+    "description": "Scan a StillAlive QR code to link",
+    "no_camera": "Camera permission not granted.\nDon't worry, we only use the camera here.",
+    "valid_qr": ["Valid StillAlive QR codes", "contain the", "symbol"]
   },
   "history_logs": {
     "title": "History",

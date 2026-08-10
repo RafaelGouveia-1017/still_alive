@@ -212,12 +212,10 @@
     "not_found": "Nenhuma integração conectada encontrada."
   },
   "qr_pairing": {
-    "title": "Emparelhar dispositivo",
-    "description": "Digitalizar para ligar",
-    "instruction": "Abre o Telegram noutro dispositivo e lê este código para autorizar o bot StillAlive.",
-    "manual_code": "Código manual",
-    "code": "X9F3 · 2K7Q",
-    "cancel": "Cancelar emparelhamento"
+    "title": "Emparelhar Integração",
+    "description": "Digitaliza um código QR StillAlive para adicionar",
+    "no_camera": "Permissão para câmera não concedida.\nNão te preocupes, só usamos a câmera aqui.",
+    "valid_qr": ["Códigos QR StillAlive válidos", "contém o símbolo", ""]
   },
   "history_logs": {
     "title": "Histórico",

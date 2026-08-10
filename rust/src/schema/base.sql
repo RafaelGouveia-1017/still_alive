@@ -116,6 +116,10 @@ VALUES
     (
         'telegram',
         '{
+            "main_account": {
+                "id": "123",
+                "username": "Alice"
+            },
             "users": [
                 {
                     "id": "123",

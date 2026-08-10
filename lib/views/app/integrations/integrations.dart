@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:still_alive/src/rust/api/data/db.dart';
 import 'package:still_alive/src/rust/api/integrations/traits.dart';
 
 import 'integration_row.dart';
+import 'qr_scanner.dart';
 import '../../../data/all.dart';
 import '../../widgets/primitives.dart';
 
@@ -258,6 +261,7 @@ class _IntegrationsScreenState extends State<IntegrationsScreen> {
                                 factory: InkSparkle.splashFactory,
                                 onTap: () {
                                   Navigator.pop(context);
+                                  //TODO create integrations
                                 },
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
@@ -313,8 +317,17 @@ class _IntegrationsScreenState extends State<IntegrationsScreen> {
               ),
               children: [
                 Pressable(
-                  onTap: () {
-                    //TODO: QR Code Page
+                  onTap: () async {
+                    final result = await Navigator.of(context)
+                        .push<Map<String, dynamic>>(
+                          AppRoute(
+                            page: QRScannerScreen(),
+                            transition: AppRouteTransitionType.slideRight,
+                          ),
+                        );
+                    if (result == null) return;
+
+                    //TODO add to database new channel (must filter by brand, account & server)
                   },
                   child: AppCard(
                     gradient: const LinearGradient(
@@ -387,6 +400,7 @@ class _IntegrationsScreenState extends State<IntegrationsScreen> {
                         style: AppText.bodySm(
                           scheme,
                         ).copyWith(color: scheme.onSurfaceVariant),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ] else ...[

@@ -222,6 +222,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     style: AppText.bodySm(
                       scheme,
                     ).copyWith(color: scheme.onSurfaceVariant),
+                    textAlign: TextAlign.center,
                   ),
                 ] else ...[
                   Expanded(
