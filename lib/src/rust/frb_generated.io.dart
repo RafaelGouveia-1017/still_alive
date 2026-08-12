@@ -5,6 +5,7 @@
 
 import 'api/backup.dart';
 import 'api/data/db.dart';
+import 'api/integrations/public_traits.dart';
 import 'api/integrations/traits.dart';
 import 'api/main.dart';
 import 'dart:async';
@@ -31,7 +32,19 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   bool dco_decode_bool(dynamic raw);
 
   @protected
-  IntegrationChannel dco_decode_integration_channel(dynamic raw);
+  MessageDestination dco_decode_box_autoadd_message_destination(dynamic raw);
+
+  @protected
+  DestinationKind dco_decode_destination_kind(dynamic raw);
+
+  @protected
+  DestinationTestResult dco_decode_destination_test_result(dynamic raw);
+
+  @protected
+  int dco_decode_i_32(dynamic raw);
+
+  @protected
+  IntegrationAccount dco_decode_integration_account(dynamic raw);
 
   @protected
   IntegrationGradient dco_decode_integration_gradient(dynamic raw);
@@ -40,25 +53,28 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   IntegrationInfo dco_decode_integration_info(dynamic raw);
 
   @protected
-  IntegrationTestResult dco_decode_integration_test_result(dynamic raw);
+  IntegrationProvider dco_decode_integration_provider(dynamic raw);
 
   @protected
-  IntegrationUser dco_decode_integration_user(dynamic raw);
-
-  @protected
-  List<IntegrationChannel> dco_decode_list_integration_channel(dynamic raw);
+  List<IntegrationAccount> dco_decode_list_integration_account(dynamic raw);
 
   @protected
   List<IntegrationInfo> dco_decode_list_integration_info(dynamic raw);
 
   @protected
-  List<IntegrationUser> dco_decode_list_integration_user(dynamic raw);
+  List<MessageDestination> dco_decode_list_message_destination(dynamic raw);
 
   @protected
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
 
   @protected
+  MessageDestination dco_decode_message_destination(dynamic raw);
+
+  @protected
   String? dco_decode_opt_String(dynamic raw);
+
+  @protected
+  SentMessage dco_decode_sent_message(dynamic raw);
 
   @protected
   int dco_decode_u_32(dynamic raw);
@@ -82,7 +98,23 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   bool sse_decode_bool(SseDeserializer deserializer);
 
   @protected
-  IntegrationChannel sse_decode_integration_channel(
+  MessageDestination sse_decode_box_autoadd_message_destination(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  DestinationKind sse_decode_destination_kind(SseDeserializer deserializer);
+
+  @protected
+  DestinationTestResult sse_decode_destination_test_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  int sse_decode_i_32(SseDeserializer deserializer);
+
+  @protected
+  IntegrationAccount sse_decode_integration_account(
     SseDeserializer deserializer,
   );
 
@@ -95,15 +127,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   IntegrationInfo sse_decode_integration_info(SseDeserializer deserializer);
 
   @protected
-  IntegrationTestResult sse_decode_integration_test_result(
+  IntegrationProvider sse_decode_integration_provider(
     SseDeserializer deserializer,
   );
 
   @protected
-  IntegrationUser sse_decode_integration_user(SseDeserializer deserializer);
-
-  @protected
-  List<IntegrationChannel> sse_decode_list_integration_channel(
+  List<IntegrationAccount> sse_decode_list_integration_account(
     SseDeserializer deserializer,
   );
 
@@ -113,7 +142,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  List<IntegrationUser> sse_decode_list_integration_user(
+  List<MessageDestination> sse_decode_list_message_destination(
     SseDeserializer deserializer,
   );
 
@@ -121,7 +150,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
 
   @protected
+  MessageDestination sse_decode_message_destination(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   String? sse_decode_opt_String(SseDeserializer deserializer);
+
+  @protected
+  SentMessage sse_decode_sent_message(SseDeserializer deserializer);
 
   @protected
   int sse_decode_u_32(SseDeserializer deserializer);
@@ -136,9 +173,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   BigInt sse_decode_usize(SseDeserializer deserializer);
 
   @protected
-  int sse_decode_i_32(SseDeserializer deserializer);
-
-  @protected
   void sse_encode_AnyhowException(
     AnyhowException self,
     SseSerializer serializer,
@@ -151,8 +185,29 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_bool(bool self, SseSerializer serializer);
 
   @protected
-  void sse_encode_integration_channel(
-    IntegrationChannel self,
+  void sse_encode_box_autoadd_message_destination(
+    MessageDestination self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_destination_kind(
+    DestinationKind self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_destination_test_result(
+    DestinationTestResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_i_32(int self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_integration_account(
+    IntegrationAccount self,
     SseSerializer serializer,
   );
 
@@ -169,20 +224,14 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  void sse_encode_integration_test_result(
-    IntegrationTestResult self,
+  void sse_encode_integration_provider(
+    IntegrationProvider self,
     SseSerializer serializer,
   );
 
   @protected
-  void sse_encode_integration_user(
-    IntegrationUser self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_list_integration_channel(
-    List<IntegrationChannel> self,
+  void sse_encode_list_integration_account(
+    List<IntegrationAccount> self,
     SseSerializer serializer,
   );
 
@@ -193,8 +242,8 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  void sse_encode_list_integration_user(
-    List<IntegrationUser> self,
+  void sse_encode_list_message_destination(
+    List<MessageDestination> self,
     SseSerializer serializer,
   );
 
@@ -205,7 +254,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_message_destination(
+    MessageDestination self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_opt_String(String? self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_sent_message(SentMessage self, SseSerializer serializer);
 
   @protected
   void sse_encode_u_32(int self, SseSerializer serializer);
@@ -218,9 +276,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_usize(BigInt self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_i_32(int self, SseSerializer serializer);
 }
 
 // Section: wire_class

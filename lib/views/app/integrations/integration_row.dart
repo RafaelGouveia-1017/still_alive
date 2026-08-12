@@ -33,7 +33,7 @@ class IntegrationRow extends StatefulWidget {
   ///
   /// The returned result determines whether the test state displays a
   /// successful or failed connection indicator.
-  final Future<({bool connected, String message})> Function() onTest;
+  final Future<({bool canSend, String message})> Function() onTest;
 
   /// Deletes the integration record represented by this row.
   ///
@@ -53,7 +53,7 @@ class _IntegrationRowState extends State<IntegrationRow> {
   bool _testing = false;
   bool _deleting = false;
 
-  bool? _connected;
+  bool? _canSend;
 
   Future<void> _handleTest() async {
     if (_testing || _deleting) return;
@@ -68,14 +68,14 @@ class _IntegrationRowState extends State<IntegrationRow> {
       if (!mounted) return;
 
       setState(() {
-        _connected = result.connected;
+        _canSend = result.canSend;
         _testing = false;
       });
     } catch (_) {
       if (!mounted) return;
 
       setState(() {
-        _connected = false;
+        _canSend = false;
         _testing = false;
       });
     }
@@ -115,8 +115,8 @@ class _IntegrationRowState extends State<IntegrationRow> {
       );
     }
 
-    if (_connected != null) {
-      final connected = _connected!;
+    if (_canSend != null) {
+      final connected = _canSend!;
 
       return IconButton(
         icon: Icon(

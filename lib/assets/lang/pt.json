@@ -209,7 +209,20 @@
     "users": "contactos",
     "channel": "canal",
     "channels": "canais",
-    "not_found": "Nenhuma integração conectada encontrada."
+    "not_found": "Nenhuma integração conectada encontrada.",
+    "account_added": "Conta adicionada com sucesso!",
+    "account_deleted": "Conta removida com sucesso!",
+    "destination_added": "Destinatário adicionado com sucesso!",
+    "account_empty": "Esta conta ainda não tem integrações configuradas...",
+    "delete_account": [
+      "Apagar Conta",
+      "Tens acerteza? Esta conta e todas as suas integrações serão PERMANENTEMENTE apagadas."
+    ]
+  },
+  "integration_destinations": {
+    "title": "Destinatários",
+    "search": "Procurar destinatários",
+    "not_found": "Nenhum destinatário encontrado."
   },
   "qr_pairing": {
     "title": "Emparelhar Integração",

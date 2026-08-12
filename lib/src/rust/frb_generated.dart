@@ -5,6 +5,7 @@
 
 import 'api/backup.dart';
 import 'api/data/db.dart';
+import 'api/integrations/public_traits.dart';
 import 'api/integrations/traits.dart';
 import 'api/main.dart';
 import 'dart:async';
@@ -69,7 +70,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.13.0-beta.5';
 
   @override
-  int get rustContentHash => -1082246228;
+  int get rustContentHash => 860651029;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -83,11 +84,29 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 abstract class RustLibApi extends BaseApi {
   Future<void> crateApiDataDbCloseDatabase();
 
+  Future<IntegrationAccount>
+  crateApiIntegrationsPublicTraitsConnectIntegrationAccount({
+    required String key,
+  });
+
   Future<void> crateApiDataDbDatabasePathStr();
 
-  Future<void> crateApiIntegrationsTraitsDeleteIntegrationRecord({
+  Future<void> crateApiIntegrationsPublicTraitsDeleteIntegrationAccount({
     required String key,
-    required String id,
+    required String accountId,
+  });
+
+  Future<IntegrationAccount>
+  crateApiIntegrationsPublicTraitsDeselectIntegrationDestination({
+    required String key,
+    required String accountId,
+    required String destinationId,
+  });
+
+  Future<List<MessageDestination>>
+  crateApiIntegrationsPublicTraitsDiscoverIntegrationDestinations({
+    required String key,
+    required String accountId,
   });
 
   Future<void> crateApiDataDbExecuteBatchSql({required String sql});
@@ -113,7 +132,8 @@ abstract class RustLibApi extends BaseApi {
 
   Future<void> crateApiDataDbInitDatabase({required String path});
 
-  Future<List<IntegrationInfo>> crateApiIntegrationsTraitsLoadAllIntegrations();
+  Future<List<IntegrationInfo>>
+  crateApiIntegrationsPublicTraitsLoadAllIntegrations();
 
   Future<void> crateApiDataDbOpenDatabase();
 
@@ -121,18 +141,27 @@ abstract class RustLibApi extends BaseApi {
 
   Future<String> crateApiDataDbSelect({required String sql});
 
+  Future<IntegrationAccount>
+  crateApiIntegrationsPublicTraitsSelectIntegrationDestination({
+    required String key,
+    required String accountId,
+    required MessageDestination destination,
+  });
+
   Future<String> crateApiDataDbSelectOne({required String sql});
 
-  Future<void> crateApiIntegrationsTraitsSendIntegrationMessage({
+  Future<SentMessage> crateApiIntegrationsPublicTraitsSendIntegrationMessage({
     required String key,
-    required String recipientId,
+    required String accountId,
+    required String destinationId,
     required String message,
   });
 
-  Future<IntegrationTestResult>
-  crateApiIntegrationsTraitsTestIntegrationConnection({
+  Future<DestinationTestResult>
+  crateApiIntegrationsPublicTraitsTestIntegrationDestination({
     required String key,
-    required String id,
+    required String accountId,
+    required String destinationId,
   });
 }
 
@@ -172,6 +201,42 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "close_database", argNames: []);
 
   @override
+  Future<IntegrationAccount>
+  crateApiIntegrationsPublicTraitsConnectIntegrationAccount({
+    required String key,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(key, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 2,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_integration_account,
+          decodeErrorData: sse_decode_AnyhowException,
+        ),
+        constMeta:
+            kCrateApiIntegrationsPublicTraitsConnectIntegrationAccountConstMeta,
+        argValues: [key],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiIntegrationsPublicTraitsConnectIntegrationAccountConstMeta =>
+      const TaskConstMeta(
+        debugName: "connect_integration_account",
+        argNames: ["key"],
+      );
+
+  @override
   Future<void> crateApiDataDbDatabasePathStr() {
     return handler.executeNormal(
       NormalTask(
@@ -180,7 +245,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 2,
+            funcId: 3,
             port: port_,
           );
         },
@@ -199,20 +264,20 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "database_path_str", argNames: []);
 
   @override
-  Future<void> crateApiIntegrationsTraitsDeleteIntegrationRecord({
+  Future<void> crateApiIntegrationsPublicTraitsDeleteIntegrationAccount({
     required String key,
-    required String id,
+    required String accountId,
   }) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_String(key, serializer);
-          sse_encode_String(id, serializer);
+          sse_encode_String(accountId, serializer);
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 3,
+            funcId: 4,
             port: port_,
           );
         },
@@ -220,18 +285,97 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           decodeSuccessData: sse_decode_unit,
           decodeErrorData: sse_decode_AnyhowException,
         ),
-        constMeta: kCrateApiIntegrationsTraitsDeleteIntegrationRecordConstMeta,
-        argValues: [key, id],
+        constMeta:
+            kCrateApiIntegrationsPublicTraitsDeleteIntegrationAccountConstMeta,
+        argValues: [key, accountId],
         apiImpl: this,
       ),
     );
   }
 
   TaskConstMeta
-  get kCrateApiIntegrationsTraitsDeleteIntegrationRecordConstMeta =>
+  get kCrateApiIntegrationsPublicTraitsDeleteIntegrationAccountConstMeta =>
       const TaskConstMeta(
-        debugName: "delete_integration_record",
-        argNames: ["key", "id"],
+        debugName: "delete_integration_account",
+        argNames: ["key", "accountId"],
+      );
+
+  @override
+  Future<IntegrationAccount>
+  crateApiIntegrationsPublicTraitsDeselectIntegrationDestination({
+    required String key,
+    required String accountId,
+    required String destinationId,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(key, serializer);
+          sse_encode_String(accountId, serializer);
+          sse_encode_String(destinationId, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 5,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_integration_account,
+          decodeErrorData: sse_decode_AnyhowException,
+        ),
+        constMeta:
+            kCrateApiIntegrationsPublicTraitsDeselectIntegrationDestinationConstMeta,
+        argValues: [key, accountId, destinationId],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiIntegrationsPublicTraitsDeselectIntegrationDestinationConstMeta =>
+      const TaskConstMeta(
+        debugName: "deselect_integration_destination",
+        argNames: ["key", "accountId", "destinationId"],
+      );
+
+  @override
+  Future<List<MessageDestination>>
+  crateApiIntegrationsPublicTraitsDiscoverIntegrationDestinations({
+    required String key,
+    required String accountId,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(key, serializer);
+          sse_encode_String(accountId, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 6,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_list_message_destination,
+          decodeErrorData: sse_decode_AnyhowException,
+        ),
+        constMeta:
+            kCrateApiIntegrationsPublicTraitsDiscoverIntegrationDestinationsConstMeta,
+        argValues: [key, accountId],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiIntegrationsPublicTraitsDiscoverIntegrationDestinationsConstMeta =>
+      const TaskConstMeta(
+        debugName: "discover_integration_destinations",
+        argNames: ["key", "accountId"],
       );
 
   @override
@@ -244,7 +388,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 4,
+            funcId: 7,
             port: port_,
           );
         },
@@ -272,7 +416,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 5,
+            funcId: 8,
             port: port_,
           );
         },
@@ -300,7 +444,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 6,
+            funcId: 9,
             port: port_,
           );
         },
@@ -328,7 +472,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 7,
+            funcId: 10,
             port: port_,
           );
         },
@@ -355,7 +499,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 8,
+            funcId: 11,
             port: port_,
           );
         },
@@ -383,7 +527,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 9,
+            funcId: 12,
             port: port_,
           );
         },
@@ -415,7 +559,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 10,
+            funcId: 13,
             port: port_,
           );
         },
@@ -445,7 +589,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 11,
+            funcId: 14,
             port: port_,
           );
         },
@@ -472,7 +616,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 12,
+            funcId: 15,
             port: port_,
           );
         },
@@ -500,7 +644,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 13,
+            funcId: 16,
             port: port_,
           );
         },
@@ -520,7 +664,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @override
   Future<List<IntegrationInfo>>
-  crateApiIntegrationsTraitsLoadAllIntegrations() {
+  crateApiIntegrationsPublicTraitsLoadAllIntegrations() {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -528,7 +672,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 14,
+            funcId: 17,
             port: port_,
           );
         },
@@ -536,14 +680,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           decodeSuccessData: sse_decode_list_integration_info,
           decodeErrorData: sse_decode_AnyhowException,
         ),
-        constMeta: kCrateApiIntegrationsTraitsLoadAllIntegrationsConstMeta,
+        constMeta:
+            kCrateApiIntegrationsPublicTraitsLoadAllIntegrationsConstMeta,
         argValues: [],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiIntegrationsTraitsLoadAllIntegrationsConstMeta =>
+  TaskConstMeta
+  get kCrateApiIntegrationsPublicTraitsLoadAllIntegrationsConstMeta =>
       const TaskConstMeta(debugName: "load_all_integrations", argNames: []);
 
   @override
@@ -555,7 +701,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 15,
+            funcId: 18,
             port: port_,
           );
         },
@@ -582,7 +728,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 16,
+            funcId: 19,
             port: port_,
           );
         },
@@ -610,7 +756,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 17,
+            funcId: 20,
             port: port_,
           );
         },
@@ -629,6 +775,46 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "select", argNames: ["sql"]);
 
   @override
+  Future<IntegrationAccount>
+  crateApiIntegrationsPublicTraitsSelectIntegrationDestination({
+    required String key,
+    required String accountId,
+    required MessageDestination destination,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(key, serializer);
+          sse_encode_String(accountId, serializer);
+          sse_encode_box_autoadd_message_destination(destination, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 21,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_integration_account,
+          decodeErrorData: sse_decode_AnyhowException,
+        ),
+        constMeta:
+            kCrateApiIntegrationsPublicTraitsSelectIntegrationDestinationConstMeta,
+        argValues: [key, accountId, destination],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiIntegrationsPublicTraitsSelectIntegrationDestinationConstMeta =>
+      const TaskConstMeta(
+        debugName: "select_integration_destination",
+        argNames: ["key", "accountId", "destination"],
+      );
+
+  @override
   Future<String> crateApiDataDbSelectOne({required String sql}) {
     return handler.executeNormal(
       NormalTask(
@@ -638,7 +824,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 18,
+            funcId: 22,
             port: port_,
           );
         },
@@ -657,9 +843,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "select_one", argNames: ["sql"]);
 
   @override
-  Future<void> crateApiIntegrationsTraitsSendIntegrationMessage({
+  Future<SentMessage> crateApiIntegrationsPublicTraitsSendIntegrationMessage({
     required String key,
-    required String recipientId,
+    required String accountId,
+    required String destinationId,
     required String message,
   }) {
     return handler.executeNormal(
@@ -667,69 +854,73 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_String(key, serializer);
-          sse_encode_String(recipientId, serializer);
+          sse_encode_String(accountId, serializer);
+          sse_encode_String(destinationId, serializer);
           sse_encode_String(message, serializer);
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 19,
+            funcId: 23,
             port: port_,
           );
         },
         codec: SseCodec(
-          decodeSuccessData: sse_decode_unit,
+          decodeSuccessData: sse_decode_sent_message,
           decodeErrorData: sse_decode_AnyhowException,
         ),
-        constMeta: kCrateApiIntegrationsTraitsSendIntegrationMessageConstMeta,
-        argValues: [key, recipientId, message],
+        constMeta:
+            kCrateApiIntegrationsPublicTraitsSendIntegrationMessageConstMeta,
+        argValues: [key, accountId, destinationId, message],
         apiImpl: this,
       ),
     );
   }
 
   TaskConstMeta
-  get kCrateApiIntegrationsTraitsSendIntegrationMessageConstMeta =>
+  get kCrateApiIntegrationsPublicTraitsSendIntegrationMessageConstMeta =>
       const TaskConstMeta(
         debugName: "send_integration_message",
-        argNames: ["key", "recipientId", "message"],
+        argNames: ["key", "accountId", "destinationId", "message"],
       );
 
   @override
-  Future<IntegrationTestResult>
-  crateApiIntegrationsTraitsTestIntegrationConnection({
+  Future<DestinationTestResult>
+  crateApiIntegrationsPublicTraitsTestIntegrationDestination({
     required String key,
-    required String id,
+    required String accountId,
+    required String destinationId,
   }) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_String(key, serializer);
-          sse_encode_String(id, serializer);
+          sse_encode_String(accountId, serializer);
+          sse_encode_String(destinationId, serializer);
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 20,
+            funcId: 24,
             port: port_,
           );
         },
         codec: SseCodec(
-          decodeSuccessData: sse_decode_integration_test_result,
+          decodeSuccessData: sse_decode_destination_test_result,
           decodeErrorData: sse_decode_AnyhowException,
         ),
         constMeta:
-            kCrateApiIntegrationsTraitsTestIntegrationConnectionConstMeta,
-        argValues: [key, id],
+            kCrateApiIntegrationsPublicTraitsTestIntegrationDestinationConstMeta,
+        argValues: [key, accountId, destinationId],
         apiImpl: this,
       ),
     );
   }
 
   TaskConstMeta
-  get kCrateApiIntegrationsTraitsTestIntegrationConnectionConstMeta =>
+  get kCrateApiIntegrationsPublicTraitsTestIntegrationDestinationConstMeta =>
       const TaskConstMeta(
-        debugName: "test_integration_connection",
-        argNames: ["key", "id"],
+        debugName: "test_integration_destination",
+        argNames: ["key", "accountId", "destinationId"],
       );
 
   @protected
@@ -751,16 +942,45 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  IntegrationChannel dco_decode_integration_channel(dynamic raw) {
+  MessageDestination dco_decode_box_autoadd_message_destination(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_message_destination(raw);
+  }
+
+  @protected
+  DestinationKind dco_decode_destination_kind(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return DestinationKind.values[raw as int];
+  }
+
+  @protected
+  DestinationTestResult dco_decode_destination_test_result(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 4)
-      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
-    return IntegrationChannel(
-      guildId: dco_decode_opt_String(arr[0]),
-      guildName: dco_decode_opt_String(arr[1]),
-      channelId: dco_decode_String(arr[2]),
-      channelName: dco_decode_String(arr[3]),
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return DestinationTestResult(
+      canSend: dco_decode_bool(arr[0]),
+      message: dco_decode_String(arr[1]),
+    );
+  }
+
+  @protected
+  int dco_decode_i_32(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw as int;
+  }
+
+  @protected
+  IntegrationAccount dco_decode_integration_account(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    return IntegrationAccount(
+      id: dco_decode_String(arr[0]),
+      name: dco_decode_String(arr[1]),
+      destinations: dco_decode_list_message_destination(arr[2]),
     );
   }
 
@@ -786,40 +1006,22 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       key: dco_decode_String(arr[0]),
       title: dco_decode_String(arr[1]),
       gradient: dco_decode_integration_gradient(arr[2]),
-      connected: dco_decode_bool(arr[3]),
-      users: dco_decode_list_integration_user(arr[4]),
-      channels: dco_decode_list_integration_channel(arr[5]),
+      provider: dco_decode_integration_provider(arr[3]),
+      connected: dco_decode_bool(arr[4]),
+      accounts: dco_decode_list_integration_account(arr[5]),
     );
   }
 
   @protected
-  IntegrationTestResult dco_decode_integration_test_result(dynamic raw) {
+  IntegrationProvider dco_decode_integration_provider(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 2)
-      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
-    return IntegrationTestResult(
-      connected: dco_decode_bool(arr[0]),
-      message: dco_decode_String(arr[1]),
-    );
+    return IntegrationProvider.values[raw as int];
   }
 
   @protected
-  IntegrationUser dco_decode_integration_user(dynamic raw) {
+  List<IntegrationAccount> dco_decode_list_integration_account(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 2)
-      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
-    return IntegrationUser(
-      id: dco_decode_String(arr[0]),
-      username: dco_decode_String(arr[1]),
-    );
-  }
-
-  @protected
-  List<IntegrationChannel> dco_decode_list_integration_channel(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return (raw as List<dynamic>).map(dco_decode_integration_channel).toList();
+    return (raw as List<dynamic>).map(dco_decode_integration_account).toList();
   }
 
   @protected
@@ -829,9 +1031,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  List<IntegrationUser> dco_decode_list_integration_user(dynamic raw) {
+  List<MessageDestination> dco_decode_list_message_destination(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
-    return (raw as List<dynamic>).map(dco_decode_integration_user).toList();
+    return (raw as List<dynamic>).map(dco_decode_message_destination).toList();
   }
 
   @protected
@@ -841,9 +1043,37 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  MessageDestination dco_decode_message_destination(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 5)
+      throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
+    return MessageDestination(
+      id: dco_decode_String(arr[0]),
+      name: dco_decode_String(arr[1]),
+      kind: dco_decode_destination_kind(arr[2]),
+      parentId: dco_decode_opt_String(arr[3]),
+      parentName: dco_decode_opt_String(arr[4]),
+    );
+  }
+
+  @protected
   String? dco_decode_opt_String(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw == null ? null : dco_decode_String(raw);
+  }
+
+  @protected
+  SentMessage dco_decode_sent_message(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    return SentMessage(
+      provider: dco_decode_integration_provider(arr[0]),
+      destinationId: dco_decode_String(arr[1]),
+      messageId: dco_decode_opt_String(arr[2]),
+    );
   }
 
   @protected
@@ -891,19 +1121,48 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  IntegrationChannel sse_decode_integration_channel(
+  MessageDestination sse_decode_box_autoadd_message_destination(
     SseDeserializer deserializer,
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_guildId = sse_decode_opt_String(deserializer);
-    var var_guildName = sse_decode_opt_String(deserializer);
-    var var_channelId = sse_decode_String(deserializer);
-    var var_channelName = sse_decode_String(deserializer);
-    return IntegrationChannel(
-      guildId: var_guildId,
-      guildName: var_guildName,
-      channelId: var_channelId,
-      channelName: var_channelName,
+    return (sse_decode_message_destination(deserializer));
+  }
+
+  @protected
+  DestinationKind sse_decode_destination_kind(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_i_32(deserializer);
+    return DestinationKind.values[inner];
+  }
+
+  @protected
+  DestinationTestResult sse_decode_destination_test_result(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_canSend = sse_decode_bool(deserializer);
+    var var_message = sse_decode_String(deserializer);
+    return DestinationTestResult(canSend: var_canSend, message: var_message);
+  }
+
+  @protected
+  int sse_decode_i_32(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return deserializer.buffer.getInt32();
+  }
+
+  @protected
+  IntegrationAccount sse_decode_integration_account(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_id = sse_decode_String(deserializer);
+    var var_name = sse_decode_String(deserializer);
+    var var_destinations = sse_decode_list_message_destination(deserializer);
+    return IntegrationAccount(
+      id: var_id,
+      name: var_name,
+      destinations: var_destinations,
     );
   }
 
@@ -923,50 +1182,38 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_key = sse_decode_String(deserializer);
     var var_title = sse_decode_String(deserializer);
     var var_gradient = sse_decode_integration_gradient(deserializer);
+    var var_provider = sse_decode_integration_provider(deserializer);
     var var_connected = sse_decode_bool(deserializer);
-    var var_users = sse_decode_list_integration_user(deserializer);
-    var var_channels = sse_decode_list_integration_channel(deserializer);
+    var var_accounts = sse_decode_list_integration_account(deserializer);
     return IntegrationInfo(
       key: var_key,
       title: var_title,
       gradient: var_gradient,
+      provider: var_provider,
       connected: var_connected,
-      users: var_users,
-      channels: var_channels,
+      accounts: var_accounts,
     );
   }
 
   @protected
-  IntegrationTestResult sse_decode_integration_test_result(
+  IntegrationProvider sse_decode_integration_provider(
     SseDeserializer deserializer,
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_connected = sse_decode_bool(deserializer);
-    var var_message = sse_decode_String(deserializer);
-    return IntegrationTestResult(
-      connected: var_connected,
-      message: var_message,
-    );
+    var inner = sse_decode_i_32(deserializer);
+    return IntegrationProvider.values[inner];
   }
 
   @protected
-  IntegrationUser sse_decode_integration_user(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_id = sse_decode_String(deserializer);
-    var var_username = sse_decode_String(deserializer);
-    return IntegrationUser(id: var_id, username: var_username);
-  }
-
-  @protected
-  List<IntegrationChannel> sse_decode_list_integration_channel(
+  List<IntegrationAccount> sse_decode_list_integration_account(
     SseDeserializer deserializer,
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
     var len_ = sse_decode_i_32(deserializer);
-    var ans_ = <IntegrationChannel>[];
+    var ans_ = <IntegrationAccount>[];
     for (var idx_ = 0; idx_ < len_; ++idx_) {
-      ans_.add(sse_decode_integration_channel(deserializer));
+      ans_.add(sse_decode_integration_account(deserializer));
     }
     return ans_;
   }
@@ -986,15 +1233,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  List<IntegrationUser> sse_decode_list_integration_user(
+  List<MessageDestination> sse_decode_list_message_destination(
     SseDeserializer deserializer,
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
     var len_ = sse_decode_i_32(deserializer);
-    var ans_ = <IntegrationUser>[];
+    var ans_ = <MessageDestination>[];
     for (var idx_ = 0; idx_ < len_; ++idx_) {
-      ans_.add(sse_decode_integration_user(deserializer));
+      ans_.add(sse_decode_message_destination(deserializer));
     }
     return ans_;
   }
@@ -1007,6 +1254,25 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  MessageDestination sse_decode_message_destination(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_id = sse_decode_String(deserializer);
+    var var_name = sse_decode_String(deserializer);
+    var var_kind = sse_decode_destination_kind(deserializer);
+    var var_parentId = sse_decode_opt_String(deserializer);
+    var var_parentName = sse_decode_opt_String(deserializer);
+    return MessageDestination(
+      id: var_id,
+      name: var_name,
+      kind: var_kind,
+      parentId: var_parentId,
+      parentName: var_parentName,
+    );
+  }
+
+  @protected
   String? sse_decode_opt_String(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
@@ -1015,6 +1281,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     } else {
       return null;
     }
+  }
+
+  @protected
+  SentMessage sse_decode_sent_message(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_provider = sse_decode_integration_provider(deserializer);
+    var var_destinationId = sse_decode_String(deserializer);
+    var var_messageId = sse_decode_opt_String(deserializer);
+    return SentMessage(
+      provider: var_provider,
+      destinationId: var_destinationId,
+      messageId: var_messageId,
+    );
   }
 
   @protected
@@ -1041,12 +1320,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  int sse_decode_i_32(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getInt32();
-  }
-
-  @protected
   void sse_encode_AnyhowException(
     AnyhowException self,
     SseSerializer serializer,
@@ -1068,15 +1341,48 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_integration_channel(
-    IntegrationChannel self,
+  void sse_encode_box_autoadd_message_destination(
+    MessageDestination self,
     SseSerializer serializer,
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_opt_String(self.guildId, serializer);
-    sse_encode_opt_String(self.guildName, serializer);
-    sse_encode_String(self.channelId, serializer);
-    sse_encode_String(self.channelName, serializer);
+    sse_encode_message_destination(self, serializer);
+  }
+
+  @protected
+  void sse_encode_destination_kind(
+    DestinationKind self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.index, serializer);
+  }
+
+  @protected
+  void sse_encode_destination_test_result(
+    DestinationTestResult self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_bool(self.canSend, serializer);
+    sse_encode_String(self.message, serializer);
+  }
+
+  @protected
+  void sse_encode_i_32(int self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    serializer.buffer.putInt32(self);
+  }
+
+  @protected
+  void sse_encode_integration_account(
+    IntegrationAccount self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.id, serializer);
+    sse_encode_String(self.name, serializer);
+    sse_encode_list_message_destination(self.destinations, serializer);
   }
 
   @protected
@@ -1098,40 +1404,29 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_String(self.key, serializer);
     sse_encode_String(self.title, serializer);
     sse_encode_integration_gradient(self.gradient, serializer);
+    sse_encode_integration_provider(self.provider, serializer);
     sse_encode_bool(self.connected, serializer);
-    sse_encode_list_integration_user(self.users, serializer);
-    sse_encode_list_integration_channel(self.channels, serializer);
+    sse_encode_list_integration_account(self.accounts, serializer);
   }
 
   @protected
-  void sse_encode_integration_test_result(
-    IntegrationTestResult self,
+  void sse_encode_integration_provider(
+    IntegrationProvider self,
     SseSerializer serializer,
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_bool(self.connected, serializer);
-    sse_encode_String(self.message, serializer);
+    sse_encode_i_32(self.index, serializer);
   }
 
   @protected
-  void sse_encode_integration_user(
-    IntegrationUser self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_String(self.id, serializer);
-    sse_encode_String(self.username, serializer);
-  }
-
-  @protected
-  void sse_encode_list_integration_channel(
-    List<IntegrationChannel> self,
+  void sse_encode_list_integration_account(
+    List<IntegrationAccount> self,
     SseSerializer serializer,
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.length, serializer);
     for (final item in self) {
-      sse_encode_integration_channel(item, serializer);
+      sse_encode_integration_account(item, serializer);
     }
   }
 
@@ -1148,14 +1443,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_list_integration_user(
-    List<IntegrationUser> self,
+  void sse_encode_list_message_destination(
+    List<MessageDestination> self,
     SseSerializer serializer,
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.length, serializer);
     for (final item in self) {
-      sse_encode_integration_user(item, serializer);
+      sse_encode_message_destination(item, serializer);
     }
   }
 
@@ -1170,6 +1465,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_message_destination(
+    MessageDestination self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.id, serializer);
+    sse_encode_String(self.name, serializer);
+    sse_encode_destination_kind(self.kind, serializer);
+    sse_encode_opt_String(self.parentId, serializer);
+    sse_encode_opt_String(self.parentName, serializer);
+  }
+
+  @protected
   void sse_encode_opt_String(String? self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
@@ -1177,6 +1485,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     if (self != null) {
       sse_encode_String(self, serializer);
     }
+  }
+
+  @protected
+  void sse_encode_sent_message(SentMessage self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_integration_provider(self.provider, serializer);
+    sse_encode_String(self.destinationId, serializer);
+    sse_encode_opt_String(self.messageId, serializer);
   }
 
   @protected
@@ -1200,11 +1516,5 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   void sse_encode_usize(BigInt self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putBigUint64(self);
-  }
-
-  @protected
-  void sse_encode_i_32(int self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putInt32(self);
   }
 }

@@ -1,39 +1,27 @@
 use crate::api::integrations::traits::*;
 use flutter_rust_bridge::frb;
 
-use anyhow::Result;
+use anyhow::{anyhow, Ok, Result};
 use serde::{Deserialize, Serialize};
 
+/// Persisted Discord integration configuration.
+///
+/// Only connected accounts and explicitly selected destinations are stored.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[frb(ignore)]
 pub struct DiscordConfig {
-    pub users: Vec<DiscordUser>,
-    pub guilds: Vec<DiscordGuild>,
+    pub accounts: Vec<DiscordAccount>,
 }
 
-/// Connected Discord account.
+/// A connected Discord account and its selected message destinations.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[frb(ignore)]
-pub struct DiscordUser {
-    pub id: String,
-    pub username: String,
-}
-
-/// Discord server containing one or more configured channels.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[frb(ignore)]
-pub struct DiscordGuild {
+pub struct DiscordAccount {
     pub id: String,
     pub name: String,
-    pub channels: Vec<DiscordTextChannel>,
-}
 
-/// Discord text channel configured as a message destination.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[frb(ignore)]
-pub struct DiscordTextChannel {
-    pub id: String,
-    pub name: String,
+    /// Destinations explicitly selected by the user.
+    pub destinations: Vec<MessageDestination>,
 }
 
 /// Discord implementation of the [`Integration`] trait.
@@ -53,6 +41,10 @@ impl Integration for DiscordIntegration {
         "Discord"
     }
 
+    fn provider(&self) -> IntegrationProvider {
+        IntegrationProvider::Discord
+    }
+
     fn from_config(config: DiscordConfig) -> Self {
         Self { config }
     }
@@ -64,74 +56,242 @@ impl Integration for DiscordIntegration {
         }
     }
 
-    fn users(&self) -> Vec<IntegrationUser> {
+    fn accounts(&self) -> Vec<IntegrationAccount> {
         self.config
-            .users
+            .accounts
             .iter()
-            .map(|u| IntegrationUser {
-                id: u.id.clone(),
-                username: u.username.clone(),
+            .map(|account| {
+                let mut destinations = account.destinations.clone();
+
+                destinations.sort_by(|a, b| {
+                    a.parent_name
+                        .cmp(&b.parent_name)
+                        .then_with(|| a.name.cmp(&b.name))
+                });
+
+                IntegrationAccount {
+                    id: account.id.clone(),
+                    name: account.name.clone(),
+                    destinations,
+                }
             })
             .collect()
     }
 
-    fn channels(&self) -> Vec<IntegrationChannel> {
-        let mut guilds: Vec<_> = self.config.guilds.iter().collect();
-        guilds.sort_by(|a, b| a.name.cmp(&b.name));
+    fn authenticate_account(&self) -> Result<IntegrationAccount> {
+        // Authenticate the Discord integration here.
+        //
+        // Example:
+        //
+        // GET /users/@me
+        //
+        // Return the authenticated Discord identity.
+        todo!("Discord: authenticate account")
+    }
 
-        guilds
+    fn discover_destinations(&self, account_id: &str) -> Result<Vec<MessageDestination>> {
+        let account = self
+            .config
+            .accounts
+            .iter()
+            .find(|account| account.id == account_id)
+            .ok_or_else(|| anyhow!("Discord account not found: {}", account_id))?;
+
+        let _ = account;
+
+        // This is deliberately NOT persisted.
+        //
+        // Depending on your Discord architecture this should discover:
+        //
+        //   * server text channels the bot/user can send to
+        //   * DM destinations that are actually valid
+        //
+        // Return MessageDestination values.
+        //
+        // Discord's APIs distinguish guild channels from DMs, so normalize
+        // both into the application's destination model here.
+        todo!("Discord: discover available message destinations")
+    }
+
+    fn add_destination(
+        &mut self,
+        account_id: &str,
+        destination: MessageDestination,
+    ) -> Result<IntegrationAccount> {
+        let account = self
+            .config
+            .accounts
+            .iter_mut()
+            .find(|account| account.id == account_id)
+            .ok_or_else(|| anyhow!("Discord account not found: {}", account_id))?;
+
+        if account
+            .destinations
+            .iter()
+            .any(|existing| existing.id == destination.id)
+        {
+            return Err(anyhow!(
+                "Discord destination already selected: {}",
+                destination.id
+            ));
+        }
+
+        account.destinations.push(destination);
+
+        save_config(Self::KEY, &self.config)?;
+
+        self.accounts()
             .into_iter()
-            .flat_map(|guild| {
-                let mut channels: Vec<_> = guild.channels.iter().collect();
-                channels.sort_by(|a, b| a.name.cmp(&b.name));
-
-                channels.into_iter().map(move |channel| IntegrationChannel {
-                    guild_id: Some(guild.id.clone()),
-                    guild_name: Some(guild.name.clone()),
-                    channel_id: channel.id.clone(),
-                    channel_name: channel.name.clone(),
-                })
-            })
-            .collect()
+            .find(|account| account.id == account_id)
+            .ok_or_else(|| anyhow!("Discord account disappeared"))
     }
 
-    fn delete(&mut self, id: &str) -> Result<()> {
-        self.config.users.retain(|u| u.id != id);
+    fn remove_destination(
+        &mut self,
+        account_id: &str,
+        destination_id: &str,
+    ) -> Result<IntegrationAccount> {
+        let account = self
+            .config
+            .accounts
+            .iter_mut()
+            .find(|account| account.id == account_id)
+            .ok_or_else(|| anyhow!("Discord account not found: {}", account_id))?;
 
-        self.config.guilds.retain_mut(|guild| {
-            guild.channels.retain(|channel| channel.id != id);
-            !guild.channels.is_empty()
-        });
+        let original_len = account.destinations.len();
+
+        account
+            .destinations
+            .retain(|destination| destination.id != destination_id);
+
+        if account.destinations.len() == original_len {
+            return Err(anyhow!(
+                "Discord destination not selected: {}",
+                destination_id
+            ));
+        }
+
+        save_config(Self::KEY, &self.config)?;
+
+        self.accounts()
+            .into_iter()
+            .find(|account| account.id == account_id)
+            .ok_or_else(|| anyhow!("Discord account disappeared"))
+    }
+
+    fn add_account(&mut self, account: IntegrationAccount) -> Result<IntegrationAccount> {
+        if self
+            .config
+            .accounts
+            .iter()
+            .any(|existing| existing.id == account.id)
+        {
+            return Err(anyhow!("Discord account already connected: {}", account.id));
+        }
+
+        let account = DiscordAccount {
+            id: account.id,
+            name: account.name,
+            destinations: account.destinations,
+        };
+
+        self.config.accounts.push(account.clone());
+
+        save_config(Self::KEY, &self.config)?;
+
+        Ok(IntegrationAccount {
+            id: account.id,
+            name: account.name,
+            destinations: account.destinations,
+        })
+    }
+
+    fn remove_account(&mut self, account_id: &str) -> Result<()> {
+        let original_len = self.config.accounts.len();
+
+        self.config
+            .accounts
+            .retain(|account| account.id != account_id);
+
+        if self.config.accounts.len() == original_len {
+            return Err(anyhow!("Discord account not found: {}", account_id));
+        }
 
         save_config(Self::KEY, &self.config)?;
 
         Ok(())
     }
 
-    fn test(&self, id: &str) -> Result<IntegrationTestResult> {
-        // Example:
-        // Call Discord API using stored token/session.
+    fn send_message(
+        &self,
+        account_id: &str,
+        destination_id: &str,
+        message: &str,
+    ) -> Result<SentMessage> {
+        let account = self
+            .config
+            .accounts
+            .iter()
+            .find(|account| account.id == account_id)
+            .ok_or_else(|| anyhow!("Discord account not found: {}", account_id))?;
 
-        let exists = self.config.users.iter().any(|u| u.id == id)
-            || self
-                .config
-                .guilds
-                .iter()
-                .any(|g| g.channels.iter().any(|c| c.id == id));
+        let destination = account
+            .destinations
+            .iter()
+            .find(|destination| destination.id == destination_id)
+            .ok_or_else(|| anyhow!("Discord destination is not selected: {}", destination_id))?;
 
-        Ok(IntegrationTestResult {
-            connected: exists,
-            message: if exists {
-                "Discord connection exists".to_owned()
-            } else {
-                "Discord connection not found".to_owned()
-            },
-        })
+        if message.trim().is_empty() {
+            return Err(anyhow!("message cannot be empty"));
+        }
+
+        // IMPORTANT:
+        // The API call belongs here.
+        //
+        // For a server channel:
+        //   POST /channels/{channel.id}/messages
+        //
+        // For a DM:
+        //   resolve/open the DM channel first, then send to that channel.
+        //
+        // Do not accept an arbitrary destination_id from Flutter and blindly
+        // send to it. The persisted selection check above is part of the
+        // authorization boundary.
+
+        let _ = destination;
+
+        todo!("Discord: send message")
     }
 
-    fn send(&self, recipient_id: &str, message: &str) -> Result<()> {
-        // call Discord API here
+    fn test_destination(
+        &self,
+        account_id: &str,
+        destination_id: &str,
+    ) -> Result<DestinationTestResult> {
+        let account = self
+            .config
+            .accounts
+            .iter()
+            .find(|account| account.id == account_id)
+            .ok_or_else(|| anyhow!("Discord account not found: {}", account_id))?;
 
-        Ok(())
+        let destination = account
+            .destinations
+            .iter()
+            .find(|destination| destination.id == destination_id)
+            .ok_or_else(|| anyhow!("Discord destination is not selected: {}", destination_id))?;
+
+        // Provider-specific check goes here.
+        //
+        // For a guild channel, verify that the connected Discord identity/bot
+        // can send messages to the channel.
+        //
+        // For a DM, verify that the DM channel can be resolved/used.
+        //
+        // Do not send an actual message merely to test this.
+
+        let _ = destination;
+
+        todo!("Discord: test whether destination can receive messages")
     }
 }

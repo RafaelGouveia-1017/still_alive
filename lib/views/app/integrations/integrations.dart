@@ -1,73 +1,27 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:still_alive/src/rust/api/data/db.dart';
 import 'package:still_alive/src/rust/api/integrations/traits.dart';
+import 'package:still_alive/src/rust/api/integrations/public_traits.dart';
+import 'package:still_alive/services/integration_service.dart';
 
 import 'integration_row.dart';
+import 'integration_destinations.dart';
 import 'qr_scanner.dart';
 import '../../../data/all.dart';
 import '../../widgets/primitives.dart';
 
-/// Provides presentation and grouping helpers for [IntegrationInfo].
-///
-/// This extension exposes derived values used by the integrations UI,
-/// including the integration's display colors, platform icon, and channels
-/// grouped by guild.
-extension IntegrationInfoExtension on IntegrationInfo {
-  /// Returns the two colors used to visually represent the integration.
-  ///
-  /// The colors are created from the ARGB values stored in
-  /// [IntegrationInfo.gradient].
-  List<Color> get colors {
-    return [Color(gradient.start), Color(gradient.end)];
-  }
-
-  /// Returns the icon associated with the integration platform.
-  ///
-  /// Recognized integrations use their corresponding platform icons.
-  /// Integrations with an unrecognized key use a generic webhook icon.
-  IconData get iconData {
-    switch (key) {
-      case 'discord':
-        return Icons.discord;
-      case 'telegram':
-        return Icons.telegram;
-      default:
-        return LucideIcons.webhook;
-    }
-  }
-
-  /// Groups the integration's channels by guild name.
-  ///
-  /// Channels without a guild name are grouped under an empty string.
-  ///
-  /// The returned map uses the guild name as its key and contains all
-  /// channels belonging to that guild as its value.
-  Map<String, List<IntegrationChannel>> get groupChannels {
-    final result = <String, List<IntegrationChannel>>{};
-
-    for (final channel in channels) {
-      final guild = channel.guildName ?? '';
-
-      result.putIfAbsent(guild, () => []);
-      result[guild]!.add(channel);
-    }
-
-    return result;
-  }
-}
-
 /// Displays the integrations management screen.
 ///
 /// This screen loads the available integrations and presents their connected
-/// users and message channels. Each integration is displayed as an expandable
-/// group, with individual users and channels represented by [IntegrationRow].
+/// destinations. Each integration is displayed as an expandable
+/// group, with individual destinations represented by [IntegrationRow].
 ///
 /// The screen is also responsible for:
 /// - Loading integration data.
-/// - Testing individual integration connections.
-/// - Deleting individual users or channels.
+/// - Testing individual integration destinations.
+/// - Deleting individual destinations.
 /// - Updating the local integration state after a deletion.
 /// - Providing navigation and UI actions for adding integrations.
 class IntegrationsScreen extends StatefulWidget {
@@ -101,124 +55,23 @@ class _IntegrationsScreenState extends State<IntegrationsScreen> {
       _isLoading = true;
     });
 
-    List<IntegrationInfo> items = await loadAllIntegrations();
-
-    if (!mounted) return;
-    setState(() {
-      _integrationItems = items;
-      _isLoading = false;
-    });
-  }
-
-  /// Builds the subtitle displayed for an integration.
-  ///
-  /// The subtitle describes the number of connected users and channels,
-  /// automatically selecting singular or plural localization keys based on
-  /// their respective counts.
-  ///
-  /// If only users or only channels are present, only that count is displayed.
-  /// When both are present, the two counts are separated by a bullet.
-  String _subtitle(IntegrationInfo it, BuildContext context) {
-    AppLocalizations local = AppLocalizations.of(context)!;
-
-    final users = it.users.length;
-    final channels = it.channels.length;
-
-    String countLabel(int count, String singularKey, String pluralKey) {
-      return '$count ${local.translate(count == 1 ? singularKey : pluralKey)}';
-    }
-
-    if (users == 0) {
-      return countLabel(
-        channels,
-        "integrations.channel",
-        "integrations.channels",
-      );
-    }
-
-    if (channels == 0) {
-      return countLabel(users, "integrations.user", "integrations.users");
-    }
-
-    return '${countLabel(users, "integrations.user", "integrations.users")} • '
-        '${countLabel(channels, "integrations.channel", "integrations.channels")}';
-  }
-
-  /// Tests the connection for an individual integration record.
-  ///
-  /// Calls [testIntegrationConnection] using the provided integration key
-  /// and record ID. When the connection test fails, the returned message is
-  /// displayed to the user as a toast notification.
-  ///
-  /// Returns a record containing the connection status and the message
-  /// returned by the integration test.
-  Future<({bool connected, String message})> _testIntegrationChannel({
-    required String integrationKey,
-    required String channelId,
-    required ColorScheme scheme,
-  }) async {
-    final result = await testIntegrationConnection(
-      key: integrationKey,
-      id: channelId,
-    );
-    if (!result.connected) {
-      showToast(
-        scheme: scheme,
-        toast: Text(
-          result.message,
-          style: AppText.bodySm(scheme),
-          textAlign: TextAlign.center,
-        ),
-      );
-    }
-    return (connected: result.connected, message: result.message);
-  }
-
-  /// Deletes an individual integration user or channel.
-  ///
-  /// The corresponding record is first removed through
-  /// [deleteIntegrationRecord]. After the operation succeeds, the local
-  /// [_integrationItems] state is updated to remove the matching user and
-  /// channel from the integration.
-  ///
-  /// If the deletion fails, the error is logged and a generic error message
-  /// is displayed to the user.
-  Future<void> _deleteIntegrationChannel({
-    required String integrationKey,
-    required String channelId,
-  }) async {
     try {
-      await deleteIntegrationRecord(key: integrationKey, id: channelId);
+      List<IntegrationInfo> items = await loadAllIntegrations();
+
       if (!mounted) return;
       setState(() {
-        _integrationItems = _integrationItems.map((integration) {
-          if (integration.key != integrationKey) {
-            return integration;
-          }
-
-          final updatedUsers = integration.users
-              .where((user) => user.id != channelId)
-              .toList();
-
-          final updatedChannels = integration.channels
-              .where((channel) => channel.channelId != channelId)
-              .toList();
-
-          return IntegrationInfo(
-            key: integration.key,
-            title: integration.title,
-            gradient: integration.gradient,
-            connected: integration.connected,
-            users: updatedUsers,
-            channels: updatedChannels,
-          );
-        }).toList();
+        _integrationItems = items;
+        _isLoading = false;
       });
     } catch (e, st) {
-      AppLogger.log.severe('SQL failed', e, st);
-      if (context.mounted) {
-        showGenericErrorMessage(context, null);
-      }
+      AppLogger.log.severe('Failed to load integrations.', e, st);
+
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+      });
+
+      showGenericErrorMessage(context, null);
     }
   }
 
@@ -227,7 +80,12 @@ class _IntegrationsScreenState extends State<IntegrationsScreen> {
     ColorScheme scheme = Theme.of(context).colorScheme;
     AppLocalizations local = AppLocalizations.of(context)!;
 
-    if (!_isLoading) {}
+    List<IntegrationInfo> connectedIntegrations = [];
+    if (!_isLoading) {
+      connectedIntegrations = _integrationItems
+          .where((integration) => integration.accounts.isNotEmpty)
+          .toList();
+    }
 
     return ScreenBase(
       bottomNavDestination: 'integrations',
@@ -259,9 +117,42 @@ class _IntegrationsScreenState extends State<IntegrationsScreen> {
                               height: 85,
                               child: Pressable(
                                 factory: InkSparkle.splashFactory,
-                                onTap: () {
-                                  Navigator.pop(context);
-                                  //TODO create integrations
+                                onTap: () async {
+                                  setState(() => _isLoading = true);
+                                  Navigator.of(context).pop();
+
+                                  try {
+                                    final items =
+                                        await IntegrationService.connectAccount(
+                                          context: context,
+                                          integrationItems: _integrationItems,
+                                          integrationKey: item.key,
+                                        );
+
+                                    if (items == null) return;
+                                    setState(() => _integrationItems = items);
+
+                                    showToast(
+                                      scheme: scheme,
+                                      toast: Text(
+                                        local.translate(
+                                          "integrations.account_added",
+                                        ),
+                                        style: AppText.bodySm(scheme),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      gravity: ToastGravity.BOTTOM,
+                                      position: (context, child, gravity) =>
+                                          Positioned(
+                                            bottom: 170,
+                                            left: 50,
+                                            right: 50,
+                                            child: child,
+                                          ),
+                                    );
+                                  } finally {
+                                    setState(() => _isLoading = false);
+                                  }
                                 },
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
@@ -318,16 +209,73 @@ class _IntegrationsScreenState extends State<IntegrationsScreen> {
               children: [
                 Pressable(
                   onTap: () async {
-                    final result = await Navigator.of(context)
-                        .push<Map<String, dynamic>>(
-                          AppRoute(
-                            page: QRScannerScreen(),
-                            transition: AppRouteTransitionType.slideRight,
-                          ),
-                        );
-                    if (result == null) return;
+                    final result = await Navigator.of(context).push<String>(
+                      AppRoute(
+                        page: QRScannerScreen(),
+                        transition: AppRouteTransitionType.slideRight,
+                      ),
+                    );
+                    if (result == null || !context.mounted) return;
 
-                    //TODO add to database new channel (must filter by brand, account & server)
+                    setState(() => _isLoading = true);
+                    try {
+                      Map<String, dynamic> json = jsonDecode(result);
+
+                      //TODO make sure QR code works
+                      /*
+                        Expected JSON in QR Code:
+                        {
+                          "integrationKey": "discord",
+                          "accountId": "DVSLk8utVw",
+                          "destination": {
+                            "id": "",
+                            "name": "",
+                            "kind": "direct_message",
+                            "parentId": null,
+                            "parentName": null
+                          }
+                        }
+                      */
+                      final items = await IntegrationService.selectDestination(
+                        context: context,
+                        integrationItems: _integrationItems,
+                        integrationKey: json["integrationKey"],
+                        accountId: json["accountId"],
+                        destination: MessageDestination(
+                          id: json["destination"]["id"],
+                          name: json["destination"]["name"],
+                          kind: switch (json["destination"]["kind"]) {
+                            "direct_message" => DestinationKind.directMessage,
+                            "group" => DestinationKind.group,
+                            "server_channel" => DestinationKind.serverChannel,
+                            _ => DestinationKind.channel,
+                          },
+                          parentId: json["destination"]["parentId"],
+                          parentName: json["destination"]["parentName"],
+                        ),
+                      );
+
+                      if (items == null) return;
+                      setState(() => _integrationItems = items);
+
+                      showToast(
+                        scheme: scheme,
+                        toast: Text(
+                          local.translate("integrations.destination_added"),
+                          style: AppText.bodySm(scheme),
+                          textAlign: TextAlign.center,
+                        ),
+                        gravity: ToastGravity.BOTTOM,
+                        position: (context, child, gravity) => Positioned(
+                          bottom: 170,
+                          left: 50,
+                          right: 50,
+                          child: child,
+                        ),
+                      );
+                    } finally {
+                      setState(() => _isLoading = false);
+                    }
                   },
                   child: AppCard(
                     gradient: const LinearGradient(
@@ -370,98 +318,228 @@ class _IntegrationsScreenState extends State<IntegrationsScreen> {
                       ),
                     ),
                   ),
+                ] else if (connectedIntegrations.isEmpty) ...[
+                  const SizedBox(height: AppSpacing.xl),
+                  Center(
+                    child: Container(
+                      width: 80,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        color: scheme.surfaceContainer,
+                        borderRadius: BorderRadius.circular(AppRadius.xxl),
+                        border: Border.all(color: scheme.outlineVariant),
+                      ),
+                      child: Icon(
+                        LucideIcons.webhookOff,
+                        size: 36,
+                        color: scheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  Center(
+                    child: Text(
+                      local.translate("integrations.not_found"),
+                      style: AppText.bodySm(
+                        scheme,
+                      ).copyWith(color: scheme.onSurfaceVariant),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
                 ] else ...[
-                  if (_integrationItems.every(
-                    (integration) =>
-                        (integration.groupChannels.isEmpty &&
-                        integration.users.isEmpty),
-                  )) ...[
-                    const SizedBox(height: AppSpacing.xl),
-                    Center(
-                      child: Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          color: scheme.surfaceContainer,
-                          borderRadius: BorderRadius.circular(AppRadius.xxl),
-                          border: Border.all(color: scheme.outlineVariant),
-                        ),
-                        child: Icon(
-                          LucideIcons.webhookOff,
-                          size: 36,
-                          color: scheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    Center(
-                      child: Text(
-                        local.translate("integrations.not_found"),
-                        style: AppText.bodySm(
-                          scheme,
-                        ).copyWith(color: scheme.onSurfaceVariant),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ] else ...[
-                    AppExpandableGroup(
-                      children: [
-                        for (final it in _integrationItems)
-                          if (it.groupChannels.isNotEmpty ||
-                              it.users.isNotEmpty)
-                            AppExpandableCard(
-                              title: it.title,
-                              subtitle: _subtitle(it, context),
-                              icon: it.iconData,
-                              iconGradient: it.colors,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  for (final user in it.users)
+                  AppExpandableGroup(
+                    children: [
+                      for (final it in connectedIntegrations)
+                        for (final entry
+                            in it.groupDestinationsByAccount.entries)
+                          AppExpandableCard(
+                            title: entry.key.name,
+                            subtitle: IntegrationService.subtitle(it, context),
+                            icon: it.iconData,
+                            iconGradient: it.colors,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                if (entry.key.destinations.isNotEmpty) ...[
+                                  for (final dest
+                                      in entry.key.destinations) ...[
                                     IntegrationRow(
-                                      title: user.username,
-                                      subtitle: null,
+                                      title: dest.name,
+                                      subtitle: dest.parentName,
                                       integrationKey: it.key,
-                                      channelId: user.id,
-                                      onTest: () => _testIntegrationChannel(
-                                        integrationKey: it.key,
-                                        channelId: user.id,
-                                        scheme: scheme,
-                                      ),
-                                      onDelete: () => _deleteIntegrationChannel(
-                                        integrationKey: it.key,
-                                        channelId: user.id,
-                                      ),
-                                    ),
-
-                                  for (final entry
-                                      in it.groupChannels.entries) ...[
-                                    for (final channel in entry.value)
-                                      IntegrationRow(
-                                        title: channel.channelName,
-                                        subtitle: entry.key == ''
-                                            ? null
-                                            : entry.key,
-                                        integrationKey: it.key,
-                                        channelId: channel.channelId,
-                                        onTest: () => _testIntegrationChannel(
-                                          integrationKey: it.key,
-                                          channelId: channel.channelId,
-                                          scheme: scheme,
-                                        ),
-                                        onDelete: () =>
-                                            _deleteIntegrationChannel(
+                                      channelId: dest.id,
+                                      onTest: () =>
+                                          IntegrationService.testDestination(
+                                            context: context,
+                                            integrationKey: it.key,
+                                            accountId: entry.key.id,
+                                            destinationId: dest.id,
+                                            scheme: scheme,
+                                          ),
+                                      onDelete: () async {
+                                        final result =
+                                            await IntegrationService.deselectDestination(
+                                              context: context,
+                                              integrationItems:
+                                                  _integrationItems,
                                               integrationKey: it.key,
-                                              channelId: channel.channelId,
+                                              accountId: entry.key.id,
+                                              destinationId: dest.id,
+                                            );
+                                        if (result == null) return;
+                                        setState(
+                                          () => _integrationItems = result,
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ] else ...[
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: AppSpacing.lg,
+                                    ),
+                                    child: Text(
+                                      local.translate(
+                                        "integrations.account_empty",
+                                      ),
+                                      style: AppText.caption(scheme),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ],
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: AppSpacing.md,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      PrimaryButton(
+                                        icon: LucideIcons.plus,
+                                        width: 80,
+                                        onPressed: () =>
+                                            Navigator.of(context).push(
+                                              AppRoute(
+                                                page:
+                                                    IntegrationDestinationsScreen(
+                                                      integration: it,
+                                                      account: entry.key,
+                                                    ),
+                                                transition:
+                                                    AppRouteTransitionType
+                                                        .slideLeft,
+                                              ),
                                             ),
                                       ),
-                                  ],
-                                ],
-                              ),
+                                      PrimaryButton(
+                                        icon: LucideIcons.trash,
+                                        color: ButtonColor.warning,
+                                        width: 80,
+                                        onPressed: () {
+                                          showBlurredBottomSheet(
+                                            context: context,
+                                            scheme: scheme,
+                                            marginHorizontal: 50,
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text(
+                                                  local.translate(
+                                                    "integrations.delete_account.1",
+                                                  ),
+                                                  style: AppText.body(scheme),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                        top: AppSpacing.xl,
+                                                        bottom: AppRadius.lg,
+                                                      ),
+                                                  child: PrimaryButton(
+                                                    label: local.translate(
+                                                      "integrations.delete_account.0",
+                                                    ),
+                                                    color: ButtonColor.warning,
+                                                    onPressed: () async {
+                                                      setState(
+                                                        () => _isLoading = true,
+                                                      );
+                                                      Navigator.of(
+                                                        context,
+                                                      ).pop();
+
+                                                      try {
+                                                        final items =
+                                                            await IntegrationService.deleteAccount(
+                                                              context: context,
+                                                              integrationItems:
+                                                                  _integrationItems,
+                                                              integrationKey:
+                                                                  it.key,
+                                                              accountId:
+                                                                  entry.key.id,
+                                                            );
+
+                                                        if (items == null) {
+                                                          return;
+                                                        }
+                                                        setState(
+                                                          () =>
+                                                              _integrationItems =
+                                                                  items,
+                                                        );
+
+                                                        showToast(
+                                                          scheme: scheme,
+                                                          toast: Text(
+                                                            local.translate(
+                                                              "integrations.account_deleted",
+                                                            ),
+                                                            style:
+                                                                AppText.bodySm(
+                                                                  scheme,
+                                                                ),
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                          ),
+                                                          gravity: ToastGravity
+                                                              .BOTTOM,
+                                                          position:
+                                                              (
+                                                                context,
+                                                                child,
+                                                                gravity,
+                                                              ) => Positioned(
+                                                                bottom: 170,
+                                                                left: 50,
+                                                                right: 50,
+                                                                child: child,
+                                                              ),
+                                                        );
+                                                      } finally {
+                                                        setState(
+                                                          () => _isLoading =
+                                                              false,
+                                                        );
+                                                      }
+                                                    },
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
-                      ],
-                    ),
-                  ],
+                          ),
+                    ],
+                  ),
                 ],
               ],
             ),

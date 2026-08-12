@@ -54,11 +54,11 @@ void main() async {
 
       FlutterError.onError = (FlutterErrorDetails details) {
         AppLogger.log.severe("Flutter Error", details.exception, details.stack);
-        GlobalErrorDialog.show();
+        //GlobalErrorDialog.show();
       };
       PlatformDispatcher.instance.onError = (error, stack) {
         AppLogger.log.severe("Platform Error", error, stack);
-        GlobalErrorDialog.show();
+        //GlobalErrorDialog.show();
         return true;
       };
       AppLogger.log.info("GlobalError setup finish.");
@@ -94,9 +94,11 @@ void main() async {
     },
     (error, stack) {
       AppLogger.log.severe("Zone Error", error, stack);
-      GlobalErrorDialog.show();
+      //GlobalErrorDialog.show();
     },
   );
+
+  //TODO uncomment global error catchers
 }
 
 /// Root widget of the application.

@@ -209,7 +209,20 @@
     "users": "users",
     "channel": "channel",
     "channels": "channels",
-    "not_found": "No connected integrations found."
+    "not_found": "No connected integrations found.",
+    "account_added": "Account sucessfully added!",
+    "account_deleted": "Account sucessfully deleted!",
+    "destination_added": "Recipient sucessfully added!",
+    "account_empty": "This account has no integrations configured yet...",
+    "delete_account": [
+      "Delete Account",
+      "Are you sure? This account and all its integrations will be PERMENANTLY deleted."
+    ]
+  },
+  "integration_destinations": {
+    "title": "Recipients",
+    "search": "Search recipients",
+    "not_found": "No recipients found."
   },
   "qr_pairing": {
     "title": "Pair Integration",

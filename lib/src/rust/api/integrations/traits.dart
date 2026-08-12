@@ -7,140 +7,62 @@ import '../../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 // These functions are ignored because they are not marked as `pub`: `load_config`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `clone`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
-// These functions are ignored (category: IgnoreBecauseExplicitAttribute): `channels`, `connected`, `connected`, `connected`, `delete`, `from_config`, `gradient`, `info`, `info`, `info`, `load`, `load`, `load`, `save_config`, `send`, `test`, `title`, `users`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `assert_fields_are_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
+// These functions are ignored (category: IgnoreBecauseExplicitAttribute): `accounts`, `add_account`, `add_destination`, `authenticate_account`, `connected`, `connected`, `connected`, `discover_destinations`, `from_config`, `gradient`, `info`, `info`, `info`, `load`, `load`, `load`, `provider`, `remove_account`, `remove_destination`, `save_config`, `send_message`, `test_destination`, `title`
 
-/// Returns information about every supported integration.
+/// Kind of resource that can receive a message.
 ///
-/// Integrations that are not configured are still returned with empty
-/// user and channel lists.
-Future<List<IntegrationInfo>> loadAllIntegrations() =>
-    RustLib.instance.api.crateApiIntegrationsTraitsLoadAllIntegrations();
+/// This deliberately describes the application's messaging model rather
+/// than mirroring a provider's API types.
+enum DestinationKind { directMessage, group, channel, serverChannel }
 
-/// Deletes a user or channel record from an integration configuration.
+/// Result of testing a destination.
 ///
-/// The target integration is loaded from the database, the matching record is
-/// removed using the provided identifier, and the updated configuration is
-/// persisted back to the database.
-///
-/// # Arguments
-///
-/// * `key` - The integration identifier (for example, `"discord"` or
-///   `"telegram"`).
-/// * `id` - The user or channel identifier to remove.
-///
-/// # Errors
-///
-/// Returns an error if:
-///
-/// * The integration key is unknown.
-/// * The integration configuration cannot be loaded.
-/// * The updated configuration cannot be saved.
-Future<void> deleteIntegrationRecord({
-  required String key,
-  required String id,
-}) => RustLib.instance.api.crateApiIntegrationsTraitsDeleteIntegrationRecord(
-  key: key,
-  id: id,
-);
+/// Contains whether the connection succeeded and an optional
+/// human-readable message describing the result.
+class DestinationTestResult {
+  final bool canSend;
+  final String message;
 
-/// Tests whether an integration connection is available.
-///
-/// Loads the requested integration and executes its connection test logic.
-/// The returned result contains both the connection status and a descriptive
-/// message explaining the outcome.
-///
-/// # Arguments
-///
-/// * `key` - The integration identifier used to select the platform
-///   (for example, `"discord"` or `"telegram"`).
-/// * `id` - The platform-specific user or channel identifier to test.
-///
-/// # Returns
-///
-/// Returns an [`IntegrationTestResult`] containing:
-///
-/// * Whether the integration is connected.
-/// * A human-readable status message.
-///
-/// # Errors
-///
-/// Returns an error if:
-///
-/// * The integration key is unknown.
-/// * The integration configuration cannot be loaded.
-/// * The integration test fails.
-Future<IntegrationTestResult> testIntegrationConnection({
-  required String key,
-  required String id,
-}) => RustLib.instance.api.crateApiIntegrationsTraitsTestIntegrationConnection(
-  key: key,
-  id: id,
-);
-
-/// Sends a message through an integration to a recipient.
-///
-/// The integration is loaded using the provided key and delegates the send
-/// operation to the platform-specific implementation.
-///
-/// # Arguments
-///
-/// * `key` - The integration identifier used to select the platform.
-/// * `recipient_id` - The platform-specific recipient identifier.
-/// * `message` - The message content to send.
-///
-/// # Errors
-///
-/// Returns an error if:
-///
-/// * The integration key is unknown.
-/// * The integration configuration cannot be loaded.
-/// * Authentication fails.
-/// * The recipient cannot be reached.
-/// * Sending the message fails.
-Future<void> sendIntegrationMessage({
-  required String key,
-  required String recipientId,
-  required String message,
-}) => RustLib.instance.api.crateApiIntegrationsTraitsSendIntegrationMessage(
-  key: key,
-  recipientId: recipientId,
-  message: message,
-);
-
-/// Destination that can receive messages through an integration.
-///
-/// Discord channels belong to a guild, while platforms without
-/// guilds may leave the guild fields empty.
-class IntegrationChannel {
-  final String? guildId;
-  final String? guildName;
-  final String channelId;
-  final String channelName;
-
-  const IntegrationChannel({
-    this.guildId,
-    this.guildName,
-    required this.channelId,
-    required this.channelName,
-  });
+  const DestinationTestResult({required this.canSend, required this.message});
 
   @override
-  int get hashCode =>
-      guildId.hashCode ^
-      guildName.hashCode ^
-      channelId.hashCode ^
-      channelName.hashCode;
+  int get hashCode => canSend.hashCode ^ message.hashCode;
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is IntegrationChannel &&
+      other is DestinationTestResult &&
           runtimeType == other.runtimeType &&
-          guildId == other.guildId &&
-          guildName == other.guildName &&
-          channelId == other.channelId &&
-          channelName == other.channelName;
+          canSend == other.canSend &&
+          message == other.message;
+}
+
+/// A connected account belonging to a messaging provider.
+///
+/// Only destinations explicitly selected by the user are persisted here.
+class IntegrationAccount {
+  final String id;
+  final String name;
+  final List<MessageDestination> destinations;
+
+  const IntegrationAccount({
+    required this.id,
+    required this.name,
+    required this.destinations,
+  });
+
+  @override
+  int get hashCode => id.hashCode ^ name.hashCode ^ destinations.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is IntegrationAccount &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          name == other.name &&
+          destinations == other.destinations;
 }
 
 /// Two-color linear gradient used to visually identify an integration.
@@ -164,25 +86,22 @@ class IntegrationGradient {
           end == other.end;
 }
 
-/// Summary of an integration exposed through Flutter Rust Bridge.
-///
-/// This structure contains metadata together with the connected users
-/// and available message destinations required by the Flutter UI.
+/// Public integration metadata exposed to Flutter.
 class IntegrationInfo {
   final String key;
   final String title;
   final IntegrationGradient gradient;
+  final IntegrationProvider provider;
   final bool connected;
-  final List<IntegrationUser> users;
-  final List<IntegrationChannel> channels;
+  final List<IntegrationAccount> accounts;
 
   const IntegrationInfo({
     required this.key,
     required this.title,
     required this.gradient,
+    required this.provider,
     required this.connected,
-    required this.users,
-    required this.channels,
+    required this.accounts,
   });
 
   @override
@@ -190,9 +109,9 @@ class IntegrationInfo {
       key.hashCode ^
       title.hashCode ^
       gradient.hashCode ^
+      provider.hashCode ^
       connected.hashCode ^
-      users.hashCode ^
-      channels.hashCode;
+      accounts.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -202,51 +121,75 @@ class IntegrationInfo {
           key == other.key &&
           title == other.title &&
           gradient == other.gradient &&
+          provider == other.provider &&
           connected == other.connected &&
-          users == other.users &&
-          channels == other.channels;
+          accounts == other.accounts;
 }
 
-/// Result of testing an integration connection.
+/// Supported messaging providers.
+enum IntegrationProvider { discord, telegram }
+
+/// A message destination discovered from a messaging provider.
 ///
-/// Contains whether the connection succeeded and an optional
-/// human-readable message describing the result.
-class IntegrationTestResult {
-  final bool connected;
-  final String message;
-
-  const IntegrationTestResult({required this.connected, required this.message});
-
-  @override
-  int get hashCode => connected.hashCode ^ message.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is IntegrationTestResult &&
-          runtimeType == other.runtimeType &&
-          connected == other.connected &&
-          message == other.message;
-}
-
-/// User account connected to an integration.
-///
-/// For example, a Discord account or Telegram account authorized
-/// to interact with the application.
-class IntegrationUser {
+/// `parent_id` and `parent_name` are optional metadata. For example, a
+/// Discord server channel has its guild as its parent, while a DM does not.
+class MessageDestination {
   final String id;
-  final String username;
+  final String name;
+  final DestinationKind kind;
+  final String? parentId;
+  final String? parentName;
 
-  const IntegrationUser({required this.id, required this.username});
+  const MessageDestination({
+    required this.id,
+    required this.name,
+    required this.kind,
+    this.parentId,
+    this.parentName,
+  });
 
   @override
-  int get hashCode => id.hashCode ^ username.hashCode;
+  int get hashCode =>
+      id.hashCode ^
+      name.hashCode ^
+      kind.hashCode ^
+      parentId.hashCode ^
+      parentName.hashCode;
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is IntegrationUser &&
+      other is MessageDestination &&
           runtimeType == other.runtimeType &&
           id == other.id &&
-          username == other.username;
+          name == other.name &&
+          kind == other.kind &&
+          parentId == other.parentId &&
+          parentName == other.parentName;
+}
+
+/// A message returned after sending.
+class SentMessage {
+  final IntegrationProvider provider;
+  final String destinationId;
+  final String? messageId;
+
+  const SentMessage({
+    required this.provider,
+    required this.destinationId,
+    this.messageId,
+  });
+
+  @override
+  int get hashCode =>
+      provider.hashCode ^ destinationId.hashCode ^ messageId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SentMessage &&
+          runtimeType == other.runtimeType &&
+          provider == other.provider &&
+          destinationId == other.destinationId &&
+          messageId == other.messageId;
 }

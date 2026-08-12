@@ -176,15 +176,17 @@ enum ButtonColor {
 class PrimaryButton extends StatelessWidget {
   const PrimaryButton({
     super.key,
-    required this.label,
+    this.label,
     this.icon,
     this.color = ButtonColor.primary,
+    this.width = double.infinity,
     this.onPressed,
   });
 
-  final String label;
+  final String? label;
   final IconData? icon;
   final ButtonColor color;
+  final double width;
   final VoidCallback? onPressed;
 
   @override
@@ -223,32 +225,43 @@ class PrimaryButton extends StatelessWidget {
         break;
     }
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onPressed,
+    return DecoratedBox(
+      decoration: BoxDecoration(
         borderRadius: AppRadius.button,
-        child: Ink(
-          decoration: BoxDecoration(
-            color: bg,
-            borderRadius: AppRadius.button,
-            boxShadow: shadow,
-            border: border,
-          ),
-          child: Container(
-            width: double.infinity,
-            padding: AppSpacing.primaryButton,
-            alignment: Alignment.center,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (icon != null) ...[
-                  Icon(icon, size: 18, color: fg),
-                  const SizedBox(width: AppSpacing.sm),
+        boxShadow: shadow,
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: AppRadius.button,
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: AppRadius.button,
+          child: Ink(
+            decoration: BoxDecoration(
+              color: bg,
+              borderRadius: AppRadius.button,
+              border: border,
+            ),
+            child: Container(
+              width: width,
+              padding: AppSpacing.primaryButton,
+              alignment: Alignment.center,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (icon != null) ...[
+                    Icon(icon, size: 18, color: fg),
+                    if (label != null) const SizedBox(width: AppSpacing.sm),
+                  ],
+                  if (label != null)
+                    Text(
+                      label!,
+                      style: AppText.body(scheme).copyWith(color: fg),
+                    ),
                 ],
-                Text(label, style: AppText.body(scheme).copyWith(color: fg)),
-              ],
+              ),
             ),
           ),
         ),
@@ -600,7 +613,7 @@ class AppHeader extends StatelessWidget {
   final Widget? left;
   final Widget? right;
   final AppSearchBar? searchBar;
-  final Widget? filterBar;
+  final AppFilterBar? filterBar;
   final ColorScheme? colorScheme;
   final bool bottomLine;
 
