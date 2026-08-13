@@ -437,6 +437,14 @@ jobs:
 
       # ======================================================
       # Upload to Google Play
+      #
+      # Optional Google Play tracks: (--track <track>)
+      # | Track      | Use             |
+      # | ---------- | --------------- |
+      # | internal   | fast testing    |
+      # | alpha      | limited testers |
+      # | beta       | wider testing   |
+      # | production | public release  |
       # ======================================================
       - name: Upload to Play Store
         env:

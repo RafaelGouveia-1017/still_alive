@@ -137,7 +137,7 @@ VALUES
                             "kind": "server_channel",
                             "parent_id": "rnvqTfEQKs",
                             "parent_name": "Monstercat"
-                        },
+                        }
                     ]
                 }
             ]

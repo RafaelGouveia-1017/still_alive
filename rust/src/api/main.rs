@@ -1,9 +1,10 @@
+use crate::api::data::logging::init_rust_logging;
 use flutter_rust_bridge::frb;
 
+/// `#[frb(init)]` causes this to run as part of `RustLib.init()`.
 #[frb(init)]
 pub fn init_app() {
-    // Default utilities - feel free to customize
-    flutter_rust_bridge::setup_default_user_utils();
+    init_rust_logging();
 }
 
 pub fn greet(name: String) -> String {

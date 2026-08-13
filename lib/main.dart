@@ -42,8 +42,13 @@ void main() async {
       FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
       await AppLogger.init();
+      AppLogger.log.info("AppLogger loaded.");
+
       await RustLib.init();
-      AppLogger.log.info("AppLogger & RustLib loaded.");
+      AppLogger.log.info("RustLib loaded.");
+
+      AppLogger.connectRustLogging();
+      AppLogger.log.info("Connected Rust logger to AppLogger.");
 
       SystemChrome.setEnabledSystemUIMode(.immersive);
       await SystemChrome.setPreferredOrientations([

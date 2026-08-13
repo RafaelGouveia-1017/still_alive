@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:still_alive/src/rust/api/data/logging.dart';
 
 /// Provides centralized application logging.
 ///
@@ -25,6 +27,7 @@ class AppLogger {
   static final Logger log = Logger('StillAlive');
 
   static late File _logFile;
+  static IOSink? _logSink;
 
   /// Initializes the logging system.
   ///
@@ -46,6 +49,9 @@ class AppLogger {
 
     await _logFile.create();
 
+    // Keeps one persistent writer instead of opening the file for every log.
+    _logSink = _logFile.openWrite(mode: FileMode.append);
+
     Logger.root.level = Level.ALL;
 
     Logger.root.onRecord.listen((record) {
@@ -62,9 +68,10 @@ class AppLogger {
         message.write('\n${record.stackTrace}');
       }
 
-      debugPrint(message.toString());
-
-      _logFile.writeAsString('$message\n\n', mode: FileMode.append);
+      final formattedMessage = message.toString();
+      debugPrint(formattedMessage);
+      _logSink?.writeln(formattedMessage);
+      _logSink?.writeln();
     });
   }
 
@@ -75,11 +82,95 @@ class AppLogger {
   static File getLogFile() => _logFile;
 
   /// Save log file in custom location.
-  static Future<String?> saveLogFile() async => await FilePicker.saveFile(
-    dialogTitle: "Save log file",
-    fileName: 'StillAlive_Log_${DateTime.now().toIso8601String()}.log',
-    type: FileType.custom,
-    allowedExtensions: ['log'],
-    bytes: await getLogFile().readAsBytes(),
-  );
+  static Future<String?> saveLogFile() async {
+    // Make sure everything currently buffered by the IOSink is on disk.
+    await _logSink?.flush();
+
+    return await FilePicker.saveFile(
+      dialogTitle: "Save log file",
+      fileName: 'StillAlive_Log_${DateTime.now().toIso8601String()}.log',
+      type: FileType.custom,
+      allowedExtensions: ['log'],
+      bytes: await getLogFile().readAsBytes(),
+    );
+  }
+
+  /// Closes the log file writer.
+  ///
+  /// Call this when the application's logging lifecycle is ending.
+  static Future<void> dispose() async {
+    await _rustLogSubscription?.cancel();
+    _rustLogSubscription = null;
+
+    await _logSink?.flush();
+    await _logSink?.close();
+    _logSink = null;
+  }
+
+  /// Subscription used to receive log records emitted by Rust.
+  ///
+  /// The subscription is kept so that an existing Rust logging connection can
+  /// be cancelled before establishing a new one.
+  static StreamSubscription<RustLogRecord>? _rustLogSubscription;
+
+  /// Connects the Rust logger to the application's Dart logger.
+  ///
+  /// Rust log records received through [createRustLogStream] are converted to
+  /// their corresponding [Level] from the `logging` package and forwarded to
+  /// [AppLogger.log].
+  ///
+  /// Rust source metadata is included in the log message when available:
+  /// - [RustLogRecord.target] identifies the Rust logging target.
+  /// - [RustLogRecord.file] identifies the Rust source file.
+  /// - [RustLogRecord.line] identifies the Rust source line.
+  ///
+  /// This allows Rust logs to follow the same logging pipeline as Dart logs,
+  /// including the debug console and application log file configured by
+  /// [AppLogger.init].
+  ///
+  /// If Rust logging is already connected, the existing subscription is
+  /// cancelled before creating a new one. This makes the method safe to call
+  /// multiple times without accumulating duplicate listeners.
+  ///
+  /// Call this after [AppLogger.init] and after the Rust library has been
+  /// initialized.
+  static void connectRustLogging() {
+    _rustLogSubscription?.cancel();
+
+    final stream = createRustLogStream();
+    _rustLogSubscription = stream.listen((record) {
+      final level = switch (record.level) {
+        'ERROR' => Level.SEVERE,
+        'WARN' => Level.WARNING,
+        'INFO' => Level.INFO,
+        'DEBUG' => Level.FINE,
+        'TRACE' => Level.FINER,
+        _ => Level.INFO,
+      };
+
+      final location = StringBuffer();
+
+      if (record.target.isNotEmpty) {
+        location.write(record.target);
+      }
+
+      if (record.file != null) {
+        if (location.isNotEmpty) {
+          location.write(' ');
+        }
+
+        location.write(record.file);
+
+        if (record.line != null) {
+          location.write(':${record.line}');
+        }
+      }
+
+      final message = location.isEmpty
+          ? '[Rust] ${record.message}'
+          : '[Rust][$location] ${record.message}';
+
+      AppLogger.log.log(level, message);
+    });
+  }
 }
