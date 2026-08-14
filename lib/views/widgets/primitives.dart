@@ -697,45 +697,76 @@ class AppHeader extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Hero(
-                        tag: 'header-title',
-                        flightShuttleBuilder:
-                            (context, animation, direction, from, to) =>
-                                flight(context, animation, direction, from, to),
-                        child: Material(
-                          type: MaterialType.transparency,
-                          child: Text(
-                            title,
-                            maxLines: 1,
-                            softWrap: false,
-                            overflow: TextOverflow.visible,
-                            style: AppText.title(scheme),
-                            textAlign: TextAlign.center,
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final titlePainter = TextPainter(
+                        text: TextSpan(
+                          text: title,
+                          style: AppText.title(scheme),
+                        ),
+                        maxLines: 1,
+                        textDirection: Directionality.of(context),
+                      )..layout();
+
+                      final titleWidth = titlePainter.width;
+                      final availableWidth = constraints.maxWidth;
+                      final isOverflowing = titleWidth > availableWidth;
+
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Hero(
+                            tag: 'header-title',
+                            flightShuttleBuilder:
+                                (context, animation, direction, from, to) =>
+                                    flight(
+                                      context,
+                                      animation,
+                                      direction,
+                                      from,
+                                      to,
+                                    ),
+                            child: Material(
+                              type: MaterialType.transparency,
+                              child: Text(
+                                title,
+                                maxLines: 1,
+                                softWrap: false,
+                                overflow: (isOverflowing)
+                                    ? TextOverflow.ellipsis
+                                    : TextOverflow.visible,
+                                style: AppText.title(scheme),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                      Hero(
-                        tag: 'header-subtitle',
-                        flightShuttleBuilder:
-                            (context, animation, direction, from, to) =>
-                                flight(context, animation, direction, from, to),
-                        child: Material(
-                          type: MaterialType.transparency,
-                          child: subtitle == null
-                              ? const SizedBox(height: 0)
-                              : Text(
-                                  subtitle!,
-                                  maxLines: 1,
-                                  softWrap: false,
-                                  overflow: TextOverflow.visible,
-                                  style: AppText.micro(scheme),
-                                ),
-                        ),
-                      ),
-                    ],
+                          Hero(
+                            tag: 'header-subtitle',
+                            flightShuttleBuilder:
+                                (context, animation, direction, from, to) =>
+                                    flight(
+                                      context,
+                                      animation,
+                                      direction,
+                                      from,
+                                      to,
+                                    ),
+                            child: Material(
+                              type: MaterialType.transparency,
+                              child: subtitle == null
+                                  ? const SizedBox(height: 0)
+                                  : Text(
+                                      subtitle!,
+                                      maxLines: 1,
+                                      softWrap: false,
+                                      overflow: TextOverflow.visible,
+                                      style: AppText.micro(scheme),
+                                    ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                 ),
                 Padding(

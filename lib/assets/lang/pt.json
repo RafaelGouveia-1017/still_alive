@@ -222,7 +222,9 @@
   "integration_destinations": {
     "title": "Destinatários",
     "search": "Procurar destinatários",
-    "not_found": "Nenhum destinatário encontrado."
+    "not_found": "Nenhum destinatário encontrado.",
+    "warning": "Estás à espera que algo apareça?\nVerifica na tua conta se a StillAlive tem as permissões necessárias para ver os teus destinatários.",
+    "filters": ["Todos", "Outros"]
   },
   "qr_pairing": {
     "title": "Emparelhar Integração",

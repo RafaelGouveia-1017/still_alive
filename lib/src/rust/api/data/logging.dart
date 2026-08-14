@@ -10,20 +10,123 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 // These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `RustLogger`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `enabled`, `flush`, `fmt`, `log`
 
-/// Creates the Rust -> Dart logging stream.
+/// Installs [`RustLogger`] as the global logger for the [`log`] crate.
 ///
-/// FRB keeps the underlying StreamSink alive after this function returns.
+/// This should be called during Rust library initialization, before Rust code
+/// begins emitting application logs.
+///
+/// The function is intentionally tolerant of an existing global logger. The
+/// `log` crate permits only one global logger, so another Rust dependency or
+/// application component may already have installed one. In that case,
+/// `set_logger` simply fails and this function leaves the existing logger
+/// untouched rather than panicking.
+///
+/// When installation succeeds, the maximum log level is set to [`Trace`], which
+/// allows all `log` levels to reach [`RustLogger`]. Dart-side logging can then
+/// decide how verbose the application's final output should be.
+///
+/// # Initialization
+///
+/// This function is normally invoked automatically through FRB's initialization
+/// mechanism, for example:
+///
+/// ```rust,ignore
+/// #[frb(init)]
+/// pub fn init_rust_logging() {
+///     // ...
+/// }
+/// ```
+///
+/// Once installed, ordinary Rust logging macros can be used throughout the
+/// application:
+///
+/// ```rust,ignore
+/// log::error!("Something went wrong");
+/// log::warn!("Something looks suspicious");
+/// log::info!("Application started");
+/// log::debug!("Received response");
+/// log::trace!("Detailed diagnostic information");
+/// ```
+Future<void> initRustLogging() =>
+    RustLib.instance.api.crateApiDataLoggingInitRustLogging();
+
+/// Establishes the Rust-to-Dart logging stream.
+///
+/// The generated Dart API exposes this as a stream of [`RustLogRecord`] values.
+/// When Dart subscribes to that stream, FRB provides the corresponding
+/// [`StreamSink`] to this function.
+///
+/// The sink is retained by [`RUST_LOGGER`] after this function returns, allowing
+/// Rust logging calls to occur independently of the lifetime of this function.
+///
+/// Calling this function again replaces the previous sink. This makes the
+/// logging connection safe to recreate during Flutter lifecycle events such as
+/// hot restart or Dart-side reconnection.
+///
+/// Rust logs emitted before the Dart stream is established use the fallback
+/// behavior in [`RustLogger::log`] and are not replayed after Dart connects.
 Stream<RustLogRecord> createRustLogStream() =>
     RustLib.instance.api.crateApiDataLoggingCreateRustLogStream();
 
-/// Disconnect the Rust -> Dart logging stream.
+/// Disconnects the active Rust-to-Dart logging stream.
+///
+/// After disconnection, Rust logging continues to work, but records are no
+/// longer forwarded to Dart until [`create_rust_log_stream`] is called again.
+///
+/// This is useful when the Flutter/Dart side is being shut down, restarted, or
+/// otherwise needs to explicitly release the active stream.
+///
+/// A failed stream send automatically performs the equivalent cleanup, so
+/// callers generally only need to invoke this function when they want to
+/// proactively disconnect the logging bridge.
 Future<void> disposeRustLogStream() =>
     RustLib.instance.api.crateApiDataLoggingDisposeRustLogStream();
 
-/// A Rust log record transported to Dart.
+/// A log record emitted by Rust and transported to Dart through
+/// [`flutter_rust_bridge`]'s [`StreamSink`].
 ///
-/// This is deliberately a normal public FRB type. The FRB code generator
-/// will generate the SSE serialization implementation for it.
+/// `RustLogRecord` intentionally contains the useful source metadata provided
+/// by the [`log`] crate so that the Dart logging layer can preserve information
+/// about where a Rust log originated.
+///
+/// The FRB code generator generates the necessary serialization code for this
+/// type. On the Dart side, the generated type is received from
+/// `createRustLogStream()` and is converted into the application's normal
+/// Dart `Logger` records.
+///
+/// # Logging pipeline
+///
+/// A Rust logging macro such as:
+///
+/// ```ignore
+/// log::info!("Connected to server");
+/// ```
+///
+/// follows this path:
+///
+/// ```text
+/// log::info!()
+///     │
+///     ▼
+/// RustLogger::log()
+///     │
+///     ▼
+/// RustLogRecord
+///     │
+///     ▼
+/// StreamSink<RustLogRecord>
+///     │
+///     │ flutter_rust_bridge
+///     ▼
+/// Dart Stream<RustLogRecord>
+///     │
+///     ▼
+/// Application logger
+/// ```
+///
+/// If the Dart logging stream has not yet been established, the record is not
+/// sent to Dart. Instead, the logger falls back to Rust-side logging so that
+/// messages emitted during application startup are not silently discarded.
 class RustLogRecord {
   /// Unix timestamp in milliseconds when Rust created the record.
   final PlatformInt64 timeMillis;

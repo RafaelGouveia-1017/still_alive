@@ -5,6 +5,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:still_alive/src/rust/api/integrations/traits.dart';
 import 'package:still_alive/src/rust/api/integrations/public_traits.dart';
 import 'package:still_alive/services/integration_service.dart';
+import 'package:still_alive/src/rust/api/main.dart';
 
 import 'integration_row.dart';
 import 'integration_destinations.dart';
@@ -54,6 +55,8 @@ class _IntegrationsScreenState extends State<IntegrationsScreen> {
     setState(() {
       _isLoading = true;
     });
+
+    greet(name: "test");
 
     try {
       List<IntegrationInfo> items = await loadAllIntegrations();
@@ -212,7 +215,7 @@ class _IntegrationsScreenState extends State<IntegrationsScreen> {
                     final result = await Navigator.of(context).push<String>(
                       AppRoute(
                         page: QRScannerScreen(),
-                        transition: AppRouteTransitionType.slideRight,
+                        transition: AppRouteTransitionType.slideLeft,
                       ),
                     );
                     if (result == null || !context.mounted) return;
@@ -292,7 +295,7 @@ class _IntegrationsScreenState extends State<IntegrationsScreen> {
                       title: local.translate("integrations.qr_title"),
                       subtitle: local.translate("integrations.qr_note"),
                       icon: LucideIcons.qrCode,
-                      iconSize: 30,
+                      iconSize: 32,
                       iconBackground: Colors.transparent,
                       trailing: Icon(
                         LucideIcons.chevronRight,
@@ -354,7 +357,10 @@ class _IntegrationsScreenState extends State<IntegrationsScreen> {
                             in it.groupDestinationsByAccount.entries)
                           AppExpandableCard(
                             title: entry.key.name,
-                            subtitle: IntegrationService.subtitle(it, context),
+                            subtitle: IntegrationService.subtitle(
+                              entry.key,
+                              context,
+                            ),
                             icon: it.iconData,
                             iconGradient: it.colors,
                             child: Column(
@@ -418,19 +424,25 @@ class _IntegrationsScreenState extends State<IntegrationsScreen> {
                                       PrimaryButton(
                                         icon: LucideIcons.plus,
                                         width: 80,
-                                        onPressed: () =>
-                                            Navigator.of(context).push(
-                                              AppRoute(
-                                                page:
-                                                    IntegrationDestinationsScreen(
-                                                      integration: it,
-                                                      account: entry.key,
-                                                    ),
-                                                transition:
-                                                    AppRouteTransitionType
-                                                        .slideLeft,
-                                              ),
+                                        onPressed: () async {
+                                          await Navigator.of(context).push(
+                                            AppRoute(
+                                              page:
+                                                  IntegrationDestinationsScreen(
+                                                    integration: it,
+                                                    account: entry.key,
+                                                  ),
+                                              transition: AppRouteTransitionType
+                                                  .slideLeft,
                                             ),
+                                          );
+
+                                          setState(() {
+                                            _integrationItems = [];
+                                            _isLoading = true;
+                                          });
+                                          loadIntegrations();
+                                        },
                                       ),
                                       PrimaryButton(
                                         icon: LucideIcons.trash,

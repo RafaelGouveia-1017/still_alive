@@ -22,12 +22,17 @@ class IntegrationRow extends StatefulWidget {
     required this.channelId,
     required this.onTest,
     required this.onDelete,
+    this.onAdd,
+    this.selected = true,
+    this.listMode = false,
   });
 
   final String title;
   final String? subtitle;
   final String integrationKey;
   final String channelId;
+  final bool selected;
+  final bool listMode;
 
   /// Tests the connection for this integration record.
   ///
@@ -41,6 +46,12 @@ class IntegrationRow extends StatefulWidget {
   /// after the deletion completes.
   final Future<void> Function() onDelete;
 
+  /// Adds/restores the integration record represented by this row.
+  ///
+  /// The parent widget is responsible for performing the actual persistence
+  /// operation and updating its integration list after the addition.
+  final Future<void> Function()? onAdd;
+
   @override
   State<IntegrationRow> createState() => _IntegrationRowState();
 }
@@ -52,8 +63,16 @@ class IntegrationRow extends StatefulWidget {
 class _IntegrationRowState extends State<IntegrationRow> {
   bool _testing = false;
   bool _deleting = false;
-
+  bool _adding = false;
   bool? _canSend;
+
+  late bool _selected;
+
+  @override
+  void initState() {
+    _selected = widget.selected;
+    super.initState();
+  }
 
   Future<void> _handleTest() async {
     if (_testing || _deleting) return;
@@ -93,9 +112,27 @@ class _IntegrationRowState extends State<IntegrationRow> {
     } finally {
       if (mounted) {
         setState(() {
+          _selected = false;
           _deleting = false;
         });
       }
+    }
+  }
+
+  Future<void> _handleAdd() async {
+    if (_testing || _deleting || _adding || _selected) return;
+
+    setState(() {
+      _adding = true;
+    });
+
+    try {
+      await widget.onAdd!();
+    } finally {
+      setState(() {
+        _selected = true;
+        _adding = false;
+      });
     }
   }
 
@@ -104,12 +141,12 @@ class _IntegrationRowState extends State<IntegrationRow> {
 
     if (_testing) {
       return Padding(
-        padding: const EdgeInsets.only(right: 14),
+        padding: EdgeInsets.only(right: 20),
         child: SizedBox(
-          width: 18,
-          height: 18,
+          width: 24,
+          height: 24,
           child: Center(
-            child: CircularProgressIndicator(color: scheme.tertiary),
+            child: CircularProgressIndicator(color: scheme.secondary),
           ),
         ),
       );
@@ -121,15 +158,15 @@ class _IntegrationRowState extends State<IntegrationRow> {
       return IconButton(
         icon: Icon(
           connected ? LucideIcons.check : LucideIcons.x,
-          size: 18,
-          color: connected ? scheme.tertiary : scheme.error,
+          size: 24,
+          color: connected ? scheme.secondary : scheme.error,
         ),
         onPressed: null,
       );
     }
 
     return IconButton(
-      icon: Icon(LucideIcons.flaskConical, size: 18, color: scheme.secondary),
+      icon: Icon(LucideIcons.flaskConical, size: 24, color: scheme.secondary),
       onPressed: _handleTest,
     );
   }
@@ -137,37 +174,82 @@ class _IntegrationRowState extends State<IntegrationRow> {
   Widget _buildDeleteButton(ColorScheme scheme) {
     if (_deleting) {
       return Padding(
-        padding: const EdgeInsets.only(
+        padding: EdgeInsets.only(
           top: AppSpacing.md,
           bottom: AppSpacing.md,
-          right: 38,
+          right: 44,
         ),
         child: SizedBox(
-          width: 18,
-          height: 18,
+          width: 24,
+          height: 24,
           child: Center(child: CircularProgressIndicator(color: scheme.error)),
         ),
       );
     }
 
     return IconButton(
-      icon: Icon(LucideIcons.trash2, size: 18, color: scheme.error),
+      icon: Icon(LucideIcons.trash2, size: 24, color: scheme.error),
       onPressed: _handleDelete,
     );
+  }
+
+  Widget _buildAddButton(ColorScheme scheme) {
+    if (_adding) {
+      return Padding(
+        padding: EdgeInsets.only(
+          top: AppSpacing.md,
+          bottom: AppSpacing.md,
+          right: 44,
+        ),
+        child: SizedBox(
+          width: 24,
+          height: 24,
+          child: Center(
+            child: CircularProgressIndicator(color: scheme.primary),
+          ),
+        ),
+      );
+    }
+
+    return Icon(LucideIcons.plus, size: 24, color: scheme.primary);
   }
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
-    return AppRow(
+    Widget row = AppRow(
       title: widget.title,
       subtitle: widget.subtitle,
       padding: EdgeInsets.only(left: AppSpacing.xl),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
-        children: [_buildTestButton(scheme), _buildDeleteButton(scheme)],
+        children: (!_selected && widget.listMode)
+            ? [_buildAddButton(scheme)]
+            : [
+                _buildTestButton(scheme),
+                const SizedBox(width: AppSpacing.md),
+                _buildDeleteButton(scheme),
+              ],
       ),
     );
+
+    if (!_selected && widget.listMode) {
+      return GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: _handleAdd,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            0,
+            AppSpacing.md,
+            AppSpacing.md,
+            AppSpacing.md,
+          ),
+          child: row,
+        ),
+      );
+    } else {
+      return row;
+    }
   }
 }

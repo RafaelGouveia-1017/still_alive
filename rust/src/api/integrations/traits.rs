@@ -27,9 +27,16 @@ pub struct IntegrationGradient {
 /// than mirroring a provider's API types.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum DestinationKind {
+    #[serde(rename = "direct_message")]
     DirectMessage,
+
+    #[serde(rename = "group")]
     Group,
+
+    #[serde(rename = "channel")]
     Channel,
+
+    #[serde(rename = "server_channel")]
     ServerChannel,
 }
 
@@ -128,6 +135,7 @@ pub trait Integration: Sized {
 
     #[frb(ignore)]
     fn info(&self) -> IntegrationInfo {
+        log::info!("Starting info in {}", self.title());
         IntegrationInfo {
             key: Self::KEY.to_owned(),
             title: self.title().to_owned(),
@@ -219,6 +227,8 @@ pub trait Integration: Sized {
 /// - deserialization fails.
 #[frb(ignore)]
 fn load_config<T: DeserializeOwned>(key: &str) -> Result<T> {
+    log::info!("Starting load_config for integration with key: '{}'", key);
+
     let db = db();
 
     let json: String = db
@@ -258,6 +268,8 @@ fn load_config<T: DeserializeOwned>(key: &str) -> Result<T> {
 /// new database entry if the provided key does not exist.
 #[frb(ignore)]
 pub fn save_config<T: Serialize>(key: &str, config: &T) -> Result<()> {
+    log::info!("Starting save_config for integration with key: '{}'", key);
+
     let db = db();
 
     let json = serde_json::to_string(config)?;

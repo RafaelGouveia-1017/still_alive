@@ -56,6 +56,8 @@ impl Integration for TelegramIntegration {
     }
 
     fn accounts(&self) -> Vec<IntegrationAccount> {
+        log::info!("Starting accounts in {}", self.title());
+
         self.config
             .accounts
             .iter()
@@ -74,6 +76,8 @@ impl Integration for TelegramIntegration {
     }
 
     fn authenticate_account(&self) -> Result<IntegrationAccount> {
+        log::info!("Starting authenticate_account in {}", self.title());
+
         // For the bot architecture:
         //
         // GET /bot<TOKEN>/getMe
@@ -82,10 +86,18 @@ impl Integration for TelegramIntegration {
         //
         // If you later support MTProto user accounts, this implementation
         // can use a Telegram user session instead.
-        todo!("Telegram: authenticate account")
+        //todo!("Telegram: authenticate account")
+
+        Ok(IntegrationAccount {
+            id: "bruhtelegramid".into(),
+            name: "telegram bruh".into(),
+            destinations: [].into(),
+        })
     }
 
     fn discover_destinations(&self, account_id: &str) -> Result<Vec<MessageDestination>> {
+        log::info!("Starting discover_destinations in {}", self.title());
+
         let account = self
             .config
             .accounts
@@ -112,6 +124,8 @@ impl Integration for TelegramIntegration {
         account_id: &str,
         destination: MessageDestination,
     ) -> Result<IntegrationAccount> {
+        log::info!("Starting add_destination in {}", self.title());
+
         let account = self
             .config
             .accounts
@@ -145,6 +159,8 @@ impl Integration for TelegramIntegration {
         account_id: &str,
         destination_id: &str,
     ) -> Result<IntegrationAccount> {
+        log::info!("Starting remove_destination in {}", self.title());
+
         let account = self
             .config
             .accounts
@@ -174,6 +190,8 @@ impl Integration for TelegramIntegration {
     }
 
     fn add_account(&mut self, account: IntegrationAccount) -> Result<IntegrationAccount> {
+        log::info!("Starting add_account in {}", self.title());
+
         if self
             .config
             .accounts
@@ -204,6 +222,8 @@ impl Integration for TelegramIntegration {
     }
 
     fn remove_account(&mut self, account_id: &str) -> Result<()> {
+        log::info!("Starting remove_account in {}", self.title());
+
         let original_len = self.config.accounts.len();
 
         self.config
@@ -225,6 +245,8 @@ impl Integration for TelegramIntegration {
         destination_id: &str,
         message: &str,
     ) -> Result<SentMessage> {
+        log::info!("Starting send_message in {}", self.title());
+
         let account = self
             .config
             .accounts
@@ -264,6 +286,8 @@ impl Integration for TelegramIntegration {
         account_id: &str,
         destination_id: &str,
     ) -> Result<DestinationTestResult> {
+        log::info!("Starting test_destination in {}", self.title());
+
         let account = self
             .config
             .accounts
@@ -286,6 +310,16 @@ impl Integration for TelegramIntegration {
 
         let _ = destination;
 
-        todo!("Telegram: test whether destination can receive messages")
+        //todo!("Telegram: test whether destination can receive messages")
+
+        let nanos = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .subsec_nanos();
+
+        Ok(DestinationTestResult {
+            can_send: nanos.is_multiple_of(2),
+            message: "".into(),
+        })
     }
 }

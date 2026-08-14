@@ -57,6 +57,8 @@ impl Integration for DiscordIntegration {
     }
 
     fn accounts(&self) -> Vec<IntegrationAccount> {
+        log::info!("Starting accounts in {}", self.title());
+
         self.config
             .accounts
             .iter()
@@ -79,6 +81,8 @@ impl Integration for DiscordIntegration {
     }
 
     fn authenticate_account(&self) -> Result<IntegrationAccount> {
+        log::info!("Starting authenticate_account in {}", self.title());
+
         // Authenticate the Discord integration here.
         //
         // Example:
@@ -86,10 +90,18 @@ impl Integration for DiscordIntegration {
         // GET /users/@me
         //
         // Return the authenticated Discord identity.
-        todo!("Discord: authenticate account")
+        //todo!("Discord: authenticate account")
+
+        Ok(IntegrationAccount {
+            id: "bruhid".into(),
+            name: "discord bruh".into(),
+            destinations: [].into(),
+        })
     }
 
     fn discover_destinations(&self, account_id: &str) -> Result<Vec<MessageDestination>> {
+        log::info!("Starting discover_destinations in {}", self.title());
+
         let account = self
             .config
             .accounts
@@ -110,7 +122,164 @@ impl Integration for DiscordIntegration {
         //
         // Discord's APIs distinguish guild channels from DMs, so normalize
         // both into the application's destination model here.
-        todo!("Discord: discover available message destinations")
+        //todo!("Discord: discover available message destinations")
+
+        Ok(vec![
+            MessageDestination {
+                id: "789".into(),
+                name: "general".into(),
+                kind: DestinationKind::ServerChannel,
+                parent_id: Some("5KuCjeIJNd".into()),
+                parent_name: Some("Still Alive".into()),
+            },
+            MessageDestination {
+                id: "78329".into(),
+                name: "general #2".into(),
+                kind: DestinationKind::ServerChannel,
+                parent_id: Some("5KuCjeIJNd".into()),
+                parent_name: Some("Still Alive".into()),
+            },
+            MessageDestination {
+                id: "E0LCyU1tQ6".into(),
+                name: "emergency".into(),
+                kind: DestinationKind::ServerChannel,
+                parent_id: Some("45ew6".into()),
+                parent_name: Some("Still Dead".into()),
+            },
+            MessageDestination {
+                id: "dAE1KqF4YI".into(),
+                name: "Alice".into(),
+                kind: DestinationKind::DirectMessage,
+                parent_id: None,
+                parent_name: None,
+            },
+            MessageDestination {
+                id: "hp7iKPwDvi".into(),
+                name: "Mano bro".into(),
+                kind: DestinationKind::DirectMessage,
+                parent_id: None,
+                parent_name: None,
+            },
+            MessageDestination {
+                id: "JNjTdzz9VI".into(),
+                name: "outro bro".into(),
+                kind: DestinationKind::DirectMessage,
+                parent_id: None,
+                parent_name: None,
+            },
+            MessageDestination {
+                id: "0GoH5qOT3D".into(),
+                name: "music".into(),
+                kind: DestinationKind::ServerChannel,
+                parent_id: Some("rnvqTfEQKs".into()),
+                parent_name: Some("Monstercat".into()),
+            },
+            MessageDestination {
+                id: "fpQgCiuU0s".into(),
+                name: "general".into(),
+                kind: DestinationKind::ServerChannel,
+                parent_id: Some("rnvqTfEQKs".into()),
+                parent_name: Some("Monstercat".into()),
+            },
+            MessageDestination {
+                id: "hf77hRua6d".into(),
+                name: "Tom".into(),
+                kind: DestinationKind::DirectMessage,
+                parent_id: None,
+                parent_name: None,
+            },
+            MessageDestination {
+                id: "45J44CGdTb".into(),
+                name: "Still Alive".into(),
+                kind: DestinationKind::Group,
+                parent_id: None,
+                parent_name: None,
+            },
+            MessageDestination {
+                id: "k8Lm2QpR7x".into(),
+                name: "announcements".into(),
+                kind: DestinationKind::ServerChannel,
+                parent_id: Some("5KuCjeIJNd".into()),
+                parent_name: Some("Still Alive".into()),
+            },
+            MessageDestination {
+                id: "v3Nx9AaL2m".into(),
+                name: "random".into(),
+                kind: DestinationKind::ServerChannel,
+                parent_id: Some("5KuCjeIJNd".into()),
+                parent_name: Some("Still Alive".into()),
+            },
+            MessageDestination {
+                id: "Q7wEr4TyUi".into(),
+                name: "off-topic".into(),
+                kind: DestinationKind::ServerChannel,
+                parent_id: Some("5KuCjeIJNd".into()),
+                parent_name: Some("Still Alive".into()),
+            },
+            MessageDestination {
+                id: "m2Zx8BcV5n".into(),
+                name: "support".into(),
+                kind: DestinationKind::ServerChannel,
+                parent_id: Some("45ew6".into()),
+                parent_name: Some("Still Dead".into()),
+            },
+            MessageDestination {
+                id: "P4qL7sW1eR".into(),
+                name: "logs".into(),
+                kind: DestinationKind::ServerChannel,
+                parent_id: Some("45ew6".into()),
+                parent_name: Some("Still Dead".into()),
+            },
+            MessageDestination {
+                id: "Y6uI9oP3aS".into(),
+                name: "releases".into(),
+                kind: DestinationKind::ServerChannel,
+                parent_id: Some("rnvqTfEQKs".into()),
+                parent_name: Some("Monstercat".into()),
+            },
+            MessageDestination {
+                id: "t5Gh2Jk8Lm".into(),
+                name: "artists".into(),
+                kind: DestinationKind::ServerChannel,
+                parent_id: Some("rnvqTfEQKs".into()),
+                parent_name: Some("Monstercat".into()),
+            },
+            MessageDestination {
+                id: "R9cV4bN7xQ".into(),
+                name: "beats".into(),
+                kind: DestinationKind::ServerChannel,
+                parent_id: Some("rnvqTfEQKs".into()),
+                parent_name: Some("Monstercat".into()),
+            },
+            MessageDestination {
+                id: "a1S2d3F4g5".into(),
+                name: "Bob".into(),
+                kind: DestinationKind::DirectMessage,
+                parent_id: None,
+                parent_name: None,
+            },
+            MessageDestination {
+                id: "h6J7k8L9m0".into(),
+                name: "Charlie".into(),
+                kind: DestinationKind::DirectMessage,
+                parent_id: None,
+                parent_name: None,
+            },
+            MessageDestination {
+                id: "N4b5V6c7X8".into(),
+                name: "Dev Team".into(),
+                kind: DestinationKind::Group,
+                parent_id: None,
+                parent_name: None,
+            },
+            MessageDestination {
+                id: "z9Q0w1E2r3".into(),
+                name: "Weekend Plans".into(),
+                kind: DestinationKind::Group,
+                parent_id: None,
+                parent_name: None,
+            },
+        ])
     }
 
     fn add_destination(
@@ -118,6 +287,8 @@ impl Integration for DiscordIntegration {
         account_id: &str,
         destination: MessageDestination,
     ) -> Result<IntegrationAccount> {
+        log::info!("Starting add_destination in {}", self.title());
+
         let account = self
             .config
             .accounts
@@ -151,6 +322,8 @@ impl Integration for DiscordIntegration {
         account_id: &str,
         destination_id: &str,
     ) -> Result<IntegrationAccount> {
+        log::info!("Starting remove_destination in {}", self.title());
+
         let account = self
             .config
             .accounts
@@ -180,6 +353,8 @@ impl Integration for DiscordIntegration {
     }
 
     fn add_account(&mut self, account: IntegrationAccount) -> Result<IntegrationAccount> {
+        log::info!("Starting add_account in {}", self.title());
+
         if self
             .config
             .accounts
@@ -207,6 +382,8 @@ impl Integration for DiscordIntegration {
     }
 
     fn remove_account(&mut self, account_id: &str) -> Result<()> {
+        log::info!("Starting remove_account in {}", self.title());
+
         let original_len = self.config.accounts.len();
 
         self.config
@@ -228,6 +405,8 @@ impl Integration for DiscordIntegration {
         destination_id: &str,
         message: &str,
     ) -> Result<SentMessage> {
+        log::info!("Starting send_message in {}", self.title());
+
         let account = self
             .config
             .accounts
@@ -268,6 +447,8 @@ impl Integration for DiscordIntegration {
         account_id: &str,
         destination_id: &str,
     ) -> Result<DestinationTestResult> {
+        log::info!("Starting test_destination in {}", self.title());
+
         let account = self
             .config
             .accounts
@@ -292,6 +473,16 @@ impl Integration for DiscordIntegration {
 
         let _ = destination;
 
-        todo!("Discord: test whether destination can receive messages")
+        //todo!("Discord: test whether destination can receive messages")
+
+        let nanos = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .subsec_nanos();
+
+        Ok(DestinationTestResult {
+            can_send: nanos.is_multiple_of(2),
+            message: "".into(),
+        })
     }
 }

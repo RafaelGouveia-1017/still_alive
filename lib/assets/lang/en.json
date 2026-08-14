@@ -222,7 +222,9 @@
   "integration_destinations": {
     "title": "Recipients",
     "search": "Search recipients",
-    "not_found": "No recipients found."
+    "not_found": "No recipients found.",
+    "warning": "Expecting something to show up?\nCheck in your account if our app has the necessary permissions to see your recipients.",
+    "filters": ["All", "Other"]
   },
   "qr_pairing": {
     "title": "Pair Integration",

@@ -1,35 +1,32 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:still_alive/src/rust/api/integrations/traits.dart';
-import 'package:still_alive/src/rust/api/integrations/public_traits.dart';
 import 'package:still_alive/services/integration_service.dart';
 
 import 'integration_row.dart';
-import 'integration_destinations.dart';
-import 'qr_scanner.dart';
 import '../../../data/all.dart';
 import '../../widgets/primitives.dart';
-  
 
 class IntegrationDestinationsScreen extends StatefulWidget {
   const IntegrationDestinationsScreen({
     super.key,
     required this.integration,
-    required this.account
+    required this.account,
   });
 
   final IntegrationInfo integration;
   final IntegrationAccount account;
 
   @override
-  State<IntegrationDestinationsScreen> createState() => _IntegrationDestinationsScreenState();
+  State<IntegrationDestinationsScreen> createState() =>
+      _IntegrationDestinationsScreenState();
 }
 
 /// State implementation for [IntegrationDestinationsScreen].
-class _IntegrationDestinationsScreenState extends State<IntegrationDestinationsScreen> {
+class _IntegrationDestinationsScreenState
+    extends State<IntegrationDestinationsScreen> {
   List<MessageDestination> _destinationItems = [];
+  Set<String> _selectedIds = {};
 
   late List<AppFilterBarOption> _filters = [];
   late List<List<String>> filterLabels = [];
@@ -42,24 +39,10 @@ class _IntegrationDestinationsScreenState extends State<IntegrationDestinationsS
     super.initState();
   }
 
-   @override
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
     if (filterLabels.isNotEmpty) return;
-
-    AppLocalizations local = AppLocalizations.of(context)!;
-    filterLabels = [
-      ['all', local.translate("history_logs.events.filters.0")],
-      ['started', local.translate("history_logs.events.filters.1")],
-      ['warning', local.translate("history_logs.events.filters.2")],
-      ['paused', local.translate("history_logs.events.filters.3")],
-      ['cancelled', local.translate("history_logs.events.filters.4")],
-      ['expired', local.translate("history_logs.events.filters.5")],
-    ];
-    filterLabels.sort((a, b) => a[0].compareTo(b[0]));
-
-    loadFilters(0);
     loadDestinations();
   }
 
@@ -123,80 +106,132 @@ class _IntegrationDestinationsScreenState extends State<IntegrationDestinationsS
     });
 
     try {
-      List<MessageDestination> destinations = await IntegrationService.discoverDestinations(
-        context: context,
-        integrationKey: widget.integration.key,
-        accountId: widget.account.id,
-      );
+      List<MessageDestination> destinations =
+          await IntegrationService.discoverDestinations(
+            context: context,
+            integrationKey: widget.integration.key,
+            accountId: widget.account.id,
+          );
 
-      if (!context.mounted || destinations.isEmpty) return;
+      if (!mounted || destinations.isEmpty) return;
 
       final selectedIds = widget.account.destinations
           .map((destination) => destination.id)
           .toSet();
-      final available = destinations
-          .where((destination) => !selectedIds.contains(destination.id))
+
+      final sorted = IntegrationService.sortedDestinations(destinations);
+
+      // Build filters from destination parent names.
+      final parentNames = sorted
+          .map((destination) => destination.parentName)
+          .toSet()
           .toList();
 
-      if (available.isEmpty) {
-        return;
-      }
+      parentNames.sort((a, b) {
+        // Keep destinations without a parent at the end.
+        if (a == null) return 1;
+        if (b == null) return -1;
 
-      final sorted = IntegrationService.sortedDestinations(available);
+        return a.toLowerCase().compareTo(b.toLowerCase());
+      });
 
-      if (!mounted) return;
-      setState(() => _destinationItems = sorted);
+      AppLocalizations local = AppLocalizations.of(context)!;
+
+      filterLabels = [
+        ['all', local.translate("integration_destinations.filters.0")],
+        ...parentNames.map(
+          (name) => [
+            name?.toLowerCase() ?? '__no_parent__',
+            name ?? local.translate("integration_destinations.filters.1"),
+          ],
+        ),
+      ];
+
+      loadFilters(0);
+
+      setState(() {
+        _selectedIds = selectedIds;
+        _destinationItems = sorted;
+      });
     } finally {
       setState(() => _isLoading = false);
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     ColorScheme scheme = Theme.of(context).colorScheme;
     AppLocalizations local = AppLocalizations.of(context)!;
 
-    List<MessageDestination> destinationsFiltered = [];
+    Map<String, List<MessageDestination>> groupedDestinations =
+        <String, List<MessageDestination>>{};
+
+    String? subtitle;
 
     if (!_isLoading) {
-      final activeFilters = _filters
-          .where((f) => f.active)
-          .map((f) => f.id)
-          .toSet();
+      Set<String> activeFilters = (_filters.isNotEmpty)
+          ? _filters.where((f) => f.active).map((f) => f.id).toSet()
+          : {};
 
-      destinationsFiltered = _destinationItems
-          .where((group) {
-              // Search query
-              bool matchesSearch =
-                  searchQuery.isEmpty ||
-                  group.name.toLowerCase().contains(searchQuery) ||
-                  (group.parentName != null && group.parentName!.toLowerCase().contains(searchQuery));
+      List<MessageDestination> destinationsFiltered = _destinationItems.where((
+        group,
+      ) {
+        // Search query
+        bool matchesSearch =
+            searchQuery.isEmpty ||
+            group.name.toLowerCase().contains(searchQuery) ||
+            (group.parentName != null &&
+                group.parentName!.toLowerCase().contains(searchQuery));
 
-              // Active filters
-              bool matchesFilter =
-                  activeFilters.contains('all') ||
-                  activeFilters.contains(group.parentName?.toLowerCase());
+        // Active filters
+        bool matchesFilter = (_filters.isNotEmpty)
+            ? activeFilters.contains('all') ||
+                  activeFilters.contains(
+                    group.parentName?.toLowerCase() ?? '__no_parent__',
+                  )
+            : true;
 
-              return matchesSearch && matchesFilter;
-          })
-          .toList();
+        return matchesSearch && matchesFilter;
+      }).toList();
+
+      for (final destination in destinationsFiltered) {
+        final parentName =
+            destination.parentName ??
+            local.translate("integration_destinations.filters.1");
+        groupedDestinations.putIfAbsent(parentName, () => []).add(destination);
+      }
+
+      subtitle = IntegrationService.subtitle(
+        IntegrationAccount(
+          id: widget.account.id,
+          name: widget.account.name,
+          destinations: _destinationItems,
+        ),
+        context,
+      );
     }
 
     return ScreenBase(
       header: AppHeader(
-        title: '${widget.account.name} • ${local.translate("integration_destinations.title")}',
+        title:
+            '${widget.account.name} • ${local.translate("integration_destinations.title")}',
+        subtitle: (_isLoading)
+            ? "..."
+            : subtitle ?? local.translate("integration_destinations.not_found"),
         left: CircleIconButton(
           icon: LucideIcons.chevronLeft,
           onTap: () => Navigator.pop(context),
         ),
-        searchBar: AppSearchBar(
-          hint: local.translate("integration_destinations.search"),
-          onChanged: (value) {
-            setState(() {
-              searchQuery = value.toLowerCase();
-            });
-          },
-        ),
+        searchBar: (groupedDestinations.isNotEmpty)
+            ? AppSearchBar(
+                hint: local.translate("integration_destinations.search"),
+                onChanged: (value) {
+                  setState(() {
+                    searchQuery = value.toLowerCase();
+                  });
+                },
+              )
+            : null,
         filterBar: (_filters.isEmpty) ? null : AppFilterBar(filters: _filters),
       ),
       child: (_isLoading)
@@ -210,8 +245,7 @@ class _IntegrationDestinationsScreenState extends State<IntegrationDestinationsS
           : Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                if (destinationsFiltered.isEmpty) ...[
-                  const SizedBox(height: AppSpacing.xl),
+                if (groupedDestinations.isEmpty) ...[
                   Container(
                     width: 80,
                     height: 80,
@@ -221,14 +255,16 @@ class _IntegrationDestinationsScreenState extends State<IntegrationDestinationsS
                       border: Border.all(color: scheme.outlineVariant),
                     ),
                     child: Icon(
-                      LucideIcons.navigationOff,
+                      LucideIcons.searchX,
                       size: 36,
                       color: scheme.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   Text(
-                    local.translate("integration_destinations.not_found"),
+                    (searchQuery.isNotEmpty)
+                        ? local.translate("integration_destinations.not_found")
+                        : local.translate("integration_destinations.warning"),
                     style: AppText.bodySm(
                       scheme,
                     ).copyWith(color: scheme.onSurfaceVariant),
@@ -238,96 +274,68 @@ class _IntegrationDestinationsScreenState extends State<IntegrationDestinationsS
                   Expanded(
                     child: ListView(
                       physics: const ClampingScrollPhysics(),
-                      padding: const EdgeInsets.fromLTRB(
-                        0,
-                        AppSpacing.lg,
-                        0,
-                        AppSpacing.xl,
-                      ),
+                      padding: const EdgeInsets.only(bottom: AppSpacing.xl),
                       children: [
-                        for (final d in destinationsFiltered) ...[
-                          Pressable(
-                            onTap: () async {
-                              Navigator.of(context).pop();
-                              await selectDestination(
-                                context: context,
-                                integrationItems: ,
-                                integrationKey: widget.integration.key,
-                                accountId: widget.account.id,
-                                destination: d,
-                              );
-                            },
-                            child: AppRow(
-                              title: d.name,
-                              subtitle: d.parentName,
-                              icon: widget.integration.iconData,
-                              iconSize: 24,
-                              iconBackground: Colors.transparent,
-                              trailing: Icon(
-                                LucideIcons.plus,
-                                size: 18,
-                                color: scheme.onSurfaceVariant,
-                              ),
-                            ),
-                          ),
-
-                          //TODO change integration_row to only display the test button
-                          //TODO move delete button from integration_row to this page for each selected row
-                          //TODO if row not selected, trailing icon will be a plus sign that calls selectDestination(...)
-
-                          //TODO move current selectDestination(...) list logic to QR implementation (after it runs)
-                          //TODO change selectDestination(...) to return List<MessageDestination> instead 
-                          //TODO fix QR implementation after selectDestination(...) changes
-
-                          //TODO divide page by guild sections and appcards with the respective guild channels
-                          //TODO fix filters labels and all of it really (good luck brother :( )
-
-
+                        for (final entry in groupedDestinations.entries) ...[
                           SizedBox(height: AppRadius.lg),
-                          SectionTitle(
-                                '${local.translate("history_logs.sections.months.${date.month}")} ${date.day}',
-                              ),
+                          SectionTitle(entry.key),
                           AppCard(
                             padding: EdgeInsets.symmetric(
-                              horizontal: AppSpacing.lg,
+                              horizontal: AppSpacing.xxs,
                               vertical: AppSpacing.xxs,
                             ),
                             child: Column(
                               children: [
-                                for (int i = 0; i < d.items.length; i++) ...[
-                                  Pressable(
-                                    onTap: () {
-                                      showBlurredBottomSheet(
-                                        context: context,
-                                        scheme: scheme,
-                                        child: d.items[i].toTable(context),
-                                      );
+                                for (final d in entry.value)
+                                  IntegrationRow(
+                                    title: d.name,
+                                    subtitle: null,
+                                    integrationKey: widget.integration.key,
+                                    channelId: d.id,
+                                    selected: _selectedIds.contains(d.id),
+                                    listMode: true,
+                                    onAdd: () async {
+                                      final result =
+                                          await IntegrationService.selectDestination(
+                                            context: context,
+                                            integrationItems: [],
+                                            integrationKey:
+                                                widget.integration.key,
+                                            accountId: widget.account.id,
+                                            destination: d,
+                                          );
+                                      if (result == null) return;
+                                      setState(() {
+                                        _selectedIds.add(d.id);
+                                      });
                                     },
-                                    child: AppRow(
-                                      title: d.items[i].getTitle(local),
-                                      subtitle: d.items[i].getSubtitle(
-                                        is24HourFormat,
-                                        local,
-                                      ),
-                                      icon: d.items[i].icon,
-                                      iconColor: d.items[i].tone.foreground(
-                                        context,
-                                      ),
-                                      iconBackground: d.items[i].tone
-                                          .background(context),
-                                      trailing: Icon(
-                                        LucideIcons.chevronRight,
-                                        size: 18,
-                                        color: scheme.onSurfaceVariant,
-                                      ),
-                                    ),
+                                    onTest: () =>
+                                        IntegrationService.testDestination(
+                                          context: context,
+                                          integrationKey:
+                                              widget.integration.key,
+                                          accountId: widget.account.id,
+                                          destinationId: d.id,
+                                          scheme: scheme,
+                                        ),
+                                    onDelete: () async {
+                                      final result =
+                                          await IntegrationService.deselectDestination(
+                                            context: context,
+                                            integrationItems: [],
+                                            integrationKey:
+                                                widget.integration.key,
+                                            accountId: widget.account.id,
+                                            destinationId: d.id,
+                                          );
+                                      if (result == null) return;
+                                      setState(() {
+                                        _selectedIds.removeWhere(
+                                          (id) => id == d.id,
+                                        );
+                                      });
+                                    },
                                   ),
-                                  if (i < d.items.length - 1)
-                                    Divider(
-                                      height: 1,
-                                      color: scheme.outlineVariant,
-                                    ),
-                                ],
                               ],
                             ),
                           ),
@@ -341,4 +349,3 @@ class _IntegrationDestinationsScreenState extends State<IntegrationDestinationsS
     );
   }
 }
-

@@ -93,11 +93,11 @@ class IntegrationService {
   ///
   /// If only users or only channels are present, only that count is displayed.
   /// When both are present, the two counts are separated by a bullet.
-  static String? subtitle(IntegrationInfo it, BuildContext context) {
+  static String? subtitle(IntegrationAccount ac, BuildContext context) {
     AppLocalizations local = AppLocalizations.of(context)!;
 
-    int destinations = it.destinations.length;
-    int users = it.destinations
+    int destinations = ac.destinations.length;
+    int users = ac.destinations
         .where((test) => (test.parentId == null && test.parentName == null))
         .length;
     int channels = destinations - users;
