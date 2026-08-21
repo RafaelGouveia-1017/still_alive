@@ -6,25 +6,19 @@ import 'package:still_alive/src/rust/api/integrations/traits.dart';
 import 'package:still_alive/src/rust/api/integrations/public_traits.dart';
 import 'package:still_alive/services/integration_service.dart';
 import 'package:still_alive/src/rust/api/main.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-import 'integration_row.dart';
 import 'integration_destinations.dart';
 import 'qr_scanner.dart';
 import '../../../data/all.dart';
 import '../../widgets/primitives.dart';
 
-/// Displays the integrations management screen.
+/// A screen for managing the application's external integrations.
 ///
-/// This screen loads the available integrations and presents their connected
-/// destinations. Each integration is displayed as an expandable
-/// group, with individual destinations represented by [IntegrationRow].
-///
-/// The screen is also responsible for:
-/// - Loading integration data.
-/// - Testing individual integration destinations.
-/// - Deleting individual destinations.
-/// - Updating the local integration state after a deletion.
-/// - Providing navigation and UI actions for adding integrations.
+/// Displays connected integration accounts, allows new integrations to be
+/// connected, provides account-level testing and deletion actions, and
+/// provides access to QR code scanning and integration destinations.
 class IntegrationsScreen extends StatefulWidget {
   const IntegrationsScreen({super.key});
 
@@ -33,11 +27,9 @@ class IntegrationsScreen extends StatefulWidget {
 }
 
 /// State implementation for [IntegrationsScreen].
-///
-/// Maintains the currently loaded integrations and the loading state while
-/// integration data is being retrieved.
 class _IntegrationsScreenState extends State<IntegrationsScreen> {
   List<IntegrationInfo> _integrationItems = [];
+  Map<String, bool> _pressedTestAccounts = {};
   bool _isLoading = true;
 
   @override
@@ -104,98 +96,152 @@ class _IntegrationsScreenState extends State<IntegrationsScreen> {
               )
             : CircleIconButton(
                 icon: LucideIcons.plus,
-                onTap: () => showBlurredBottomSheet(
-                  scheme: scheme,
-                  context: context,
-                  marginHorizontal: 50,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Center(
-                        child: Wrap(
-                          alignment: WrapAlignment.center,
-                          children: _integrationItems.map((item) {
-                            return SizedBox(
-                              width: 85,
-                              height: 85,
-                              child: Pressable(
-                                factory: InkSparkle.splashFactory,
-                                onTap: () async {
-                                  setState(() => _isLoading = true);
-                                  Navigator.of(context).pop();
+                onTap: () async {
+                  if (await InternetConnection().hasInternetAccess) {
+                    if (!context.mounted) return;
+                    showBlurredBottomSheet(
+                      scheme: scheme,
+                      context: context,
+                      marginHorizontal: 50,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Center(
+                            child: Wrap(
+                              alignment: WrapAlignment.center,
+                              children: _integrationItems.map((item) {
+                                return SizedBox(
+                                  width: 85,
+                                  height: 85,
+                                  child: Pressable(
+                                    factory: InkSparkle.splashFactory,
+                                    onTap: () async {
+                                      Navigator.of(context).pop();
 
-                                  try {
-                                    final items =
-                                        await IntegrationService.connectAccount(
-                                          context: context,
-                                          integrationItems: _integrationItems,
-                                          integrationKey: item.key,
-                                        );
+                                      try {
+                                        List<IntegrationInfo>? items;
+                                        switch (item.provider) {
+                                          case IntegrationProvider.discord:
+                                            items =
+                                                await IntegrationService.discordSetup(
+                                                  context: context,
+                                                  scheme: scheme,
+                                                  local: local,
+                                                  integrationItems:
+                                                      _integrationItems,
+                                                  integrationKey: item.key,
+                                                );
+                                            /*
+                                            items = await IntegrationService.connectAccount(
+                                              context: context,
+                                              integrationItems:
+                                                  _integrationItems,
+                                              integrationKey: item.key,
+                                              integrationCredentials: {
+                                                "token": "nope",
+                                              },
+                                            );
+                                            */
+                                            break;
+                                          case IntegrationProvider.telegram:
+                                            items =
+                                                await IntegrationService.telegramSetup(
+                                                  context: context,
+                                                  scheme: scheme,
+                                                  local: local,
+                                                  integrationItems:
+                                                      _integrationItems,
+                                                  integrationKey: item.key,
+                                                );
+                                            break;
+                                        }
 
-                                    if (items == null) return;
-                                    setState(() => _integrationItems = items);
+                                        if (items == null) return;
+                                        setState(() {
+                                          _isLoading = true;
+                                          _integrationItems = items!;
+                                        });
 
-                                    showToast(
-                                      scheme: scheme,
-                                      toast: Text(
-                                        local.translate(
-                                          "integrations.account_added",
-                                        ),
-                                        style: AppText.bodySm(scheme),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                      gravity: ToastGravity.BOTTOM,
-                                      position: (context, child, gravity) =>
-                                          Positioned(
-                                            bottom: 170,
-                                            left: 50,
-                                            right: 50,
-                                            child: child,
+                                        showToast(
+                                          scheme: scheme,
+                                          toast: Text(
+                                            local.translate(
+                                              "integrations.account_added",
+                                            ),
+                                            style: AppText.bodySm(scheme),
+                                            textAlign: TextAlign.center,
                                           ),
-                                    );
-                                  } finally {
-                                    setState(() => _isLoading = false);
-                                  }
-                                },
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      item.iconData,
-                                      size: 50,
-                                      color: item.colors[0],
+                                          gravity: ToastGravity.BOTTOM,
+                                          position: (context, child, gravity) =>
+                                              Positioned(
+                                                bottom: 170,
+                                                left: 50,
+                                                right: 50,
+                                                child: child,
+                                              ),
+                                        );
+                                      } finally {
+                                        setState(() => _isLoading = false);
+                                      }
+                                    },
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          item.iconData,
+                                          size: 50,
+                                          color: item.colors[0],
+                                        ),
+                                        const SizedBox(width: AppSpacing.xl),
+                                        Text(
+                                          item.title,
+                                          style: AppText.caption(
+                                            scheme,
+                                          ).copyWith(color: scheme.onSurface),
+                                        ),
+                                      ],
                                     ),
-                                    const SizedBox(width: AppSpacing.xl),
-                                    Text(
-                                      item.title,
-                                      style: AppText.caption(
-                                        scheme,
-                                      ).copyWith(color: scheme.onSurface),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                        ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                          Divider(height: 1, color: scheme.outlineVariant),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: AppSpacing.ms,
+                            ),
+                            child: Text(
+                              local.translate("integrations.soon"),
+                              style: AppText.bodySm(
+                                scheme,
+                              ).copyWith(color: scheme.onSurfaceVariant),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ],
                       ),
-                      Divider(height: 1, color: scheme.outlineVariant),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: AppSpacing.ms,
-                        ),
-                        child: Text(
-                          local.translate("integrations.soon"),
-                          style: AppText.bodySm(
-                            scheme,
-                          ).copyWith(color: scheme.onSurfaceVariant),
-                          textAlign: TextAlign.center,
-                        ),
+                    );
+                  } else {
+                    showToast(
+                      scheme: scheme,
+                      toast: Text(
+                        local.translate("integrations.no_internet"),
+                        style: AppText.bodySm(scheme),
+                        textAlign: TextAlign.center,
                       ),
-                    ],
-                  ),
-                ),
+                      gravity: ToastGravity.BOTTOM,
+                      position: (context, child, gravity) => Positioned(
+                        bottom: 170,
+                        left: 80,
+                        right: 80,
+                        child: child,
+                      ),
+                    );
+                  }
+                },
               ),
       ),
       child: Column(
@@ -220,73 +266,36 @@ class _IntegrationsScreenState extends State<IntegrationsScreen> {
                     );
                     if (result == null || !context.mounted) return;
 
-                    setState(() => _isLoading = true);
-                    try {
-                      Map<String, dynamic> json = jsonDecode(result);
+                    /*
+                      Expected JSON in QR Code:
+                      {
+                        "app": "StillAlive",
+                        "link": "https://link-to-group.com"
+                      }
+                    */
+                    Map<String, dynamic> json = jsonDecode(result);
 
-                      //TODO make sure QR code works
-                      /*
-                        Expected JSON in QR Code:
-                        {
-                          "integrationKey": "discord",
-                          "accountId": "DVSLk8utVw",
-                          "destination": {
-                            "id": "",
-                            "name": "",
-                            "kind": "direct_message",
-                            "parentId": null,
-                            "parentName": null
-                          }
-                        }
-                      */
-                      final items = await IntegrationService.selectDestination(
-                        context: context,
-                        integrationItems: _integrationItems,
-                        integrationKey: json["integrationKey"],
-                        accountId: json["accountId"],
-                        destination: MessageDestination(
-                          id: json["destination"]["id"],
-                          name: json["destination"]["name"],
-                          kind: switch (json["destination"]["kind"]) {
-                            "direct_message" => DestinationKind.directMessage,
-                            "group" => DestinationKind.group,
-                            "server_channel" => DestinationKind.serverChannel,
-                            _ => DestinationKind.channel,
-                          },
-                          parentId: json["destination"]["parentId"],
-                          parentName: json["destination"]["parentName"],
-                        ),
-                      );
-
-                      if (items == null) return;
-                      setState(() => _integrationItems = items);
-
-                      showToast(
-                        scheme: scheme,
-                        toast: Text(
-                          local.translate("integrations.destination_added"),
-                          style: AppText.bodySm(scheme),
-                          textAlign: TextAlign.center,
-                        ),
-                        gravity: ToastGravity.BOTTOM,
-                        position: (context, child, gravity) => Positioned(
-                          bottom: 170,
-                          left: 50,
-                          right: 50,
-                          child: child,
-                        ),
-                      );
-                    } finally {
-                      setState(() => _isLoading = false);
+                    if (json.containsKey("app") && json.containsKey("link")) {
+                      if (json["app"] != "StillAlive") return;
+                      try {
+                        Uri link = Uri.parse(json["link"]);
+                        launchUrl(link, mode: LaunchMode.externalApplication);
+                      } catch (e) {
+                        AppLogger.log.info("JSON in QR code: $json", e);
+                        return;
+                      }
                     }
                   },
                   child: AppCard(
-                    gradient: const LinearGradient(
+                    gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: [Color(0x263D6FFF), Color(0x1A6C63FF)],
+                      colors: [
+                        scheme.primary.withAlpha(38),
+                        scheme.secondary.withAlpha(26),
+                      ],
                     ),
-                    borderColor: const Color(0x406C63FF),
+                    borderColor: scheme.secondary.withAlpha(64),
                     padding: EdgeInsets.symmetric(
                       horizontal: AppSpacing.lg,
                       vertical: 0,
@@ -294,7 +303,7 @@ class _IntegrationsScreenState extends State<IntegrationsScreen> {
                     child: AppRow(
                       title: local.translate("integrations.qr_title"),
                       subtitle: local.translate("integrations.qr_note"),
-                      icon: LucideIcons.qrCode,
+                      icon: LucideIcons.scanQrCode,
                       iconSize: 32,
                       iconBackground: Colors.transparent,
                       trailing: Icon(
@@ -356,63 +365,39 @@ class _IntegrationsScreenState extends State<IntegrationsScreen> {
                         for (final entry
                             in it.groupDestinationsByAccount.entries)
                           AppExpandableCard(
-                            title: entry.key.name,
-                            subtitle: IntegrationService.subtitle(
-                              entry.key,
-                              context,
-                            ),
+                            title: it.title,
+                            subtitle: entry.key.name,
                             icon: it.iconData,
                             iconGradient: it.colors,
+                            trailing:
+                                _pressedTestAccounts.keys.contains(entry.key.id)
+                                ? (_pressedTestAccounts[entry.key.id] == true)
+                                      ? Pill(
+                                          label: local.translate(
+                                            "integrations.account_test.2",
+                                          ),
+                                          backColor: scheme.tertiary,
+                                          leading: Icon(
+                                            LucideIcons.check,
+                                            size: 12,
+                                            color: scheme.tertiary,
+                                          ),
+                                        )
+                                      : Pill(
+                                          label: local.translate(
+                                            "integrations.account_test.3",
+                                          ),
+                                          backColor: scheme.error,
+                                          leading: Icon(
+                                            LucideIcons.x,
+                                            size: 12,
+                                            color: scheme.error,
+                                          ),
+                                        )
+                                : null,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                if (entry.key.destinations.isNotEmpty) ...[
-                                  for (final dest
-                                      in entry.key.destinations) ...[
-                                    IntegrationRow(
-                                      title: dest.name,
-                                      subtitle: dest.parentName,
-                                      integrationKey: it.key,
-                                      channelId: dest.id,
-                                      onTest: () =>
-                                          IntegrationService.testDestination(
-                                            context: context,
-                                            integrationKey: it.key,
-                                            accountId: entry.key.id,
-                                            destinationId: dest.id,
-                                            scheme: scheme,
-                                          ),
-                                      onDelete: () async {
-                                        final result =
-                                            await IntegrationService.deselectDestination(
-                                              context: context,
-                                              integrationItems:
-                                                  _integrationItems,
-                                              integrationKey: it.key,
-                                              accountId: entry.key.id,
-                                              destinationId: dest.id,
-                                            );
-                                        if (result == null) return;
-                                        setState(
-                                          () => _integrationItems = result,
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ] else ...[
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: AppSpacing.lg,
-                                    ),
-                                    child: Text(
-                                      local.translate(
-                                        "integrations.account_empty",
-                                      ),
-                                      style: AppText.caption(scheme),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                ],
                                 Padding(
                                   padding: const EdgeInsets.only(
                                     top: AppSpacing.md,
@@ -422,27 +407,151 @@ class _IntegrationsScreenState extends State<IntegrationsScreen> {
                                         MainAxisAlignment.spaceEvenly,
                                     children: [
                                       PrimaryButton(
-                                        icon: LucideIcons.plus,
+                                        icon: LucideIcons.messagesSquare,
                                         width: 80,
                                         onPressed: () async {
-                                          await Navigator.of(context).push(
-                                            AppRoute(
-                                              page:
-                                                  IntegrationDestinationsScreen(
-                                                    integration: it,
-                                                    account: entry.key,
-                                                  ),
-                                              transition: AppRouteTransitionType
-                                                  .slideLeft,
-                                            ),
-                                          );
+                                          if (await InternetConnection()
+                                              .hasInternetAccess) {
+                                            if (!context.mounted) return;
 
-                                          setState(() {
-                                            _integrationItems = [];
-                                            _isLoading = true;
-                                          });
-                                          loadIntegrations();
+                                            await Navigator.of(context).push(
+                                              AppRoute(
+                                                page:
+                                                    IntegrationDestinationsScreen(
+                                                      integration: it,
+                                                      account: entry.key,
+                                                    ),
+                                                transition:
+                                                    AppRouteTransitionType
+                                                        .slideLeft,
+                                              ),
+                                            );
+                                          } else {
+                                            showToast(
+                                              scheme: scheme,
+                                              toast: Text(
+                                                local.translate(
+                                                  "integrations.no_internet",
+                                                ),
+                                                style: AppText.bodySm(scheme),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              gravity: ToastGravity.BOTTOM,
+                                              position:
+                                                  (context, child, gravity) =>
+                                                      Positioned(
+                                                        bottom: 170,
+                                                        left: 80,
+                                                        right: 80,
+                                                        child: child,
+                                                      ),
+                                            );
+                                          }
                                         },
+                                      ),
+                                      PrimaryButton(
+                                        icon:
+                                            _pressedTestAccounts.keys.contains(
+                                              entry.key.id,
+                                            )
+                                            ? LucideIcons.flaskConicalOff
+                                            : LucideIcons.flaskConical,
+                                        color:
+                                            _pressedTestAccounts.keys.contains(
+                                              entry.key.id,
+                                            )
+                                            ? ButtonColor.muted
+                                            : ButtonColor.tertiary,
+                                        width: 80,
+                                        onPressed:
+                                            _pressedTestAccounts.keys.contains(
+                                              entry.key.id,
+                                            )
+                                            ? null
+                                            : () async {
+                                                if (await InternetConnection()
+                                                    .hasInternetAccess) {
+                                                  if (!context.mounted) return;
+
+                                                  setState(
+                                                    () => _isLoading = true,
+                                                  );
+                                                  try {
+                                                    final result =
+                                                        await IntegrationService.testAccount(
+                                                          context: context,
+                                                          integrationKey:
+                                                              it.key,
+                                                          accountId:
+                                                              entry.key.id,
+                                                        );
+
+                                                    setState(() {
+                                                      _pressedTestAccounts[entry
+                                                              .key
+                                                              .id] =
+                                                          result.canSend;
+                                                    });
+
+                                                    showToast(
+                                                      scheme: scheme,
+                                                      secs: 5,
+                                                      toast: Text(
+                                                        '${entry.key.name} ${(result.canSend) ? local.translate("integrations.account_test.0") : local.translate("integrations.account_test.1")}',
+                                                        style: AppText.bodySm(
+                                                          scheme,
+                                                        ),
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                      ),
+                                                      gravity:
+                                                          ToastGravity.BOTTOM,
+                                                      position:
+                                                          (
+                                                            context,
+                                                            child,
+                                                            gravity,
+                                                          ) => Positioned(
+                                                            bottom: 170,
+                                                            left: 50,
+                                                            right: 50,
+                                                            child: child,
+                                                          ),
+                                                    );
+                                                  } finally {
+                                                    setState(
+                                                      () => _isLoading = false,
+                                                    );
+                                                  }
+                                                } else {
+                                                  showToast(
+                                                    scheme: scheme,
+                                                    toast: Text(
+                                                      local.translate(
+                                                        "integrations.no_internet",
+                                                      ),
+                                                      style: AppText.bodySm(
+                                                        scheme,
+                                                      ),
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                    gravity:
+                                                        ToastGravity.BOTTOM,
+                                                    position:
+                                                        (
+                                                          context,
+                                                          child,
+                                                          gravity,
+                                                        ) => Positioned(
+                                                          bottom: 170,
+                                                          left: 80,
+                                                          right: 80,
+                                                          child: child,
+                                                        ),
+                                                  );
+                                                }
+                                              },
                                       ),
                                       PrimaryButton(
                                         icon: LucideIcons.trash,

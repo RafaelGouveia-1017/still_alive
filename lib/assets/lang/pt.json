@@ -202,33 +202,86 @@
   "integrations": {
     "title": "Integrações",
     "soon": "Mais opções em breve...",
-    "qr_title": "Emparelhamento rápido via QR",
-    "qr_note": "Adiciona um novo plugin em segundos",
-    "connected": "Conectado",
+    "qr_title": "Conta via QR",
+    "qr_note": "Utilizar uma conta de outro",
+    "connected": "conectado",
+    "destinations": "Destinatários",
     "user": "contacto",
     "users": "contactos",
     "channel": "canal",
     "channels": "canais",
     "not_found": "Nenhuma integração conectada encontrada.",
+    "account_add": "Adicionar Conta",
     "account_added": "Conta adicionada com sucesso!",
     "account_deleted": "Conta removida com sucesso!",
-    "destination_added": "Destinatário adicionado com sucesso!",
-    "account_empty": "Esta conta ainda não tem integrações configuradas...",
+    "account_test": [
+      "verificado!",
+      "não está a responder...",
+      "activo",
+      "inactivo"
+    ],
     "delete_account": [
       "Apagar Conta",
       "Tens acerteza? Esta conta e todas as suas integrações serão PERMANENTEMENTE apagadas."
-    ]
+    ],
+    "no_internet": "Internet não está disponível!!!",
+    "setup": {
+      "discord": [
+        "Conecta o teu bot do Discord",
+        "Para conectares o teu bot do Discord, precisas do respetivo token.",
+        "Como obter o token do bot:",
+        "Abre o Discord Developer Portal.",
+        "Cria uma nova aplicação ou seleciona uma aplicação existente.",
+        "Abre a secção Bot no menu lateral esquerdo.",
+        "Clique em Reset Token ou View Token para revelar o token do teu bot.",
+        "Copia o token e cola-o abaixo.",
+        "Ir para Discord Developer Portal",
+        "Token do bot",
+        "Cola o token do teu bot do Discord",
+        "Mantém o token privado. Qualquer pessoa que o obtenha pode controlar o teu bot."
+      ],
+      "telegram": [
+        "Conecta o teu bot do Telegram",
+        "Para conectares o teu bot do Telegram, precisas do respetivo token.",
+        "Como obter o token do bot:",
+        "Abre o Telegram e procura por @BotFather.",
+        "Envia /newbot para o BotFather.",
+        "Segue as instruções para escolher um nome e descrição para o teu bot.",
+        "O BotFather irá fornecer-te um token de autenticação. Copia-o.",
+        "Ir para @BotFather",
+        "Token do bot",
+        "Cola o token do teu bot do Telegram",
+        "Mantém o token privado. Qualquer pessoa que o obtenha pode controlar o teu bot."
+      ]
+    }
   },
   "integration_destinations": {
-    "title": "Destinatários",
     "search": "Procurar destinatários",
     "not_found": "Nenhum destinatário encontrado.",
-    "warning": "Estás à espera que algo apareça?\nVerifica na tua conta se a StillAlive tem as permissões necessárias para ver os teus destinatários.",
-    "filters": ["Todos", "Outros"]
+    "warning": "Estás à espera que algo apareça?",
+    "solutions": {
+      "discord": [
+        "Verifica se o teu bot:",
+        "Está num chat e/ou grupo;\nTem as permissões corretas para ver os teus destinatários;\nTem as permissões corretas para enviar mensagens."
+      ],
+      "telegram": [
+        "Verifica se o teu bot:",
+        "Está num chat e/ou grupo;\nTem as permissões corretas para ver os teus destinatários;\nTem as permissões corretas para enviar mensagens."
+      ]
+    },
+    "filters": ["Todos", "Outros"],
+    "kinds": ["Mensagem Direta", "Grupo", "Canal", "Canal Servidor"],
+    "test_result": [
+      "Destinatário está disponível.",
+      "Destinatário não está disponível!!!"
+    ]
+  },
+  "qr_display": {
+    "title": "Código QR Conta"
   },
   "qr_pairing": {
-    "title": "Emparelhar Integração",
-    "description": "Digitaliza um código QR StillAlive para adicionar",
+    "title": "Obtém Destinatário",
+    "description": "Digitaliza um código QR StillAlive para ir",
     "no_camera": "Permissão para câmera não concedida.\nNão te preocupes, só usamos a câmera aqui.",
     "valid_qr": ["Códigos QR StillAlive válidos", "contém o símbolo", ""]
   },

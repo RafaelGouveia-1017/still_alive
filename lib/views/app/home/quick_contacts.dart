@@ -140,52 +140,74 @@ class _QuickContactsState extends State<QuickContacts> with RouteAware {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SectionTitle(local.translate("home.quick_contacts")),
-        ReorderableBuilder(
-          onReorder: (ReorderedListFunction reorder) {
-            setState(() {
-              final reordered =
-                  reorder(movableContacts) as List<_QuickContactData>;
+        if (movableContacts.isEmpty) ...[
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => Navigator.of(context).push(
+              AppRoute(
+                page: ContactsScreen(),
+                transition: AppRouteTransitionType.slideRight,
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.only(
+                top: AppSpacing.xs,
+                left: AppSpacing.ms,
+              ),
+              child: CircleIconButton(
+                icon: LucideIcons.plus,
+                background: scheme.surfaceContainer,
+              ),
+            ),
+          ),
+        ] else ...[
+          ReorderableBuilder(
+            onReorder: (ReorderedListFunction reorder) {
+              setState(() {
+                final reordered =
+                    reorder(movableContacts) as List<_QuickContactData>;
 
-              Map<String, dynamic> json = {
-                'count': reordered.length,
-                'ids': reordered.map((contact) => contact.id).toList(),
-              };
+                Map<String, dynamic> json = {
+                  'count': reordered.length,
+                  'ids': reordered.map((contact) => contact.id).toList(),
+                };
 
-              executeSql(
-                sql:
-                    "UPDATE contacts SET value = '${jsonEncode(json).replaceAll("'", "''")}' WHERE key = 'quick'",
+                executeSql(
+                  sql:
+                      "UPDATE contacts SET value = '${jsonEncode(json).replaceAll("'", "''")}' WHERE key = 'quick'",
+                );
+
+                quickContacts = [...reordered, addContact];
+              });
+            },
+            builder: (children) {
+              return GridView(
+                shrinkWrap: true,
+                padding: EdgeInsets.zero,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 5,
+                  mainAxisSpacing: AppSpacing.sm,
+                  crossAxisSpacing: AppSpacing.sm,
+                  childAspectRatio: 0.75,
+                ),
+                children: [
+                  ...children,
+
+                  _QuickContact(data: addContact),
+                ],
               );
-
-              quickContacts = [...reordered, addContact];
-            });
-          },
-          builder: (children) {
-            return GridView(
-              shrinkWrap: true,
-              padding: EdgeInsets.zero,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 5,
-                mainAxisSpacing: AppSpacing.sm,
-                crossAxisSpacing: AppSpacing.sm,
-                childAspectRatio: 0.75,
-              ),
-              children: [
-                ...children,
-
-                _QuickContact(data: addContact),
-              ],
-            );
-          },
-          children: [
-            for (final contact in movableContacts)
-              KeyedSubtree(
-                key: ValueKey(contact.id + contact.hashCode.toString()),
-                child: _QuickContact(data: contact),
-              ),
-          ],
-        ),
-        if (movableContacts.isNotEmpty) const SizedBox(height: AppSpacing.sm),
+            },
+            children: [
+              for (final contact in movableContacts)
+                KeyedSubtree(
+                  key: ValueKey(contact.id + contact.hashCode.toString()),
+                  child: _QuickContact(data: contact),
+                ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.sm),
+        ],
       ],
     );
   }

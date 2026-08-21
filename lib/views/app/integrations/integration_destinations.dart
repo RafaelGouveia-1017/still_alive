@@ -1,12 +1,20 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:still_alive/src/rust/api/integrations/traits.dart';
 import 'package:still_alive/services/integration_service.dart';
 
+import 'qr_display.dart';
 import 'integration_row.dart';
 import '../../../data/all.dart';
 import '../../widgets/primitives.dart';
 
+/// A screen that displays the message destinations available for an
+/// integration account.
+///
+/// Destinations can be searched and filtered by their parent group. Each
+/// destination also provides actions for testing the connection and
+/// generating a QR code for the destination.
 class IntegrationDestinationsScreen extends StatefulWidget {
   const IntegrationDestinationsScreen({
     super.key,
@@ -26,7 +34,6 @@ class IntegrationDestinationsScreen extends StatefulWidget {
 class _IntegrationDestinationsScreenState
     extends State<IntegrationDestinationsScreen> {
   List<MessageDestination> _destinationItems = [];
-  Set<String> _selectedIds = {};
 
   late List<AppFilterBarOption> _filters = [];
   late List<List<String>> filterLabels = [];
@@ -115,14 +122,10 @@ class _IntegrationDestinationsScreenState
 
       if (!mounted || destinations.isEmpty) return;
 
-      final selectedIds = widget.account.destinations
-          .map((destination) => destination.id)
-          .toSet();
-
       final sorted = IntegrationService.sortedDestinations(destinations);
 
       // Build filters from destination parent names.
-      final parentNames = sorted
+      List<String?> parentNames = sorted
           .map((destination) => destination.parentName)
           .toSet()
           .toList();
@@ -135,27 +138,94 @@ class _IntegrationDestinationsScreenState
         return a.toLowerCase().compareTo(b.toLowerCase());
       });
 
+      if (parentNames.length == 1 && parentNames[0] == null) parentNames = [];
+
       AppLocalizations local = AppLocalizations.of(context)!;
+
+      // Build filters from destination type.
+      final destinationKind = sorted
+          .map((destination) => destination.kind)
+          .toSet()
+          .toList();
+
+      final destinationTypes = destinationKind
+          .map((kind) {
+            switch (kind) {
+              case DestinationKind.directMessage:
+                return [
+                  kind.name.toLowerCase(),
+                  local.translate("integration_destinations.kinds.0"),
+                ];
+              case DestinationKind.group:
+                return [
+                  kind.name.toLowerCase(),
+                  local.translate("integration_destinations.kinds.1"),
+                ];
+              case DestinationKind.channel:
+                return [
+                  kind.name.toLowerCase(),
+                  local.translate("integration_destinations.kinds.2"),
+                ];
+              case DestinationKind.serverChannel:
+                return [
+                  kind.name.toLowerCase(),
+                  local.translate("integration_destinations.kinds.3"),
+                ];
+            }
+          })
+          .toSet()
+          .toList();
+
+      destinationTypes.sort((a, b) {
+        return a[1].toLowerCase().compareTo(b[1].toLowerCase());
+      });
 
       filterLabels = [
         ['all', local.translate("integration_destinations.filters.0")],
-        ...parentNames.map(
-          (name) => [
-            name?.toLowerCase() ?? '__no_parent__',
-            name ?? local.translate("integration_destinations.filters.1"),
-          ],
-        ),
+
+        if (parentNames.isNotEmpty)
+          ...parentNames.map(
+            (name) => [
+              name?.toLowerCase() ?? '__no_parent__',
+              name ?? local.translate("integration_destinations.filters.1"),
+            ],
+          ),
+
+        ...destinationTypes,
       ];
 
       loadFilters(0);
 
       setState(() {
-        _selectedIds = selectedIds;
         _destinationItems = sorted;
       });
     } finally {
       setState(() => _isLoading = false);
     }
+  }
+
+  String _handleJSONForQR(IntegrationAccount account) {
+    String link = '';
+
+    switch (widget.integration.provider) {
+      case IntegrationProvider.discord:
+        link =
+            "https://discord.com/oauth2/authorize?client_id=${account.id}&scope=bot&permissions=3072";
+      case IntegrationProvider.telegram:
+        link = "https://t.me/${account.name.substring(1, account.name.length)}";
+    }
+
+    /*
+      Expected JSON in QR Code:
+      {
+        "app": "StillAlive",
+        "link": "https://link-to-group.com"
+      }
+    */
+
+    Map<String, String> data = {"app": "StillAlive", "link": link};
+    String json = jsonEncode(data);
+    return base64UrlEncode(utf8.encode(json));
   }
 
   @override
@@ -188,7 +258,8 @@ class _IntegrationDestinationsScreenState
             ? activeFilters.contains('all') ||
                   activeFilters.contains(
                     group.parentName?.toLowerCase() ?? '__no_parent__',
-                  )
+                  ) ||
+                  activeFilters.contains(group.kind.name.toLowerCase())
             : true;
 
         return matchesSearch && matchesFilter;
@@ -213,8 +284,7 @@ class _IntegrationDestinationsScreenState
 
     return ScreenBase(
       header: AppHeader(
-        title:
-            '${widget.account.name} • ${local.translate("integration_destinations.title")}',
+        title: widget.account.name,
         subtitle: (_isLoading)
             ? "..."
             : subtitle ?? local.translate("integration_destinations.not_found"),
@@ -222,17 +292,34 @@ class _IntegrationDestinationsScreenState
           icon: LucideIcons.chevronLeft,
           onTap: () => Navigator.pop(context),
         ),
-        searchBar: (groupedDestinations.isNotEmpty)
-            ? AppSearchBar(
+        right: CircleIconButton(
+          icon: LucideIcons.qrCode,
+          onTap: () {
+            Navigator.of(context).push(
+              AppRoute(
+                page: QrCodeScreen(
+                  integrationTitle: widget.integration.title,
+                  accountName: widget.account.name,
+                  qrData: _handleJSONForQR(widget.account),
+                ),
+                transition: AppRouteTransitionType.slideLeft,
+              ),
+            );
+          },
+        ),
+        searchBar: (groupedDestinations.isEmpty && searchQuery.isEmpty)
+            ? null
+            : AppSearchBar(
                 hint: local.translate("integration_destinations.search"),
                 onChanged: (value) {
                   setState(() {
                     searchQuery = value.toLowerCase();
                   });
                 },
-              )
-            : null,
-        filterBar: (_filters.isEmpty) ? null : AppFilterBar(filters: _filters),
+              ),
+        filterBar: (_filters.length <= 2)
+            ? null
+            : AppFilterBar(filters: _filters),
       ),
       child: (_isLoading)
           ? SizedBox(
@@ -270,6 +357,44 @@ class _IntegrationDestinationsScreenState
                     ).copyWith(color: scheme.onSurfaceVariant),
                     textAlign: TextAlign.center,
                   ),
+                  if (searchQuery.isEmpty) ...[
+                    SizedBox(height: AppSpacing.lg),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          switch (widget.integration.provider) {
+                            IntegrationProvider.telegram => local.translate(
+                              "integration_destinations.solutions.telegram.0",
+                            ),
+                            _ => local.translate(
+                              "integration_destinations.solutions.discord.0",
+                            ),
+                          },
+                          style: AppText.bodySm(scheme).copyWith(
+                            color: scheme.onSurfaceVariant,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.left,
+                        ),
+                        SizedBox(height: AppSpacing.sm),
+                        Text(
+                          switch (widget.integration.provider) {
+                            IntegrationProvider.telegram => local.translate(
+                              "integration_destinations.solutions.telegram.1",
+                            ),
+                            _ => local.translate(
+                              "integration_destinations.solutions.discord.1",
+                            ),
+                          },
+                          style: AppText.bodySm(
+                            scheme,
+                          ).copyWith(color: scheme.onSurfaceVariant),
+                          textAlign: TextAlign.left,
+                        ),
+                      ],
+                    ),
+                  ],
                 ] else ...[
                   Expanded(
                     child: ListView(
@@ -277,8 +402,9 @@ class _IntegrationDestinationsScreenState
                       padding: const EdgeInsets.only(bottom: AppSpacing.xl),
                       children: [
                         for (final entry in groupedDestinations.entries) ...[
-                          SizedBox(height: AppRadius.lg),
-                          SectionTitle(entry.key),
+                          SizedBox(height: AppSpacing.lg),
+                          if (_filters.any((opt) => opt.id == "__no_parent__"))
+                            SectionTitle(entry.key),
                           AppCard(
                             padding: EdgeInsets.symmetric(
                               horizontal: AppSpacing.xxs,
@@ -286,29 +412,10 @@ class _IntegrationDestinationsScreenState
                             ),
                             child: Column(
                               children: [
-                                for (final d in entry.value)
+                                for (final d in entry.value) ...[
                                   IntegrationRow(
                                     title: d.name,
                                     subtitle: null,
-                                    integrationKey: widget.integration.key,
-                                    channelId: d.id,
-                                    selected: _selectedIds.contains(d.id),
-                                    listMode: true,
-                                    onAdd: () async {
-                                      final result =
-                                          await IntegrationService.selectDestination(
-                                            context: context,
-                                            integrationItems: [],
-                                            integrationKey:
-                                                widget.integration.key,
-                                            accountId: widget.account.id,
-                                            destination: d,
-                                          );
-                                      if (result == null) return;
-                                      setState(() {
-                                        _selectedIds.add(d.id);
-                                      });
-                                    },
                                     onTest: () =>
                                         IntegrationService.testDestination(
                                           context: context,
@@ -318,24 +425,41 @@ class _IntegrationDestinationsScreenState
                                           destinationId: d.id,
                                           scheme: scheme,
                                         ),
-                                    onDelete: () async {
-                                      final result =
-                                          await IntegrationService.deselectDestination(
-                                            context: context,
-                                            integrationItems: [],
-                                            integrationKey:
-                                                widget.integration.key,
-                                            accountId: widget.account.id,
-                                            destinationId: d.id,
-                                          );
-                                      if (result == null) return;
-                                      setState(() {
-                                        _selectedIds.removeWhere(
-                                          (id) => id == d.id,
-                                        );
-                                      });
+                                    getExtLink: () {
+                                      switch (widget.integration.provider) {
+                                        case IntegrationProvider.discord:
+                                          if (d.parentId == null) {
+                                            return Uri.parse(
+                                              "discord://-/channels/@me/${d.id}",
+                                            );
+                                          } else {
+                                            return Uri.parse(
+                                              "discord://-/channels/${d.parentId}/${d.id}",
+                                            );
+                                          }
+                                        case IntegrationProvider.telegram:
+                                          return Uri.parse("tg://");
+                                      }
                                     },
                                   ),
+                                  PrimaryButton(
+                                    label: "send example message",
+                                    color: ButtonColor.muted,
+                                    width: 230,
+                                    icon: LucideIcons.send,
+                                    onPressed: () {
+                                      IntegrationService.sendMessage(
+                                        integrationKey: widget.integration.key,
+                                        accountId: widget.account.id,
+                                        destinationId: d.id,
+                                        message:
+                                            "hello sissel, this is a test message.",
+                                      );
+                                    },
+                                  ),
+                                  SizedBox(height: 12),
+                                  //TODO delete this primarybutton & sizedbox when testing messages is no longer needed
+                                ],
                               ],
                             ),
                           ),

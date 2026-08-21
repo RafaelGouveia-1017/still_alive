@@ -2,6 +2,7 @@ use crate::api::integrations::traits::*;
 use flutter_rust_bridge::frb;
 
 use anyhow::{anyhow, Ok, Result};
+use reqwest::Client;
 use serde::{Deserialize, Serialize};
 
 /// Persisted Discord integration configuration.
@@ -62,6 +63,7 @@ impl Integration for DiscordIntegration {
         self.config
             .accounts
             .iter()
+            .filter(|account| account.id != "example")
             .map(|account| {
                 let mut destinations = account.destinations.clone();
 
@@ -80,280 +82,226 @@ impl Integration for DiscordIntegration {
             .collect()
     }
 
-    fn authenticate_account(&self) -> Result<IntegrationAccount> {
+    async fn authenticate_account(&self, credential: &str) -> Result<IntegrationAccount> {
         log::info!("Starting authenticate_account in {}", self.title());
 
-        // Authenticate the Discord integration here.
-        //
-        // Example:
-        //
-        // GET /users/@me
-        //
-        // Return the authenticated Discord identity.
-        //todo!("Discord: authenticate account")
+        if credential.trim().is_empty() {
+            return Err(anyhow!("Discord bot token cannot be empty"));
+        }
+
+        let client = Client::new();
+
+        let response = client
+            .get(discord_url("users/@me"))
+            .header(
+                reqwest::header::AUTHORIZATION,
+                format!("Bot {}", credential),
+            )
+            .send()
+            .await?;
+
+        if !response.status().is_success() {
+            return Err(anyhow!(
+                "Discord authentication failed with HTTP {}",
+                response.status()
+            ));
+        }
+
+        let user: DiscordUser = response.json().await?;
+
+        if user.bot != Some(true) {
+            return Err(anyhow!("Discord credential does not belong to a bot"));
+        }
 
         Ok(IntegrationAccount {
-            id: "bruhid".into(),
-            name: "discord bruh".into(),
-            destinations: [].into(),
+            id: credential.to_owned(),
+
+            name: user.global_name.unwrap_or(user.username),
+
+            destinations: Vec::new(),
         })
     }
 
-    fn discover_destinations(&self, account_id: &str) -> Result<Vec<MessageDestination>> {
+    async fn discover_destinations(&mut self, account_id: &str) -> Result<Vec<MessageDestination>> {
         log::info!("Starting discover_destinations in {}", self.title());
 
-        let account = self
+        let account_index = self
             .config
             .accounts
             .iter()
-            .find(|account| account.id == account_id)
+            .position(|account| account.id == account_id)
             .ok_or_else(|| anyhow!("Discord account not found: {}", account_id))?;
 
-        let _ = account;
+        let credential = self.config.accounts[account_index].id.clone();
 
-        // This is deliberately NOT persisted.
-        //
-        // Depending on your Discord architecture this should discover:
-        //
-        //   * server text channels the bot/user can send to
-        //   * DM destinations that are actually valid
-        //
-        // Return MessageDestination values.
-        //
-        // Discord's APIs distinguish guild channels from DMs, so normalize
-        // both into the application's destination model here.
-        //todo!("Discord: discover available message destinations")
+        let client = Client::new();
+        let auth_header = format!("Bot {}", credential);
 
-        Ok(vec![
-            MessageDestination {
-                id: "789".into(),
-                name: "general".into(),
-                kind: DestinationKind::ServerChannel,
-                parent_id: Some("5KuCjeIJNd".into()),
-                parent_name: Some("Still Alive".into()),
-            },
-            MessageDestination {
-                id: "78329".into(),
-                name: "general #2".into(),
-                kind: DestinationKind::ServerChannel,
-                parent_id: Some("5KuCjeIJNd".into()),
-                parent_name: Some("Still Alive".into()),
-            },
-            MessageDestination {
-                id: "E0LCyU1tQ6".into(),
-                name: "emergency".into(),
-                kind: DestinationKind::ServerChannel,
-                parent_id: Some("45ew6".into()),
-                parent_name: Some("Still Dead".into()),
-            },
-            MessageDestination {
-                id: "dAE1KqF4YI".into(),
-                name: "Alice".into(),
-                kind: DestinationKind::DirectMessage,
-                parent_id: None,
-                parent_name: None,
-            },
-            MessageDestination {
-                id: "hp7iKPwDvi".into(),
-                name: "Mano bro".into(),
-                kind: DestinationKind::DirectMessage,
-                parent_id: None,
-                parent_name: None,
-            },
-            MessageDestination {
-                id: "JNjTdzz9VI".into(),
-                name: "outro bro".into(),
-                kind: DestinationKind::DirectMessage,
-                parent_id: None,
-                parent_name: None,
-            },
-            MessageDestination {
-                id: "0GoH5qOT3D".into(),
-                name: "music".into(),
-                kind: DestinationKind::ServerChannel,
-                parent_id: Some("rnvqTfEQKs".into()),
-                parent_name: Some("Monstercat".into()),
-            },
-            MessageDestination {
-                id: "fpQgCiuU0s".into(),
-                name: "general".into(),
-                kind: DestinationKind::ServerChannel,
-                parent_id: Some("rnvqTfEQKs".into()),
-                parent_name: Some("Monstercat".into()),
-            },
-            MessageDestination {
-                id: "hf77hRua6d".into(),
-                name: "Tom".into(),
-                kind: DestinationKind::DirectMessage,
-                parent_id: None,
-                parent_name: None,
-            },
-            MessageDestination {
-                id: "45J44CGdTb".into(),
-                name: "Still Alive".into(),
-                kind: DestinationKind::Group,
-                parent_id: None,
-                parent_name: None,
-            },
-            MessageDestination {
-                id: "k8Lm2QpR7x".into(),
-                name: "announcements".into(),
-                kind: DestinationKind::ServerChannel,
-                parent_id: Some("5KuCjeIJNd".into()),
-                parent_name: Some("Still Alive".into()),
-            },
-            MessageDestination {
-                id: "v3Nx9AaL2m".into(),
-                name: "random".into(),
-                kind: DestinationKind::ServerChannel,
-                parent_id: Some("5KuCjeIJNd".into()),
-                parent_name: Some("Still Alive".into()),
-            },
-            MessageDestination {
-                id: "Q7wEr4TyUi".into(),
-                name: "off-topic".into(),
-                kind: DestinationKind::ServerChannel,
-                parent_id: Some("5KuCjeIJNd".into()),
-                parent_name: Some("Still Alive".into()),
-            },
-            MessageDestination {
-                id: "m2Zx8BcV5n".into(),
-                name: "support".into(),
-                kind: DestinationKind::ServerChannel,
-                parent_id: Some("45ew6".into()),
-                parent_name: Some("Still Dead".into()),
-            },
-            MessageDestination {
-                id: "P4qL7sW1eR".into(),
-                name: "logs".into(),
-                kind: DestinationKind::ServerChannel,
-                parent_id: Some("45ew6".into()),
-                parent_name: Some("Still Dead".into()),
-            },
-            MessageDestination {
-                id: "Y6uI9oP3aS".into(),
-                name: "releases".into(),
-                kind: DestinationKind::ServerChannel,
-                parent_id: Some("rnvqTfEQKs".into()),
-                parent_name: Some("Monstercat".into()),
-            },
-            MessageDestination {
-                id: "t5Gh2Jk8Lm".into(),
-                name: "artists".into(),
-                kind: DestinationKind::ServerChannel,
-                parent_id: Some("rnvqTfEQKs".into()),
-                parent_name: Some("Monstercat".into()),
-            },
-            MessageDestination {
-                id: "R9cV4bN7xQ".into(),
-                name: "beats".into(),
-                kind: DestinationKind::ServerChannel,
-                parent_id: Some("rnvqTfEQKs".into()),
-                parent_name: Some("Monstercat".into()),
-            },
-            MessageDestination {
-                id: "a1S2d3F4g5".into(),
-                name: "Bob".into(),
-                kind: DestinationKind::DirectMessage,
-                parent_id: None,
-                parent_name: None,
-            },
-            MessageDestination {
-                id: "h6J7k8L9m0".into(),
-                name: "Charlie".into(),
-                kind: DestinationKind::DirectMessage,
-                parent_id: None,
-                parent_name: None,
-            },
-            MessageDestination {
-                id: "N4b5V6c7X8".into(),
-                name: "Dev Team".into(),
-                kind: DestinationKind::Group,
-                parent_id: None,
-                parent_name: None,
-            },
-            MessageDestination {
-                id: "z9Q0w1E2r3".into(),
-                name: "Weekend Plans".into(),
-                kind: DestinationKind::Group,
-                parent_id: None,
-                parent_name: None,
-            },
-        ])
-    }
+        // ---------------------------------------------------------
+        // 1. Get guilds the bot belongs to.
+        // ---------------------------------------------------------
 
-    fn add_destination(
-        &mut self,
-        account_id: &str,
-        destination: MessageDestination,
-    ) -> Result<IntegrationAccount> {
-        log::info!("Starting add_destination in {}", self.title());
+        let guilds_response = client
+            .get(discord_url("users/@me/guilds"))
+            .header(reqwest::header::AUTHORIZATION, &auth_header)
+            .send()
+            .await?;
 
-        let account = self
-            .config
-            .accounts
-            .iter_mut()
-            .find(|account| account.id == account_id)
-            .ok_or_else(|| anyhow!("Discord account not found: {}", account_id))?;
+        if !guilds_response.status().is_success() {
+            return Err(anyhow!(
+                "Discord guild discovery failed with HTTP {}",
+                guilds_response.status()
+            ));
+        }
 
-        if account
-            .destinations
-            .iter()
-            .any(|existing| existing.id == destination.id)
+        let guilds: Vec<DiscordGuild> = guilds_response.json().await?;
+
+        let mut destinations = Vec::new();
+
+        // Keep track of guilds that are actually accessible.
+        let mut accessible_guild_ids = std::collections::HashSet::new();
+
+        // Keep track of channels that are currently accessible.
+        let mut accessible_channel_ids = std::collections::HashSet::new();
+
+        // ---------------------------------------------------------
+        // 2. Get channels for every guild.
+        // ---------------------------------------------------------
+
+        for guild in guilds {
+            let guild_id = guild.id.clone();
+
+            let url = discord_url(format!("guilds/{}/channels", guild.id).as_str());
+
+            let channels_response = client
+                .get(url)
+                .header(reqwest::header::AUTHORIZATION, &auth_header)
+                .send()
+                .await?;
+
+            if !channels_response.status().is_success() {
+                log::warn!(
+                    "Failed to discover Discord channels for guild {}: HTTP {}",
+                    guild.id,
+                    channels_response.status()
+                );
+
+                continue;
+            }
+
+            accessible_guild_ids.insert(guild_id.clone());
+
+            let channels: Vec<DiscordChannel> = channels_response.json().await?;
+
+            for channel in channels {
+                // https://docs.discord.com/developers/resources/channel#channel-object-channel-types
+                let kind = match channel.channel_type {
+                    0 | 5 => DestinationKind::ServerChannel,
+                    3 => DestinationKind::Group,
+                    _ => continue,
+                };
+
+                accessible_channel_ids.insert(channel.id.clone());
+
+                destinations.push(MessageDestination {
+                    id: channel.id,
+                    name: channel.name.unwrap_or_else(|| "Unnamed Channel".into()),
+                    kind,
+                    parent_id: Some(guild.id.clone()),
+                    parent_name: Some(guild.name.clone()),
+                });
+            }
+        }
+
+        // ---------------------------------------------------------
+        // 3. Reconcile persisted destinations.
+        // ---------------------------------------------------------
+
         {
-            return Err(anyhow!(
-                "Discord destination already selected: {}",
-                destination.id
-            ));
-        }
+            let account = &mut self.config.accounts[account_index];
 
-        account.destinations.push(destination);
+            account.destinations.retain_mut(|persisted| {
+                let Some(parent_id) = persisted.parent_id.as_ref() else {
+                    log::info!(
+                        "Removing Discord destination {} because it has no guild",
+                        persisted.id
+                    );
+                    return false;
+                };
+
+                // The guild/server is no longer accessible.
+                if !accessible_guild_ids.contains(parent_id) {
+                    log::info!(
+                        "Removing inaccessible Discord destination {} from guild {}",
+                        persisted.id,
+                        parent_id
+                    );
+                    return false;
+                }
+
+                // The channel is no longer accessible.
+                if !accessible_channel_ids.contains(&persisted.id) {
+                    log::info!("Removing inaccessible Discord channel {}", persisted.id);
+                    return false;
+                }
+
+                // The channel is accessible, so find its current metadata and
+                // update anything that changed.
+                if let Some(current) = destinations
+                    .iter()
+                    .find(|destination| destination.id == persisted.id)
+                {
+                    if persisted.name != current.name {
+                        log::info!(
+                            "Updating Discord channel {} name: '{}' -> '{}'",
+                            persisted.id,
+                            persisted.name,
+                            current.name
+                        );
+
+                        persisted.name = current.name.clone();
+                    }
+
+                    if persisted.parent_id != current.parent_id {
+                        log::info!(
+                            "Updating Discord channel {} guild: {:?} -> {:?}",
+                            persisted.id,
+                            persisted.parent_id,
+                            current.parent_id
+                        );
+
+                        persisted.parent_id = current.parent_id.clone();
+                    }
+
+                    if persisted.parent_name != current.parent_name {
+                        log::info!(
+                            "Updating Discord channel {} guild name: {:?} -> {:?}",
+                            persisted.id,
+                            persisted.parent_name,
+                            current.parent_name
+                        );
+
+                        persisted.parent_name = current.parent_name.clone();
+                    }
+
+                    persisted.kind = current.kind;
+                }
+
+                true
+            });
+        }
 
         save_config(Self::KEY, &self.config)?;
 
-        self.accounts()
-            .into_iter()
-            .find(|account| account.id == account_id)
-            .ok_or_else(|| anyhow!("Discord account disappeared"))
-    }
-
-    fn remove_destination(
-        &mut self,
-        account_id: &str,
-        destination_id: &str,
-    ) -> Result<IntegrationAccount> {
-        log::info!("Starting remove_destination in {}", self.title());
-
-        let account = self
-            .config
-            .accounts
-            .iter_mut()
-            .find(|account| account.id == account_id)
-            .ok_or_else(|| anyhow!("Discord account not found: {}", account_id))?;
-
-        let original_len = account.destinations.len();
-
-        account
-            .destinations
-            .retain(|destination| destination.id != destination_id);
-
-        if account.destinations.len() == original_len {
-            return Err(anyhow!(
-                "Discord destination not selected: {}",
-                destination_id
-            ));
-        }
-
-        save_config(Self::KEY, &self.config)?;
-
-        self.accounts()
-            .into_iter()
-            .find(|account| account.id == account_id)
-            .ok_or_else(|| anyhow!("Discord account disappeared"))
+        Ok(destinations)
     }
 
     fn add_account(&mut self, account: IntegrationAccount) -> Result<IntegrationAccount> {
         log::info!("Starting add_account in {}", self.title());
+
+        if account.id.trim().is_empty() {
+            return Err(anyhow!("Discord bot token cannot be empty"));
+        }
 
         if self
             .config
@@ -399,7 +347,7 @@ impl Integration for DiscordIntegration {
         Ok(())
     }
 
-    fn send_message(
+    async fn send_message(
         &self,
         account_id: &str,
         destination_id: &str,
@@ -424,25 +372,43 @@ impl Integration for DiscordIntegration {
             return Err(anyhow!("message cannot be empty"));
         }
 
-        // IMPORTANT:
-        // The API call belongs here.
-        //
-        // For a server channel:
-        //   POST /channels/{channel.id}/messages
-        //
-        // For a DM:
-        //   resolve/open the DM channel first, then send to that channel.
-        //
-        // Do not accept an arbitrary destination_id from Flutter and blindly
-        // send to it. The persisted selection check above is part of the
-        // authorization boundary.
+        let credential = &account.id;
 
-        let _ = destination;
+        let client = Client::new();
 
-        todo!("Discord: send message")
+        let url = discord_url(format!("channels/{}/messages", destination.id).as_str());
+
+        let response = client
+            .post(url)
+            .header(
+                reqwest::header::AUTHORIZATION,
+                format!("Bot {}", credential),
+            )
+            .json(&DiscordCreateMessage { content: message })
+            .send()
+            .await?;
+
+        if !response.status().is_success() {
+            let status = response.status();
+            let body = response.text().await.unwrap_or_default();
+
+            return Err(anyhow!(
+                "Discord send message failed with HTTP {}: {}",
+                status,
+                body
+            ));
+        }
+
+        let sent: DiscordMessage = response.json().await?;
+
+        Ok(SentMessage {
+            provider: IntegrationProvider::Discord,
+            destination_id: destination.id.clone(),
+            message_id: Some(sent.id),
+        })
     }
 
-    fn test_destination(
+    async fn test_destination(
         &self,
         account_id: &str,
         destination_id: &str,
@@ -462,27 +428,162 @@ impl Integration for DiscordIntegration {
             .find(|destination| destination.id == destination_id)
             .ok_or_else(|| anyhow!("Discord destination is not selected: {}", destination_id))?;
 
-        // Provider-specific check goes here.
-        //
-        // For a guild channel, verify that the connected Discord identity/bot
-        // can send messages to the channel.
-        //
-        // For a DM, verify that the DM channel can be resolved/used.
-        //
-        // Do not send an actual message merely to test this.
+        let credential = &account.id;
 
-        let _ = destination;
+        let client = Client::new();
 
-        //todo!("Discord: test whether destination can receive messages")
+        let url = discord_url(format!("channels/{}", destination.id).as_str());
 
-        let nanos = std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
-            .unwrap()
-            .subsec_nanos();
+        let response = client
+            .get(url)
+            .header(
+                reqwest::header::AUTHORIZATION,
+                format!("Bot {}", credential),
+            )
+            .send()
+            .await?;
 
-        Ok(DestinationTestResult {
-            can_send: nanos.is_multiple_of(2),
-            message: "".into(),
-        })
+        if response.status().is_success() {
+            Ok(DestinationTestResult {
+                can_send: true,
+                message: "Discord destination is accessible.".into(),
+            })
+        } else {
+            Ok(DestinationTestResult {
+                can_send: false,
+                message: format!("Discord destination returned HTTP {}.", response.status()),
+            })
+        }
     }
+
+    async fn test_account(&self, account_id: &str) -> Result<DestinationTestResult> {
+        log::info!("Starting test_account in {}", self.title());
+
+        let account = self
+            .config
+            .accounts
+            .iter()
+            .find(|account| account.id == account_id)
+            .ok_or_else(|| anyhow!("Discord account not found: {}", account_id))?;
+
+        let credential = &account.id;
+
+        let client = Client::new();
+
+        let response = client
+            .get(discord_url("users/@me"))
+            .header(
+                reqwest::header::AUTHORIZATION,
+                format!("Bot {}", credential),
+            )
+            .send()
+            .await?;
+
+        if response.status().is_success() {
+            Ok(DestinationTestResult {
+                can_send: true,
+                message: "Discord account is accessible.".into(),
+            })
+        } else {
+            Ok(DestinationTestResult {
+                can_send: false,
+                message: format!("Discord account returned HTTP {}.", response.status()),
+            })
+        }
+    }
+}
+
+/// Builds the URL for a Discord API v10 endpoint.
+///
+/// # Arguments
+///
+/// * `method` - The API path relative to the Discord API v10 base URL.
+///
+/// # Examples
+///
+/// ```
+/// let url = discord_url("users/@me");
+/// assert_eq!(
+///     url,
+///     "https://discord.com/api/v10/users/@me"
+/// );
+/// ```
+#[frb(ignore)]
+fn discord_url(method: &str) -> String {
+    format!("https://discord.com/api/v10/{}", method)
+}
+
+/// Discord user or bot identity returned by the API.
+///
+/// This structure is primarily used to authenticate a bot token and obtain
+/// the bot's display identity.
+#[derive(Debug, Deserialize)]
+#[frb(ignore)]
+struct DiscordUser {
+    /// Discord username.
+    username: String,
+
+    /// Optional display name associated with the account.
+    #[serde(default)]
+    global_name: Option<String>,
+
+    /// Whether the Discord account is a bot.
+    #[serde(default)]
+    bot: Option<bool>,
+}
+
+/// Discord guild (server) returned by the API.
+///
+/// A guild represents a Discord server that the authenticated bot belongs to.
+#[derive(Debug, Deserialize)]
+#[frb(ignore)]
+struct DiscordGuild {
+    /// Unique Discord identifier of the guild.
+    id: String,
+
+    /// Display name of the guild.
+    name: String,
+}
+
+/// Discord channel returned by the API.
+///
+/// Only the fields required by the integration layer are represented here.
+/// The numeric `channel_type` determines whether the channel is a text
+/// channel, DM, group DM, or another Discord channel type.
+#[derive(Debug, Deserialize)]
+#[frb(ignore)]
+struct DiscordChannel {
+    /// Unique Discord identifier of the channel.
+    id: String,
+
+    /// Optional display name of the channel.
+    ///
+    /// DM channels may not have a conventional channel name.
+    name: Option<String>,
+
+    /// Discord numeric channel type.
+    ///
+    /// For example, `0` represents a guild text channel, `1` a DM, and `3`
+    /// a group DM.
+    #[serde(rename = "type")]
+    channel_type: i32,
+}
+
+/// Discord message returned after successfully creating a message.
+#[derive(Debug, Deserialize)]
+#[frb(ignore)]
+struct DiscordMessage {
+    /// Unique Discord identifier of the newly created message.
+    id: String,
+}
+
+/// Request body for Discord's create-message endpoint.
+///
+/// The lifetime parameter allows the request to borrow the message content
+/// without allocating an owned copy.
+#[derive(Debug, Serialize)]
+#[frb(ignore)]
+struct DiscordCreateMessage<'a> {
+    /// Message content to send to the Discord channel.
+    content: &'a str,
 }

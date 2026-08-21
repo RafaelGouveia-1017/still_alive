@@ -202,33 +202,78 @@
   "integrations": {
     "title": "Integrations",
     "soon": "More options coming soon...",
-    "qr_title": "Quick pair via QR",
-    "qr_note": "Add a new plug-in in seconds",
-    "connected": "Connected",
+    "qr_title": "Account via QR",
+    "qr_note": "Use someone else's account",
+    "connected": "connected",
+    "destinations": "Destinations",
     "user": "user",
     "users": "users",
     "channel": "channel",
     "channels": "channels",
     "not_found": "No connected integrations found.",
+    "account_add": "Add Account",
     "account_added": "Account sucessfully added!",
     "account_deleted": "Account sucessfully deleted!",
-    "destination_added": "Recipient sucessfully added!",
-    "account_empty": "This account has no integrations configured yet...",
+    "account_test": ["verified!", "not responding...", "active", "inactive"],
     "delete_account": [
       "Delete Account",
       "Are you sure? This account and all its integrations will be PERMENANTLY deleted."
-    ]
+    ],
+    "no_internet": "Internet not available!!!",
+    "setup": {
+      "discord": [
+        "Connect your Discord bot",
+        "To connect your Discord bot, you need its bot token.",
+        "How to get your bot token:",
+        "Open the Discord Developer Portal.",
+        "Create a new application, or select an existing application.",
+        "Open the Bot section from the left sidebar.",
+        "Click Reset Token or View Token to reveal your bot token.",
+        "Copy the token and paste it below.",
+        "Open Discord Developer Portal",
+        "Bot token",
+        "Paste your Discord bot token",
+        "Keep your token private. Anyone who has it can control your bot."
+      ],
+      "telegram": [
+        "Connect your Telegram bot",
+        "To connect your Telegram bot, you need its bot token.",
+        "How to get your bot token:",
+        "Open Telegram and search for @BotFather.",
+        "Send /newbot to BotFather.",
+        "Follow the instructions to choose a name and username for your bot.",
+        "BotFather will give you an authentication token. Copy it.",
+        "Open @BotFather",
+        "Bot token",
+        "Paste your Telegram bot token",
+        "Keep your token private. Anyone who has it can control your bot."
+      ]
+    }
   },
   "integration_destinations": {
-    "title": "Recipients",
     "search": "Search recipients",
     "not_found": "No recipients found.",
-    "warning": "Expecting something to show up?\nCheck in your account if our app has the necessary permissions to see your recipients.",
-    "filters": ["All", "Other"]
+    "warning": "Expecting something to show up?",
+    "solutions": {
+      "discord": [
+        "Check if your bot:",
+        "Is added to any chat and/or groups;\nHas the correct permissions to see your recipients;\nHas the correct permissions to be able to send messages."
+      ],
+      "telegram": [
+        "Check if your bot:",
+        "Is added to any chat and/or groups;\nHas the correct permissions to see your recipients;\nHas the correct permissions to be able to send messages."
+      ]
+    },
+    "filters": ["All", "Other"],
+    "kinds": ["DM", "Group", "Channel", "Server Channel"],
+    "test_result": ["Recipient is available.", "Recipient not available!!!"]
+  },
+  "qr_display": {
+    "title": "Account QR Code"
   },
   "qr_pairing": {
-    "title": "Pair Integration",
-    "description": "Scan a StillAlive QR code to link",
+    "title": "Get Destination",
+    "description": "Scan a StillAlive QR code to go",
     "no_camera": "Camera permission not granted.\nDon't worry, we only use the camera here.",
     "valid_qr": ["Valid StillAlive QR codes", "contain the", "symbol"]
   },

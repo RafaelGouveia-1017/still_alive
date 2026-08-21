@@ -299,7 +299,7 @@ pub fn init_rust_logging() {
     // It is possible that another Rust library/application component has
     // already installed a logger. Don't panic in that case.
     if log::set_logger(&RUST_LOGGER).is_ok() {
-        log::set_max_level(LevelFilter::Trace);
+        log::set_max_level(LevelFilter::Info);
     }
 }
 

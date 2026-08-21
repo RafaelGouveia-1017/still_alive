@@ -4,6 +4,7 @@ use flutter_rust_bridge::frb;
 use anyhow::{Context, Result};
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
+use std::future::Future;
 
 /// Supported messaging providers.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -146,35 +147,28 @@ pub trait Integration: Sized {
         }
     }
 
-    /// Obtains the currently authenticated account from the provider.
+    /// Authenticates a provider credential and returns the corresponding
+    /// account.
     ///
-    /// This performs external API/authentication work but does not mutate
-    /// application configuration.
+    /// This does not persist anything. Persistence is performed by
+    /// `add_account`.
     #[frb(ignore)]
-    fn authenticate_account(&self) -> Result<IntegrationAccount>;
+    fn authenticate_account(
+        &self,
+        credential: &str,
+    ) -> impl Future<Output = Result<IntegrationAccount>> + Send;
 
-    /// Discovers destinations available to an account.
+    /// Discovers destinations available to an account and reconciles the
+    /// account's persisted destinations with the provider.
     ///
-    /// The result is temporary discovery data. It is NOT automatically
-    /// persisted or treated as application permission.
+    /// Persisted destinations that are no longer accessible are removed.
+    /// Persisted destination names are updated when they differ from the
+    /// provider's current name.
     #[frb(ignore)]
-    fn discover_destinations(&self, account_id: &str) -> Result<Vec<MessageDestination>>;
-
-    /// Adds one explicitly selected destination to an account.
-    #[frb(ignore)]
-    fn add_destination(
+    fn discover_destinations(
         &mut self,
         account_id: &str,
-        destination: MessageDestination,
-    ) -> Result<IntegrationAccount>;
-
-    /// Removes an explicitly selected destination.
-    #[frb(ignore)]
-    fn remove_destination(
-        &mut self,
-        account_id: &str,
-        destination_id: &str,
-    ) -> Result<IntegrationAccount>;
+    ) -> impl Future<Output = Result<Vec<MessageDestination>>> + Send;
 
     /// Adds an authenticated account to persisted configuration.
     #[frb(ignore)]
@@ -194,7 +188,7 @@ pub trait Integration: Sized {
         account_id: &str,
         destination_id: &str,
         message: &str,
-    ) -> Result<SentMessage>;
+    ) -> impl Future<Output = Result<SentMessage>> + Send;
 
     /// Tests whether a specific destination can currently receive a message.
     ///
@@ -210,7 +204,17 @@ pub trait Integration: Sized {
         &self,
         account_id: &str,
         destination_id: &str,
-    ) -> Result<DestinationTestResult>;
+    ) -> impl Future<Output = Result<DestinationTestResult>> + Send;
+
+    /// Tests whether a specific account is accessible.
+    ///
+    /// Implementations should avoid actually sending a user-visible message.
+    /// Provider-specific permission/access checks should be used where possible.
+    #[frb(ignore)]
+    fn test_account(
+        &self,
+        account_id: &str,
+    ) -> impl Future<Output = Result<DestinationTestResult>> + Send;
 }
 
 /// Loads and deserializes an integration configuration from the database.

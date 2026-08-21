@@ -23,90 +23,39 @@ Future<List<MessageDestination>> discoverIntegrationDestinations({
       accountId: accountId,
     );
 
-/// Fetches a selected destination from the external API and returns the
-/// updated account.
-///
-/// This is the operation that changes application authorization state.
-///
-/// # Arguments
-///
-/// * `key` - The integration identifier (for example, `"discord"` or
-///   `"telegram"`).
-/// * `account_id` - The account identifier.
-/// * `destination` - The destination record metadata to insert.
-///
-/// # Errors
-///
-/// Returns an error if:
-///
-/// * The integration key is unknown.
-/// * The integration configuration cannot be loaded.
-/// * The updated configuration cannot be saved.
-Future<IntegrationAccount> selectIntegrationDestination({
-  required String key,
-  required String accountId,
-  required MessageDestination destination,
-}) => RustLib.instance.api
-    .crateApiIntegrationsPublicTraitsSelectIntegrationDestination(
-      key: key,
-      accountId: accountId,
-      destination: destination,
-    );
-
-/// Fetches the currently authenticated account from the external API,
-/// inserts it into the integration configuration, and returns the newly
-/// created account.
+/// Authenticates an account with the external integration API, adds the
+/// account to the integration configuration, and returns the newly created
+/// account.
 ///
 /// The returned account is persisted with no selected destinations.
 ///
-/// The external API call is performed by the integration implementation.
+/// The authentication request is performed by the integration
+/// implementation.
 ///
 /// # Arguments
 ///
-/// * `key` - The integration identifier (for example, `"discord"` or
-///   `"telegram"`).
+/// * `key` - The integration identifier, for example, `"discord"` or
+///   `"telegram"`.
+/// * `credentials` - Credentials required to authenticate with the integration.
+///   Must contain a non-empty `"token"` value.
 ///
 /// # Errors
 ///
 /// Returns an error if:
 ///
+/// * `credentials` does not contain a non-empty `"token"`.
 /// * The integration key is unknown.
 /// * The integration configuration cannot be loaded.
-/// * The updated configuration cannot be saved.
-Future<IntegrationAccount> connectIntegrationAccount({required String key}) =>
-    RustLib.instance.api
-        .crateApiIntegrationsPublicTraitsConnectIntegrationAccount(key: key);
-
-/// Removes a selected destination record from the specified account in an
-/// integration configuration.
-///
-/// The target account is loaded from the database, the matching record is
-/// removed using the provided identifier, and the updated configuration is
-/// persisted back to the database.
-///
-/// # Arguments
-///
-/// * `key` - The integration identifier (for example, `"discord"` or
-///   `"telegram"`).
-/// * `account_id` - The account identifier with the record.
-/// * `destination_id` - The destination identifier to remove.
-///
-/// # Errors
-///
-/// Returns an error if:
-///
-/// * The integration key is unknown.
-/// * The integration configuration cannot be loaded.
-/// * The updated configuration cannot be saved.
-Future<IntegrationAccount> deselectIntegrationDestination({
+/// * Authentication with the external API fails.
+/// * The authenticated account cannot be added to the integration
+///   configuration.
+Future<IntegrationAccount> connectIntegrationAccount({
   required String key,
-  required String accountId,
-  required String destinationId,
+  required Map<String, String> credentials,
 }) => RustLib.instance.api
-    .crateApiIntegrationsPublicTraitsDeselectIntegrationDestination(
+    .crateApiIntegrationsPublicTraitsConnectIntegrationAccount(
       key: key,
-      accountId: accountId,
-      destinationId: destinationId,
+      credentials: credentials,
     );
 
 /// Deletes a connected integration account.
@@ -171,6 +120,37 @@ Future<DestinationTestResult> testIntegrationDestination({
       key: key,
       accountId: accountId,
       destinationId: destinationId,
+    );
+
+/// Tests whether a selected account is accessible.
+///
+/// # Arguments
+///
+/// * `key` - The integration identifier used to select the platform
+///   (for example, `"discord"` or `"telegram"`).
+/// * `account_id` - The account identifier to test.
+///
+/// # Returns
+///
+/// Returns an [`IntegrationTestResult`] containing:
+///
+/// * Whether the integration is connected.
+/// * A human-readable status message.
+///
+/// # Errors
+///
+/// Returns an error if:
+///
+/// * The integration key is unknown.
+/// * The integration configuration cannot be loaded.
+/// * The integration test fails.
+Future<DestinationTestResult> testIntegrationAccount({
+  required String key,
+  required String accountId,
+}) =>
+    RustLib.instance.api.crateApiIntegrationsPublicTraitsTestIntegrationAccount(
+      key: key,
+      accountId: accountId,
     );
 
 /// Sends a message to an explicitly selected destination.

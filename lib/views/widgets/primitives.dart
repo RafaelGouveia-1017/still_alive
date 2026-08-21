@@ -194,7 +194,6 @@ class PrimaryButton extends StatelessWidget {
     late final Color bg;
     late final Color fg;
     List<BoxShadow> shadow = const [];
-    Border? border;
     ColorScheme scheme = Theme.of(context).colorScheme;
 
     switch (color) {
@@ -221,7 +220,6 @@ class PrimaryButton extends StatelessWidget {
       case ButtonColor.muted:
         bg = scheme.surfaceContainerHighest;
         fg = scheme.onSurface;
-        border = Border.all(color: scheme.outline);
         break;
     }
 
@@ -241,7 +239,6 @@ class PrimaryButton extends StatelessWidget {
             decoration: BoxDecoration(
               color: bg,
               borderRadius: AppRadius.button,
-              border: border,
             ),
             child: Container(
               width: width,
@@ -379,7 +376,7 @@ class Pill extends StatelessWidget {
         children: [
           if (leading != null) ...[
             leading!,
-            const SizedBox(width: AppSpacing.xxxs),
+            const SizedBox(width: AppSpacing.xs),
           ],
           Text(
             label.toUpperCase(),
@@ -982,7 +979,7 @@ Future<T?> showBlurredBottomSheet<T>({
                 child: Container(
                   margin: EdgeInsets.symmetric(
                     horizontal: marginHorizontal,
-                  ).add(EdgeInsetsGeometry.only(top: 200)),
+                  ).add(EdgeInsetsGeometry.only(top: 110)),
                   child: Material(
                     color: scheme.surfaceContainerHigh,
                     elevation: 0,
@@ -1401,6 +1398,7 @@ class AppExpandableCard extends AppExpandableItem {
     this.iconColor,
     this.iconBackground,
     this.iconGradient,
+    this.trailing,
   });
 
   final String title;
@@ -1417,6 +1415,7 @@ class AppExpandableCard extends AppExpandableItem {
   final Color? iconColor;
   final Color? iconBackground;
   final List<Color>? iconGradient;
+  final Widget? trailing;
 
   @override
   Widget build({required bool expanded, required VoidCallback onPressed}) {
@@ -1436,6 +1435,7 @@ class AppExpandableCard extends AppExpandableItem {
       iconColor: iconColor,
       iconBackground: iconBackground,
       iconGradient: iconGradient,
+      trailing: trailing,
       child: child,
     );
   }
@@ -1469,6 +1469,7 @@ class _AppExpandableCardView extends StatefulWidget {
     this.iconColor,
     this.iconBackground,
     this.iconGradient,
+    this.trailing,
   });
 
   final String title;
@@ -1487,6 +1488,7 @@ class _AppExpandableCardView extends StatefulWidget {
   final Color? iconColor;
   final Color? iconBackground;
   final List<Color>? iconGradient;
+  final Widget? trailing;
 
   @override
   State<_AppExpandableCardView> createState() => _AppExpandableCardViewState();
@@ -1609,6 +1611,12 @@ class _AppExpandableCardViewState extends State<_AppExpandableCardView>
                       ],
                     ),
                   ),
+
+                  if (widget.trailing != null)
+                    Container(
+                      margin: const EdgeInsets.only(left: AppSpacing.ms),
+                      child: widget.trailing,
+                    ),
 
                   Container(
                     margin: const EdgeInsets.only(left: AppSpacing.ms),

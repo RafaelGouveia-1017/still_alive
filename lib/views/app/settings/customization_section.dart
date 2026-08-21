@@ -54,7 +54,7 @@ class _CustomizationSectionState extends State<CustomizationSection> {
             horizontal: AppSpacing.lg,
             vertical: AppSpacing.xxs,
           ),
-          margin: EdgeInsets.only(bottom: AppRadius.xl),
+          margin: EdgeInsets.only(bottom: AppSpacing.xl),
           child: Column(
             children: [
               Pressable(

@@ -73,8 +73,8 @@ VALUES
         '{
             "accounts": [
                 {
-                    "id": "123",
-                    "name": "Alice",
+                    "id": "example",
+                    "name": "Vorso",
                     "destinations": [
                         {
                             "id": "789",
@@ -84,47 +84,6 @@ VALUES
                             "parent_name": "Still Alive"
                         },
                         {
-                            "id": "78329",
-                            "name": "general #2",
-                            "kind": "server_channel",
-                            "parent_id": "5KuCjeIJNd",
-                            "parent_name": "Still Alive"
-                        },
-                        {
-                            "id": "E0LCyU1tQ6",
-                            "name": "emergency",
-                            "kind": "server_channel",
-                            "parent_id": "45ew6",
-                            "parent_name": "Still Dead"
-                        },
-                        {
-                            "id": "dAE1KqF4YI",
-                            "name": "Alice",
-                            "kind": "direct_message",
-                            "parent_id": null,
-                            "parent_name": null
-                        },                 
-                        {
-                            "id": "hp7iKPwDvi",
-                            "name": "Mano bro",
-                            "kind": "direct_message",
-                            "parent_id": null,
-                            "parent_name": null
-                        },    
-                        {
-                            "id": "JNjTdzz9VI",
-                            "name": "outro bro",
-                            "kind": "direct_message",
-                            "parent_id": null,
-                            "parent_name": null
-                        }
-                    ]
-                },
-                {
-                    "id": "DVSLk8utVw",
-                    "name": "Vorso",
-                    "destinations": [
-                        {
                             "id": "0GoH5qOT3D",
                             "name": "music",
                             "kind": "server_channel",
@@ -132,11 +91,11 @@ VALUES
                             "parent_name": "Monstercat"
                         },
                         {
-                            "id": "fpQgCiuU0s",
-                            "name": "general",
-                            "kind": "server_channel",
-                            "parent_id": "rnvqTfEQKs",
-                            "parent_name": "Monstercat"
+                            "id": "dAE1KqF4YI",
+                            "name": "Alice",
+                            "kind": "direct_message",
+                            "parent_id": null,
+                            "parent_name": null
                         }
                     ]
                 }
@@ -148,8 +107,9 @@ VALUES
         '{
             "accounts": [
                 {
-                    "id": "4RbRN1lNl8",
+                    "id": "example",
                     "name": "Thomas",
+                    "update_offset": 2,
                     "destinations": [
                         {
                             "id": "hf77hRua6d",

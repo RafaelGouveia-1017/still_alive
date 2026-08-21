@@ -146,3 +146,7 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
     );
   }
 }
+
+//TODO when timer starts, if integration does not exist in database: remove task from timer in database
+
+//TODO don't forget to add to history table the relevant timer events

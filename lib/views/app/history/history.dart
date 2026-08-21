@@ -231,7 +231,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       padding: const EdgeInsets.only(bottom: AppSpacing.xl),
                       children: [
                         for (final g in groupsFiltered) ...[
-                          SizedBox(height: AppRadius.lg),
+                          SizedBox(height: AppSpacing.lg),
                           Builder(
                             builder: (context) {
                               DateTime date = DateTime.parse(g.day);

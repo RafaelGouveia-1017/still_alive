@@ -3,6 +3,7 @@ use crate::api::integrations::telegram::TelegramIntegration;
 use crate::api::integrations::traits::*;
 
 use anyhow::{anyhow, Result};
+use std::collections::HashMap;
 
 /// Returns information about every supported integration.
 pub fn load_all_integrations() -> Result<Vec<IntegrationInfo>> {
@@ -15,74 +16,63 @@ pub fn load_all_integrations() -> Result<Vec<IntegrationInfo>> {
 /// Discovers destinations currently available to an account.
 ///
 /// Discovery does NOT persist anything.
-pub fn discover_integration_destinations(
+pub async fn discover_integration_destinations(
     key: String,
     account_id: String,
 ) -> Result<Vec<MessageDestination>> {
     match key.as_str() {
-        "discord" => DiscordIntegration::load()?.discover_destinations(&account_id),
-        "telegram" => TelegramIntegration::load()?.discover_destinations(&account_id),
+        "discord" => {
+            let mut integration = DiscordIntegration::load()?;
+            integration.discover_destinations(&account_id).await
+        }
+        "telegram" => {
+            let mut integration = TelegramIntegration::load()?;
+            integration.discover_destinations(&account_id).await
+        }
         _ => Err(anyhow!("unknown integration: {}", key)),
     }
 }
 
-/// Fetches a selected destination from the external API and returns the
-/// updated account.
-///
-/// This is the operation that changes application authorization state.
-///
-/// # Arguments
-///
-/// * `key` - The integration identifier (for example, `"discord"` or
-///   `"telegram"`).
-/// * `account_id` - The account identifier.
-/// * `destination` - The destination record metadata to insert.
-///
-/// # Errors
-///
-/// Returns an error if:
-///
-/// * The integration key is unknown.
-/// * The integration configuration cannot be loaded.
-/// * The updated configuration cannot be saved.
-pub fn select_integration_destination(
-    key: String,
-    account_id: String,
-    destination: MessageDestination,
-) -> Result<IntegrationAccount> {
-    match key.as_str() {
-        "discord" => DiscordIntegration::load()?.add_destination(&account_id, destination),
-        "telegram" => TelegramIntegration::load()?.add_destination(&account_id, destination),
-        _ => Err(anyhow!("unknown integration: {}", key)),
-    }
-}
-
-/// Fetches the currently authenticated account from the external API,
-/// inserts it into the integration configuration, and returns the newly
-/// created account.
+/// Authenticates an account with the external integration API, adds the
+/// account to the integration configuration, and returns the newly created
+/// account.
 ///
 /// The returned account is persisted with no selected destinations.
 ///
-/// The external API call is performed by the integration implementation.
+/// The authentication request is performed by the integration
+/// implementation.
 ///
 /// # Arguments
 ///
-/// * `key` - The integration identifier (for example, `"discord"` or
-///   `"telegram"`).
+/// * `key` - The integration identifier, for example, `"discord"` or
+///   `"telegram"`.
+/// * `credentials` - Credentials required to authenticate with the integration.
+///   Must contain a non-empty `"token"` value.
 ///
 /// # Errors
 ///
 /// Returns an error if:
 ///
+/// * `credentials` does not contain a non-empty `"token"`.
 /// * The integration key is unknown.
 /// * The integration configuration cannot be loaded.
-/// * The updated configuration cannot be saved.
-pub fn connect_integration_account(key: String) -> Result<IntegrationAccount> {
+/// * Authentication with the external API fails.
+/// * The authenticated account cannot be added to the integration
+///   configuration.
+pub async fn connect_integration_account(
+    key: String,
+    credentials: HashMap<String, String>,
+) -> Result<IntegrationAccount> {
+    let token = credentials
+        .get("token")
+        .filter(|token| !token.trim().is_empty())
+        .ok_or_else(|| anyhow!("integration token cannot be empty"))?;
+
     match key.as_str() {
         "discord" => {
             let mut integration = DiscordIntegration::load()?;
 
-            let mut account = integration.authenticate_account()?;
+            let mut account = integration.authenticate_account(token).await?;
             account.destinations.clear();
 
             integration.add_account(account.clone())?;
@@ -93,7 +83,7 @@ pub fn connect_integration_account(key: String) -> Result<IntegrationAccount> {
         "telegram" => {
             let mut integration = TelegramIntegration::load()?;
 
-            let mut account = integration.authenticate_account()?;
+            let mut account = integration.authenticate_account(token).await?;
             account.destinations.clear();
 
             integration.add_account(account.clone())?;
@@ -101,39 +91,6 @@ pub fn connect_integration_account(key: String) -> Result<IntegrationAccount> {
             Ok(account)
         }
 
-        _ => Err(anyhow!("unknown integration: {}", key)),
-    }
-}
-
-/// Removes a selected destination record from the specified account in an
-/// integration configuration.
-///
-/// The target account is loaded from the database, the matching record is
-/// removed using the provided identifier, and the updated configuration is
-/// persisted back to the database.
-///
-/// # Arguments
-///
-/// * `key` - The integration identifier (for example, `"discord"` or
-///   `"telegram"`).
-/// * `account_id` - The account identifier with the record.
-/// * `destination_id` - The destination identifier to remove.
-///
-/// # Errors
-///
-/// Returns an error if:
-///
-/// * The integration key is unknown.
-/// * The integration configuration cannot be loaded.
-/// * The updated configuration cannot be saved.
-pub fn deselect_integration_destination(
-    key: String,
-    account_id: String,
-    destination_id: String,
-) -> Result<IntegrationAccount> {
-    match key.as_str() {
-        "discord" => DiscordIntegration::load()?.remove_destination(&account_id, &destination_id),
-        "telegram" => TelegramIntegration::load()?.remove_destination(&account_id, &destination_id),
         _ => Err(anyhow!("unknown integration: {}", key)),
     }
 }
@@ -190,14 +147,55 @@ pub fn delete_integration_account(key: String, account_id: String) -> Result<()>
 /// * The integration key is unknown.
 /// * The integration configuration cannot be loaded.
 /// * The integration test fails.
-pub fn test_integration_destination(
+pub async fn test_integration_destination(
     key: String,
     account_id: String,
     destination_id: String,
 ) -> Result<DestinationTestResult> {
     match key.as_str() {
-        "discord" => DiscordIntegration::load()?.test_destination(&account_id, &destination_id),
-        "telegram" => TelegramIntegration::load()?.test_destination(&account_id, &destination_id),
+        "discord" => {
+            DiscordIntegration::load()?
+                .test_destination(&account_id, &destination_id)
+                .await
+        }
+        "telegram" => {
+            TelegramIntegration::load()?
+                .test_destination(&account_id, &destination_id)
+                .await
+        }
+        _ => Err(anyhow!("unknown integration: {}", key)),
+    }
+}
+
+/// Tests whether a selected account is accessible.
+///
+/// # Arguments
+///
+/// * `key` - The integration identifier used to select the platform
+///   (for example, `"discord"` or `"telegram"`).
+/// * `account_id` - The account identifier to test.
+///
+/// # Returns
+///
+/// Returns an [`IntegrationTestResult`] containing:
+///
+/// * Whether the integration is connected.
+/// * A human-readable status message.
+///
+/// # Errors
+///
+/// Returns an error if:
+///
+/// * The integration key is unknown.
+/// * The integration configuration cannot be loaded.
+/// * The integration test fails.
+pub async fn test_integration_account(
+    key: String,
+    account_id: String,
+) -> Result<DestinationTestResult> {
+    match key.as_str() {
+        "discord" => DiscordIntegration::load()?.test_account(&account_id).await,
+        "telegram" => TelegramIntegration::load()?.test_account(&account_id).await,
         _ => Err(anyhow!("unknown integration: {}", key)),
     }
 }
@@ -223,7 +221,7 @@ pub fn test_integration_destination(
 /// * Authentication fails.
 /// * The destination cannot be reached.
 /// * Sending the message fails.
-pub fn send_integration_message(
+pub async fn send_integration_message(
     key: String,
     account_id: String,
     destination_id: String,
@@ -231,10 +229,14 @@ pub fn send_integration_message(
 ) -> Result<SentMessage> {
     match key.as_str() {
         "discord" => {
-            DiscordIntegration::load()?.send_message(&account_id, &destination_id, &message)
+            DiscordIntegration::load()?
+                .send_message(&account_id, &destination_id, &message)
+                .await
         }
         "telegram" => {
-            TelegramIntegration::load()?.send_message(&account_id, &destination_id, &message)
+            TelegramIntegration::load()?
+                .send_message(&account_id, &destination_id, &message)
+                .await
         }
         _ => Err(anyhow!("unknown integration: {}", key)),
     }

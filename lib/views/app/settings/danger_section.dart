@@ -37,7 +37,7 @@ class _DangerSectionState extends State<DangerSection> {
             horizontal: AppSpacing.lg,
             vertical: AppSpacing.xxs,
           ),
-          margin: const EdgeInsets.only(bottom: AppRadius.xl),
+          margin: const EdgeInsets.only(bottom: AppSpacing.xl),
           child: Pressable(
             onTap: () {
               showBlurredBottomSheet(
@@ -57,7 +57,7 @@ class _DangerSectionState extends State<DangerSection> {
                     Padding(
                       padding: const EdgeInsets.only(
                         top: AppSpacing.xl,
-                        bottom: AppRadius.lg,
+                        bottom: AppSpacing.lg,
                       ),
                       child: PrimaryButton(
                         label: widget.local.translate(

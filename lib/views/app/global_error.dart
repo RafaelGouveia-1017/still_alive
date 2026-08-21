@@ -158,7 +158,7 @@ class GlobalErrorDialog {
               },
               contentPadding: EdgeInsets.symmetric(
                 horizontal: AppSpacing.xxl,
-                vertical: AppRadius.lg,
+                vertical: AppSpacing.lg,
               ),
 
               actions: switch (state) {
