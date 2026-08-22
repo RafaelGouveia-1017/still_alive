@@ -45,15 +45,18 @@ class IntegrationAccount {
   final String id;
   final String name;
   final List<MessageDestination> destinations;
+  final String? appId;
 
   const IntegrationAccount({
     required this.id,
     required this.name,
     required this.destinations,
+    this.appId,
   });
 
   @override
-  int get hashCode => id.hashCode ^ name.hashCode ^ destinations.hashCode;
+  int get hashCode =>
+      id.hashCode ^ name.hashCode ^ destinations.hashCode ^ appId.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -62,7 +65,8 @@ class IntegrationAccount {
           runtimeType == other.runtimeType &&
           id == other.id &&
           name == other.name &&
-          destinations == other.destinations;
+          destinations == other.destinations &&
+          appId == other.appId;
 }
 
 /// Two-color linear gradient used to visually identify an integration.

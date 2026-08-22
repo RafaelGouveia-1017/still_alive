@@ -63,6 +63,7 @@ pub struct IntegrationAccount {
     pub id: String,
     pub name: String,
     pub destinations: Vec<MessageDestination>,
+    pub app_id: Option<String>,
 }
 
 /// Public integration metadata exposed to Flutter.

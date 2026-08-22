@@ -38,6 +38,7 @@ class _IntegrationDestinationsScreenState
   late List<AppFilterBarOption> _filters = [];
   late List<List<String>> filterLabels = [];
 
+  late bool destinationsHaveParents;
   bool _isLoading = true;
   String searchQuery = '';
 
@@ -197,6 +198,7 @@ class _IntegrationDestinationsScreenState
       loadFilters(0);
 
       setState(() {
+        destinationsHaveParents = parentNames.isNotEmpty;
         _destinationItems = sorted;
       });
     } finally {
@@ -210,7 +212,7 @@ class _IntegrationDestinationsScreenState
     switch (widget.integration.provider) {
       case IntegrationProvider.discord:
         link =
-            "https://discord.com/oauth2/authorize?client_id=${account.id}&scope=bot&permissions=3072";
+            "https://discord.com/oauth2/authorize?client_id=${account.appId}&scope=bot&permissions=3072";
       case IntegrationProvider.telegram:
         link = "https://t.me/${account.name.substring(1, account.name.length)}";
     }
@@ -403,8 +405,7 @@ class _IntegrationDestinationsScreenState
                       children: [
                         for (final entry in groupedDestinations.entries) ...[
                           SizedBox(height: AppSpacing.lg),
-                          if (_filters.any((opt) => opt.id == "__no_parent__"))
-                            SectionTitle(entry.key),
+                          if (destinationsHaveParents) SectionTitle(entry.key),
                           AppCard(
                             padding: EdgeInsets.symmetric(
                               horizontal: AppSpacing.xxs,
@@ -430,35 +431,18 @@ class _IntegrationDestinationsScreenState
                                         case IntegrationProvider.discord:
                                           if (d.parentId == null) {
                                             return Uri.parse(
-                                              "discord://-/channels/@me/${d.id}",
+                                              "https://discord.com/channels/@me/${d.id}",
                                             );
                                           } else {
                                             return Uri.parse(
-                                              "discord://-/channels/${d.parentId}/${d.id}",
+                                              "https://discord.com/channels/${d.parentId}/${d.id}",
                                             );
                                           }
                                         case IntegrationProvider.telegram:
-                                          return Uri.parse("tg://");
+                                          return Uri.parse("https://t.me/");
                                       }
                                     },
                                   ),
-                                  PrimaryButton(
-                                    label: "send example message",
-                                    color: ButtonColor.muted,
-                                    width: 230,
-                                    icon: LucideIcons.send,
-                                    onPressed: () {
-                                      IntegrationService.sendMessage(
-                                        integrationKey: widget.integration.key,
-                                        accountId: widget.account.id,
-                                        destinationId: d.id,
-                                        message:
-                                            "hello sissel, this is a test message.",
-                                      );
-                                    },
-                                  ),
-                                  SizedBox(height: 12),
-                                  //TODO delete this primarybutton & sizedbox when testing messages is no longer needed
                                 ],
                               ],
                             ),

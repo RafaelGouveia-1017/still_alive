@@ -81,6 +81,7 @@ impl Integration for TelegramIntegration {
                 IntegrationAccount {
                     id: account.id.clone(),
                     name: account.name.clone(),
+                    app_id: None,
                     destinations,
                 }
             })
@@ -128,6 +129,7 @@ impl Integration for TelegramIntegration {
                 .username
                 .map(|username| format!("@{}", username))
                 .unwrap_or(bot.first_name),
+            app_id: None,
             destinations: Vec::new(),
         })
     }
@@ -424,6 +426,7 @@ impl Integration for TelegramIntegration {
         Ok(IntegrationAccount {
             id: account.id,
             name: account.name,
+            app_id: None,
             destinations: account.destinations,
         })
     }

@@ -250,3 +250,12 @@ pub fn execute_batch_sql(sql: &str) {
     let db = db();
     let _ = db.as_ref().unwrap().execute_batch(sql);
 }
+
+/// Custom execute_sql function to prevent SQL injection from user.
+pub fn update_message(message: String) -> Result<usize> {
+    let db = db();
+    db.as_ref().unwrap().execute(
+        "UPDATE settings SET value = ?1 WHERE key = ?2",
+        rusqlite::params![message, "message"],
+    )
+}

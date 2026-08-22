@@ -92,19 +92,14 @@ class _ThemesScreenState extends State<ThemesScreen> {
       ThemeData themeData = AppThemes.getTheme(theme);
       ColorScheme colorScheme = themeData.colorScheme;
       themeOptions.add(
-        _AppThemeOption(
-          theme,
-          themeData,
-          [
-            colorScheme.surface,
-            colorScheme.surfaceContainer,
-            colorScheme.primary,
-            colorScheme.secondary,
-            colorScheme.tertiary,
-            colorScheme.onSurface,
-          ],
-          active: MyApp.of(context).currentTheme == theme ? true : false,
-        ),
+        _AppThemeOption(theme, themeData, [
+          colorScheme.surface,
+          colorScheme.surfaceContainer,
+          colorScheme.primary,
+          colorScheme.secondary,
+          colorScheme.tertiary,
+          colorScheme.onSurface,
+        ], active: MyApp.of(context).currentTheme == theme ? true : false),
       );
     }
 

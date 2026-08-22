@@ -29,7 +29,7 @@ class IntegrationsScreen extends StatefulWidget {
 /// State implementation for [IntegrationsScreen].
 class _IntegrationsScreenState extends State<IntegrationsScreen> {
   List<IntegrationInfo> _integrationItems = [];
-  Map<String, bool> _pressedTestAccounts = {};
+  final Map<String, bool> _pressedTestAccounts = {};
   bool _isLoading = true;
 
   @override

@@ -326,8 +326,21 @@ class IntegrationService {
       return integrationItems;
     } catch (e, st) {
       AppLogger.log.severe('Failed to add integration account.', e, st);
+
       if (context.mounted) {
-        showGenericErrorMessage(context, null);
+        final scheme = Theme.of(context).colorScheme;
+        showToast(
+          secs: 6,
+          scheme: scheme,
+          toast: Text(
+            e.toString(),
+            style: AppText.bodySm(scheme),
+            textAlign: TextAlign.center,
+          ),
+          gravity: ToastGravity.BOTTOM,
+          position: (context, child, gravity) =>
+              Positioned(bottom: 170, left: 40, right: 40, child: child),
+        );
       }
       return null;
     }
@@ -560,6 +573,12 @@ class IntegrationService {
                   if (items == null) {
                     Navigator.pop(context, null);
                   } else {
+                    launchUrl(
+                      Uri.parse(
+                        "https://discord.com/oauth2/authorize?client_id=${items.where((i) => i.provider == IntegrationProvider.discord).first.accounts.last.appId}&scope=bot&permissions=3072",
+                      ),
+                      mode: LaunchMode.inAppBrowserView,
+                    );
                     Navigator.pop(context, items);
                   }
                 }

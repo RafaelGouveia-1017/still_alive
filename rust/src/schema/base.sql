@@ -75,6 +75,7 @@ VALUES
                 {
                     "id": "example",
                     "name": "Vorso",
+                    "app_id": "example",
                     "destinations": [
                         {
                             "id": "789",

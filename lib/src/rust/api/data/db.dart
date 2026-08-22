@@ -172,3 +172,7 @@ Future<BigInt> executeSql({required String sql}) =>
 /// ```
 Future<void> executeBatchSql({required String sql}) =>
     RustLib.instance.api.crateApiDataDbExecuteBatchSql(sql: sql);
+
+/// Custom execute_sql function to prevent SQL injection from user.
+Future<BigInt> updateMessage({required String message}) =>
+    RustLib.instance.api.crateApiDataDbUpdateMessage(message: message);

@@ -39,7 +39,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.13.0-beta.6";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 63416430;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -1857435569;
 
 // Section: executor
 
@@ -967,6 +967,41 @@ fn wire__crate__api__integrations__public_traits__test_integration_destination_i
         },
     )
 }
+fn wire__crate__api__data__db__update_message_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "update_message",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_message = <String>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
+                    (move || {
+                        let output_ok = crate::api::data::db::update_message(api_message)?;
+                        std::result::Result::Ok(output_ok)
+                    })(),
+                )
+            }
+        },
+    )
+}
 
 // Section: dart2rust
 
@@ -1061,10 +1096,12 @@ impl SseDecode for crate::api::integrations::traits::IntegrationAccount {
         let mut var_name = <String>::sse_decode(deserializer);
         let mut var_destinations =
             <Vec<crate::api::integrations::traits::MessageDestination>>::sse_decode(deserializer);
+        let mut var_appId = <Option<String>>::sse_decode(deserializer);
         return crate::api::integrations::traits::IntegrationAccount {
             id: var_id,
             name: var_name,
             destinations: var_destinations,
+            app_id: var_appId,
         };
     }
 }
@@ -1380,6 +1417,7 @@ fn pde_ffi_dispatcher_primary_impl(
             rust_vec_len,
             data_len,
         ),
+        27 => wire__crate__api__data__db__update_message_impl(port, ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -1449,6 +1487,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::integrations::traits::Integra
             self.id.into_into_dart().into_dart(),
             self.name.into_into_dart().into_dart(),
             self.destinations.into_into_dart().into_dart(),
+            self.app_id.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -1693,6 +1732,7 @@ impl SseEncode for crate::api::integrations::traits::IntegrationAccount {
             self.destinations,
             serializer,
         );
+        <Option<String>>::sse_encode(self.app_id, serializer);
     }
 }
 

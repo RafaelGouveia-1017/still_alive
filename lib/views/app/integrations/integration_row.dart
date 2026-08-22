@@ -91,7 +91,7 @@ class _IntegrationRowState extends State<IntegrationRow> {
         icon: Icon(
           connected ? LucideIcons.check : LucideIcons.x,
           size: 24,
-          color: connected ? scheme.secondary : scheme.error,
+          color: connected ? scheme.tertiary : scheme.error,
         ),
         onPressed: null,
       );

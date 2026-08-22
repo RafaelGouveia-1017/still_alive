@@ -223,7 +223,7 @@
     "setup": {
       "discord": [
         "Connect your Discord bot",
-        "To connect your Discord bot, you need its bot token.",
+        "To connect your Discord bot, you need its bot token.\nOnly works for channels in guilds/servers where you have the \"MANAGE_GUILD\" permission.",
         "How to get your bot token:",
         "Open the Discord Developer Portal.",
         "Create a new application, or select an existing application.",

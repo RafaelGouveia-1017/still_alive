@@ -19,6 +19,7 @@ pub struct DiscordConfig {
 #[frb(ignore)]
 pub struct DiscordAccount {
     pub id: String,
+    pub app_id: String,
     pub name: String,
 
     /// Destinations explicitly selected by the user.
@@ -76,6 +77,7 @@ impl Integration for DiscordIntegration {
                 IntegrationAccount {
                     id: account.id.clone(),
                     name: account.name.clone(),
+                    app_id: Some(account.app_id.clone()),
                     destinations,
                 }
             })
@@ -113,12 +115,15 @@ impl Integration for DiscordIntegration {
             return Err(anyhow!("Discord credential does not belong to a bot"));
         }
 
+        let name = user
+            .global_name
+            .unwrap_or_else(|| user.username + "#" + &user.discriminator);
+
         Ok(IntegrationAccount {
             id: credential.to_owned(),
-
-            name: user.global_name.unwrap_or(user.username),
-
+            name,
             destinations: Vec::new(),
+            app_id: Some(user.id),
         })
     }
 
@@ -213,83 +218,13 @@ impl Integration for DiscordIntegration {
             }
         }
 
-        // ---------------------------------------------------------
-        // 3. Reconcile persisted destinations.
-        // ---------------------------------------------------------
+        destinations.sort_by(|a, b| {
+            a.parent_name
+                .cmp(&b.parent_name)
+                .then_with(|| a.name.cmp(&b.name))
+        });
 
-        {
-            let account = &mut self.config.accounts[account_index];
-
-            account.destinations.retain_mut(|persisted| {
-                let Some(parent_id) = persisted.parent_id.as_ref() else {
-                    log::info!(
-                        "Removing Discord destination {} because it has no guild",
-                        persisted.id
-                    );
-                    return false;
-                };
-
-                // The guild/server is no longer accessible.
-                if !accessible_guild_ids.contains(parent_id) {
-                    log::info!(
-                        "Removing inaccessible Discord destination {} from guild {}",
-                        persisted.id,
-                        parent_id
-                    );
-                    return false;
-                }
-
-                // The channel is no longer accessible.
-                if !accessible_channel_ids.contains(&persisted.id) {
-                    log::info!("Removing inaccessible Discord channel {}", persisted.id);
-                    return false;
-                }
-
-                // The channel is accessible, so find its current metadata and
-                // update anything that changed.
-                if let Some(current) = destinations
-                    .iter()
-                    .find(|destination| destination.id == persisted.id)
-                {
-                    if persisted.name != current.name {
-                        log::info!(
-                            "Updating Discord channel {} name: '{}' -> '{}'",
-                            persisted.id,
-                            persisted.name,
-                            current.name
-                        );
-
-                        persisted.name = current.name.clone();
-                    }
-
-                    if persisted.parent_id != current.parent_id {
-                        log::info!(
-                            "Updating Discord channel {} guild: {:?} -> {:?}",
-                            persisted.id,
-                            persisted.parent_id,
-                            current.parent_id
-                        );
-
-                        persisted.parent_id = current.parent_id.clone();
-                    }
-
-                    if persisted.parent_name != current.parent_name {
-                        log::info!(
-                            "Updating Discord channel {} guild name: {:?} -> {:?}",
-                            persisted.id,
-                            persisted.parent_name,
-                            current.parent_name
-                        );
-
-                        persisted.parent_name = current.parent_name.clone();
-                    }
-
-                    persisted.kind = current.kind;
-                }
-
-                true
-            });
-        }
+        self.config.accounts[account_index].destinations = destinations.clone();
 
         save_config(Self::KEY, &self.config)?;
 
@@ -314,6 +249,7 @@ impl Integration for DiscordIntegration {
 
         let account = DiscordAccount {
             id: account.id,
+            app_id: account.app_id.unwrap(),
             name: account.name,
             destinations: account.destinations,
         };
@@ -325,6 +261,7 @@ impl Integration for DiscordIntegration {
         Ok(IntegrationAccount {
             id: account.id,
             name: account.name,
+            app_id: Some(account.app_id.clone()),
             destinations: account.destinations,
         })
     }
@@ -520,8 +457,14 @@ fn discord_url(method: &str) -> String {
 #[derive(Debug, Deserialize)]
 #[frb(ignore)]
 struct DiscordUser {
+    /// Discord application id.
+    id: String,
+
     /// Discord username.
     username: String,
+
+    /// Username discriminator associated with the account.
+    discriminator: String,
 
     /// Optional display name associated with the account.
     #[serde(default)]

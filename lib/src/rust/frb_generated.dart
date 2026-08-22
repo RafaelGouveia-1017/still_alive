@@ -71,7 +71,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.13.0-beta.6';
 
   @override
-  int get rustContentHash => 63416430;
+  int get rustContentHash => -1857435569;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -163,6 +163,8 @@ abstract class RustLibApi extends BaseApi {
     required String accountId,
     required String destinationId,
   });
+
+  Future<BigInt> crateApiDataDbUpdateMessage({required String message});
 }
 
 class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
@@ -972,6 +974,34 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         argNames: ["key", "accountId", "destinationId"],
       );
 
+  @override
+  Future<BigInt> crateApiDataDbUpdateMessage({required String message}) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(message, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 27,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_usize,
+          decodeErrorData: sse_decode_AnyhowException,
+        ),
+        constMeta: kCrateApiDataDbUpdateMessageConstMeta,
+        argValues: [message],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiDataDbUpdateMessageConstMeta =>
+      const TaskConstMeta(debugName: "update_message", argNames: ["message"]);
+
   @protected
   AnyhowException dco_decode_AnyhowException(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
@@ -1048,12 +1078,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   IntegrationAccount dco_decode_integration_account(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 3)
-      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    if (arr.length != 4)
+      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
     return IntegrationAccount(
       id: dco_decode_String(arr[0]),
       name: dco_decode_String(arr[1]),
       destinations: dco_decode_list_message_destination(arr[2]),
+      appId: dco_decode_opt_String(arr[3]),
     );
   }
 
@@ -1292,10 +1323,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_id = sse_decode_String(deserializer);
     var var_name = sse_decode_String(deserializer);
     var var_destinations = sse_decode_list_message_destination(deserializer);
+    var var_appId = sse_decode_opt_String(deserializer);
     return IntegrationAccount(
       id: var_id,
       name: var_name,
       destinations: var_destinations,
+      appId: var_appId,
     );
   }
 
@@ -1604,6 +1637,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_String(self.id, serializer);
     sse_encode_String(self.name, serializer);
     sse_encode_list_message_destination(self.destinations, serializer);
+    sse_encode_opt_String(self.appId, serializer);
   }
 
   @protected
