@@ -73,7 +73,7 @@ class _PermBuilderState extends State<_PermBuilder> {
     });
   }
 
-  void _requestStatus() async {
+  Future<void> _requestStatus() async {
     final status = await PermissionManager.instance.requestPermission(
       widget.item.permission,
     );

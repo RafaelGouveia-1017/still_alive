@@ -265,7 +265,9 @@ class _QuickContact extends StatelessWidget {
                   gradient: data.gradient,
                   textColor: data.textColor,
                 ),
-          transition: AppRouteTransitionType.slideRight,
+          transition: (isAdd)
+              ? AppRouteTransitionType.slideRight
+              : AppRouteTransitionType.slideLeft,
         ),
       ),
       child: Column(

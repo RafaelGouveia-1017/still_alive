@@ -197,7 +197,9 @@
   "contacts_emergency": {
     "title": "Emergency Contacts",
     "message": "No contacts yet",
-    "description": "Add at least one person you trust to a timer.\nThey'll be alerted in an emergency."
+    "description": "Add at least one person you trust to a timer.\nThey'll be alerted in an emergency.",
+    "in": "In",
+    "timers": ["timer", "timers"]
   },
   "integrations": {
     "title": "Integrations",
@@ -306,8 +308,8 @@
       "paused": "Timer paused",
       "cancelled": "Timer completed safely",
       "expired": "Emergency triggered",
-      "alert": "alert",
-      "sent": "sent",
+      "alert": ["alert", "alerts"],
+      "sent": ["sent", "sent"],
       "details": {
         "type": "Type",
         "timer": "Timer",
@@ -340,6 +342,7 @@
   },
   "settings": {
     "title": "Settings",
+    "footer": "Made with ❤️ and lots of",
     "sections": {
       "customization": {
         "title": "Customization",

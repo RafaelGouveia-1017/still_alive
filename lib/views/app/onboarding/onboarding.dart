@@ -65,7 +65,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with RouteAware {
     super.dispose();
   }
 
-  void _nextPage() async {
+  Future<void> _nextPage() async {
     if (currentPage < 2) {
       _controller.nextPage(
         duration: AppMotion.fast,

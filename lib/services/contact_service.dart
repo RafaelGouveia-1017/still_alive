@@ -78,19 +78,30 @@ class ContactService {
 
   /// Adds [contactID] to the list of quick contacts.
   ///
-  /// The contact ID is appended to the `ids` array stored in the `quick` row,
-  /// then the `count` field is updated to reflect the current number of IDs.
-  static void insertQuickContact(String contactID) async {
+  /// If [contactID] is already present, the list is left unchanged. Otherwise,
+  /// the contact ID is appended to the `ids` array stored in the `quick` row.
+  /// The `count` field is then updated to reflect the number of unique stored
+  /// IDs.
+  static Future<void> insertQuickContact(String contactID) async {
     await executeBatchSql(
       sql:
           """
-        UPDATE contacts
-        SET value = json_insert(value, '\$.ids[#]', '$contactID')
-        WHERE key = 'quick';
-        UPDATE contacts
-        SET value = json_set(value, '\$.count', json_array_length(json_extract(value, '\$.ids')))
-        WHERE key = 'quick';
-        """,
+          UPDATE contacts
+          SET value = json_insert(value, '\$.ids[#]', '$contactID')
+          WHERE key = 'quick'
+            AND NOT EXISTS (
+                SELECT 1
+                FROM json_each(contacts.value, '\$.ids')
+                WHERE json_each.value = '$contactID'
+            );
+          UPDATE contacts
+          SET value = json_set(
+              value,
+              '\$.count',
+              json_array_length(json_extract(value, '\$.ids'))
+          )
+          WHERE key = 'quick';
+          """,
     );
   }
 
@@ -98,28 +109,28 @@ class ContactService {
   ///
   /// If the contact ID exists in the `ids` array of the `quick` row, it is
   /// removed and the `count` field is updated to match the remaining entries.
-  static void deleteQuickContact(String contactID) async {
+  static Future<void> deleteQuickContact(String contactID) async {
     await executeBatchSql(
       sql:
           """
-        UPDATE contacts
-        SET value = json_set(
-            contacts.value,
-            '\$.ids',
-            COALESCE(
-                (
-                    SELECT json_group_array(json_each.value)
-                    FROM json_each(contacts.value, '\$.ids')
-                    WHERE json_each.value <> '$contactID'
-                ),
-                json('[]')
-            )
-        )
-        WHERE key = 'quick';
-        UPDATE contacts
-        SET value = json_set(value, '\$.count', json_array_length(json_extract(value, '\$.ids')))
-        WHERE key = 'quick';
-        """,
+          UPDATE contacts
+          SET value = json_set(
+              contacts.value,
+              '\$.ids',
+              COALESCE(
+                  (
+                      SELECT json_group_array(json_each.value)
+                      FROM json_each(contacts.value, '\$.ids')
+                      WHERE json_each.value <> '$contactID'
+                  ),
+                  json('[]')
+              )
+          )
+          WHERE key = 'quick';
+          UPDATE contacts
+          SET value = json_set(value, '\$.count', json_array_length(json_extract(value, '\$.ids')))
+          WHERE key = 'quick';
+          """,
     );
   }
 
@@ -131,39 +142,41 @@ class ContactService {
   /// updated to reflect the total number of stored preference objects.
   ///
   /// The [contactPrefs] map must contain an `id` key.
-  static void insertContactPrefs(Map<String, dynamic> contactPrefs) async {
+  static Future<void> insertContactPrefs(
+    Map<String, dynamic> contactPrefs,
+  ) async {
     final id = contactPrefs['id'];
     await executeBatchSql(
       sql:
           """
-        UPDATE contacts
-        SET value = json_set(
-            contacts.value,
-            '\$.contacts',
-            (
-                SELECT json_group_array(json(value))
-                FROM (
-                    -- Keep all other contacts
-                    SELECT json_each.value AS value
-                    FROM json_each(contacts.value, '\$.contacts')
-                    WHERE json_extract(json_each.value, '\$.id') <> '$id'
+          UPDATE contacts
+          SET value = json_set(
+              contacts.value,
+              '\$.contacts',
+              (
+                  SELECT json_group_array(json(value))
+                  FROM (
+                      -- Keep all other contacts
+                      SELECT json_each.value AS value
+                      FROM json_each(contacts.value, '\$.contacts')
+                      WHERE json_extract(json_each.value, '\$.id') <> '$id'
 
-                    UNION ALL
+                      UNION ALL
 
-                    -- Append the new/updated contact
-                    SELECT json('${jsonEncode(contactPrefs)}')
-                )
-            )
-        )
-        WHERE key = 'preferences';
-        UPDATE contacts
-        SET value = json_set(
-            value,
-            '\$.count',
-            json_array_length(json_extract(value, '\$.contacts'))
-        )
-        WHERE key = 'preferences';
-        """,
+                      -- Append the new/updated contact
+                      SELECT json('${jsonEncode(contactPrefs)}')
+                  )
+              )
+          )
+          WHERE key = 'preferences';
+          UPDATE contacts
+          SET value = json_set(
+              value,
+              '\$.count',
+              json_array_length(json_extract(value, '\$.contacts'))
+          )
+          WHERE key = 'preferences';
+          """,
     );
   }
 
@@ -172,32 +185,95 @@ class ContactService {
   /// If a contact whose `id` matches [contactID] exists in the `contacts` array
   /// of the `preferences` row, it is removed and the `count` field is updated
   /// to reflect the remaining preference objects.
-  static void deleteContactPrefs(String contactID) async {
+  static Future<void> deleteContactPrefs(String contactID) async {
     await executeBatchSql(
       sql:
           """
-        UPDATE contacts
-        SET value = json_set(
-            contacts.value,
-            '\$.contacts',
-            COALESCE(
-                (
-                    SELECT json_group_array(json_each.value)
-                    FROM json_each(contacts.value, '\$.contacts')
-                    WHERE json_extract(json_each.value, '\$.id') <> '$contactID'
-                ),
-                json('[]')
-            )
-        )
-        WHERE key = 'preferences';
-        UPDATE contacts
-        SET value = json_set(
-            value,
-            '\$.count',
-            json_array_length(json_extract(value, '\$.contacts'))
-        )
-        WHERE key = 'preferences';
-        """,
+          UPDATE contacts
+          SET value = json_set(
+              contacts.value,
+              '\$.contacts',
+              COALESCE(
+                  (
+                      SELECT json_group_array(json_each.value)
+                      FROM json_each(contacts.value, '\$.contacts')
+                      WHERE json_extract(json_each.value, '\$.id') <> '$contactID'
+                  ),
+                  json('[]')
+              )
+          )
+          WHERE key = 'preferences';
+          UPDATE contacts
+          SET value = json_set(
+              value,
+              '\$.count',
+              json_array_length(json_extract(value, '\$.contacts'))
+          )
+          WHERE key = 'preferences';
+          """,
+    );
+  }
+
+  /// Adds [contactID] to the list of emergency contacts.
+  ///
+  /// If [contactID] is already present, the list is left unchanged. Otherwise,
+  /// the contact ID is appended to the `ids` array stored in the `emergency`
+  /// row. The `count` field is then updated to reflect the number of unique
+  /// stored IDs.
+  static Future<void> insertEmergencyContact(String contactID) async {
+    await executeBatchSql(
+      sql:
+          """
+          UPDATE contacts
+          SET value = json_insert(value, '\$.ids[#]', '$contactID')
+          WHERE key = 'emergency'
+            AND NOT EXISTS (
+                SELECT 1
+                FROM json_each(contacts.value, '\$.ids')
+                WHERE json_each.value = '$contactID'
+            );
+          UPDATE contacts
+          SET value = json_set(
+              value,
+              '\$.count',
+              json_array_length(json_extract(value, '\$.ids'))
+          )
+          WHERE key = 'emergency';
+          """,
+    );
+  }
+
+  /// Removes [contactID] from the list of emergency contacts.
+  ///
+  /// If [contactID] exists in the `ids` array of the `emergency` row,  all
+  /// occurrences are removed and the `count` field is updated to match the
+  /// remaining entries.
+  static Future<void> deleteEmergencyContact(String contactID) async {
+    await executeBatchSql(
+      sql:
+          """
+          UPDATE contacts
+          SET value = json_set(
+              contacts.value,
+              '\$.ids',
+              COALESCE(
+                  (
+                      SELECT json_group_array(json_each.value)
+                      FROM json_each(contacts.value, '\$.ids')
+                      WHERE json_each.value <> '$contactID'
+                  ),
+                  json('[]')
+              )
+          )
+          WHERE key = 'emergency';
+          UPDATE contacts
+          SET value = json_set(
+              value,
+              '\$.count',
+              json_array_length(json_extract(value, '\$.ids'))
+          )
+          WHERE key = 'emergency';
+          """,
     );
   }
 }

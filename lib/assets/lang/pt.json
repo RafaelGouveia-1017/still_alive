@@ -195,9 +195,11 @@
     }
   },
   "contacts_emergency": {
-    "title": "Contactos de emergência",
+    "title": "Contactos de Emergência",
     "message": "Ainda não há contactos",
-    "description": "Adiciona pelo menos uma pessoa em quem confies num temporizador.\nSerá alertada em caso de emergência."
+    "description": "Adiciona pelo menos uma pessoa em quem confies num temporizador.\nSerá alertada em caso de emergência.",
+    "in": "Em",
+    "timers": ["temporizador", "temporizadores"]
   },
   "integrations": {
     "title": "Integrações",
@@ -314,8 +316,8 @@
       "paused": "Temporizador interrompido",
       "cancelled": "Temporizador concluído em segurança",
       "expired": "Emergência acionada",
-      "alert": "alerta",
-      "sent": "enviado",
+      "alert": ["alerta", "alertas"],
+      "sent": ["enviado", "enviados"],
       "details": {
         "type": "Tipo",
         "timer": "Temporizador",
@@ -348,6 +350,7 @@
   },
   "settings": {
     "title": "Definições",
+    "footer": "Feito com ❤️ e muito",
     "sections": {
       "customization": {
         "title": "Personalização",

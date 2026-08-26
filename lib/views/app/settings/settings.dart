@@ -9,6 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:restart_app/restart_app.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../src/rust/api/data/db.dart';
 import '../../../src/rust/api/backup.dart';
 
@@ -408,25 +409,56 @@ class _SettingsScreenState extends State<SettingsScreen> with RouteAware {
                   },
                 ),
 
-                Center(
-                  child: FutureBuilder<PackageInfo>(
-                    future: PackageInfo.fromPlatform(),
-                    builder: (context, snapshot) {
-                      if (snapshot.data == null) {
-                        return Text(
-                          local.translate('app_name'),
-                          style: AppText.micro(scheme),
-                        );
-                      } else {
-                        return Text(
-                          '${local.translate('app_name')} v${snapshot.data!.version} • Build ${snapshot.data!.buildNumber}',
-                          style: AppText.micro(scheme),
-                        );
-                      }
-                    },
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => launchUrl(
+                    Uri.parse("https://buymeacoffee.com/rafaelgouveia"),
+                  ),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            FutureBuilder<PackageInfo>(
+                              future: PackageInfo.fromPlatform(),
+                              builder: (context, snapshot) {
+                                if (snapshot.data == null) {
+                                  return Text(
+                                    local.translate('app_name'),
+                                    style: AppText.micro(scheme),
+                                  );
+                                } else {
+                                  return Text(
+                                    '${local.translate('app_name')} v${snapshot.data!.version} • Build ${snapshot.data!.buildNumber}',
+                                    style: AppText.micro(scheme),
+                                  );
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              local.translate("settings.footer"),
+                              style: AppText.micro(scheme),
+                            ),
+                            const SizedBox(width: AppSpacing.xxs),
+                            Image.asset(
+                              "lib/assets/bmc-logo.png",
+                              height: 20,
+                              filterQuality: FilterQuality.high,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                const SizedBox(height: AppSpacing.xxs),
               ],
             ),
           ),

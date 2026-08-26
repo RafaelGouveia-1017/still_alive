@@ -85,7 +85,7 @@ class _PhoneStatusState extends State<PhoneStatus> {
     });
   }
 
-  Future<void> _initializeConnectivity() async {
+  void _initializeConnectivity() async {
     final result = await _connectivity.checkConnectivity();
     _updateConnectivity(result);
 
@@ -191,7 +191,7 @@ class _PhoneStatusState extends State<PhoneStatus> {
             onTap: () => Navigator.of(context).push(
               AppRoute(
                 page: EmergencyContactsScreen(),
-                transition: AppRouteTransitionType.slideRight,
+                transition: AppRouteTransitionType.slideLeft,
               ),
             ),
             child: _StatCard(

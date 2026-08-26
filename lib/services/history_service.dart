@@ -44,7 +44,10 @@ enum HistoryColorTones {
       case HistoryColorTones.danger:
         return scheme.error;
       case HistoryColorTones.warning:
-        return scheme.error;
+        return scheme.error.withValues(
+          green: scheme.error.g + 30,
+          blue: scheme.error.b + 30,
+        );
       case HistoryColorTones.muted:
         return scheme.onSurfaceVariant;
       default:
@@ -66,29 +69,15 @@ enum HistoryColorTones {
       case HistoryColorTones.danger:
         return scheme.error.withAlpha(38);
       case HistoryColorTones.warning:
-        return scheme.error.withAlpha(38);
+        return scheme.error.withValues(
+          alpha: 38,
+          green: scheme.error.g + 30,
+          blue: scheme.error.b + 30,
+        );
       case HistoryColorTones.muted:
         return scheme.onSurfaceVariant.withAlpha(38);
       default:
         return scheme.primary.withAlpha(38);
-    }
-  }
-
-  /// Returns history tone from provided string.
-  static HistoryColorTones fromString(String label) {
-    switch (label) {
-      case 'safe':
-        return HistoryColorTones.safe;
-      case 'highlight':
-        return HistoryColorTones.highlight;
-      case 'danger':
-        return HistoryColorTones.danger;
-      case 'warning':
-        return HistoryColorTones.warning;
-      case 'muted':
-        return HistoryColorTones.muted;
-      default:
-        return HistoryColorTones.primary;
     }
   }
 }
@@ -157,16 +146,17 @@ class HistoryService {
   ///
   /// Otherwise, a new history record is created containing only the supplied
   /// event.
-  static void insertHistoryRecord(Map<String, dynamic> event) async {
+  static Future<void> insertHistoryRecord(HistoryEvent event) async {
     String date = DateTime.now()
         .copyWith(hour: 0, minute: 0, second: 0, millisecond: 0, microsecond: 0)
         .toIso8601String()
         .split('T')
         .first;
 
+    final eventJson = event.toJson();
     final value = jsonEncode({
-      "count": 1,
-      "events": [event],
+      'count': 1,
+      'events': [eventJson],
     });
 
     await executeBatchSql(
@@ -190,7 +180,7 @@ class HistoryService {
 
                           UNION ALL
 
-                          SELECT json('${jsonEncode(event)}')
+                          SELECT json('${jsonEncode(eventJson)}')
                       )
                   )
               ),
@@ -208,7 +198,7 @@ class HistoryService {
 
                                   UNION ALL
 
-                                  SELECT json('${jsonEncode(event)}')
+                                  SELECT json('${jsonEncode(eventJson)}')
                               )
                           )
                       ),
@@ -247,21 +237,99 @@ class HistoryService {
 /// which returns the appropriate concrete subclass based on the event's
 /// `type` field.
 abstract class HistoryEvent {
-  final IconData icon;
-  final String type;
-  final HistoryColorTones tone;
+  IconData get icon;
+  String get type;
+  HistoryColorTones get tone;
+
   final String timerName;
   final DateTime startedAt;
   final DateTime? endedAt;
 
   const HistoryEvent({
-    required this.icon,
-    required this.type,
-    required this.tone,
     required this.timerName,
     required this.startedAt,
     required this.endedAt,
   });
+
+  /// Converts this history event into its JSON representation.
+  ///
+  /// The returned map contains the common event fields and any
+  /// event-specific data required to reconstruct the event with
+  /// [HistoryService.fromJson].
+  ///
+  /// The resulting map is suitable for passing to [jsonEncode].
+  Map<String, dynamic> toJson() {
+    return {
+      'type': type,
+      'timer_name': timerName,
+      'started_at': startedAt.toIso8601String(),
+      'ended_at': endedAt?.toIso8601String(),
+      'details': detailsToJson(),
+    };
+  }
+
+  /// Converts the event-specific properties into a JSON-compatible map.
+  ///
+  /// The returned map is stored under the `details` field of the event's
+  /// JSON representation by [toJson].
+  ///
+  /// Subclasses must include all event-specific data required by their
+  /// corresponding `fromJson` factory.
+  Map<String, dynamic> detailsToJson();
+
+  /// Returns the localized title describing this history event.
+  String getTitle(AppLocalizations local);
+
+  /// Returns a short summary describing the event.
+  String getSubtitle(bool is24HourFormat, AppLocalizations local);
+
+  /// Builds a widget displaying all information associated with this event.
+  ///
+  /// Implementations should present every event-specific property in a readable
+  /// tabular format suitable for inspection by the user.
+  Widget toTable(BuildContext context);
+
+  /// Formats a [DateTime] as a localized 12-hour or 24-hour time string.
+  ///
+  /// When [is24HourFormat] is `true`, the returned value uses the `HH:mm`
+  /// format. Otherwise, it uses the `hh:mm AM/PM` format.
+  ///
+  /// Midnight is represented as `12:00 AM` and noon as `12:00 PM` when using
+  /// the 12-hour format.
+  ///
+  /// ## Examples
+  ///
+  /// ```dart
+  /// _formatTime(
+  ///   DateTime(2026, 1, 1, 9, 5),
+  ///   true,
+  /// ); // '09:05'
+  ///
+  /// _formatTime(
+  ///   DateTime(2026, 1, 1, 9, 5),
+  ///   false,
+  /// ); // '09:05 AM'
+  ///
+  /// _formatTime(
+  ///   DateTime(2026, 1, 1, 12, 30),
+  ///   false,
+  /// ); // '12:30 PM'
+  /// ```
+  String _formatTime(DateTime dateTime, bool is24HourFormat) {
+    final hour = dateTime.hour;
+    final minute = dateTime.minute;
+
+    if (is24HourFormat) {
+      return '${hour.toString().padLeft(2, '0')}:'
+          '${minute.toString().padLeft(2, '0')}';
+    }
+
+    final period = hour >= 12 ? 'PM' : 'AM';
+    final displayHour = hour % 12 == 0 ? 12 : hour % 12;
+
+    return '${displayHour.toString().padLeft(2, '0')}:'
+        '${minute.toString().padLeft(2, '0')} $period';
+  }
 
   /// Creates a table row containing a label and its associated value.
   ///
@@ -298,18 +366,6 @@ abstract class HistoryEvent {
       ],
     );
   }
-
-  /// Returns the localized title describing this history event.
-  String getTitle(AppLocalizations local);
-
-  /// Returns a short summary describing the event.
-  String getSubtitle(bool is24HourFormat, AppLocalizations local);
-
-  /// Builds a widget displaying all information associated with this event.
-  ///
-  /// Implementations should present every event-specific property in a readable
-  /// tabular format suitable for inspection by the user.
-  Widget toTable(BuildContext context);
 }
 
 /// Represents the creation or activation of a timer.
@@ -318,14 +374,20 @@ abstract class HistoryEvent {
 /// initial configuration, including its duration, grace period and whether
 /// password protection was enabled.
 class TimerStartedEvent extends HistoryEvent {
+  @override
+  IconData get icon => LucideIcons.play;
+
+  @override
+  String get type => 'started';
+
+  @override
+  HistoryColorTones get tone => HistoryColorTones.primary;
+
   final int durationSeconds;
   final int gracePeriodSeconds;
   final bool passwordProtected;
 
   TimerStartedEvent({
-    required super.icon,
-    required super.type,
-    required super.tone,
     required super.timerName,
     required super.startedAt,
     required super.endedAt,
@@ -335,12 +397,9 @@ class TimerStartedEvent extends HistoryEvent {
   });
 
   factory TimerStartedEvent.fromJson(Map<String, dynamic> json) {
-    final details = json['details'];
+    final details = json['details'] as Map<String, dynamic>;
 
     return TimerStartedEvent(
-      icon: LucideIcons.play,
-      type: json['type'],
-      tone: HistoryColorTones.fromString(json['severity']),
       timerName: json['timer_name'],
       startedAt: DateTime.parse(json['started_at']),
       endedAt: json['ended_at'] == null
@@ -353,22 +412,21 @@ class TimerStartedEvent extends HistoryEvent {
   }
 
   @override
+  Map<String, dynamic> detailsToJson() {
+    return {
+      'duration_seconds': durationSeconds,
+      'grace_period_seconds': gracePeriodSeconds,
+      'password_protected': passwordProtected,
+    };
+  }
+
+  @override
   String getTitle(AppLocalizations local) =>
       local.translate("history_logs.events.started");
 
   @override
-  String getSubtitle(bool is24HourFormat, AppLocalizations local) {
-    String paddedHour = startedAt.hour.toString().padLeft(2, '0');
-    String paddedMinute = startedAt.minute.toString().padLeft(2, '0');
-
-    String started = (is24HourFormat)
-        ? '$paddedHour:$paddedMinute'
-        : (startedAt.hour > 12)
-        ? '${((startedAt.hour) - 12).toString().padLeft(2, '0')}:$paddedMinute PM'
-        : '$paddedHour:$paddedMinute AM';
-
-    return started;
-  }
+  String getSubtitle(bool is24HourFormat, AppLocalizations local) =>
+      _formatTime(startedAt, is24HourFormat);
 
   @override
   Widget toTable(BuildContext context) {
@@ -430,12 +488,18 @@ class TimerStartedEvent extends HistoryEvent {
 /// This event indicates that the timer is approaching expiration and records
 /// the remaining time when the warning was issued.
 class TimerWarningEvent extends HistoryEvent {
+  @override
+  IconData get icon => LucideIcons.shieldAlert;
+
+  @override
+  String get type => 'warning';
+
+  @override
+  HistoryColorTones get tone => HistoryColorTones.warning;
+
   final int remainingSeconds;
 
   TimerWarningEvent({
-    required super.icon,
-    required super.type,
-    required super.tone,
     required super.timerName,
     required super.startedAt,
     required super.endedAt,
@@ -443,12 +507,9 @@ class TimerWarningEvent extends HistoryEvent {
   });
 
   factory TimerWarningEvent.fromJson(Map<String, dynamic> json) {
-    final details = json['details'];
+    final details = json['details'] as Map<String, dynamic>;
 
     return TimerWarningEvent(
-      icon: LucideIcons.shieldAlert,
-      type: json['type'],
-      tone: HistoryColorTones.fromString(json['severity']),
       timerName: json['timer_name'],
       startedAt: DateTime.parse(json['started_at']),
       endedAt: DateTime.parse(json['ended_at']),
@@ -457,22 +518,17 @@ class TimerWarningEvent extends HistoryEvent {
   }
 
   @override
+  Map<String, dynamic> detailsToJson() {
+    return {'remaining_seconds': remainingSeconds};
+  }
+
+  @override
   String getTitle(AppLocalizations local) =>
       local.translate("history_logs.events.warning");
 
   @override
-  String getSubtitle(bool is24HourFormat, AppLocalizations local) {
-    String paddedHour = startedAt.hour.toString().padLeft(2, '0');
-    String paddedMinute = startedAt.minute.toString().padLeft(2, '0');
-
-    String started = (is24HourFormat)
-        ? '$paddedHour:$paddedMinute'
-        : (startedAt.hour > 12)
-        ? '${((startedAt.hour) - 12).toString().padLeft(2, '0')}:$paddedMinute PM'
-        : '$paddedHour:$paddedMinute AM';
-
-    return '$started • ${remainingSeconds}s';
-  }
+  String getSubtitle(bool is24HourFormat, AppLocalizations local) =>
+      '${_formatTime(startedAt, is24HourFormat)} • ${remainingSeconds}s';
 
   @override
   Widget toTable(BuildContext context) {
@@ -523,13 +579,19 @@ class TimerWarningEvent extends HistoryEvent {
 /// It stores the amount of time remaining at the moment the timer was paused,
 /// allowing the timer to be resumed later.
 class TimerPausedEvent extends HistoryEvent {
+  @override
+  IconData get icon => LucideIcons.pause;
+
+  @override
+  String get type => 'paused';
+
+  @override
+  HistoryColorTones get tone => HistoryColorTones.muted;
+
   /// The remaining duration, in seconds, when the timer was paused.
   final int remainingSeconds;
 
   TimerPausedEvent({
-    required super.icon,
-    required super.type,
-    required super.tone,
     required super.timerName,
     required super.startedAt,
     required super.endedAt,
@@ -537,12 +599,9 @@ class TimerPausedEvent extends HistoryEvent {
   });
 
   factory TimerPausedEvent.fromJson(Map<String, dynamic> json) {
-    final details = json['details'];
+    final details = json['details'] as Map<String, dynamic>;
 
     return TimerPausedEvent(
-      icon: LucideIcons.pause,
-      type: json['type'],
-      tone: HistoryColorTones.fromString(json['severity']),
       timerName: json['timer_name'],
       startedAt: DateTime.parse(json['started_at']),
       endedAt: DateTime.parse(json['ended_at']),
@@ -551,22 +610,17 @@ class TimerPausedEvent extends HistoryEvent {
   }
 
   @override
+  Map<String, dynamic> detailsToJson() {
+    return {'remaining_seconds': remainingSeconds};
+  }
+
+  @override
   String getTitle(AppLocalizations local) =>
       local.translate("history_logs.events.paused");
 
   @override
-  String getSubtitle(bool is24HourFormat, AppLocalizations local) {
-    String paddedHour = endedAt!.hour.toString().padLeft(2, '0');
-    String paddedMinute = endedAt!.minute.toString().padLeft(2, '0');
-
-    String ended = (is24HourFormat)
-        ? '$paddedHour:$paddedMinute'
-        : (endedAt!.hour > 12)
-        ? '${((endedAt!.hour) - 12).toString().padLeft(2, '0')}:$paddedMinute PM'
-        : '$paddedHour:$paddedMinute AM';
-
-    return ended;
-  }
+  String getSubtitle(bool is24HourFormat, AppLocalizations local) =>
+      _formatTime(endedAt!, is24HourFormat);
 
   @override
   Widget toTable(BuildContext context) {
@@ -617,13 +671,19 @@ class TimerPausedEvent extends HistoryEvent {
 /// cancelled, as well as whether password verification was successfully
 /// performed when required.
 class TimerCancelledEvent extends HistoryEvent {
+  @override
+  IconData get icon => LucideIcons.shieldCheck;
+
+  @override
+  String get type => 'cancelled';
+
+  @override
+  HistoryColorTones get tone => HistoryColorTones.safe;
+
   final int remainingSeconds;
   final bool passwordVerified;
 
   TimerCancelledEvent({
-    required super.icon,
-    required super.type,
-    required super.tone,
     required super.timerName,
     required super.startedAt,
     required super.endedAt,
@@ -632,12 +692,9 @@ class TimerCancelledEvent extends HistoryEvent {
   });
 
   factory TimerCancelledEvent.fromJson(Map<String, dynamic> json) {
-    final details = json['details'];
+    final details = json['details'] as Map<String, dynamic>;
 
     return TimerCancelledEvent(
-      icon: LucideIcons.shieldCheck,
-      type: json['type'],
-      tone: HistoryColorTones.fromString(json['severity']),
       timerName: json['timer_name'],
       startedAt: DateTime.parse(json['started_at']),
       endedAt: DateTime.parse(json['ended_at']),
@@ -647,20 +704,19 @@ class TimerCancelledEvent extends HistoryEvent {
   }
 
   @override
+  Map<String, dynamic> detailsToJson() {
+    return {
+      'remaining_seconds': remainingSeconds,
+      'password_verified': passwordVerified,
+    };
+  }
+
+  @override
   String getTitle(AppLocalizations local) =>
       local.translate("history_logs.events.cancelled");
 
   @override
   String getSubtitle(bool is24HourFormat, AppLocalizations local) {
-    String paddedHour = endedAt!.hour.toString().padLeft(2, '0');
-    String paddedMinute = endedAt!.minute.toString().padLeft(2, '0');
-
-    String ended = (is24HourFormat)
-        ? '$paddedHour:$paddedMinute'
-        : (endedAt!.hour > 12)
-        ? '${((endedAt!.hour) - 12).toString().padLeft(2, '0')}:$paddedMinute PM'
-        : '$paddedHour:$paddedMinute AM';
-
     int howLong = endedAt!.difference(startedAt).inSeconds;
     int hours = howLong ~/ 3600;
     int minutes = (howLong % 3600) ~/ 60;
@@ -679,7 +735,7 @@ class TimerCancelledEvent extends HistoryEvent {
 
     final formatted = parts.join(' ');
 
-    return '$ended • $formatted';
+    return '${_formatTime(endedAt!, is24HourFormat)} • $formatted';
   }
 
   @override
@@ -744,6 +800,15 @@ class TimerCancelledEvent extends HistoryEvent {
 /// * whether the offline alarm was triggered;
 /// * whether ambient audio recording was started.
 class TimerExpiredEvent extends HistoryEvent {
+  @override
+  IconData get icon => LucideIcons.triangleAlert;
+
+  @override
+  String get type => 'expired';
+
+  @override
+  HistoryColorTones get tone => HistoryColorTones.danger;
+
   final Map<String, dynamic>? location;
   final String? polyline;
   final List<dynamic> sms;
@@ -753,9 +818,6 @@ class TimerExpiredEvent extends HistoryEvent {
   final bool audioRecorded;
 
   TimerExpiredEvent({
-    required super.icon,
-    required super.type,
-    required super.tone,
     required super.timerName,
     required super.startedAt,
     required super.endedAt,
@@ -769,12 +831,9 @@ class TimerExpiredEvent extends HistoryEvent {
   });
 
   factory TimerExpiredEvent.fromJson(Map<String, dynamic> json) {
-    final details = json['details'];
+    final details = json['details'] as Map<String, dynamic>;
 
     return TimerExpiredEvent(
-      icon: LucideIcons.triangleAlert,
-      type: json['type'],
-      tone: HistoryColorTones.fromString(json['severity']),
       timerName: json['timer_name'],
       startedAt: DateTime.parse(json['started_at']),
       endedAt: DateTime.parse(json['ended_at']),
@@ -789,27 +848,39 @@ class TimerExpiredEvent extends HistoryEvent {
   }
 
   @override
+  Map<String, dynamic> detailsToJson() {
+    return {
+      'location': location,
+      'polyline': polyline,
+      'sms': sms,
+      'emails': emails,
+      'channels': channels,
+      'alarm_triggered': alarmTriggered,
+      'audio_recorded': audioRecorded,
+    };
+  }
+
+  @override
   String getTitle(AppLocalizations local) =>
       local.translate("history_logs.events.expired");
 
   @override
   String getSubtitle(bool is24HourFormat, AppLocalizations local) {
-    String paddedHour = endedAt!.hour.toString().padLeft(2, '0');
-    String paddedMinute = endedAt!.minute.toString().padLeft(2, '0');
-
-    String ended = (is24HourFormat)
-        ? '$paddedHour:$paddedMinute'
-        : (endedAt!.hour > 12)
-        ? '${((endedAt!.hour) - 12).toString().padLeft(2, '0')}:$paddedMinute PM'
-        : '$paddedHour:$paddedMinute AM';
-
     final successfulAlerts = [
       ...sms,
       ...emails,
       ...channels,
     ].where((e) => e['status'] == 'sent').length;
 
-    return '$ended • $successfulAlerts ${local.translate("history_logs.events.alert")}${successfulAlerts == 1 ? '' : 's'} ${local.translate("history_logs.events.sent")}${local.locale.languageCode != 'en' && successfulAlerts > 1 ? 's' : ''}';
+    String alerts = successfulAlerts == 1
+        ? local.translate("history_logs.events.alert.0")
+        : local.translate("history_logs.events.alert.1");
+
+    String sent = successfulAlerts == 1
+        ? local.translate("history_logs.events.sent.0")
+        : local.translate("history_logs.events.sent.1");
+
+    return '${_formatTime(endedAt!, is24HourFormat)} • $successfulAlerts $alerts $sent';
   }
 
   @override

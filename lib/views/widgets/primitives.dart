@@ -1392,7 +1392,9 @@ class AppExpandableCard extends AppExpandableItem {
     this.cardColor,
     this.cardBorderColor,
     this.cardGradient,
+    this.iconHeroID,
     this.icon,
+    this.iconWidget,
     this.iconSize = 26,
     this.iconRotateAngle = 0,
     this.iconColor,
@@ -1409,7 +1411,9 @@ class AppExpandableCard extends AppExpandableItem {
   final Color? cardColor;
   final Color? cardBorderColor;
   final Gradient? cardGradient;
+  final String? iconHeroID;
   final IconData? icon;
+  final Widget? iconWidget;
   final double iconSize;
   final double iconRotateAngle;
   final Color? iconColor;
@@ -1429,7 +1433,9 @@ class AppExpandableCard extends AppExpandableItem {
       cardColor: cardColor,
       cardBorderColor: cardBorderColor,
       cardGradient: cardGradient,
+      iconHeroID: iconHeroID,
       icon: icon,
+      iconWidget: iconWidget,
       iconSize: iconSize,
       iconRotateAngle: iconRotateAngle,
       iconColor: iconColor,
@@ -1463,7 +1469,9 @@ class _AppExpandableCardView extends StatefulWidget {
     this.cardColor,
     this.cardBorderColor,
     this.cardGradient,
+    this.iconHeroID,
     this.icon,
+    this.iconWidget,
     this.iconSize = 26,
     this.iconRotateAngle = 0,
     this.iconColor,
@@ -1482,7 +1490,9 @@ class _AppExpandableCardView extends StatefulWidget {
   final Color? cardColor;
   final Color? cardBorderColor;
   final Gradient? cardGradient;
+  final String? iconHeroID;
   final IconData? icon;
+  final Widget? iconWidget;
   final double iconSize;
   final double iconRotateAngle;
   final Color? iconColor;
@@ -1548,6 +1558,44 @@ class _AppExpandableCardViewState extends State<_AppExpandableCardView>
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
+    Widget? iconContainer = (widget.icon != null || widget.iconWidget != null)
+        ? Container(
+            width: 44,
+            height: 44,
+            clipBehavior: Clip.antiAlias,
+            decoration: BoxDecoration(
+              color:
+                  widget.iconBackground ??
+                  ((widget.iconGradient == null)
+                      ? scheme.surfaceContainerHigh
+                      : null),
+              gradient: (widget.iconGradient != null)
+                  ? LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: widget.iconGradient!,
+                    )
+                  : null,
+              borderRadius: BorderRadius.circular(AppRadius.lg),
+            ),
+            alignment: Alignment.center,
+            child: Transform.rotate(
+              angle: widget.iconRotateAngle,
+              child: (widget.icon != null)
+                  ? Icon(
+                      widget.icon,
+                      size: widget.iconSize,
+                      color:
+                          widget.iconColor ??
+                          ((widget.iconGradient == null)
+                              ? scheme.onSurface
+                              : Colors.white),
+                    )
+                  : widget.iconWidget,
+            ),
+          )
+        : null;
+
     return AppCard(
       padding: EdgeInsets.zero,
       margin: widget.cardMargin,
@@ -1563,38 +1611,26 @@ class _AppExpandableCardViewState extends State<_AppExpandableCardView>
               padding: widget.cardPadding,
               child: Row(
                 children: [
-                  if (widget.icon != null) ...[
-                    Container(
-                      width: 44,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        color:
-                            widget.iconBackground ??
-                            ((widget.iconGradient == null)
-                                ? scheme.surfaceContainerHigh
-                                : null),
-                        gradient: (widget.iconGradient != null)
-                            ? LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: widget.iconGradient!,
-                              )
-                            : null,
-                        borderRadius: BorderRadius.circular(AppRadius.lg),
-                      ),
-                      child: Transform.rotate(
-                        angle: widget.iconRotateAngle,
-                        child: Icon(
-                          widget.icon,
-                          size: widget.iconSize,
-                          color:
-                              widget.iconColor ??
-                              ((widget.iconGradient == null)
-                                  ? scheme.onSurface
-                                  : Colors.white),
+                  if (iconContainer != null) ...[
+                    if (widget.iconHeroID != null) ...[
+                      Hero(
+                        tag: widget.iconHeroID!,
+                        flightShuttleBuilder:
+                            (context, animation, direction, from, to) =>
+                                AppHeader.flight(
+                                  context,
+                                  animation,
+                                  direction,
+                                  from,
+                                  to,
+                                ),
+                        child: Material(
+                          type: MaterialType.transparency,
+                          child: iconContainer,
                         ),
                       ),
-                    ),
+                    ] else
+                      iconContainer,
                     const SizedBox(width: AppSpacing.md),
                   ],
 

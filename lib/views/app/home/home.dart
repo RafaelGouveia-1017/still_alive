@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:still_alive/views/app/home/timer/timer_config.dart';
 
 import 'quick_contacts.dart';
 import 'phone_status.dart';
@@ -122,7 +123,12 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
                     color: scheme.primary,
                     progress: 1.0,
                     caption: 'Tap to configure',
-                    //onTap: onConfigureTimer,
+                    onTap: () => Navigator.of(context).push(
+                      AppRoute(
+                        page: TimerConfigScreen(),
+                        transition: AppRouteTransitionType.slideRight,
+                      ),
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.xxl),
                   PhoneStatus(
@@ -133,7 +139,9 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
                   PrimaryButton(
                     label: 'Start safety timer',
                     icon: LucideIcons.play,
-                    //onPressed: onConfigureTimer,
+                    onPressed: () {
+                      //TODO start timer (maybe create a start function in timerService?)
+                    },
                   ),
                   const SizedBox(height: AppSpacing.xl),
                   QuickContacts(),
@@ -146,7 +154,3 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
     );
   }
 }
-
-//TODO when timer starts, if integration does not exist in database: remove task from timer in database
-
-//TODO don't forget to add to history table the relevant timer events

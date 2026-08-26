@@ -116,7 +116,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
     String jsonStr = await select(
       sql:
-          "SELECT * FROM history WHERE created_at >= date('now', '-3 months') ORDER BY created_at DESC",
+          "SELECT * FROM history WHERE created_at >= date('now', '-6 months') ORDER BY created_at DESC",
     );
     List<dynamic> results = jsonDecode(jsonStr);
 

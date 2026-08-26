@@ -107,7 +107,7 @@ class PermissionManager {
   ///
   /// This helps ensure users cannot continue using the app
   /// without granting required permissions.
-  void verifyPermissions() async {
+  Future<void> verifyPermissions() async {
     if (await hasAllNeededPermissions()) return;
 
     if (PermissionRouteTracker.instance.isPermissionScreenActive) return;

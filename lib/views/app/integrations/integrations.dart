@@ -5,7 +5,6 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:still_alive/src/rust/api/integrations/traits.dart';
 import 'package:still_alive/src/rust/api/integrations/public_traits.dart';
 import 'package:still_alive/services/integration_service.dart';
-import 'package:still_alive/src/rust/api/main.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -47,8 +46,6 @@ class _IntegrationsScreenState extends State<IntegrationsScreen> {
     setState(() {
       _isLoading = true;
     });
-
-    greet(name: "test");
 
     try {
       List<IntegrationInfo> items = await loadAllIntegrations();
@@ -131,17 +128,6 @@ class _IntegrationsScreenState extends State<IntegrationsScreen> {
                                                       _integrationItems,
                                                   integrationKey: item.key,
                                                 );
-                                            /*
-                                            items = await IntegrationService.connectAccount(
-                                              context: context,
-                                              integrationItems:
-                                                  _integrationItems,
-                                              integrationKey: item.key,
-                                              integrationCredentials: {
-                                                "token": "nope",
-                                              },
-                                            );
-                                            */
                                             break;
                                           case IntegrationProvider.telegram:
                                             items =
