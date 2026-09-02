@@ -63,7 +63,7 @@ class _EmergencyContactsState extends State<EmergencyContactsScreen> {
           } catch (e) {
             AppLogger.log.info('Contact not found.', e);
             ContactService.deleteEmergencyContact(id);
-            TimerService.removeDeletedContactFromTimers(id);
+            TimerService.instance.removeDeletedContactFromTimers(id);
             continue;
           }
         }

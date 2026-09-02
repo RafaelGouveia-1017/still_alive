@@ -19,7 +19,7 @@ class CountdownRing extends StatefulWidget {
     this.color,
     this.progress = 1.0,
     this.caption,
-    this.diameter = 280,
+    this.diameter = 300,
     this.strokeWidth = 14,
     this.timeStyle,
     // When set, the arc depletes from full to empty over [depleteOver]
@@ -55,6 +55,7 @@ class CountdownRing extends StatefulWidget {
 class _CountdownRingState extends State<CountdownRing>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
+  late final Tween<double> _tween;
   late final Animation<double> _sweep;
 
   @override
@@ -65,18 +66,33 @@ class _CountdownRingState extends State<CountdownRing>
         vsync: this,
         duration: widget.depleteOver,
       );
-      _sweep = Tween<double>(
-        begin: 1.0,
-        end: 0.0,
-      ).animate(CurvedAnimation(parent: _controller, curve: AppMotion.linear));
+      _tween = Tween<double>(begin: 1.0, end: 0.0);
+      _sweep = _tween.animate(
+        CurvedAnimation(parent: _controller, curve: AppMotion.linear),
+      );
     } else {
       // Reveal to target progress
       _controller = AnimationController(vsync: this, duration: AppMotion.ring);
-      _sweep = Tween<double>(begin: 0.0, end: widget.progress).animate(
+      _tween = Tween<double>(begin: 0.0, end: widget.progress);
+      _sweep = _tween.animate(
         CurvedAnimation(parent: _controller, curve: AppMotion.emphasized),
       );
     }
     _controller.forward();
+  }
+
+  @override
+  void didUpdateWidget(covariant CountdownRing oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.depleteOver == null) {
+      _tween
+        ..begin = _sweep.value
+        ..end = widget.progress;
+      _controller
+        ..reset()
+        ..forward();
+    }
   }
 
   @override
@@ -203,5 +219,6 @@ class _RingPainter extends CustomPainter {
   bool shouldRepaint(_RingPainter old) =>
       old.progress != progress ||
       old.color != color ||
+      old.trackColor != trackColor ||
       old.strokeWidth != strokeWidth;
 }

@@ -10,21 +10,21 @@ import 'package:path/path.dart' as p;
 import 'package:provider/provider.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:still_alive/services/timer_service.dart';
 
 import 'package:still_alive/src/rust/frb_generated.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 
 import 'package:still_alive/src/rust/api/data/db.dart';
-
 import 'package:still_alive/data/all.dart';
-
+import 'package:still_alive/services/native/method_channel.dart';
 import 'package:still_alive/views/app/screens.dart';
 import 'package:still_alive/views/widgets/custom_splash.dart';
 
 /// Application entry point.
 ///
-/// Performs all startup initialization including:
+/// Performs all startup initialization including but limited to:
 /// * Flutter framework initialization.
 /// * Native splash screen preservation.
 /// * Permission observation initialization.
@@ -50,7 +50,7 @@ void main() async {
       AppLogger.connectRustLogging();
       AppLogger.log.info("Connected Rust logger to AppLogger.");
 
-      SystemChrome.setEnabledSystemUIMode(.immersive);
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
       await SystemChrome.setPreferredOrientations([
         DeviceOrientation.portraitUp,
         DeviceOrientation.portraitDown,
@@ -79,6 +79,14 @@ void main() async {
       }
       AppLogger.log.info("Database loaded.");
 
+      await TimerService.initialize();
+      AppLogger.log.info("TimerService initialized.");
+
+      AppMethodChannel.instance.setMethodCallHandler(
+        TimerService.instance.handleNativeCall,
+      );
+      AppLogger.log.info("Native handler registered.");
+
       String label = await CustomTheme.load();
       CustomTheme theme = CustomTheme.fromLabel(label);
       ThemeData appTheme = AppThemes.getTheme(theme);
@@ -96,6 +104,19 @@ void main() async {
           child: MyApp(theme: appDesign, currentTheme: theme),
         ),
       );
+
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        FlutterNativeSplash.remove();
+
+        if (GlobalErrorDialog.hasPendingError) {
+          GlobalErrorDialog.show();
+          return;
+        }
+
+        // Tells native platform that Flutter is now
+        // ready to receive a pending alarm.
+        await AppMethodChannel.instance.invokeMethod('flutterReady');
+      });
     },
     (error, stack) {
       AppLogger.log.severe("Zone Error", error, stack);
@@ -166,10 +187,6 @@ class MyAppState extends State<MyApp> {
     _lifecycleListener = AppLifecycleListener(
       onResume: () => PermissionManager.instance.verifyPermissions(),
     );
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (GlobalErrorDialog.hasPendingError) GlobalErrorDialog.show();
-    });
   }
 
   @override
@@ -227,7 +244,8 @@ class MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     final localeProvider = Provider.of<LocaleProvider>(context);
-    MaterialApp root = MaterialApp(
+
+    return MaterialApp(
       navigatorObservers: [routeObserver],
       navigatorKey: PermissionManager.instance.navigatorKey,
       debugShowCheckedModeBanner: false,
@@ -258,9 +276,6 @@ class MyAppState extends State<MyApp> {
       ),
       builder: FToastBuilder(),
     );
-
-    FlutterNativeSplash.remove();
-    return root;
   }
 }
 

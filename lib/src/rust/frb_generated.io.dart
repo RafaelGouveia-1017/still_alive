@@ -9,6 +9,10 @@ import 'api/data/logging.dart';
 import 'api/integrations/public_traits.dart';
 import 'api/integrations/traits.dart';
 import 'api/main.dart';
+import 'api/timer/active_timer.dart';
+import 'api/timer/config.dart';
+import 'api/timer/run.dart';
+import 'api/timer/state.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi' as ffi;
@@ -23,11 +27,67 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     required super.portManager,
   });
 
+  CrossPlatformFinalizerArg
+  get rust_arc_decrement_strong_count_ActiveTimerPtr => wire
+      ._rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimerPtr;
+
+  CrossPlatformFinalizerArg
+  get rust_arc_decrement_strong_count_TimerConfigPtr => wire
+      ._rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfigPtr;
+
   @protected
   AnyhowException dco_decode_AnyhowException(dynamic raw);
 
   @protected
+  ActiveTimer
+  dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    dynamic raw,
+  );
+
+  @protected
+  TimerConfig
+  dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+    dynamic raw,
+  );
+
+  @protected
+  ActiveTimer
+  dco_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    dynamic raw,
+  );
+
+  @protected
+  TimerConfig
+  dco_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+    dynamic raw,
+  );
+
+  @protected
+  ActiveTimer
+  dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    dynamic raw,
+  );
+
+  @protected
+  TimerConfig
+  dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+    dynamic raw,
+  );
+
+  @protected
   Map<String, String> dco_decode_Map_String_String_None(dynamic raw);
+
+  @protected
+  ActiveTimer
+  dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    dynamic raw,
+  );
+
+  @protected
+  TimerConfig
+  dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+    dynamic raw,
+  );
 
   @protected
   RustStreamSink<RustLogRecord> dco_decode_StreamSink_rust_log_record_Sse(
@@ -41,7 +101,25 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   bool dco_decode_bool(dynamic raw);
 
   @protected
+  ActiveTimer
+  dco_decode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    dynamic raw,
+  );
+
+  @protected
+  PlatformInt64 dco_decode_box_autoadd_i_64(dynamic raw);
+
+  @protected
+  TimerIntegrations dco_decode_box_autoadd_timer_integrations(dynamic raw);
+
+  @protected
+  TimerRun dco_decode_box_autoadd_timer_run(dynamic raw);
+
+  @protected
   int dco_decode_box_autoadd_u_32(dynamic raw);
+
+  @protected
+  Contact dco_decode_contact(dynamic raw);
 
   @protected
   DestinationKind dco_decode_destination_kind(dynamic raw);
@@ -68,6 +146,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   IntegrationProvider dco_decode_integration_provider(dynamic raw);
 
   @protected
+  List<String> dco_decode_list_String(dynamic raw);
+
+  @protected
+  List<Contact> dco_decode_list_contact(dynamic raw);
+
+  @protected
   List<IntegrationAccount> dco_decode_list_integration_account(dynamic raw);
 
   @protected
@@ -83,10 +167,24 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<(String, String)> dco_decode_list_record_string_string(dynamic raw);
 
   @protected
+  List<TimerIntegrationAccount> dco_decode_list_timer_integration_account(
+    dynamic raw,
+  );
+
+  @protected
   MessageDestination dco_decode_message_destination(dynamic raw);
 
   @protected
   String? dco_decode_opt_String(dynamic raw);
+
+  @protected
+  ActiveTimer?
+  dco_decode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    dynamic raw,
+  );
+
+  @protected
+  PlatformInt64? dco_decode_opt_box_autoadd_i_64(dynamic raw);
 
   @protected
   int? dco_decode_opt_box_autoadd_u_32(dynamic raw);
@@ -99,6 +197,21 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   SentMessage dco_decode_sent_message(dynamic raw);
+
+  @protected
+  TimerIntegration dco_decode_timer_integration(dynamic raw);
+
+  @protected
+  TimerIntegrationAccount dco_decode_timer_integration_account(dynamic raw);
+
+  @protected
+  TimerIntegrations dco_decode_timer_integrations(dynamic raw);
+
+  @protected
+  TimerRun dco_decode_timer_run(dynamic raw);
+
+  @protected
+  TimerState dco_decode_timer_state(dynamic raw);
 
   @protected
   int dco_decode_u_32(dynamic raw);
@@ -116,7 +229,55 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer);
 
   @protected
+  ActiveTimer
+  sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  TimerConfig
+  sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ActiveTimer
+  sse_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  TimerConfig
+  sse_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ActiveTimer
+  sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  TimerConfig
+  sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   Map<String, String> sse_decode_Map_String_String_None(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ActiveTimer
+  sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  TimerConfig
+  sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
     SseDeserializer deserializer,
   );
 
@@ -132,7 +293,27 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   bool sse_decode_bool(SseDeserializer deserializer);
 
   @protected
+  ActiveTimer
+  sse_decode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  PlatformInt64 sse_decode_box_autoadd_i_64(SseDeserializer deserializer);
+
+  @protected
+  TimerIntegrations sse_decode_box_autoadd_timer_integrations(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  TimerRun sse_decode_box_autoadd_timer_run(SseDeserializer deserializer);
+
+  @protected
   int sse_decode_box_autoadd_u_32(SseDeserializer deserializer);
+
+  @protected
+  Contact sse_decode_contact(SseDeserializer deserializer);
 
   @protected
   DestinationKind sse_decode_destination_kind(SseDeserializer deserializer);
@@ -167,6 +348,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  List<String> sse_decode_list_String(SseDeserializer deserializer);
+
+  @protected
+  List<Contact> sse_decode_list_contact(SseDeserializer deserializer);
+
+  @protected
   List<IntegrationAccount> sse_decode_list_integration_account(
     SseDeserializer deserializer,
   );
@@ -190,12 +377,26 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  List<TimerIntegrationAccount> sse_decode_list_timer_integration_account(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   MessageDestination sse_decode_message_destination(
     SseDeserializer deserializer,
   );
 
   @protected
   String? sse_decode_opt_String(SseDeserializer deserializer);
+
+  @protected
+  ActiveTimer?
+  sse_decode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  PlatformInt64? sse_decode_opt_box_autoadd_i_64(SseDeserializer deserializer);
 
   @protected
   int? sse_decode_opt_box_autoadd_u_32(SseDeserializer deserializer);
@@ -210,6 +411,23 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   SentMessage sse_decode_sent_message(SseDeserializer deserializer);
+
+  @protected
+  TimerIntegration sse_decode_timer_integration(SseDeserializer deserializer);
+
+  @protected
+  TimerIntegrationAccount sse_decode_timer_integration_account(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  TimerIntegrations sse_decode_timer_integrations(SseDeserializer deserializer);
+
+  @protected
+  TimerRun sse_decode_timer_run(SseDeserializer deserializer);
+
+  @protected
+  TimerState sse_decode_timer_state(SseDeserializer deserializer);
 
   @protected
   int sse_decode_u_32(SseDeserializer deserializer);
@@ -230,8 +448,64 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void
+  sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    ActiveTimer self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
+  sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+    TimerConfig self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
+  sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    ActiveTimer self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
+  sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+    TimerConfig self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
+  sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    ActiveTimer self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
+  sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+    TimerConfig self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_Map_String_String_None(
     Map<String, String> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
+  sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    ActiveTimer self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
+  sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+    TimerConfig self,
     SseSerializer serializer,
   );
 
@@ -248,7 +522,35 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_bool(bool self, SseSerializer serializer);
 
   @protected
+  void
+  sse_encode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    ActiveTimer self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_i_64(
+    PlatformInt64 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_timer_integrations(
+    TimerIntegrations self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_timer_run(
+    TimerRun self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_box_autoadd_u_32(int self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_contact(Contact self, SseSerializer serializer);
 
   @protected
   void sse_encode_destination_kind(
@@ -293,6 +595,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_list_String(List<String> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_list_contact(List<Contact> self, SseSerializer serializer);
+
+  @protected
   void sse_encode_list_integration_account(
     List<IntegrationAccount> self,
     SseSerializer serializer,
@@ -323,6 +631,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_list_timer_integration_account(
+    List<TimerIntegrationAccount> self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_message_destination(
     MessageDestination self,
     SseSerializer serializer,
@@ -330,6 +644,19 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_opt_String(String? self, SseSerializer serializer);
+
+  @protected
+  void
+  sse_encode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    ActiveTimer? self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_opt_box_autoadd_i_64(
+    PlatformInt64? self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_opt_box_autoadd_u_32(int? self, SseSerializer serializer);
@@ -345,6 +672,30 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_sent_message(SentMessage self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_timer_integration(
+    TimerIntegration self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_timer_integration_account(
+    TimerIntegrationAccount self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_timer_integrations(
+    TimerIntegrations self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_timer_run(TimerRun self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_timer_state(TimerState self, SseSerializer serializer);
 
   @protected
   void sse_encode_u_32(int self, SseSerializer serializer);
@@ -372,4 +723,72 @@ class RustLibWire implements BaseWire {
   /// The symbols are looked up in [dynamicLibrary].
   RustLibWire(ffi.DynamicLibrary dynamicLibrary)
     : _lookup = dynamicLibrary.lookup;
+
+  void
+  rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    ffi.Pointer<ffi.Void> ptr,
+  ) {
+    return _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+      ptr,
+    );
+  }
+
+  late final _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimerPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>(
+        'frbgen_still_alive_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer',
+      );
+  late final _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer =
+      _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimerPtr
+          .asFunction<void Function(ffi.Pointer<ffi.Void>)>();
+
+  void
+  rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    ffi.Pointer<ffi.Void> ptr,
+  ) {
+    return _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+      ptr,
+    );
+  }
+
+  late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimerPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>(
+        'frbgen_still_alive_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer',
+      );
+  late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer =
+      _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimerPtr
+          .asFunction<void Function(ffi.Pointer<ffi.Void>)>();
+
+  void
+  rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+    ffi.Pointer<ffi.Void> ptr,
+  ) {
+    return _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+      ptr,
+    );
+  }
+
+  late final _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfigPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>(
+        'frbgen_still_alive_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig',
+      );
+  late final _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig =
+      _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfigPtr
+          .asFunction<void Function(ffi.Pointer<ffi.Void>)>();
+
+  void
+  rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+    ffi.Pointer<ffi.Void> ptr,
+  ) {
+    return _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+      ptr,
+    );
+  }
+
+  late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfigPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>(
+        'frbgen_still_alive_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig',
+      );
+  late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig =
+      _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfigPtr
+          .asFunction<void Function(ffi.Pointer<ffi.Void>)>();
 }

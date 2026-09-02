@@ -11,6 +11,17 @@
     "exit": "Exit",
     "restart": "Restart"
   },
+  "notifications": {
+    "timer": {
+      "title": "Timer Status",
+      "running": ["Countdown for", "has started."],
+      "paused": "has been paused.",
+      "cancelled": "has been cancelled.",
+      "warning": ["Grace Period for", "has started."],
+      "expired": ["Emergency protocol for", "has been triggered."],
+      "completed": ["Emergency protocol for", "has been completed."]
+    }
+  },
   "welcome": {
     "title": "Welcome",
     "tagline": "Your silent guardian. Activate a safety timer — we'll alert your circle if you don't check in.",
@@ -45,7 +56,19 @@
           "detail": "Pick emergency contacts"
         },
         {
+          "name": "Exact Alarm",
+          "detail": "Precise timer scheduling"
+        },
+        {
           "name": "Notifications",
+          "detail": "Post timer reminders"
+        },
+        {
+          "name": "Battery",
+          "detail": "Disable battery optimization"
+        },
+        {
+          "name": "Full-Screen Notifications",
           "detail": "Critical timer warnings"
         }
       ]
@@ -74,32 +97,67 @@
   "home": {
     "inactive": "Monitoring inactive",
     "active": "Monitoring active",
-    "safety_timer": "Safety Timer",
     "tap_to_configure": "Tap to configure",
     "online": "Online",
     "offline": "Offline",
     "contacts": "contacts",
     "plugins": "plug-ins",
-    "start_timer": "Start safety timer",
+    "buttons": {
+      "start": "Start safety timer",
+      "cancel": "Cancel safety timer",
+      "resume": "Resume safety timer"
+    },
+    "password_hint": "Input password",
     "quick_contacts": "Quick contacts"
   },
-  "timer_configuration": {
-    "title": "New Timer",
-    "fields": {
+  "timer_selection": {
+    "title": "Select Timer",
+    "message": "No timers created yet",
+    "not_found": "No timers found",
+    "search": "Search timers",
+    "bool": {
+      "true": "Yes",
+      "false": "No"
+    },
+    "details": {
       "duration": "Duration",
-      "time_format": "HRS MIN SEC",
-      "grace_period": "Grace period",
+      "grace": "Grace Period",
+      "password_protected": "Password Protected?",
+      "location_sharing_enabled": "Location Enabled?",
+      "route_sharing_enabled": "Route Enabled?",
+      "location_collection_interval_secs": "Location Collection Interval",
+      "audio_recording_enabled": "Audio Enabled?",
+      "contacts": "Contacts",
+      "custom_sms": "Custom SMS",
+      "custom_email": "Custom Email",
+      "integrations": "Integrations",
+      "created_at": "Created",
+      "updated_at": "Updated"
+    }
+  },
+  "timer_configuration": {
+    "title_new": "New Timer",
+    "title_edit": "Edit Timer",
+    "name": {
+      "title": "Name",
+      "hint": "something like \"Daily Check-in\" or \"Jogging alone in a dark forest\""
+    },
+    "duration": {
+      "title": "Duration",
+      "time_format": "HRS MIN SEC"
+    },
+    "grace_period": {
+      "title": "Grace period",
       "warning": "Warning before alert",
       "buzzer": "Buzzer + 60s to cancel"
     },
     "security": {
       "title": "Security",
-      "cancel_password": "Cancel PIN",
+      "cancel_password": "Cancel password",
       "pin_requirement": {
         "on": "Require PIN to cancel timer",
         "off": "Don't require PIN to cancel timer"
-      },
-      "confirm_activation": "Confirm before activation"
+      }
     },
     "note": "After tapping Start, you'll see a final confirmation. Alerts dispatch automatically when the timer expires.",
     "cta": "Activate safety timer"

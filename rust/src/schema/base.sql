@@ -238,7 +238,7 @@ CREATE TABLE
 "duration_secs": 10,
 "grace_period_secs": null,
 "password_protected": false,
-"password_Hash": null,
+"password_hash": null,
 "location_sharing_enabled": false,
 "route_sharing_enabled": false,
 "location_collection_interval_secs": null,
@@ -284,7 +284,7 @@ VALUES
             "duration_secs": 10,
             "grace_period_secs": 5,
             "password_protected": false,
-            "password_Hash": null,
+            "password_hash": null,
             "location_sharing_enabled": false,
             "route_sharing_enabled": false,	 
             "location_collection_interval_secs": null,
@@ -373,5 +373,23 @@ SET
     )
 WHERE
     json_extract (value, '$.integrations.' || NEW.key) IS NOT NULL;
+
+END;
+
+CREATE TABLE
+    timer_run (
+        timer_id VARCHAR(200) PRIMARY KEY,
+        state VARCHAR(50) NOT NULL,
+        started_at_ms INTEGER NOT NULL,
+        expires_at_ms INTEGER NOT NULL,
+        warning_duration_ms INTEGER,
+        paused_at_ms INTEGER,
+        created_at_ms INTEGER NOT NULL,
+        updated_at_ms INTEGER NOT NULL,
+        FOREIGN KEY (timer_id) REFERENCES timers (key) ON DELETE CASCADE
+    );
+
+CREATE TRIGGER keep_only_one_timer_run BEFORE INSERT ON timer_run BEGIN
+DELETE FROM timer_run;
 
 END;

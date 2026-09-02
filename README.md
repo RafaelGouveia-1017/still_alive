@@ -18,13 +18,13 @@
   <br>
   <a href="https://flutter.dev">
     <img
-      src="https://img.shields.io/badge/Frontend-Flutter%20(3.47.0)-%2302569B?logo=flutter"
+      src="https://img.shields.io/badge/Frontend-Flutter%20(3.47.1)-%2302569B?logo=flutter"
       alt="Flutter"
     />
   </a>
   <a href="https://dart.dev/">
     <img
-      src="https://img.shields.io/badge/Frontend-Dart%20(3.13.0)-%2302569B?logo=dart"
+      src="https://img.shields.io/badge/Frontend-Dart%20(3.13.1)-%2302569B?logo=dart"
       alt="Dart"
     />
   </a>

@@ -1,16 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:still_alive/views/app/home/timer/timer_config.dart';
+import 'package:still_alive/services/timer_service.dart';
+import 'package:still_alive/src/rust/api/timer/config.dart';
+import 'package:still_alive/views/app/home/timer_selection.dart';
 
 import 'quick_contacts.dart';
+import 'home_widgets.dart';
 import 'phone_status.dart';
-import '../history/history.dart';
-import '../../../main.dart';
 import '../../../data/all.dart';
 import '../../widgets/primitives.dart';
-import '../../widgets/countdown_ring.dart';
 
+/// Displays the application's main home screen.
+///
+/// The home screen provides an overview of the currently selected timer,
+/// including its countdown, phone status, available controls, and quick
+/// contacts.
+///
+/// The screen header displays the application name and indicates whether an
+/// active timer is currently protecting the device. It also provides access
+/// to the timer selection screen.
+///
+/// The main content includes:
+///
+/// * [TimerCountdownRing] for displaying the active timer's countdown.
+/// * [PhoneStatus] for displaying the number of configured contacts and
+/// integrations.
+/// * [TimerControls] for starting, pausing, resuming, or cancelling the
+/// timer.
+/// * [QuickContacts] for accessing configured emergency contacts.
+///
+/// The system UI is configured for edge-to-edge display when the screen is
+/// initialized.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -19,37 +40,19 @@ class HomeScreen extends StatefulWidget {
 }
 
 /// State implementation for [HomeScreen].
-class _HomeScreenState extends State<HomeScreen> with RouteAware {
-  late final AppLifecycleListener _lifecycleListener;
-
+///
+/// Configures the system UI for edge-to-edge display when the screen is
+/// initialized and builds the home screen using the currently selected
+/// timer's configuration.
+class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-
-    _lifecycleListener = AppLifecycleListener(onResume: () => didPopNext());
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    final route = ModalRoute.of(context);
-    if (route is PageRoute) {
-      routeObserver.subscribe(this, route);
-    }
-  }
-
-  @override
-  void didPopNext() {
-    //TODO something
-    super.didPopNext();
   }
 
   @override
   void dispose() {
-    _lifecycleListener.dispose();
-    routeObserver.unsubscribe(this);
     super.dispose();
   }
 
@@ -58,45 +61,46 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
     ColorScheme scheme = Theme.of(context).colorScheme;
     AppLocalizations local = AppLocalizations.of(context)!;
 
+    TimerConfig timerData = TimerService.instance.activeTimer.config;
+
+    int contacts = timerData.contacts.length;
+    int integrations = 0;
+    if (timerData.integrations.discord.accounts.isNotEmpty) integrations++;
+    if (timerData.integrations.telegram.accounts.isNotEmpty) integrations++;
+
     return ScreenBase(
       bottomNavDestination: 'home',
       header: AppHeader(
         title: local.translate('app_name'),
-        left: CircleIconButton(
-          icon: LucideIcons
-              .shieldOff, //TODO change to LucideIcons.shield while timer is active
-          foreground: scheme.primary,
+        left: FutureBuilder<bool>(
+          future: TimerService.instance.hasActiveTimer,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return CircleIconButton(
+                icon: (snapshot.data!)
+                    ? LucideIcons.shield
+                    : LucideIcons.shieldOff,
+                foreground: scheme.primary,
+              );
+            } else {
+              return SizedBox(
+                width: 40,
+                height: 40,
+                child: Center(
+                  child: CircularProgressIndicator(color: scheme.tertiary),
+                ),
+              );
+            }
+          },
         ),
         right: CircleIconButton(
           icon: LucideIcons.list,
-          onTap: () {
-            showBlurredBottomSheet(
-              scheme: scheme,
-              context: context,
-              marginHorizontal: 40,
-              child: ListView.separated(
-                shrinkWrap: true,
-                itemCount: 25, //TODO number of timers created
-                separatorBuilder: (context, index) =>
-                    Divider(height: 1, color: scheme.outlineVariant),
-                itemBuilder: (context, index) {
-                  return Pressable(
-                    factory: InkSparkle.splashFactory,
-                    onTap: () => Navigator.of(context).push(
-                      AppRoute(
-                        page: HistoryScreen(),
-                        transition: AppRouteTransitionType.slideRight,
-                      ),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(AppSpacing.lg),
-                      child: Text("Timer $index", style: AppText.body(scheme)),
-                    ),
-                  );
-                },
-              ),
-            );
-          },
+          onTap: () => Navigator.of(context).push(
+            AppRoute(
+              page: TimerSelectionScreen(),
+              transition: AppRouteTransitionType.slideLeft,
+            ),
+          ),
         ),
       ),
       child: Column(
@@ -107,42 +111,11 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
                 shrinkWrap: true,
                 physics: const ClampingScrollPhysics(),
                 children: [
-                  Center(
-                    child: Pill(
-                      label: local.translate(
-                        "home.inactive",
-                      ), //TODO change to local.translate("home.active") while timer is active
-                      backColor: scheme
-                          .onSurfaceVariant, //TODO change to scheme.tertiary while timer is active
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-                  CountdownRing(
-                    time: '00:30:00',
-                    label: 'Safety Timer',
-                    color: scheme.primary,
-                    progress: 1.0,
-                    caption: 'Tap to configure',
-                    onTap: () => Navigator.of(context).push(
-                      AppRoute(
-                        page: TimerConfigScreen(),
-                        transition: AppRouteTransitionType.slideRight,
-                      ),
-                    ),
-                  ),
+                  TimerCountdownRing(),
                   const SizedBox(height: AppSpacing.xxl),
-                  PhoneStatus(
-                    contacts: 0,
-                    integrations: 0,
-                  ), //TODO get number of contacts & plugins in timer
+                  PhoneStatus(contacts: contacts, integrations: integrations),
                   const SizedBox(height: AppSpacing.xl),
-                  PrimaryButton(
-                    label: 'Start safety timer',
-                    icon: LucideIcons.play,
-                    onPressed: () {
-                      //TODO start timer (maybe create a start function in timerService?)
-                    },
-                  ),
+                  TimerControls(),
                   const SizedBox(height: AppSpacing.xl),
                   QuickContacts(),
                 ],

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">StillAlive</string>
+    <string name="alarm_notification_title">StillAlive</string>
+    <string name="alarm_notification_text">O teu temporizador expirou.</string>
+    <string name="alarm_notification_channel_name">Alarmes</string>
+    <string name="alarm_notification_channel_description">Notificações de alarme</string>
+</resources>

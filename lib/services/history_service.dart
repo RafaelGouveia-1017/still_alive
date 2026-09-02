@@ -384,7 +384,7 @@ class TimerStartedEvent extends HistoryEvent {
   HistoryColorTones get tone => HistoryColorTones.primary;
 
   final int durationSeconds;
-  final int gracePeriodSeconds;
+  final int? gracePeriodSeconds;
   final bool passwordProtected;
 
   TimerStartedEvent({

@@ -9,6 +9,10 @@ import 'api/data/logging.dart';
 import 'api/integrations/public_traits.dart';
 import 'api/integrations/traits.dart';
 import 'api/main.dart';
+import 'api/timer/active_timer.dart';
+import 'api/timer/config.dart';
+import 'api/timer/run.dart';
+import 'api/timer/state.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'frb_generated.dart';
@@ -71,7 +75,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.13.0';
 
   @override
-  int get rustContentHash => -1857435569;
+  int get rustContentHash => -1721908865;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -83,6 +87,222 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 }
 
 abstract class RustLibApi extends BaseApi {
+  TimerConfig crateApiTimerActiveTimerActiveTimerAutoAccessorGetConfig({
+    required ActiveTimer that,
+  });
+
+  String crateApiTimerActiveTimerActiveTimerAutoAccessorGetKey({
+    required ActiveTimer that,
+  });
+
+  TimerRun crateApiTimerActiveTimerActiveTimerAutoAccessorGetRun({
+    required ActiveTimer that,
+  });
+
+  void crateApiTimerActiveTimerActiveTimerAutoAccessorSetConfig({
+    required ActiveTimer that,
+    required TimerConfig config,
+  });
+
+  void crateApiTimerActiveTimerActiveTimerAutoAccessorSetKey({
+    required ActiveTimer that,
+    required String key,
+  });
+
+  void crateApiTimerActiveTimerActiveTimerAutoAccessorSetRun({
+    required ActiveTimer that,
+    required TimerRun run,
+  });
+
+  Future<void> crateApiTimerActiveTimerActiveTimerCancelTimerRun({
+    required ActiveTimer that,
+    required PlatformInt64 nowMs,
+    required bool passwordVerified,
+  });
+
+  Future<void> crateApiTimerActiveTimerActiveTimerPauseTimerRun({
+    required ActiveTimer that,
+    required PlatformInt64 nowMs,
+    required bool passwordVerified,
+  });
+
+  Future<void> crateApiTimerActiveTimerActiveTimerReplaceActiveTimer({
+    required ActiveTimer that,
+    required String key,
+    required TimerConfig config,
+    required PlatformInt64 nowMs,
+  });
+
+  Future<void> crateApiTimerActiveTimerActiveTimerResumeTimerRun({
+    required ActiveTimer that,
+    required PlatformInt64 nowMs,
+  });
+
+  Future<void> crateApiTimerActiveTimerActiveTimerStartTimerRun({
+    required ActiveTimer that,
+    required PlatformInt64 nowMs,
+  });
+
+  Future<void> crateApiTimerActiveTimerActiveTimerUpdateRunState({
+    required ActiveTimer that,
+    required PlatformInt64 nowMs,
+  });
+
+  bool crateApiTimerConfigTimerConfigAutoAccessorGetAudioRecordingEnabled({
+    required TimerConfig that,
+  });
+
+  List<Contact> crateApiTimerConfigTimerConfigAutoAccessorGetContacts({
+    required TimerConfig that,
+  });
+
+  String crateApiTimerConfigTimerConfigAutoAccessorGetCreatedAt({
+    required TimerConfig that,
+  });
+
+  List<String> crateApiTimerConfigTimerConfigAutoAccessorGetCustomEmail({
+    required TimerConfig that,
+  });
+
+  List<String> crateApiTimerConfigTimerConfigAutoAccessorGetCustomSms({
+    required TimerConfig that,
+  });
+
+  PlatformInt64 crateApiTimerConfigTimerConfigAutoAccessorGetDurationSecs({
+    required TimerConfig that,
+  });
+
+  PlatformInt64? crateApiTimerConfigTimerConfigAutoAccessorGetGracePeriodSecs({
+    required TimerConfig that,
+  });
+
+  TimerIntegrations crateApiTimerConfigTimerConfigAutoAccessorGetIntegrations({
+    required TimerConfig that,
+  });
+
+  PlatformInt64?
+  crateApiTimerConfigTimerConfigAutoAccessorGetLocationCollectionIntervalSecs({
+    required TimerConfig that,
+  });
+
+  bool crateApiTimerConfigTimerConfigAutoAccessorGetLocationSharingEnabled({
+    required TimerConfig that,
+  });
+
+  String crateApiTimerConfigTimerConfigAutoAccessorGetName({
+    required TimerConfig that,
+  });
+
+  String? crateApiTimerConfigTimerConfigAutoAccessorGetPasswordHash({
+    required TimerConfig that,
+  });
+
+  bool crateApiTimerConfigTimerConfigAutoAccessorGetPasswordProtected({
+    required TimerConfig that,
+  });
+
+  bool crateApiTimerConfigTimerConfigAutoAccessorGetRouteSharingEnabled({
+    required TimerConfig that,
+  });
+
+  String crateApiTimerConfigTimerConfigAutoAccessorGetUpdatedAt({
+    required TimerConfig that,
+  });
+
+  void crateApiTimerConfigTimerConfigAutoAccessorSetAudioRecordingEnabled({
+    required TimerConfig that,
+    required bool audioRecordingEnabled,
+  });
+
+  void crateApiTimerConfigTimerConfigAutoAccessorSetContacts({
+    required TimerConfig that,
+    required List<Contact> contacts,
+  });
+
+  void crateApiTimerConfigTimerConfigAutoAccessorSetCreatedAt({
+    required TimerConfig that,
+    required String createdAt,
+  });
+
+  void crateApiTimerConfigTimerConfigAutoAccessorSetCustomEmail({
+    required TimerConfig that,
+    required List<String> customEmail,
+  });
+
+  void crateApiTimerConfigTimerConfigAutoAccessorSetCustomSms({
+    required TimerConfig that,
+    required List<String> customSms,
+  });
+
+  void crateApiTimerConfigTimerConfigAutoAccessorSetDurationSecs({
+    required TimerConfig that,
+    required PlatformInt64 durationSecs,
+  });
+
+  void crateApiTimerConfigTimerConfigAutoAccessorSetGracePeriodSecs({
+    required TimerConfig that,
+    PlatformInt64? gracePeriodSecs,
+  });
+
+  void crateApiTimerConfigTimerConfigAutoAccessorSetIntegrations({
+    required TimerConfig that,
+    required TimerIntegrations integrations,
+  });
+
+  void
+  crateApiTimerConfigTimerConfigAutoAccessorSetLocationCollectionIntervalSecs({
+    required TimerConfig that,
+    PlatformInt64? locationCollectionIntervalSecs,
+  });
+
+  void crateApiTimerConfigTimerConfigAutoAccessorSetLocationSharingEnabled({
+    required TimerConfig that,
+    required bool locationSharingEnabled,
+  });
+
+  void crateApiTimerConfigTimerConfigAutoAccessorSetName({
+    required TimerConfig that,
+    required String name,
+  });
+
+  void crateApiTimerConfigTimerConfigAutoAccessorSetPasswordHash({
+    required TimerConfig that,
+    String? passwordHash,
+  });
+
+  void crateApiTimerConfigTimerConfigAutoAccessorSetPasswordProtected({
+    required TimerConfig that,
+    required bool passwordProtected,
+  });
+
+  void crateApiTimerConfigTimerConfigAutoAccessorSetRouteSharingEnabled({
+    required TimerConfig that,
+    required bool routeSharingEnabled,
+  });
+
+  void crateApiTimerConfigTimerConfigAutoAccessorSetUpdatedAt({
+    required TimerConfig that,
+    required String updatedAt,
+  });
+
+  TimerConfig crateApiTimerConfigTimerConfigNew({
+    required String name,
+    required PlatformInt64 durationSecs,
+    PlatformInt64? gracePeriodSecs,
+    required bool passwordProtected,
+    String? passwordHash,
+    required bool locationSharingEnabled,
+    required bool routeSharingEnabled,
+    PlatformInt64? locationCollectionIntervalSecs,
+    required bool audioRecordingEnabled,
+    required List<Contact> contacts,
+    required List<String> customSms,
+    required List<String> customEmail,
+    required TimerIntegrations integrations,
+    required String createdAt,
+    required String updatedAt,
+  });
+
   Future<void> crateApiDataDbCloseDatabase();
 
   Future<IntegrationAccount>
@@ -118,6 +338,8 @@ abstract class RustLibApi extends BaseApi {
 
   Future<String> crateApiDataDbGetDatabaseName();
 
+  Future<String?> crateApiTimerActiveTimerGetUniqueTimerId();
+
   Future<String> crateApiMainGreet({required String name});
 
   Future<void> crateApiBackupImportBackup({
@@ -139,6 +361,10 @@ abstract class RustLibApi extends BaseApi {
   Future<void> crateApiDataDbOpenDatabase();
 
   Future<void> crateApiDataDbPurgeDatabase();
+
+  Future<ActiveTimer?> crateApiTimerActiveTimerReconcileActiveTimer({
+    required PlatformInt64 nowMs,
+  });
 
   Future<String> crateApiDataDbSelect({required String sql});
 
@@ -164,7 +390,36 @@ abstract class RustLibApi extends BaseApi {
     required String destinationId,
   });
 
+  Future<TimerState> crateApiTimerRunTimerRunEvaluateState({
+    required TimerRun that,
+    required PlatformInt64 nowMs,
+  });
+
+  Future<bool> crateApiTimerRunTimerRunIsActive({required TimerRun that});
+
+  Future<void> crateApiTimerStateTimerStateAsStr({required TimerState that});
+
+  Future<TimerState> crateApiTimerStateTimerStateStateFromStr({
+    required String value,
+  });
+
   Future<BigInt> crateApiDataDbUpdateMessage({required String message});
+
+  RustArcIncrementStrongCountFnType
+  get rust_arc_increment_strong_count_ActiveTimer;
+
+  RustArcDecrementStrongCountFnType
+  get rust_arc_decrement_strong_count_ActiveTimer;
+
+  CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ActiveTimerPtr;
+
+  RustArcIncrementStrongCountFnType
+  get rust_arc_increment_strong_count_TimerConfig;
+
+  RustArcDecrementStrongCountFnType
+  get rust_arc_decrement_strong_count_TimerConfig;
+
+  CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TimerConfigPtr;
 }
 
 class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
@@ -176,6 +431,1577 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   });
 
   @override
+  TimerConfig crateApiTimerActiveTimerActiveTimerAutoAccessorGetConfig({
+    required ActiveTimer that,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 1)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData:
+              sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiTimerActiveTimerActiveTimerAutoAccessorGetConfigConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerActiveTimerActiveTimerAutoAccessorGetConfigConstMeta =>
+      const TaskConstMeta(
+        debugName: "ActiveTimer_auto_accessor_get_config",
+        argNames: ["that"],
+      );
+
+  @override
+  String crateApiTimerActiveTimerActiveTimerAutoAccessorGetKey({
+    required ActiveTimer that,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 2)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_String,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiTimerActiveTimerActiveTimerAutoAccessorGetKeyConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerActiveTimerActiveTimerAutoAccessorGetKeyConstMeta =>
+      const TaskConstMeta(
+        debugName: "ActiveTimer_auto_accessor_get_key",
+        argNames: ["that"],
+      );
+
+  @override
+  TimerRun crateApiTimerActiveTimerActiveTimerAutoAccessorGetRun({
+    required ActiveTimer that,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 3)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_timer_run,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiTimerActiveTimerActiveTimerAutoAccessorGetRunConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerActiveTimerActiveTimerAutoAccessorGetRunConstMeta =>
+      const TaskConstMeta(
+        debugName: "ActiveTimer_auto_accessor_get_run",
+        argNames: ["that"],
+      );
+
+  @override
+  void crateApiTimerActiveTimerActiveTimerAutoAccessorSetConfig({
+    required ActiveTimer that,
+    required TimerConfig config,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+            that,
+            serializer,
+          );
+          sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+            config,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 4)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiTimerActiveTimerActiveTimerAutoAccessorSetConfigConstMeta,
+        argValues: [that, config],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerActiveTimerActiveTimerAutoAccessorSetConfigConstMeta =>
+      const TaskConstMeta(
+        debugName: "ActiveTimer_auto_accessor_set_config",
+        argNames: ["that", "config"],
+      );
+
+  @override
+  void crateApiTimerActiveTimerActiveTimerAutoAccessorSetKey({
+    required ActiveTimer that,
+    required String key,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+            that,
+            serializer,
+          );
+          sse_encode_String(key, serializer);
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 5)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiTimerActiveTimerActiveTimerAutoAccessorSetKeyConstMeta,
+        argValues: [that, key],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerActiveTimerActiveTimerAutoAccessorSetKeyConstMeta =>
+      const TaskConstMeta(
+        debugName: "ActiveTimer_auto_accessor_set_key",
+        argNames: ["that", "key"],
+      );
+
+  @override
+  void crateApiTimerActiveTimerActiveTimerAutoAccessorSetRun({
+    required ActiveTimer that,
+    required TimerRun run,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+            that,
+            serializer,
+          );
+          sse_encode_timer_run(run, serializer);
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 6)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiTimerActiveTimerActiveTimerAutoAccessorSetRunConstMeta,
+        argValues: [that, run],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerActiveTimerActiveTimerAutoAccessorSetRunConstMeta =>
+      const TaskConstMeta(
+        debugName: "ActiveTimer_auto_accessor_set_run",
+        argNames: ["that", "run"],
+      );
+
+  @override
+  Future<void> crateApiTimerActiveTimerActiveTimerCancelTimerRun({
+    required ActiveTimer that,
+    required PlatformInt64 nowMs,
+    required bool passwordVerified,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+            that,
+            serializer,
+          );
+          sse_encode_i_64(nowMs, serializer);
+          sse_encode_bool(passwordVerified, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 7,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: sse_decode_AnyhowException,
+        ),
+        constMeta: kCrateApiTimerActiveTimerActiveTimerCancelTimerRunConstMeta,
+        argValues: [that, nowMs, passwordVerified],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerActiveTimerActiveTimerCancelTimerRunConstMeta =>
+      const TaskConstMeta(
+        debugName: "ActiveTimer_cancel_timer_run",
+        argNames: ["that", "nowMs", "passwordVerified"],
+      );
+
+  @override
+  Future<void> crateApiTimerActiveTimerActiveTimerPauseTimerRun({
+    required ActiveTimer that,
+    required PlatformInt64 nowMs,
+    required bool passwordVerified,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+            that,
+            serializer,
+          );
+          sse_encode_i_64(nowMs, serializer);
+          sse_encode_bool(passwordVerified, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 8,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: sse_decode_AnyhowException,
+        ),
+        constMeta: kCrateApiTimerActiveTimerActiveTimerPauseTimerRunConstMeta,
+        argValues: [that, nowMs, passwordVerified],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerActiveTimerActiveTimerPauseTimerRunConstMeta =>
+      const TaskConstMeta(
+        debugName: "ActiveTimer_pause_timer_run",
+        argNames: ["that", "nowMs", "passwordVerified"],
+      );
+
+  @override
+  Future<void> crateApiTimerActiveTimerActiveTimerReplaceActiveTimer({
+    required ActiveTimer that,
+    required String key,
+    required TimerConfig config,
+    required PlatformInt64 nowMs,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+            that,
+            serializer,
+          );
+          sse_encode_String(key, serializer);
+          sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+            config,
+            serializer,
+          );
+          sse_encode_i_64(nowMs, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 9,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: sse_decode_AnyhowException,
+        ),
+        constMeta:
+            kCrateApiTimerActiveTimerActiveTimerReplaceActiveTimerConstMeta,
+        argValues: [that, key, config, nowMs],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerActiveTimerActiveTimerReplaceActiveTimerConstMeta =>
+      const TaskConstMeta(
+        debugName: "ActiveTimer_replace_active_timer",
+        argNames: ["that", "key", "config", "nowMs"],
+      );
+
+  @override
+  Future<void> crateApiTimerActiveTimerActiveTimerResumeTimerRun({
+    required ActiveTimer that,
+    required PlatformInt64 nowMs,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+            that,
+            serializer,
+          );
+          sse_encode_i_64(nowMs, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 10,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: sse_decode_AnyhowException,
+        ),
+        constMeta: kCrateApiTimerActiveTimerActiveTimerResumeTimerRunConstMeta,
+        argValues: [that, nowMs],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerActiveTimerActiveTimerResumeTimerRunConstMeta =>
+      const TaskConstMeta(
+        debugName: "ActiveTimer_resume_timer_run",
+        argNames: ["that", "nowMs"],
+      );
+
+  @override
+  Future<void> crateApiTimerActiveTimerActiveTimerStartTimerRun({
+    required ActiveTimer that,
+    required PlatformInt64 nowMs,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+            that,
+            serializer,
+          );
+          sse_encode_i_64(nowMs, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 11,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: sse_decode_AnyhowException,
+        ),
+        constMeta: kCrateApiTimerActiveTimerActiveTimerStartTimerRunConstMeta,
+        argValues: [that, nowMs],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerActiveTimerActiveTimerStartTimerRunConstMeta =>
+      const TaskConstMeta(
+        debugName: "ActiveTimer_start_timer_run",
+        argNames: ["that", "nowMs"],
+      );
+
+  @override
+  Future<void> crateApiTimerActiveTimerActiveTimerUpdateRunState({
+    required ActiveTimer that,
+    required PlatformInt64 nowMs,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+            that,
+            serializer,
+          );
+          sse_encode_i_64(nowMs, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 12,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: sse_decode_AnyhowException,
+        ),
+        constMeta: kCrateApiTimerActiveTimerActiveTimerUpdateRunStateConstMeta,
+        argValues: [that, nowMs],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerActiveTimerActiveTimerUpdateRunStateConstMeta =>
+      const TaskConstMeta(
+        debugName: "ActiveTimer_update_run_state",
+        argNames: ["that", "nowMs"],
+      );
+
+  @override
+  bool crateApiTimerConfigTimerConfigAutoAccessorGetAudioRecordingEnabled({
+    required TimerConfig that,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 13)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_bool,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiTimerConfigTimerConfigAutoAccessorGetAudioRecordingEnabledConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerConfigTimerConfigAutoAccessorGetAudioRecordingEnabledConstMeta =>
+      const TaskConstMeta(
+        debugName: "TimerConfig_auto_accessor_get_audio_recording_enabled",
+        argNames: ["that"],
+      );
+
+  @override
+  List<Contact> crateApiTimerConfigTimerConfigAutoAccessorGetContacts({
+    required TimerConfig that,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 14)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_list_contact,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiTimerConfigTimerConfigAutoAccessorGetContactsConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerConfigTimerConfigAutoAccessorGetContactsConstMeta =>
+      const TaskConstMeta(
+        debugName: "TimerConfig_auto_accessor_get_contacts",
+        argNames: ["that"],
+      );
+
+  @override
+  String crateApiTimerConfigTimerConfigAutoAccessorGetCreatedAt({
+    required TimerConfig that,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 15)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_String,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiTimerConfigTimerConfigAutoAccessorGetCreatedAtConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerConfigTimerConfigAutoAccessorGetCreatedAtConstMeta =>
+      const TaskConstMeta(
+        debugName: "TimerConfig_auto_accessor_get_created_at",
+        argNames: ["that"],
+      );
+
+  @override
+  List<String> crateApiTimerConfigTimerConfigAutoAccessorGetCustomEmail({
+    required TimerConfig that,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 16)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_list_String,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiTimerConfigTimerConfigAutoAccessorGetCustomEmailConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerConfigTimerConfigAutoAccessorGetCustomEmailConstMeta =>
+      const TaskConstMeta(
+        debugName: "TimerConfig_auto_accessor_get_custom_email",
+        argNames: ["that"],
+      );
+
+  @override
+  List<String> crateApiTimerConfigTimerConfigAutoAccessorGetCustomSms({
+    required TimerConfig that,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 17)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_list_String,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiTimerConfigTimerConfigAutoAccessorGetCustomSmsConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerConfigTimerConfigAutoAccessorGetCustomSmsConstMeta =>
+      const TaskConstMeta(
+        debugName: "TimerConfig_auto_accessor_get_custom_sms",
+        argNames: ["that"],
+      );
+
+  @override
+  PlatformInt64 crateApiTimerConfigTimerConfigAutoAccessorGetDurationSecs({
+    required TimerConfig that,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 18)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_i_64,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiTimerConfigTimerConfigAutoAccessorGetDurationSecsConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerConfigTimerConfigAutoAccessorGetDurationSecsConstMeta =>
+      const TaskConstMeta(
+        debugName: "TimerConfig_auto_accessor_get_duration_secs",
+        argNames: ["that"],
+      );
+
+  @override
+  PlatformInt64? crateApiTimerConfigTimerConfigAutoAccessorGetGracePeriodSecs({
+    required TimerConfig that,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 19)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_opt_box_autoadd_i_64,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiTimerConfigTimerConfigAutoAccessorGetGracePeriodSecsConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerConfigTimerConfigAutoAccessorGetGracePeriodSecsConstMeta =>
+      const TaskConstMeta(
+        debugName: "TimerConfig_auto_accessor_get_grace_period_secs",
+        argNames: ["that"],
+      );
+
+  @override
+  TimerIntegrations crateApiTimerConfigTimerConfigAutoAccessorGetIntegrations({
+    required TimerConfig that,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 20)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_timer_integrations,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiTimerConfigTimerConfigAutoAccessorGetIntegrationsConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerConfigTimerConfigAutoAccessorGetIntegrationsConstMeta =>
+      const TaskConstMeta(
+        debugName: "TimerConfig_auto_accessor_get_integrations",
+        argNames: ["that"],
+      );
+
+  @override
+  PlatformInt64?
+  crateApiTimerConfigTimerConfigAutoAccessorGetLocationCollectionIntervalSecs({
+    required TimerConfig that,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 21)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_opt_box_autoadd_i_64,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiTimerConfigTimerConfigAutoAccessorGetLocationCollectionIntervalSecsConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerConfigTimerConfigAutoAccessorGetLocationCollectionIntervalSecsConstMeta =>
+      const TaskConstMeta(
+        debugName:
+            "TimerConfig_auto_accessor_get_location_collection_interval_secs",
+        argNames: ["that"],
+      );
+
+  @override
+  bool crateApiTimerConfigTimerConfigAutoAccessorGetLocationSharingEnabled({
+    required TimerConfig that,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 22)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_bool,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiTimerConfigTimerConfigAutoAccessorGetLocationSharingEnabledConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerConfigTimerConfigAutoAccessorGetLocationSharingEnabledConstMeta =>
+      const TaskConstMeta(
+        debugName: "TimerConfig_auto_accessor_get_location_sharing_enabled",
+        argNames: ["that"],
+      );
+
+  @override
+  String crateApiTimerConfigTimerConfigAutoAccessorGetName({
+    required TimerConfig that,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 23)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_String,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiTimerConfigTimerConfigAutoAccessorGetNameConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerConfigTimerConfigAutoAccessorGetNameConstMeta =>
+      const TaskConstMeta(
+        debugName: "TimerConfig_auto_accessor_get_name",
+        argNames: ["that"],
+      );
+
+  @override
+  String? crateApiTimerConfigTimerConfigAutoAccessorGetPasswordHash({
+    required TimerConfig that,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 24)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_opt_String,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiTimerConfigTimerConfigAutoAccessorGetPasswordHashConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerConfigTimerConfigAutoAccessorGetPasswordHashConstMeta =>
+      const TaskConstMeta(
+        debugName: "TimerConfig_auto_accessor_get_password_hash",
+        argNames: ["that"],
+      );
+
+  @override
+  bool crateApiTimerConfigTimerConfigAutoAccessorGetPasswordProtected({
+    required TimerConfig that,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 25)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_bool,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiTimerConfigTimerConfigAutoAccessorGetPasswordProtectedConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerConfigTimerConfigAutoAccessorGetPasswordProtectedConstMeta =>
+      const TaskConstMeta(
+        debugName: "TimerConfig_auto_accessor_get_password_protected",
+        argNames: ["that"],
+      );
+
+  @override
+  bool crateApiTimerConfigTimerConfigAutoAccessorGetRouteSharingEnabled({
+    required TimerConfig that,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 26)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_bool,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiTimerConfigTimerConfigAutoAccessorGetRouteSharingEnabledConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerConfigTimerConfigAutoAccessorGetRouteSharingEnabledConstMeta =>
+      const TaskConstMeta(
+        debugName: "TimerConfig_auto_accessor_get_route_sharing_enabled",
+        argNames: ["that"],
+      );
+
+  @override
+  String crateApiTimerConfigTimerConfigAutoAccessorGetUpdatedAt({
+    required TimerConfig that,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 27)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_String,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiTimerConfigTimerConfigAutoAccessorGetUpdatedAtConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerConfigTimerConfigAutoAccessorGetUpdatedAtConstMeta =>
+      const TaskConstMeta(
+        debugName: "TimerConfig_auto_accessor_get_updated_at",
+        argNames: ["that"],
+      );
+
+  @override
+  void crateApiTimerConfigTimerConfigAutoAccessorSetAudioRecordingEnabled({
+    required TimerConfig that,
+    required bool audioRecordingEnabled,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+            that,
+            serializer,
+          );
+          sse_encode_bool(audioRecordingEnabled, serializer);
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 28)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiTimerConfigTimerConfigAutoAccessorSetAudioRecordingEnabledConstMeta,
+        argValues: [that, audioRecordingEnabled],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerConfigTimerConfigAutoAccessorSetAudioRecordingEnabledConstMeta =>
+      const TaskConstMeta(
+        debugName: "TimerConfig_auto_accessor_set_audio_recording_enabled",
+        argNames: ["that", "audioRecordingEnabled"],
+      );
+
+  @override
+  void crateApiTimerConfigTimerConfigAutoAccessorSetContacts({
+    required TimerConfig that,
+    required List<Contact> contacts,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+            that,
+            serializer,
+          );
+          sse_encode_list_contact(contacts, serializer);
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 29)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiTimerConfigTimerConfigAutoAccessorSetContactsConstMeta,
+        argValues: [that, contacts],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerConfigTimerConfigAutoAccessorSetContactsConstMeta =>
+      const TaskConstMeta(
+        debugName: "TimerConfig_auto_accessor_set_contacts",
+        argNames: ["that", "contacts"],
+      );
+
+  @override
+  void crateApiTimerConfigTimerConfigAutoAccessorSetCreatedAt({
+    required TimerConfig that,
+    required String createdAt,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+            that,
+            serializer,
+          );
+          sse_encode_String(createdAt, serializer);
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 30)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiTimerConfigTimerConfigAutoAccessorSetCreatedAtConstMeta,
+        argValues: [that, createdAt],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerConfigTimerConfigAutoAccessorSetCreatedAtConstMeta =>
+      const TaskConstMeta(
+        debugName: "TimerConfig_auto_accessor_set_created_at",
+        argNames: ["that", "createdAt"],
+      );
+
+  @override
+  void crateApiTimerConfigTimerConfigAutoAccessorSetCustomEmail({
+    required TimerConfig that,
+    required List<String> customEmail,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+            that,
+            serializer,
+          );
+          sse_encode_list_String(customEmail, serializer);
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 31)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiTimerConfigTimerConfigAutoAccessorSetCustomEmailConstMeta,
+        argValues: [that, customEmail],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerConfigTimerConfigAutoAccessorSetCustomEmailConstMeta =>
+      const TaskConstMeta(
+        debugName: "TimerConfig_auto_accessor_set_custom_email",
+        argNames: ["that", "customEmail"],
+      );
+
+  @override
+  void crateApiTimerConfigTimerConfigAutoAccessorSetCustomSms({
+    required TimerConfig that,
+    required List<String> customSms,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+            that,
+            serializer,
+          );
+          sse_encode_list_String(customSms, serializer);
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 32)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiTimerConfigTimerConfigAutoAccessorSetCustomSmsConstMeta,
+        argValues: [that, customSms],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerConfigTimerConfigAutoAccessorSetCustomSmsConstMeta =>
+      const TaskConstMeta(
+        debugName: "TimerConfig_auto_accessor_set_custom_sms",
+        argNames: ["that", "customSms"],
+      );
+
+  @override
+  void crateApiTimerConfigTimerConfigAutoAccessorSetDurationSecs({
+    required TimerConfig that,
+    required PlatformInt64 durationSecs,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+            that,
+            serializer,
+          );
+          sse_encode_i_64(durationSecs, serializer);
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 33)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiTimerConfigTimerConfigAutoAccessorSetDurationSecsConstMeta,
+        argValues: [that, durationSecs],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerConfigTimerConfigAutoAccessorSetDurationSecsConstMeta =>
+      const TaskConstMeta(
+        debugName: "TimerConfig_auto_accessor_set_duration_secs",
+        argNames: ["that", "durationSecs"],
+      );
+
+  @override
+  void crateApiTimerConfigTimerConfigAutoAccessorSetGracePeriodSecs({
+    required TimerConfig that,
+    PlatformInt64? gracePeriodSecs,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+            that,
+            serializer,
+          );
+          sse_encode_opt_box_autoadd_i_64(gracePeriodSecs, serializer);
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 34)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiTimerConfigTimerConfigAutoAccessorSetGracePeriodSecsConstMeta,
+        argValues: [that, gracePeriodSecs],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerConfigTimerConfigAutoAccessorSetGracePeriodSecsConstMeta =>
+      const TaskConstMeta(
+        debugName: "TimerConfig_auto_accessor_set_grace_period_secs",
+        argNames: ["that", "gracePeriodSecs"],
+      );
+
+  @override
+  void crateApiTimerConfigTimerConfigAutoAccessorSetIntegrations({
+    required TimerConfig that,
+    required TimerIntegrations integrations,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+            that,
+            serializer,
+          );
+          sse_encode_timer_integrations(integrations, serializer);
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 35)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiTimerConfigTimerConfigAutoAccessorSetIntegrationsConstMeta,
+        argValues: [that, integrations],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerConfigTimerConfigAutoAccessorSetIntegrationsConstMeta =>
+      const TaskConstMeta(
+        debugName: "TimerConfig_auto_accessor_set_integrations",
+        argNames: ["that", "integrations"],
+      );
+
+  @override
+  void
+  crateApiTimerConfigTimerConfigAutoAccessorSetLocationCollectionIntervalSecs({
+    required TimerConfig that,
+    PlatformInt64? locationCollectionIntervalSecs,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+            that,
+            serializer,
+          );
+          sse_encode_opt_box_autoadd_i_64(
+            locationCollectionIntervalSecs,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 36)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiTimerConfigTimerConfigAutoAccessorSetLocationCollectionIntervalSecsConstMeta,
+        argValues: [that, locationCollectionIntervalSecs],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerConfigTimerConfigAutoAccessorSetLocationCollectionIntervalSecsConstMeta =>
+      const TaskConstMeta(
+        debugName:
+            "TimerConfig_auto_accessor_set_location_collection_interval_secs",
+        argNames: ["that", "locationCollectionIntervalSecs"],
+      );
+
+  @override
+  void crateApiTimerConfigTimerConfigAutoAccessorSetLocationSharingEnabled({
+    required TimerConfig that,
+    required bool locationSharingEnabled,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+            that,
+            serializer,
+          );
+          sse_encode_bool(locationSharingEnabled, serializer);
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 37)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiTimerConfigTimerConfigAutoAccessorSetLocationSharingEnabledConstMeta,
+        argValues: [that, locationSharingEnabled],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerConfigTimerConfigAutoAccessorSetLocationSharingEnabledConstMeta =>
+      const TaskConstMeta(
+        debugName: "TimerConfig_auto_accessor_set_location_sharing_enabled",
+        argNames: ["that", "locationSharingEnabled"],
+      );
+
+  @override
+  void crateApiTimerConfigTimerConfigAutoAccessorSetName({
+    required TimerConfig that,
+    required String name,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+            that,
+            serializer,
+          );
+          sse_encode_String(name, serializer);
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 38)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiTimerConfigTimerConfigAutoAccessorSetNameConstMeta,
+        argValues: [that, name],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerConfigTimerConfigAutoAccessorSetNameConstMeta =>
+      const TaskConstMeta(
+        debugName: "TimerConfig_auto_accessor_set_name",
+        argNames: ["that", "name"],
+      );
+
+  @override
+  void crateApiTimerConfigTimerConfigAutoAccessorSetPasswordHash({
+    required TimerConfig that,
+    String? passwordHash,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+            that,
+            serializer,
+          );
+          sse_encode_opt_String(passwordHash, serializer);
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 39)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiTimerConfigTimerConfigAutoAccessorSetPasswordHashConstMeta,
+        argValues: [that, passwordHash],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerConfigTimerConfigAutoAccessorSetPasswordHashConstMeta =>
+      const TaskConstMeta(
+        debugName: "TimerConfig_auto_accessor_set_password_hash",
+        argNames: ["that", "passwordHash"],
+      );
+
+  @override
+  void crateApiTimerConfigTimerConfigAutoAccessorSetPasswordProtected({
+    required TimerConfig that,
+    required bool passwordProtected,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+            that,
+            serializer,
+          );
+          sse_encode_bool(passwordProtected, serializer);
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 40)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiTimerConfigTimerConfigAutoAccessorSetPasswordProtectedConstMeta,
+        argValues: [that, passwordProtected],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerConfigTimerConfigAutoAccessorSetPasswordProtectedConstMeta =>
+      const TaskConstMeta(
+        debugName: "TimerConfig_auto_accessor_set_password_protected",
+        argNames: ["that", "passwordProtected"],
+      );
+
+  @override
+  void crateApiTimerConfigTimerConfigAutoAccessorSetRouteSharingEnabled({
+    required TimerConfig that,
+    required bool routeSharingEnabled,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+            that,
+            serializer,
+          );
+          sse_encode_bool(routeSharingEnabled, serializer);
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 41)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiTimerConfigTimerConfigAutoAccessorSetRouteSharingEnabledConstMeta,
+        argValues: [that, routeSharingEnabled],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerConfigTimerConfigAutoAccessorSetRouteSharingEnabledConstMeta =>
+      const TaskConstMeta(
+        debugName: "TimerConfig_auto_accessor_set_route_sharing_enabled",
+        argNames: ["that", "routeSharingEnabled"],
+      );
+
+  @override
+  void crateApiTimerConfigTimerConfigAutoAccessorSetUpdatedAt({
+    required TimerConfig that,
+    required String updatedAt,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+            that,
+            serializer,
+          );
+          sse_encode_String(updatedAt, serializer);
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 42)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiTimerConfigTimerConfigAutoAccessorSetUpdatedAtConstMeta,
+        argValues: [that, updatedAt],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiTimerConfigTimerConfigAutoAccessorSetUpdatedAtConstMeta =>
+      const TaskConstMeta(
+        debugName: "TimerConfig_auto_accessor_set_updated_at",
+        argNames: ["that", "updatedAt"],
+      );
+
+  @override
+  TimerConfig crateApiTimerConfigTimerConfigNew({
+    required String name,
+    required PlatformInt64 durationSecs,
+    PlatformInt64? gracePeriodSecs,
+    required bool passwordProtected,
+    String? passwordHash,
+    required bool locationSharingEnabled,
+    required bool routeSharingEnabled,
+    PlatformInt64? locationCollectionIntervalSecs,
+    required bool audioRecordingEnabled,
+    required List<Contact> contacts,
+    required List<String> customSms,
+    required List<String> customEmail,
+    required TimerIntegrations integrations,
+    required String createdAt,
+    required String updatedAt,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(name, serializer);
+          sse_encode_i_64(durationSecs, serializer);
+          sse_encode_opt_box_autoadd_i_64(gracePeriodSecs, serializer);
+          sse_encode_bool(passwordProtected, serializer);
+          sse_encode_opt_String(passwordHash, serializer);
+          sse_encode_bool(locationSharingEnabled, serializer);
+          sse_encode_bool(routeSharingEnabled, serializer);
+          sse_encode_opt_box_autoadd_i_64(
+            locationCollectionIntervalSecs,
+            serializer,
+          );
+          sse_encode_bool(audioRecordingEnabled, serializer);
+          sse_encode_list_contact(contacts, serializer);
+          sse_encode_list_String(customSms, serializer);
+          sse_encode_list_String(customEmail, serializer);
+          sse_encode_box_autoadd_timer_integrations(integrations, serializer);
+          sse_encode_String(createdAt, serializer);
+          sse_encode_String(updatedAt, serializer);
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 43)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData:
+              sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiTimerConfigTimerConfigNewConstMeta,
+        argValues: [
+          name,
+          durationSecs,
+          gracePeriodSecs,
+          passwordProtected,
+          passwordHash,
+          locationSharingEnabled,
+          routeSharingEnabled,
+          locationCollectionIntervalSecs,
+          audioRecordingEnabled,
+          contacts,
+          customSms,
+          customEmail,
+          integrations,
+          createdAt,
+          updatedAt,
+        ],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiTimerConfigTimerConfigNewConstMeta =>
+      const TaskConstMeta(
+        debugName: "TimerConfig_new",
+        argNames: [
+          "name",
+          "durationSecs",
+          "gracePeriodSecs",
+          "passwordProtected",
+          "passwordHash",
+          "locationSharingEnabled",
+          "routeSharingEnabled",
+          "locationCollectionIntervalSecs",
+          "audioRecordingEnabled",
+          "contacts",
+          "customSms",
+          "customEmail",
+          "integrations",
+          "createdAt",
+          "updatedAt",
+        ],
+      );
+
+  @override
   Future<void> crateApiDataDbCloseDatabase() {
     return handler.executeNormal(
       NormalTask(
@@ -184,7 +2010,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 1,
+            funcId: 44,
             port: port_,
           );
         },
@@ -217,7 +2043,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 2,
+            funcId: 45,
             port: port_,
           );
         },
@@ -252,7 +2078,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             pdeCallFfi(
               generalizedFrbRustBinding,
               serializer,
-              funcId: 3,
+              funcId: 46,
               port: port_,
             );
           },
@@ -284,7 +2110,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 4,
+            funcId: 47,
             port: port_,
           );
         },
@@ -316,7 +2142,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 5,
+            funcId: 48,
             port: port_,
           );
         },
@@ -354,7 +2180,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 6,
+            funcId: 49,
             port: port_,
           );
         },
@@ -386,7 +2212,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 7,
+            funcId: 50,
             port: port_,
           );
         },
@@ -414,7 +2240,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 8,
+            funcId: 51,
             port: port_,
           );
         },
@@ -442,7 +2268,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 9,
+            funcId: 52,
             port: port_,
           );
         },
@@ -470,7 +2296,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 10,
+            funcId: 53,
             port: port_,
           );
         },
@@ -498,7 +2324,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 11,
+            funcId: 54,
             port: port_,
           );
         },
@@ -525,7 +2351,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 12,
+            funcId: 55,
             port: port_,
           );
         },
@@ -544,6 +2370,33 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "get_database_name", argNames: []);
 
   @override
+  Future<String?> crateApiTimerActiveTimerGetUniqueTimerId() {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 56,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_opt_String,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiTimerActiveTimerGetUniqueTimerIdConstMeta,
+        argValues: [],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiTimerActiveTimerGetUniqueTimerIdConstMeta =>
+      const TaskConstMeta(debugName: "get_unique_timer_id", argNames: []);
+
+  @override
   Future<String> crateApiMainGreet({required String name}) {
     return handler.executeNormal(
       NormalTask(
@@ -553,7 +2406,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 13,
+            funcId: 57,
             port: port_,
           );
         },
@@ -585,7 +2438,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 14,
+            funcId: 58,
             port: port_,
           );
         },
@@ -615,7 +2468,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 15,
+            funcId: 59,
             port: port_,
           );
         },
@@ -642,7 +2495,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 16,
+            funcId: 60,
             port: port_,
           );
         },
@@ -670,7 +2523,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 17,
+            funcId: 61,
             port: port_,
           );
         },
@@ -697,7 +2550,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 18,
+            funcId: 62,
             port: port_,
           );
         },
@@ -725,7 +2578,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 19,
+            funcId: 63,
             port: port_,
           );
         },
@@ -754,7 +2607,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 20,
+            funcId: 64,
             port: port_,
           );
         },
@@ -781,7 +2634,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 21,
+            funcId: 65,
             port: port_,
           );
         },
@@ -800,6 +2653,40 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "purge_database", argNames: []);
 
   @override
+  Future<ActiveTimer?> crateApiTimerActiveTimerReconcileActiveTimer({
+    required PlatformInt64 nowMs,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_i_64(nowMs, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 66,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData:
+              sse_decode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiTimerActiveTimerReconcileActiveTimerConstMeta,
+        argValues: [nowMs],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiTimerActiveTimerReconcileActiveTimerConstMeta =>
+      const TaskConstMeta(
+        debugName: "reconcile_active_timer",
+        argNames: ["nowMs"],
+      );
+
+  @override
   Future<String> crateApiDataDbSelect({required String sql}) {
     return handler.executeNormal(
       NormalTask(
@@ -809,7 +2696,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 22,
+            funcId: 67,
             port: port_,
           );
         },
@@ -837,7 +2724,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 23,
+            funcId: 68,
             port: port_,
           );
         },
@@ -873,7 +2760,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 24,
+            funcId: 69,
             port: port_,
           );
         },
@@ -911,7 +2798,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 25,
+            funcId: 70,
             port: port_,
           );
         },
@@ -951,7 +2838,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 26,
+            funcId: 71,
             port: port_,
           );
         },
@@ -975,6 +2862,130 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<TimerState> crateApiTimerRunTimerRunEvaluateState({
+    required TimerRun that,
+    required PlatformInt64 nowMs,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_box_autoadd_timer_run(that, serializer);
+          sse_encode_i_64(nowMs, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 72,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_timer_state,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiTimerRunTimerRunEvaluateStateConstMeta,
+        argValues: [that, nowMs],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiTimerRunTimerRunEvaluateStateConstMeta =>
+      const TaskConstMeta(
+        debugName: "timer_run_evaluate_state",
+        argNames: ["that", "nowMs"],
+      );
+
+  @override
+  Future<bool> crateApiTimerRunTimerRunIsActive({required TimerRun that}) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_box_autoadd_timer_run(that, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 73,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_bool,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiTimerRunTimerRunIsActiveConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiTimerRunTimerRunIsActiveConstMeta =>
+      const TaskConstMeta(debugName: "timer_run_is_active", argNames: ["that"]);
+
+  @override
+  Future<void> crateApiTimerStateTimerStateAsStr({required TimerState that}) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_timer_state(that, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 74,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiTimerStateTimerStateAsStrConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiTimerStateTimerStateAsStrConstMeta =>
+      const TaskConstMeta(debugName: "timer_state_as_str", argNames: ["that"]);
+
+  @override
+  Future<TimerState> crateApiTimerStateTimerStateStateFromStr({
+    required String value,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(value, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 75,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_timer_state,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiTimerStateTimerStateStateFromStrConstMeta,
+        argValues: [value],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiTimerStateTimerStateStateFromStrConstMeta =>
+      const TaskConstMeta(
+        debugName: "timer_state_state_from_str",
+        argNames: ["value"],
+      );
+
+  @override
   Future<BigInt> crateApiDataDbUpdateMessage({required String message}) {
     return handler.executeNormal(
       NormalTask(
@@ -984,7 +2995,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 27,
+            funcId: 76,
             port: port_,
           );
         },
@@ -1002,10 +3013,80 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TaskConstMeta get kCrateApiDataDbUpdateMessageConstMeta =>
       const TaskConstMeta(debugName: "update_message", argNames: ["message"]);
 
+  RustArcIncrementStrongCountFnType
+  get rust_arc_increment_strong_count_ActiveTimer => wire
+      .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer;
+
+  RustArcDecrementStrongCountFnType
+  get rust_arc_decrement_strong_count_ActiveTimer => wire
+      .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer;
+
+  RustArcIncrementStrongCountFnType
+  get rust_arc_increment_strong_count_TimerConfig => wire
+      .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig;
+
+  RustArcDecrementStrongCountFnType
+  get rust_arc_decrement_strong_count_TimerConfig => wire
+      .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig;
+
   @protected
   AnyhowException dco_decode_AnyhowException(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return AnyhowException(raw as String);
+  }
+
+  @protected
+  ActiveTimer
+  dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return ActiveTimerImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
+  TimerConfig
+  dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return TimerConfigImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
+  ActiveTimer
+  dco_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return ActiveTimerImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
+  TimerConfig
+  dco_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return TimerConfigImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
+  ActiveTimer
+  dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return ActiveTimerImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
+  TimerConfig
+  dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return TimerConfigImpl.frbInternalDcoDecode(raw as List<dynamic>);
   }
 
   @protected
@@ -1016,6 +3097,24 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         raw,
       ).map((e) => MapEntry(e.$1, e.$2)),
     );
+  }
+
+  @protected
+  ActiveTimer
+  dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return ActiveTimerImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
+  TimerConfig
+  dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return TimerConfigImpl.frbInternalDcoDecode(raw as List<dynamic>);
   }
 
   @protected
@@ -1039,9 +3138,51 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  ActiveTimer
+  dco_decode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+      raw,
+    );
+  }
+
+  @protected
+  PlatformInt64 dco_decode_box_autoadd_i_64(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_i_64(raw);
+  }
+
+  @protected
+  TimerIntegrations dco_decode_box_autoadd_timer_integrations(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_timer_integrations(raw);
+  }
+
+  @protected
+  TimerRun dco_decode_box_autoadd_timer_run(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_timer_run(raw);
+  }
+
+  @protected
   int dco_decode_box_autoadd_u_32(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as int;
+  }
+
+  @protected
+  Contact dco_decode_contact(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    return Contact(
+      id: dco_decode_String(arr[0]),
+      sms: dco_decode_list_String(arr[1]),
+      email: dco_decode_list_String(arr[2]),
+    );
   }
 
   @protected
@@ -1123,6 +3264,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  List<String> dco_decode_list_String(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_String).toList();
+  }
+
+  @protected
+  List<Contact> dco_decode_list_contact(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_contact).toList();
+  }
+
+  @protected
   List<IntegrationAccount> dco_decode_list_integration_account(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return (raw as List<dynamic>).map(dco_decode_integration_account).toList();
@@ -1153,6 +3306,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  List<TimerIntegrationAccount> dco_decode_list_timer_integration_account(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>)
+        .map(dco_decode_timer_integration_account)
+        .toList();
+  }
+
+  @protected
   MessageDestination dco_decode_message_destination(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
@@ -1171,6 +3334,25 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   String? dco_decode_opt_String(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw == null ? null : dco_decode_String(raw);
+  }
+
+  @protected
+  ActiveTimer?
+  dco_decode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null
+        ? null
+        : dco_decode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+            raw,
+          );
+  }
+
+  @protected
+  PlatformInt64? dco_decode_opt_box_autoadd_i_64(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_i_64(raw);
   }
 
   @protected
@@ -1220,6 +3402,63 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  TimerIntegration dco_decode_timer_integration(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 1)
+      throw Exception('unexpected arr length: expect 1 but see ${arr.length}');
+    return TimerIntegration(
+      accounts: dco_decode_list_timer_integration_account(arr[0]),
+    );
+  }
+
+  @protected
+  TimerIntegrationAccount dco_decode_timer_integration_account(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return TimerIntegrationAccount(
+      id: dco_decode_String(arr[0]),
+      destinations: dco_decode_list_String(arr[1]),
+    );
+  }
+
+  @protected
+  TimerIntegrations dco_decode_timer_integrations(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return TimerIntegrations(
+      discord: dco_decode_timer_integration(arr[0]),
+      telegram: dco_decode_timer_integration(arr[1]),
+    );
+  }
+
+  @protected
+  TimerRun dco_decode_timer_run(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 6)
+      throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
+    return TimerRun(
+      timerId: dco_decode_String(arr[0]),
+      state: dco_decode_timer_state(arr[1]),
+      startedAtMs: dco_decode_i_64(arr[2]),
+      expiresAtMs: dco_decode_i_64(arr[3]),
+      warningDurationMs: dco_decode_opt_box_autoadd_i_64(arr[4]),
+      pausedAtMs: dco_decode_opt_box_autoadd_i_64(arr[5]),
+    );
+  }
+
+  @protected
+  TimerState dco_decode_timer_state(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return TimerState.values[raw as int];
+  }
+
+  @protected
   int dco_decode_u_32(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as int;
@@ -1251,12 +3490,108 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  ActiveTimer
+  sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return ActiveTimerImpl.frbInternalSseDecode(
+      sse_decode_usize(deserializer),
+      sse_decode_i_32(deserializer),
+    );
+  }
+
+  @protected
+  TimerConfig
+  sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return TimerConfigImpl.frbInternalSseDecode(
+      sse_decode_usize(deserializer),
+      sse_decode_i_32(deserializer),
+    );
+  }
+
+  @protected
+  ActiveTimer
+  sse_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return ActiveTimerImpl.frbInternalSseDecode(
+      sse_decode_usize(deserializer),
+      sse_decode_i_32(deserializer),
+    );
+  }
+
+  @protected
+  TimerConfig
+  sse_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return TimerConfigImpl.frbInternalSseDecode(
+      sse_decode_usize(deserializer),
+      sse_decode_i_32(deserializer),
+    );
+  }
+
+  @protected
+  ActiveTimer
+  sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return ActiveTimerImpl.frbInternalSseDecode(
+      sse_decode_usize(deserializer),
+      sse_decode_i_32(deserializer),
+    );
+  }
+
+  @protected
+  TimerConfig
+  sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return TimerConfigImpl.frbInternalSseDecode(
+      sse_decode_usize(deserializer),
+      sse_decode_i_32(deserializer),
+    );
+  }
+
+  @protected
   Map<String, String> sse_decode_Map_String_String_None(
     SseDeserializer deserializer,
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var inner = sse_decode_list_record_string_string(deserializer);
     return Map.fromEntries(inner.map((e) => MapEntry(e.$1, e.$2)));
+  }
+
+  @protected
+  ActiveTimer
+  sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return ActiveTimerImpl.frbInternalSseDecode(
+      sse_decode_usize(deserializer),
+      sse_decode_i_32(deserializer),
+    );
+  }
+
+  @protected
+  TimerConfig
+  sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return TimerConfigImpl.frbInternalSseDecode(
+      sse_decode_usize(deserializer),
+      sse_decode_i_32(deserializer),
+    );
   }
 
   @protected
@@ -1281,9 +3616,49 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  ActiveTimer
+  sse_decode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+      deserializer,
+    ));
+  }
+
+  @protected
+  PlatformInt64 sse_decode_box_autoadd_i_64(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_i_64(deserializer));
+  }
+
+  @protected
+  TimerIntegrations sse_decode_box_autoadd_timer_integrations(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_timer_integrations(deserializer));
+  }
+
+  @protected
+  TimerRun sse_decode_box_autoadd_timer_run(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_timer_run(deserializer));
+  }
+
+  @protected
   int sse_decode_box_autoadd_u_32(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return (sse_decode_u_32(deserializer));
+  }
+
+  @protected
+  Contact sse_decode_contact(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_id = sse_decode_String(deserializer);
+    var var_sms = sse_decode_list_String(deserializer);
+    var var_email = sse_decode_list_String(deserializer);
+    return Contact(id: var_id, sms: var_sms, email: var_email);
   }
 
   @protected
@@ -1371,6 +3746,30 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  List<String> sse_decode_list_String(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <String>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_String(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<Contact> sse_decode_list_contact(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <Contact>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_contact(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
   List<IntegrationAccount> sse_decode_list_integration_account(
     SseDeserializer deserializer,
   ) {
@@ -1434,6 +3833,20 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  List<TimerIntegrationAccount> sse_decode_list_timer_integration_account(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <TimerIntegrationAccount>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_timer_integration_account(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
   MessageDestination sse_decode_message_destination(
     SseDeserializer deserializer,
   ) {
@@ -1458,6 +3871,33 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
     if (sse_decode_bool(deserializer)) {
       return (sse_decode_String(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  ActiveTimer?
+  sse_decode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+        deserializer,
+      ));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  PlatformInt64? sse_decode_opt_box_autoadd_i_64(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_i_64(deserializer));
     } else {
       return null;
     }
@@ -1519,6 +3959,59 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  TimerIntegration sse_decode_timer_integration(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_accounts = sse_decode_list_timer_integration_account(deserializer);
+    return TimerIntegration(accounts: var_accounts);
+  }
+
+  @protected
+  TimerIntegrationAccount sse_decode_timer_integration_account(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_id = sse_decode_String(deserializer);
+    var var_destinations = sse_decode_list_String(deserializer);
+    return TimerIntegrationAccount(id: var_id, destinations: var_destinations);
+  }
+
+  @protected
+  TimerIntegrations sse_decode_timer_integrations(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_discord = sse_decode_timer_integration(deserializer);
+    var var_telegram = sse_decode_timer_integration(deserializer);
+    return TimerIntegrations(discord: var_discord, telegram: var_telegram);
+  }
+
+  @protected
+  TimerRun sse_decode_timer_run(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_timerId = sse_decode_String(deserializer);
+    var var_state = sse_decode_timer_state(deserializer);
+    var var_startedAtMs = sse_decode_i_64(deserializer);
+    var var_expiresAtMs = sse_decode_i_64(deserializer);
+    var var_warningDurationMs = sse_decode_opt_box_autoadd_i_64(deserializer);
+    var var_pausedAtMs = sse_decode_opt_box_autoadd_i_64(deserializer);
+    return TimerRun(
+      timerId: var_timerId,
+      state: var_state,
+      startedAtMs: var_startedAtMs,
+      expiresAtMs: var_expiresAtMs,
+      warningDurationMs: var_warningDurationMs,
+      pausedAtMs: var_pausedAtMs,
+    );
+  }
+
+  @protected
+  TimerState sse_decode_timer_state(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_i_32(deserializer);
+    return TimerState.values[inner];
+  }
+
+  @protected
   int sse_decode_u_32(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return deserializer.buffer.getUint32();
@@ -1551,6 +4044,84 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void
+  sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    ActiveTimer self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+      (self as ActiveTimerImpl).frbInternalSseEncode(move: true),
+      serializer,
+    );
+  }
+
+  @protected
+  void
+  sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+    TimerConfig self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+      (self as TimerConfigImpl).frbInternalSseEncode(move: true),
+      serializer,
+    );
+  }
+
+  @protected
+  void
+  sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    ActiveTimer self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+      (self as ActiveTimerImpl).frbInternalSseEncode(move: false),
+      serializer,
+    );
+  }
+
+  @protected
+  void
+  sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+    TimerConfig self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+      (self as TimerConfigImpl).frbInternalSseEncode(move: false),
+      serializer,
+    );
+  }
+
+  @protected
+  void
+  sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    ActiveTimer self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+      (self as ActiveTimerImpl).frbInternalSseEncode(move: false),
+      serializer,
+    );
+  }
+
+  @protected
+  void
+  sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+    TimerConfig self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+      (self as TimerConfigImpl).frbInternalSseEncode(move: false),
+      serializer,
+    );
+  }
+
+  @protected
   void sse_encode_Map_String_String_None(
     Map<String, String> self,
     SseSerializer serializer,
@@ -1558,6 +4129,32 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_list_record_string_string(
       self.entries.map((e) => (e.key, e.value)).toList(),
+      serializer,
+    );
+  }
+
+  @protected
+  void
+  sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    ActiveTimer self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+      (self as ActiveTimerImpl).frbInternalSseEncode(move: null),
+      serializer,
+    );
+  }
+
+  @protected
+  void
+  sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+    TimerConfig self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+      (self as TimerConfigImpl).frbInternalSseEncode(move: null),
       serializer,
     );
   }
@@ -1592,9 +4189,57 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void
+  sse_encode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    ActiveTimer self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+      self,
+      serializer,
+    );
+  }
+
+  @protected
+  void sse_encode_box_autoadd_i_64(
+    PlatformInt64 self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_64(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_timer_integrations(
+    TimerIntegrations self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_timer_integrations(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_timer_run(
+    TimerRun self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_timer_run(self, serializer);
+  }
+
+  @protected
   void sse_encode_box_autoadd_u_32(int self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_u_32(self, serializer);
+  }
+
+  @protected
+  void sse_encode_contact(Contact self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.id, serializer);
+    sse_encode_list_String(self.sms, serializer);
+    sse_encode_list_String(self.email, serializer);
   }
 
   @protected
@@ -1674,6 +4319,24 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_list_String(List<String> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_String(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_contact(List<Contact> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_contact(item, serializer);
+    }
+  }
+
+  @protected
   void sse_encode_list_integration_account(
     List<IntegrationAccount> self,
     SseSerializer serializer,
@@ -1732,6 +4395,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_list_timer_integration_account(
+    List<TimerIntegrationAccount> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_timer_integration_account(item, serializer);
+    }
+  }
+
+  @protected
   void sse_encode_message_destination(
     MessageDestination self,
     SseSerializer serializer,
@@ -1751,6 +4426,36 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_bool(self != null, serializer);
     if (self != null) {
       sse_encode_String(self, serializer);
+    }
+  }
+
+  @protected
+  void
+  sse_encode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+    ActiveTimer? self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerActiveTimer(
+        self,
+        serializer,
+      );
+    }
+  }
+
+  @protected
+  void sse_encode_opt_box_autoadd_i_64(
+    PlatformInt64? self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_i_64(self, serializer);
     }
   }
 
@@ -1798,6 +4503,52 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_timer_integration(
+    TimerIntegration self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_timer_integration_account(self.accounts, serializer);
+  }
+
+  @protected
+  void sse_encode_timer_integration_account(
+    TimerIntegrationAccount self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.id, serializer);
+    sse_encode_list_String(self.destinations, serializer);
+  }
+
+  @protected
+  void sse_encode_timer_integrations(
+    TimerIntegrations self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_timer_integration(self.discord, serializer);
+    sse_encode_timer_integration(self.telegram, serializer);
+  }
+
+  @protected
+  void sse_encode_timer_run(TimerRun self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.timerId, serializer);
+    sse_encode_timer_state(self.state, serializer);
+    sse_encode_i_64(self.startedAtMs, serializer);
+    sse_encode_i_64(self.expiresAtMs, serializer);
+    sse_encode_opt_box_autoadd_i_64(self.warningDurationMs, serializer);
+    sse_encode_opt_box_autoadd_i_64(self.pausedAtMs, serializer);
+  }
+
+  @protected
+  void sse_encode_timer_state(TimerState self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.index, serializer);
+  }
+
+  @protected
   void sse_encode_u_32(int self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putUint32(self);
@@ -1819,4 +4570,375 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putBigUint64(self);
   }
+}
+
+@sealed
+class ActiveTimerImpl extends RustOpaque implements ActiveTimer {
+  // Not to be used by end users
+  ActiveTimerImpl.frbInternalDcoDecode(List<dynamic> wire)
+    : super.frbInternalDcoDecode(wire, _kStaticData);
+
+  // Not to be used by end users
+  ActiveTimerImpl.frbInternalSseDecode(BigInt ptr, int externalSizeOnNative)
+    : super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
+
+  static final _kStaticData = RustArcStaticData(
+    rustArcIncrementStrongCount:
+        RustLib.instance.api.rust_arc_increment_strong_count_ActiveTimer,
+    rustArcDecrementStrongCount:
+        RustLib.instance.api.rust_arc_decrement_strong_count_ActiveTimer,
+    rustArcDecrementStrongCountPtr:
+        RustLib.instance.api.rust_arc_decrement_strong_count_ActiveTimerPtr,
+  );
+
+  TimerConfig get config => RustLib.instance.api
+      .crateApiTimerActiveTimerActiveTimerAutoAccessorGetConfig(that: this);
+
+  String get key => RustLib.instance.api
+      .crateApiTimerActiveTimerActiveTimerAutoAccessorGetKey(that: this);
+
+  TimerRun get run => RustLib.instance.api
+      .crateApiTimerActiveTimerActiveTimerAutoAccessorGetRun(that: this);
+
+  set config(TimerConfig config) => RustLib.instance.api
+      .crateApiTimerActiveTimerActiveTimerAutoAccessorSetConfig(
+        that: this,
+        config: config,
+      );
+
+  set key(String key) => RustLib.instance.api
+      .crateApiTimerActiveTimerActiveTimerAutoAccessorSetKey(
+        that: this,
+        key: key,
+      );
+
+  set run(TimerRun run) => RustLib.instance.api
+      .crateApiTimerActiveTimerActiveTimerAutoAccessorSetRun(
+        that: this,
+        run: run,
+      );
+
+  /// Cancels the current timer run.
+  ///
+  /// A running timer is transitioned to `Cancelled`. An expired timer is
+  /// transitioned to `Completed`. Paused, warning, cancelled, and completed
+  /// timers are left unchanged.
+  ///
+  /// If password protection is enabled, `password_verified` must be `true`.
+  ///
+  /// The resulting state is persisted before the in-memory run is updated.
+  ///
+  /// # Arguments
+  ///
+  /// * `now_ms` - Current timestamp in milliseconds since the Unix epoch.
+  /// * `password_verified` - Whether the caller has successfully verified
+  ///   the timer's password.
+  ///
+  /// # Errors
+  ///
+  /// Returns an error if password verification is required but has not been
+  /// completed, or if the resulting timer state cannot be persisted.
+  Future<void> cancelTimerRun({
+    required PlatformInt64 nowMs,
+    required bool passwordVerified,
+  }) => RustLib.instance.api.crateApiTimerActiveTimerActiveTimerCancelTimerRun(
+    that: this,
+    nowMs: nowMs,
+    passwordVerified: passwordVerified,
+  );
+
+  /// Pauses the currently running timer.
+  ///
+  /// A timer in the `Running` or `Warning` state can be paused. A timer that
+  /// is already paused is left unchanged.
+  ///
+  /// If password protection is enabled, `password_verified` must be `true`.
+  ///
+  /// The new state is persisted before the in-memory run is updated.
+  ///
+  /// # Arguments
+  ///
+  /// * `now_ms` - Current timestamp in milliseconds since the Unix epoch.
+  /// * `password_verified` - Whether the caller has successfully verified
+  ///   the timer's password.
+  ///
+  /// # Errors
+  ///
+  /// Returns an error if password verification is required but has not been
+  /// completed, if the timer cannot be paused in its current state, or if
+  /// the updated timer state cannot be persisted.
+  Future<void> pauseTimerRun({
+    required PlatformInt64 nowMs,
+    required bool passwordVerified,
+  }) => RustLib.instance.api.crateApiTimerActiveTimerActiveTimerPauseTimerRun(
+    that: this,
+    nowMs: nowMs,
+    passwordVerified: passwordVerified,
+  );
+
+  /// Replaces the currently active timer with a new timer.
+  ///
+  /// The new timer is created using the provided key and configuration. Its
+  /// initial run is marked as `Completed`, with its timestamps calculated from
+  /// the provided current time and configured duration. If a grace period is
+  /// configured, it is stored as part of the new run.
+  ///
+  /// The new timer run and timer configuration are persisted to the database
+  /// before the in-memory timer is updated.
+  ///
+  /// # Arguments
+  ///
+  /// * `key` - Unique key identifying the new timer.
+  /// * `config` - Configuration for the new timer.
+  /// * `now_ms` - Current timestamp in milliseconds since the Unix epoch.
+  ///
+  /// # Errors
+  ///
+  /// Returns an error if the new timer run or timer configuration cannot be
+  /// persisted to the database.
+  Future<void> replaceActiveTimer({
+    required String key,
+    required TimerConfig config,
+    required PlatformInt64 nowMs,
+  }) => RustLib.instance.api
+      .crateApiTimerActiveTimerActiveTimerReplaceActiveTimer(
+        that: this,
+        key: key,
+        config: config,
+        nowMs: nowMs,
+      );
+
+  /// Resumes a paused timer.
+  ///
+  /// The time elapsed while the timer was paused is added to the original
+  /// start and expiration timestamps so that the remaining timer duration
+  /// is preserved.
+  ///
+  /// The updated run is persisted before the in-memory run is updated.
+  ///
+  /// # Arguments
+  ///
+  /// * `now_ms` - Current timestamp in milliseconds since the Unix epoch.
+  ///
+  /// # Errors
+  ///
+  /// Returns an error if the timer is not paused, if its pause timestamp is
+  /// missing, or if the updated timer state cannot be persisted.
+  Future<void> resumeTimerRun({required PlatformInt64 nowMs}) =>
+      RustLib.instance.api.crateApiTimerActiveTimerActiveTimerResumeTimerRun(
+        that: this,
+        nowMs: nowMs,
+      );
+
+  /// Starts a new timer run.
+  ///
+  /// The timer's expiration time is calculated from the configured duration.
+  /// If a grace period is configured, it is stored as part of the new run.
+  ///
+  /// The updated timer run is also persisted to the database.
+  ///
+  /// # Arguments
+  ///
+  /// * `now_ms` - Current timestamp in milliseconds since the Unix epoch.
+  ///
+  /// # Errors
+  ///
+  /// Returns an error if the timer run cannot be persisted to the database.
+  Future<void> startTimerRun({required PlatformInt64 nowMs}) =>
+      RustLib.instance.api.crateApiTimerActiveTimerActiveTimerStartTimerRun(
+        that: this,
+        nowMs: nowMs,
+      );
+
+  /// Updates the current timer run's state based on the current time.
+  ///
+  /// The timer's state is evaluated using its current timestamps and the
+  /// provided time. If the evaluated state differs from the current state,
+  /// the updated state is persisted to the database before the in-memory
+  /// run is updated.
+  ///
+  /// If the evaluated state is unchanged, no database update is performed.
+  ///
+  /// # Arguments
+  ///
+  /// * `now_ms` - Current timestamp in milliseconds since the Unix epoch.
+  ///
+  /// # Errors
+  ///
+  /// Returns an error if the updated timer state cannot be persisted to the
+  /// database.
+  Future<void> updateRunState({required PlatformInt64 nowMs}) =>
+      RustLib.instance.api.crateApiTimerActiveTimerActiveTimerUpdateRunState(
+        that: this,
+        nowMs: nowMs,
+      );
+}
+
+@sealed
+class TimerConfigImpl extends RustOpaque implements TimerConfig {
+  // Not to be used by end users
+  TimerConfigImpl.frbInternalDcoDecode(List<dynamic> wire)
+    : super.frbInternalDcoDecode(wire, _kStaticData);
+
+  // Not to be used by end users
+  TimerConfigImpl.frbInternalSseDecode(BigInt ptr, int externalSizeOnNative)
+    : super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
+
+  static final _kStaticData = RustArcStaticData(
+    rustArcIncrementStrongCount:
+        RustLib.instance.api.rust_arc_increment_strong_count_TimerConfig,
+    rustArcDecrementStrongCount:
+        RustLib.instance.api.rust_arc_decrement_strong_count_TimerConfig,
+    rustArcDecrementStrongCountPtr:
+        RustLib.instance.api.rust_arc_decrement_strong_count_TimerConfigPtr,
+  );
+
+  bool get audioRecordingEnabled => RustLib.instance.api
+      .crateApiTimerConfigTimerConfigAutoAccessorGetAudioRecordingEnabled(
+        that: this,
+      );
+
+  List<Contact> get contacts => RustLib.instance.api
+      .crateApiTimerConfigTimerConfigAutoAccessorGetContacts(that: this);
+
+  String get createdAt => RustLib.instance.api
+      .crateApiTimerConfigTimerConfigAutoAccessorGetCreatedAt(that: this);
+
+  List<String> get customEmail => RustLib.instance.api
+      .crateApiTimerConfigTimerConfigAutoAccessorGetCustomEmail(that: this);
+
+  List<String> get customSms => RustLib.instance.api
+      .crateApiTimerConfigTimerConfigAutoAccessorGetCustomSms(that: this);
+
+  PlatformInt64 get durationSecs => RustLib.instance.api
+      .crateApiTimerConfigTimerConfigAutoAccessorGetDurationSecs(that: this);
+
+  PlatformInt64? get gracePeriodSecs => RustLib.instance.api
+      .crateApiTimerConfigTimerConfigAutoAccessorGetGracePeriodSecs(that: this);
+
+  TimerIntegrations get integrations => RustLib.instance.api
+      .crateApiTimerConfigTimerConfigAutoAccessorGetIntegrations(that: this);
+
+  PlatformInt64? get locationCollectionIntervalSecs => RustLib.instance.api
+      .crateApiTimerConfigTimerConfigAutoAccessorGetLocationCollectionIntervalSecs(
+        that: this,
+      );
+
+  bool get locationSharingEnabled => RustLib.instance.api
+      .crateApiTimerConfigTimerConfigAutoAccessorGetLocationSharingEnabled(
+        that: this,
+      );
+
+  String get name => RustLib.instance.api
+      .crateApiTimerConfigTimerConfigAutoAccessorGetName(that: this);
+
+  String? get passwordHash => RustLib.instance.api
+      .crateApiTimerConfigTimerConfigAutoAccessorGetPasswordHash(that: this);
+
+  bool get passwordProtected => RustLib.instance.api
+      .crateApiTimerConfigTimerConfigAutoAccessorGetPasswordProtected(
+        that: this,
+      );
+
+  bool get routeSharingEnabled => RustLib.instance.api
+      .crateApiTimerConfigTimerConfigAutoAccessorGetRouteSharingEnabled(
+        that: this,
+      );
+
+  String get updatedAt => RustLib.instance.api
+      .crateApiTimerConfigTimerConfigAutoAccessorGetUpdatedAt(that: this);
+
+  set audioRecordingEnabled(bool audioRecordingEnabled) => RustLib.instance.api
+      .crateApiTimerConfigTimerConfigAutoAccessorSetAudioRecordingEnabled(
+        that: this,
+        audioRecordingEnabled: audioRecordingEnabled,
+      );
+
+  set contacts(List<Contact> contacts) => RustLib.instance.api
+      .crateApiTimerConfigTimerConfigAutoAccessorSetContacts(
+        that: this,
+        contacts: contacts,
+      );
+
+  set createdAt(String createdAt) => RustLib.instance.api
+      .crateApiTimerConfigTimerConfigAutoAccessorSetCreatedAt(
+        that: this,
+        createdAt: createdAt,
+      );
+
+  set customEmail(List<String> customEmail) => RustLib.instance.api
+      .crateApiTimerConfigTimerConfigAutoAccessorSetCustomEmail(
+        that: this,
+        customEmail: customEmail,
+      );
+
+  set customSms(List<String> customSms) => RustLib.instance.api
+      .crateApiTimerConfigTimerConfigAutoAccessorSetCustomSms(
+        that: this,
+        customSms: customSms,
+      );
+
+  set durationSecs(PlatformInt64 durationSecs) => RustLib.instance.api
+      .crateApiTimerConfigTimerConfigAutoAccessorSetDurationSecs(
+        that: this,
+        durationSecs: durationSecs,
+      );
+
+  set gracePeriodSecs(PlatformInt64? gracePeriodSecs) => RustLib.instance.api
+      .crateApiTimerConfigTimerConfigAutoAccessorSetGracePeriodSecs(
+        that: this,
+        gracePeriodSecs: gracePeriodSecs,
+      );
+
+  set integrations(TimerIntegrations integrations) => RustLib.instance.api
+      .crateApiTimerConfigTimerConfigAutoAccessorSetIntegrations(
+        that: this,
+        integrations: integrations,
+      );
+
+  set locationCollectionIntervalSecs(
+    PlatformInt64? locationCollectionIntervalSecs,
+  ) => RustLib.instance.api
+      .crateApiTimerConfigTimerConfigAutoAccessorSetLocationCollectionIntervalSecs(
+        that: this,
+        locationCollectionIntervalSecs: locationCollectionIntervalSecs,
+      );
+
+  set locationSharingEnabled(bool locationSharingEnabled) => RustLib
+      .instance
+      .api
+      .crateApiTimerConfigTimerConfigAutoAccessorSetLocationSharingEnabled(
+        that: this,
+        locationSharingEnabled: locationSharingEnabled,
+      );
+
+  set name(String name) =>
+      RustLib.instance.api.crateApiTimerConfigTimerConfigAutoAccessorSetName(
+        that: this,
+        name: name,
+      );
+
+  set passwordHash(String? passwordHash) => RustLib.instance.api
+      .crateApiTimerConfigTimerConfigAutoAccessorSetPasswordHash(
+        that: this,
+        passwordHash: passwordHash,
+      );
+
+  set passwordProtected(bool passwordProtected) => RustLib.instance.api
+      .crateApiTimerConfigTimerConfigAutoAccessorSetPasswordProtected(
+        that: this,
+        passwordProtected: passwordProtected,
+      );
+
+  set routeSharingEnabled(bool routeSharingEnabled) => RustLib.instance.api
+      .crateApiTimerConfigTimerConfigAutoAccessorSetRouteSharingEnabled(
+        that: this,
+        routeSharingEnabled: routeSharingEnabled,
+      );
+
+  set updatedAt(String updatedAt) => RustLib.instance.api
+      .crateApiTimerConfigTimerConfigAutoAccessorSetUpdatedAt(
+        that: this,
+        updatedAt: updatedAt,
+      );
 }

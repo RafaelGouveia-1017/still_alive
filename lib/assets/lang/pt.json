@@ -11,6 +11,17 @@
     "exit": "Sair",
     "restart": "Reiniciar"
   },
+  "notifications": {
+    "timer": {
+      "title": "Estado do Temporizador",
+      "running": ["A contagem decrescente para", "foi iniciada."],
+      "paused": "foi colocado em pausa.",
+      "cancelled": "foi cancelado.",
+      "warning": ["Período de tolerância para", "foi iniciado."],
+      "expired": ["Protocolo de emergência para", "foi acionado."],
+      "completed": ["Protocolo de emergência para", "foi concluído."]
+    }
+  },
   "welcome": {
     "title": "Bem-vindo",
     "tagline": "O teu guardião silencioso. Ativa um temporizador de segurança — iremos alertar os teus contactos se não deres check-in.",
@@ -45,7 +56,19 @@
           "detail": "Escolher contactos de emergência"
         },
         {
+          "name": "Alarme Exato",
+          "detail": "Agendamento preciso do temporizador"
+        },
+        {
           "name": "Notificações",
+          "detail": "Lembretes do temporizador"
+        },
+        {
+          "name": "Bateria",
+          "detail": "Desativar otimização de bateria"
+        },
+        {
+          "name": "Notificações Ecrã Inteiro",
           "detail": "Avisos críticos do temporizador"
         }
       ]
@@ -72,34 +95,69 @@
     "cta": "Concluir"
   },
   "home": {
-    "inactive": "Monitorização inativa",
-    "active": "Monitorização ativa",
-    "safety_timer": "Temporizador de segurança",
+    "inactive": "Monitorização Inativa",
+    "active": "Monitorização Ativa",
     "tap_to_configure": "Tocar para configurar",
     "online": "Online",
     "offline": "Offline",
     "contacts": "contactos",
     "plugins": "plugins",
-    "start_timer": "Iniciar temporizador",
+    "buttons": {
+      "start": "Iniciar temporizador",
+      "cancel": "Cancelar temporizador",
+      "resume": "Retomar temporizador"
+    },
+    "password_hint": "Introduza a palavra-passe",
     "quick_contacts": "Contactos rápidos"
   },
-  "timer_configuration": {
-    "title": "Novo temporizador",
-    "fields": {
+  "timer_selection": {
+    "title": "Selecionar Temporizador",
+    "message": "Ainda não foram criados temporizadores.",
+    "not_found": "Nenhum temporizador encontrado.",
+    "search": "Pesquisar temporizadores",
+    "bool": {
+      "true": "Sim",
+      "false": "Não"
+    },
+    "details": {
       "duration": "Duração",
-      "time_format": "HRS MIN SEG",
-      "grace_period": "Período de tolerância",
+      "grace": "Tolerância",
+      "password_protected": "Palavra-passe?",
+      "location_sharing_enabled": "Localização Ativa?",
+      "route_sharing_enabled": "Rota Ativa?",
+      "location_collection_interval_secs": "Intervalo Recolha Localização",
+      "audio_recording_enabled": "Áudio Ativo?",
+      "contacts": "Contactos",
+      "custom_sms": "SMS Personalizado",
+      "custom_email": "Email Personalizado",
+      "integrations": "Plugins",
+      "created_at": "Criado",
+      "updated_at": "Atualizado"
+    }
+  },
+  "timer_configuration": {
+    "title_new": "Novo Temporizador",
+    "title_edit": "Editar Temporizador",
+    "name": {
+      "title": "Nome",
+      "hint": "algo tipo \"Check-in diário\" ou \"Corrida sem niguém comigo numa floresta escura\""
+    },
+    "duration": {
+      "title": "Duração",
+      "time_format": "HRS MIN SEG"
+    },
+    "grace_period": {
+      "title": "Período de Tolerância",
       "warning": "Aviso antes do alerta",
       "buzzer": "Alarme + 60s para cancelar"
     },
     "security": {
       "title": "Segurança",
-      "cancel_password": "PIN de cancelamento",
+      "cancel_password": "Palavra-passe para cancelamento",
       "pin_requirement": {
         "on": "Requer PIN para cancelar o temporizador",
         "off": "Não requer PIN para cancelar o temporizador"
-      },
-      "confirm_activation": "Confirmar antes de ativar"
+      }
     },
     "note": "Depois de tocar em Iniciar, verás uma confirmação final. Os alertas são enviados automaticamente quando o temporizador expira.",
     "cta": "Ativar temporizador de segurança"

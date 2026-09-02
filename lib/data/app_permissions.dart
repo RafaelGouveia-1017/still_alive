@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:still_alive/services/native/method_channel.dart';
 import 'app_design.dart';
 import '../views/app/onboarding/onboarding.dart';
 import '../main.dart';
@@ -90,9 +91,14 @@ class PermissionManager {
   /// Returns `true` if all required permissions are granted,
   /// otherwise returns `false`.
   Future<bool> hasAllNeededPermissions() async {
-    return await Permission.contacts.isGranted &&
+    final fullScreenIntentGranted = await AppMethodChannel.instance
+        .invokeMethod<bool>('canUseFullScreenIntent');
+    return (fullScreenIntentGranted ?? true) &&
+        await Permission.contacts.isGranted &&
         await Permission.sms.isGranted &&
-        await Permission.notification.isGranted;
+        await Permission.scheduleExactAlarm.isGranted &&
+        await Permission.notification.isGranted &&
+        await Permission.ignoreBatteryOptimizations.isGranted;
   }
 
   /// Verifies that required permissions are granted and redirects

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:still_alive/services/timer_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:still_alive/data/all.dart';
@@ -165,10 +166,18 @@ class IntegrationService {
     required String accountId,
   }) async {
     try {
-      return await discoverIntegrationDestinations(
-        key: integrationKey,
-        accountId: accountId,
+      List<MessageDestination> destinations =
+          await discoverIntegrationDestinations(
+            key: integrationKey,
+            accountId: accountId,
+          );
+
+      await TimerService.instance.removeDeletedAccountDestinationFromTimers(
+        integrationKey,
+        accountId,
       );
+
+      return destinations;
     } catch (e, st) {
       AppLogger.log.severe(
         'Failed to discover integration destinations.',
@@ -386,6 +395,12 @@ class IntegrationService {
           accounts: updatedAccounts,
         );
       }).toList();
+
+      await TimerService.instance.removeDeletedIntegrationAccountFromTimers(
+        integrationKey,
+        accountId,
+      );
+
       return integrationItems;
     } catch (e, st) {
       AppLogger.log.severe('Failed to delete integration account.', e, st);
