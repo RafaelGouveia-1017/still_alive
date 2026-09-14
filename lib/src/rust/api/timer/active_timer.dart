@@ -40,6 +40,19 @@ Future<ActiveTimer?> reconcileActiveTimer({required PlatformInt64 nowMs}) =>
 Future<String?> getUniqueTimerId() =>
     RustLib.instance.api.crateApiTimerActiveTimerGetUniqueTimerId();
 
+/// Creates a new timer from the given configuration.
+///
+/// # Arguments
+///
+/// * `config` - Configuration for the new timer.
+///
+/// # Errors
+///
+/// Returns an error if the new timer configuration cannot be
+/// persisted to the database.
+Future<void> createTimer({required TimerConfig config}) =>
+    RustLib.instance.api.crateApiTimerActiveTimerCreateTimer(config: config);
+
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ActiveTimer>>
 abstract class ActiveTimer implements RustOpaqueInterface {
   TimerConfig get config;
@@ -78,6 +91,29 @@ abstract class ActiveTimer implements RustOpaqueInterface {
     required PlatformInt64 nowMs,
     required bool passwordVerified,
   });
+
+  /// Deletes a timer.
+  ///
+  /// `timer0` cannot be deleted. If deleting the timer also removes the
+  /// currently persisted timer run through the database cascade and no
+  /// timer run remains, a replacement run is created for a remaining timer.
+  ///
+  /// When multiple timers remain, a random timer is selected. If only
+  /// `timer0` remains, `timer0` is used.
+  ///
+  /// The returned [`ActiveTimer`] represents the timer that is active after
+  /// the deletion.
+  ///
+  /// # Arguments
+  ///
+  /// * `key` - Identifier of the timer to delete.
+  /// * `now_ms` - Current timestamp in milliseconds since the Unix epoch.
+  ///
+  /// # Errors
+  ///
+  /// Returns an error if `timer0` is requested, the timer cannot be deleted,
+  /// no timers remain, or the replacement timer run cannot be created.
+  Future<void> deleteTimer({required String key, required PlatformInt64 nowMs});
 
   /// Pauses the currently running timer.
   ///

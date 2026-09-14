@@ -63,7 +63,7 @@ class _EmergencyContactsState extends State<EmergencyContactsScreen> {
           } catch (e) {
             AppLogger.log.info('Contact not found.', e);
             ContactService.deleteEmergencyContact(id);
-            TimerService.instance.removeDeletedContactFromTimers(id);
+            TimerService.instance.removeDeletedContactFromActiveTimer(id);
             continue;
           }
         }
@@ -75,7 +75,7 @@ class _EmergencyContactsState extends State<EmergencyContactsScreen> {
               json_extract(contact.value, '\$.id') AS contact_id,
               json_group_array(
                   json_object(
-                      'timer_key', timers.key,
+                      'timer_name', json_extract(timers.value, '\$.name'),
                       'sms', json_extract(contact.value, '\$.sms'),
                       'email', json_extract(contact.value, '\$.email')
                   )
@@ -98,7 +98,7 @@ class _EmergencyContactsState extends State<EmergencyContactsScreen> {
 
         for (Map<String, dynamic> timer in jsonDecode(row["timers"])) {
           timers.add((
-            timer["timer_key"],
+            timer["timer_name"],
             List<String>.from(timer["sms"]),
             List<String>.from(timer["email"]),
           ));

@@ -108,6 +108,7 @@
       "resume": "Resume safety timer"
     },
     "password_hint": "Input password",
+    "password_invalid": "Password is incorrect!!!",
     "quick_contacts": "Quick contacts"
   },
   "timer_selection": {
@@ -138,29 +139,108 @@
   "timer_configuration": {
     "title_new": "New Timer",
     "title_edit": "Edit Timer",
+    "validation": "At least one destination must be selected.",
+    "validation_error": "Not all fields are valid.",
     "name": {
       "title": "Name",
-      "hint": "something like \"Daily Check-in\" or \"Jogging alone in a dark forest\""
+      "hint": "Something unique like \"Daily Check-in\" or \"Jogging alone in a dark forest\"",
+      "validation": "Name is required."
     },
     "duration": {
       "title": "Duration",
-      "time_format": "HRS MIN SEC"
+      "time_format": "HRS MIN SEC",
+      "validation": "Duration must be more than 10 seconds."
     },
     "grace_period": {
       "title": "Grace period",
       "warning": "Warning before alert",
-      "buzzer": "Buzzer + 60s to cancel"
+      "false": "No grace period for this timer",
+      "buzzer": ["Buzzer +", "to cancel"]
     },
     "security": {
       "title": "Security",
-      "cancel_password": "Cancel password",
-      "pin_requirement": {
-        "on": "Require PIN to cancel timer",
-        "off": "Don't require PIN to cancel timer"
+      "permission": "Permission not granted",
+      "password": {
+        "cancel_password": "Cancel password",
+        "pin_requirement": {
+          "on": "Require PIN to cancel timer",
+          "off": "Don't require PIN to cancel timer"
+        },
+        "password_hint": "Input password (smaller the better)",
+        "validation": "Password is required.",
+        "exists": "Password already set.",
+        "note": {
+          "title": "Password is unalterable",
+          "description": "This is the only time where you can edit the password for this timer.\nDon't forget it or you'll have to create a new timer."
+        }
+      },
+      "location": {
+        "when_in_use": {
+          "title": "Location sharing",
+          "enabled": {
+            "on": "Share location during emergency",
+            "off": "Don't share location during emergency"
+          }
+        },
+        "always": {
+          "title": "Route sharing",
+          "enabled": {
+            "on": "Share route during emergency",
+            "off": "Don't share route during emergency"
+          }
+        },
+        "collection_interval": {
+          "title": "Collection interval",
+          "description": "Time between location collection"
+        }
+      },
+      "audio": {
+        "title": "Audio recording",
+        "enabled": {
+          "on": "Record audio during emergency",
+          "off": "Don't record audio during emergency"
+        }
       }
     },
-    "note": "After tapping Start, you'll see a final confirmation. Alerts dispatch automatically when the timer expires.",
-    "cta": "Activate safety timer"
+    "contacts": {
+      "title": "Send to",
+      "contact": ["contact", "contacts"],
+      "selected": ["selected", "selected"],
+      "sms": ["sms", "sms"],
+      "email": ["email", "emails"],
+      "none": "No contact selected"
+    },
+    "custom": {
+      "title": "Custom Destinations",
+      "subtitle": ["custom destination", "custom destinations"],
+      "none": "No custom destinations",
+      "phone": {
+        "title": "Phone Number\n(SMS)",
+        "hint": "Input phone number",
+        "validation": "Not a valid phone number!"
+      },
+      "email": {
+        "title": "Email\nAddress",
+        "hint": "Input email address",
+        "validation": "Not a valid email address!"
+      }
+    },
+    "integrations": {
+      "title": "Timer Integrations",
+      "selected": ["selected", "selected"],
+      "none": "No plug-ins selected",
+      "account": ["plug-in", "plug-ins"],
+      "destination": ["destination", "destinations"],
+      "no_integrations": "No integrations available.\nCheck the integrations page.",
+      "no_destinations": "No destinations available.\nCheck the integrations page."
+    },
+    "create": "Create safety timer",
+    "edit": "Save safety timer",
+    "delete": [
+      "Are you sure? Your timer will be PERMENANTLY deleted.",
+      "Delete Timer",
+      "deleted sucessfully!"
+    ]
   },
   "active_monitoring": {
     "title": "Monitoring",
@@ -229,7 +309,7 @@
   "contacts_list": {
     "title": "Contacts",
     "search": "Search contacts",
-    "sections": ["Starred", "All contacts"],
+    "sections": ["Starred", "All contacts", "In this timer"],
     "not_found": "No contact found.",
     "edit": "Edit contact",
     "is_quick": {
@@ -368,6 +448,7 @@
       "expired": "Emergency triggered",
       "alert": ["alert", "alerts"],
       "sent": ["sent", "sent"],
+      "boolean": ["Yes", "No"],
       "details": {
         "type": "Type",
         "timer": "Timer",
@@ -376,10 +457,10 @@
         "duration": "Duration",
         "grace": "Grace Period",
         "remaining": "Remaining",
-        "pin_protected": "PIN Protected",
-        "pin_verified": "PIN Verified",
-        "alarm": "Alarm Triggered",
-        "audio": "Audio Recorded",
+        "pin_protected": "PIN Protected?",
+        "pin_verified": "PIN Verified?",
+        "alarm": "Alarm Triggered?",
+        "audio": "Audio Recorded?",
         "location": "Location",
         "route": "Route",
         "sms_length": "SMS Sent",
@@ -424,9 +505,9 @@
       "privacy": {
         "title": "Privacy & Location",
         "labels": [
-          "Share live location",
+          "Share location",
           "During active emergency",
-          "Share live route",
+          "Share route",
           "Record path travelled during active timer",
           "Auto audio recording",
           "During active emergency"

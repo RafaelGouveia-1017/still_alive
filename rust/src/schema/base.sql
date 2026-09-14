@@ -37,8 +37,6 @@ preferences:
 "contacts": [ // list with contact id & its prefs
 {
 "id": "example",
-"sms": true,
-"email": true,
 "location": true,
 "audio": true
 }
@@ -373,6 +371,81 @@ SET
     )
 WHERE
     json_extract (value, '$.integrations.' || NEW.key) IS NOT NULL;
+
+END;
+
+CREATE TRIGGER update_emergency_contacts_on_updated_timer_contacts AFTER
+UPDATE OF value ON timers WHEN json_extract (OLD.value, '$.contacts') IS NOT json_extract (NEW.value, '$.contacts') BEGIN
+UPDATE contacts
+SET
+    value = json_object (
+        'count',
+        (
+            SELECT
+                COUNT(DISTINCT json_extract (c.value, '$.id'))
+            FROM
+                timers AS t,
+                json_each (json_extract (t.value, '$.contacts')) AS c
+            WHERE
+                json_extract (c.value, '$.id') IS NOT NULL
+        ),
+        'ids',
+        (
+            SELECT
+                COALESCE(json_group_array (id), json ('[]'))
+            FROM
+                (
+                    SELECT DISTINCT
+                        json_extract (c.value, '$.id') AS id
+                    FROM
+                        timers AS t,
+                        json_each (json_extract (t.value, '$.contacts')) AS c
+                    WHERE
+                        json_extract (c.value, '$.id') IS NOT NULL
+                    ORDER BY
+                        id
+                )
+        )
+    )
+WHERE
+    key = 'emergency';
+
+END;
+
+CREATE TRIGGER update_emergency_contacts_on_deleted_timer AFTER DELETE ON timers BEGIN
+UPDATE contacts
+SET
+    value = json_object (
+        'count',
+        (
+            SELECT
+                COUNT(DISTINCT json_extract (c.value, '$.id'))
+            FROM
+                timers AS t,
+                json_each (json_extract (t.value, '$.contacts')) AS c
+            WHERE
+                json_extract (c.value, '$.id') IS NOT NULL
+        ),
+        'ids',
+        (
+            SELECT
+                COALESCE(json_group_array (id), json ('[]'))
+            FROM
+                (
+                    SELECT DISTINCT
+                        json_extract (c.value, '$.id') AS id
+                    FROM
+                        timers AS t,
+                        json_each (json_extract (t.value, '$.contacts')) AS c
+                    WHERE
+                        json_extract (c.value, '$.id') IS NOT NULL
+                    ORDER BY
+                        id
+                )
+        )
+    )
+WHERE
+    key = 'emergency';
 
 END;
 

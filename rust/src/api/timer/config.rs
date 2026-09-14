@@ -54,6 +54,7 @@ pub struct TimerConfig {
 impl TimerConfig {
     /// Creates a new timer configuration from the given fields.
     #[frb(sync)]
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         name: String,
         duration_secs: i64,

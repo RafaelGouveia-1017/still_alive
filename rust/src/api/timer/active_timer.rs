@@ -189,10 +189,7 @@ impl ActiveTimer {
 
         if matches!(
             self.run.state,
-            TimerState::Paused
-                | TimerState::Cancelled
-                | TimerState::Warning
-                | TimerState::Completed
+            TimerState::Cancelled | TimerState::Completed
         ) {
             return Ok(());
         }
@@ -292,12 +289,68 @@ impl ActiveTimer {
             paused_at_ms: None,
         };
 
-        create_timer_run(&new_run, now_ms).context("Failed to create timer run")?;
         save_timer(&key, &config).context("Failed to persist timer to database")?;
+        create_timer_run(&new_run, now_ms).context("Failed to create timer run")?;
 
         self.key = key;
         self.run = new_run;
         self.config = config;
+
+        Ok(())
+    }
+
+    /// Deletes a timer.
+    ///
+    /// `timer0` cannot be deleted. If deleting the timer also removes the
+    /// currently persisted timer run through the database cascade and no
+    /// timer run remains, a replacement run is created for a remaining timer.
+    ///
+    /// When multiple timers remain, a random timer is selected. If only
+    /// `timer0` remains, `timer0` is used.
+    ///
+    /// The returned [`ActiveTimer`] represents the timer that is active after
+    /// the deletion.
+    ///
+    /// # Arguments
+    ///
+    /// * `key` - Identifier of the timer to delete.
+    /// * `now_ms` - Current timestamp in milliseconds since the Unix epoch.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if `timer0` is requested, the timer cannot be deleted,
+    /// no timers remain, or the replacement timer run cannot be created.
+    pub fn delete_timer(&mut self, key: &str, now_ms: i64) -> Result<()> {
+        log::info!("Deleting timer with key '{}'", key);
+
+        if key == "timer0" {
+            bail!("The base timer 'timer0' cannot be deleted");
+        }
+
+        delete_timer(key).context("Failed to delete timer")?;
+
+        // Normally the deleted timer's run has also disappeared because of
+        // ON DELETE CASCADE. Only create a replacement run when no run exists.
+        if !timer_run_exists().context("Failed to check timer run")? {
+            let (replacement_key, replacement_config) =
+                get_random_remaining_timer().context("Failed to select replacement timer")?;
+
+            let replacement_run = TimerRun {
+                timer_id: replacement_key.clone(),
+                state: TimerState::Completed,
+                started_at_ms: now_ms,
+                expires_at_ms: now_ms,
+                warning_duration_ms: None,
+                paused_at_ms: None,
+            };
+
+            create_timer_run(&replacement_run, now_ms)
+                .context("Failed to create replacement timer run")?;
+
+            self.key = replacement_key;
+            self.run = replacement_run;
+            self.config = replacement_config;
+        }
 
         Ok(())
     }
@@ -351,4 +404,24 @@ pub fn get_unique_timer_id() -> Option<String> {
             None
         }
     }
+}
+
+/// Creates a new timer from the given configuration.
+///
+/// # Arguments
+///
+/// * `config` - Configuration for the new timer.
+///
+/// # Errors
+///
+/// Returns an error if the new timer configuration cannot be
+/// persisted to the database.
+pub fn create_timer(config: TimerConfig) -> Result<()> {
+    let key = get_unique_timer_id().context("Failed to get unique id for timer")?;
+
+    log::info!("Creating timer with key '{}'", key);
+
+    save_timer(&key, &config).context("Failed to persist timer to database")?;
+
+    Ok(())
 }

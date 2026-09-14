@@ -186,6 +186,7 @@ class _IntegrationsScreenState extends State<IntegrationsScreen> {
                                           style: AppText.caption(
                                             scheme,
                                           ).copyWith(color: scheme.onSurface),
+                                          textAlign: TextAlign.center,
                                         ),
                                       ],
                                     ),
@@ -302,7 +303,6 @@ class _IntegrationsScreenState extends State<IntegrationsScreen> {
                 ),
                 const SizedBox(height: AppSpacing.lg),
 
-                SectionTitle(local.translate("integrations.connected")),
                 if (_isLoading) ...[
                   Padding(
                     padding: EdgeInsets.only(top: AppSpacing.lg),
@@ -317,7 +317,7 @@ class _IntegrationsScreenState extends State<IntegrationsScreen> {
                     ),
                   ),
                 ] else if (connectedIntegrations.isEmpty) ...[
-                  const SizedBox(height: AppSpacing.xl),
+                  const SizedBox(height: AppSpacing.xxxxl),
                   Center(
                     child: Container(
                       width: 80,
@@ -345,6 +345,7 @@ class _IntegrationsScreenState extends State<IntegrationsScreen> {
                     ),
                   ),
                 ] else ...[
+                  SectionTitle(local.translate("integrations.connected")),
                   AppExpandableGroup(
                     children: [
                       for (final it in connectedIntegrations)
@@ -380,7 +381,14 @@ class _IntegrationsScreenState extends State<IntegrationsScreen> {
                                             color: scheme.error,
                                           ),
                                         )
-                                : null,
+                                : Text(
+                                    (entry.key.destinations.isNotEmpty)
+                                        ? entry.key.destinations.length
+                                              .toString()
+                                        : '-',
+                                    style: AppText.caption(scheme),
+                                    textAlign: TextAlign.center,
+                                  ),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [

@@ -109,6 +109,8 @@ class _AlertsSectionState extends State<AlertsSection> {
                                 vertical: AppSpacing.xxxs,
                               ),
                               border: OutlineInputBorder(),
+                              filled: false,
+                              fillColor: Colors.transparent,
                               hintText: widget.local.translate(
                                 "settings.sections.alerts.labels.3",
                               ),

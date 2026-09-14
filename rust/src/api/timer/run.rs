@@ -33,8 +33,7 @@ pub struct TimerRun {
 impl TimerRun {
     /// Returns whether the timer is currently active.
     ///
-    /// A timer is considered active while it is either [`TimerState::Running`]
-    /// or [`TimerState::Warning`].
+    /// A timer is considered active while it is [`TimerState::Running`].
     pub fn is_active(&self) -> bool {
         matches!(self.state, TimerState::Running)
     }

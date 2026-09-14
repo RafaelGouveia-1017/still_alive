@@ -64,8 +64,7 @@ class TimerRun {
 
   /// Returns whether the timer is currently active.
   ///
-  /// A timer is considered active while it is either [`TimerState::Running`]
-  /// or [`TimerState::Warning`].
+  /// A timer is considered active while it is [`TimerState::Running`].
   Future<bool> isActive() =>
       RustLib.instance.api.crateApiTimerRunTimerRunIsActive(that: this);
 

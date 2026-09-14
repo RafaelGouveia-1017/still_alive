@@ -145,7 +145,7 @@ class _QuickContactsState extends State<QuickContacts> with RouteAware {
             behavior: HitTestBehavior.opaque,
             onTap: () => Navigator.of(context).push(
               AppRoute(
-                page: ContactsScreen(),
+                page: ContactsScreen.showAllContacts(),
                 transition: AppRouteTransitionType.slideRight,
               ),
             ),
@@ -258,7 +258,7 @@ class _QuickContact extends StatelessWidget {
       onTap: () => Navigator.of(context).push(
         AppRoute(
           page: (isAdd)
-              ? ContactsScreen()
+              ? ContactsScreen.showAllContacts()
               : ContactDetailScreen(
                   contactID: data.id,
                   heroID: 'contact-pic-${data.id}',

@@ -200,7 +200,7 @@ class _RingPainter extends CustomPainter {
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round
       ..maskFilter = const MaskFilter.blur(
-        BlurStyle.normal,
+        BlurStyle.solid,
         4,
       ); // glow approximation
 

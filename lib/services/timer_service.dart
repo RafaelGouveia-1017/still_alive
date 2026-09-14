@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'dart:convert';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:bcrypt/bcrypt.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:still_alive/data/all.dart';
 import 'package:still_alive/services/history_service.dart';
@@ -68,7 +70,7 @@ class TimerService extends ChangeNotifier {
   }
 
   /// Whether the current active timer has an active timer run.
-  Future<bool> get hasActiveTimer => _activeTimer.run.isActive();
+  bool get hasActiveTimer => _activeTimer.run.state == TimerState.running;
 
   /// Initializes the singleton timer service and reconciles the persisted
   /// active timer state.
@@ -115,7 +117,6 @@ class TimerService extends ChangeNotifier {
         timerName: _activeTimer.config.name,
         startedAt: DateTime.fromMillisecondsSinceEpoch(
           _activeTimer.run.startedAtMs,
-          isUtc: true,
         ),
         endedAt: null,
         durationSeconds: _activeTimer.config.durationSecs,
@@ -149,10 +150,10 @@ class TimerService extends ChangeNotifier {
         timerName: _activeTimer.config.name,
         startedAt: DateTime.fromMillisecondsSinceEpoch(
           _activeTimer.run.startedAtMs,
-          isUtc: true,
         ),
-        endedAt: DateTime.fromMillisecondsSinceEpoch(now, isUtc: true),
+        endedAt: DateTime.fromMillisecondsSinceEpoch(now),
         remainingSeconds: _activeTimer.remaining().inSeconds,
+        passwordVerified: passwordVerified,
       ),
     );
   }
@@ -200,9 +201,8 @@ class TimerService extends ChangeNotifier {
         timerName: _activeTimer.config.name,
         startedAt: DateTime.fromMillisecondsSinceEpoch(
           _activeTimer.run.startedAtMs,
-          isUtc: true,
         ),
-        endedAt: DateTime.fromMillisecondsSinceEpoch(now, isUtc: true),
+        endedAt: DateTime.fromMillisecondsSinceEpoch(now),
         remainingSeconds: _activeTimer.remaining().inSeconds,
         passwordVerified: passwordVerified,
       ),
@@ -300,11 +300,9 @@ class TimerService extends ChangeNotifier {
             timerName: _activeTimer.config.name,
             startedAt: DateTime.fromMillisecondsSinceEpoch(
               _activeTimer.run.startedAtMs,
-              isUtc: true,
             ),
             endedAt: DateTime.fromMillisecondsSinceEpoch(
               _activeTimer.run.expiresAtMs,
-              isUtc: true,
             ),
             remainingSeconds: _activeTimer.config.gracePeriodSecs!,
           ),
@@ -475,51 +473,91 @@ class TimerService extends ChangeNotifier {
     final TextEditingController passController = TextEditingController();
     final FocusNode passFocus = FocusNode();
 
+    void passwordWritten() {
+      passFocus.unfocus();
+
+      if (passController.text.isEmpty) return;
+      bool result = verifyPassword(
+        passController.text,
+        _activeTimer.config.passwordHash!,
+      );
+
+      try {
+        if (result) {
+          Navigator.of(context).pop(result);
+        } else {
+          showToast(
+            scheme: scheme,
+            toast: Text(
+              local.translate("home.password_invalid"),
+              style: AppText.bodySm(scheme),
+              textAlign: TextAlign.center,
+            ),
+            gravity: ToastGravity.TOP,
+            position: (context, child, gravity) {
+              return Positioned(bottom: 150, left: 60, right: 60, child: child);
+            },
+          );
+          Navigator.of(context).pop(null);
+        }
+      } finally {
+        passController.dispose();
+        passFocus.dispose();
+      }
+    }
+
     return showBlurredBottomSheet<bool>(
       context: context,
       scheme: scheme,
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              controller: passController,
-              focusNode: passFocus,
-              keyboardType: TextInputType.text,
-              maxLength: 250,
-              style: AppText.body(scheme),
-              inputFormatters: [
-                FilteringTextInputFormatter.singleLineFormatter,
-              ],
-              decoration: InputDecoration(
-                hintText: local.translate("home.password_hint"),
-                counterText: '',
-                border: InputBorder.none,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => passFocus.requestFocus(),
+        child: Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: passController,
+                focusNode: passFocus,
+                keyboardType: TextInputType.text,
+                maxLength: 30,
+                maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                style: AppText.body(scheme),
+                cursorColor: scheme.primary,
+                scrollPadding: const EdgeInsets.all(0),
+                inputFormatters: [
+                  FilteringTextInputFormatter.singleLineFormatter,
+                ],
+                decoration: InputDecoration(
+                  hintText: local.translate("home.password_hint"),
+                  counterText: '',
+                  contentPadding: EdgeInsets.symmetric(vertical: AppSpacing.xl),
+                  border: InputBorder.none,
+                  filled: false,
+                  fillColor: Colors.transparent,
+                ),
+                obscureText: true,
+                onTap: () {
+                  passController.selection = TextSelection(
+                    baseOffset: 0,
+                    extentOffset: passController.text.length,
+                  );
+                },
+                onSubmitted: (_) => passwordWritten(),
               ),
-              obscureText: true,
-              onTap: () {
-                passController.selection = TextSelection(
-                  baseOffset: 0,
-                  extentOffset: passController.text.length,
-                );
-              },
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
-            child: PrimaryButton(
-              icon: LucideIcons.keySquare,
-              onPressed: () async {
-                bool result = verifyPassword(
-                  passController.text,
-                  _activeTimer.config.passwordHash!,
-                );
-                Navigator.of(context).pop(result);
-                passController.dispose();
-                passFocus.dispose();
-              },
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+              child: SizedBox(
+                height: 64,
+                child: PrimaryButton(
+                  width: 64,
+                  icon: LucideIcons.keySquare,
+                  onPressed: () => passwordWritten(),
+                ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -592,11 +630,36 @@ class TimerService extends ChangeNotifier {
     return parts.join(' ');
   }
 
-  /// Removes [contactID] from the contacts list of every timer.
+  /// Removes a timer from the database.
   ///
-  /// If [contactID] exists in a timer's `contacts` array, that contact object
-  /// is removed. Timers that don't contain the contact are left unchanged.
-  Future<void> removeDeletedContactFromTimers(String contactID) async {
+  /// The timer identified by [timerKey] is deleted from persistent storage.
+  /// If the deleted timer was associated with the active timer run, the native
+  /// timer implementation is responsible for creating a replacement run for
+  /// another available timer.
+  ///
+  /// Returns `true` when the timer is successfully removed.
+  ///
+  /// Returns `false` if an error occurs while deleting the timer. Errors are
+  /// caught internally and are not propagated to the caller.
+  ///
+  /// The current UTC timestamp in milliseconds since the Unix epoch is passed
+  /// to the native timer implementation.
+  Future<bool> removeTimerFromDatabase(String timerKey) async {
+    try {
+      final now = DateTime.now().toUtc().millisecondsSinceEpoch;
+      await _activeTimer.deleteTimer(nowMs: now, key: timerKey);
+      return true;
+    } catch (e, st) {
+      AppLogger.log.severe('Failed to delete timer from database.', e, st);
+      return false;
+    }
+  }
+
+  /// Removes [contactID] from the active timer's contacts list.
+  ///
+  /// If [contactID] exists in the active timer's `contacts` array, that contact
+  /// is removed. Other contacts remain unchanged.
+  Future<void> removeDeletedContactFromActiveTimer(String contactID) async {
     await executeBatchSql(
       sql:
           """
@@ -634,11 +697,8 @@ class TimerService extends ChangeNotifier {
   /// destinations configured on the active timer that are no longer present in
   /// the integration account are removed. Other destinations remain unchanged.
   ///
-  /// This is used to keep the active timer configuration in sync when a
-  /// destination is deleted from an external integration.
-  ///
   /// Throws an [Exception] if [integrationKey] is not a supported integration.
-  Future<void> removeDeletedAccountDestinationFromTimers(
+  Future<void> removeDeletedAccountDestinationFromActiveTimer(
     String integrationKey,
     String accountID,
   ) async {
@@ -667,8 +727,8 @@ class TimerService extends ChangeNotifier {
     };
 
     activeIntegration.accounts
-        .firstWhere((account) => account.id == accountID)
-        .destinations
+        .firstWhereOrNull((account) => account.id == accountID)
+        ?.destinations
         .removeWhere((destination) => !destinations.contains(destination));
   }
 
@@ -678,11 +738,8 @@ class TimerService extends ChangeNotifier {
   /// identified by [integrationKey]. Any other accounts configured for the
   /// integration remain unchanged.
   ///
-  /// This is used to keep the active timer configuration in sync when an
-  /// account is deleted from an external integration.
-  ///
   /// Throws an [Exception] if [integrationKey] is not a supported integration.
-  Future<void> removeDeletedIntegrationAccountFromTimers(
+  Future<void> removeDeletedIntegrationAccountFromActiveTimer(
     String integrationKey,
     String accountID,
   ) async {

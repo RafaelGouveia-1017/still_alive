@@ -18,19 +18,19 @@
   <br>
   <a href="https://flutter.dev">
     <img
-      src="https://img.shields.io/badge/Frontend-Flutter%20(3.47.1)-%2302569B?logo=flutter"
+      src="https://img.shields.io/badge/Frontend-Flutter%20(3.47.2)-%2302569B?logo=flutter"
       alt="Flutter"
     />
   </a>
   <a href="https://dart.dev/">
     <img
-      src="https://img.shields.io/badge/Frontend-Dart%20(3.13.1)-%2302569B?logo=dart"
+      src="https://img.shields.io/badge/Frontend-Dart%20(3.13.2)-%2302569B?logo=dart"
       alt="Dart"
     />
   </a>
   <a href="https://www.rust-lang.org/">
     <img
-      src="https://img.shields.io/badge/BackEnd-Rust%20(1.97.1)-orange?logo=rust"
+      src="https://img.shields.io/badge/BackEnd-Rust%20(1.98.1)-orange?logo=rust"
       alt="Rust"
     />
   </a>

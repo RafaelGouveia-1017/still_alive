@@ -107,7 +107,8 @@
       "cancel": "Cancelar temporizador",
       "resume": "Retomar temporizador"
     },
-    "password_hint": "Introduza a palavra-passe",
+    "password_hint": "Insire a palavra-passe",
+    "password_invalid": "Palavra-chave está incorreta!!!",
     "quick_contacts": "Contactos rápidos"
   },
   "timer_selection": {
@@ -138,29 +139,108 @@
   "timer_configuration": {
     "title_new": "Novo Temporizador",
     "title_edit": "Editar Temporizador",
+    "validation": "Pelo menos um destino tem de ser selecionado.",
+    "validation_error": "Nem todos os campos são válidos.",
     "name": {
       "title": "Nome",
-      "hint": "algo tipo \"Check-in diário\" ou \"Corrida sem niguém comigo numa floresta escura\""
+      "hint": "Algo único tipo \"Check-in diário\" ou \"Corrida sem niguém comigo numa floresta escura\"",
+      "validation": "Nome é obrigatório."
     },
     "duration": {
       "title": "Duração",
-      "time_format": "HRS MIN SEG"
+      "time_format": "HRS MIN SEG",
+      "validation": "A duração deve ser superior a 10 segundos."
     },
     "grace_period": {
       "title": "Período de Tolerância",
       "warning": "Aviso antes do alerta",
-      "buzzer": "Alarme + 60s para cancelar"
+      "false": "Nenhum período de tolerância para este temporizador.",
+      "buzzer": ["Alarme +", "para cancelar"]
     },
     "security": {
       "title": "Segurança",
-      "cancel_password": "Palavra-passe para cancelamento",
-      "pin_requirement": {
-        "on": "Requer PIN para cancelar o temporizador",
-        "off": "Não requer PIN para cancelar o temporizador"
+      "permission": "Permissão não concedida",
+      "password": {
+        "cancel_password": "Palavra-passe para cancelamento",
+        "pin_requirement": {
+          "on": "Requer PIN para cancelar o temporizador",
+          "off": "Não requer PIN para cancelar o temporizador"
+        },
+        "password_hint": "Insire uma palavra-passe (menor é melhor)",
+        "validation": "Palavra-passe é obrigatória.",
+        "exists": "Palavra-passe já definida.",
+        "note": {
+          "title": "Palavra-passe é inalterável",
+          "description": "Esta é a única oportunidade de editar a palavra-passe deste temporizador.\nNão a esqueças, ou vais ter de criar um novo temporizador."
+        }
+      },
+      "location": {
+        "when_in_use": {
+          "title": "Partilhar localização",
+          "enabled": {
+            "on": "Partilhar localização durante uma emergência",
+            "off": "Não partilhar localização durante uma emergência"
+          }
+        },
+        "always": {
+          "title": "Partilhar trajeto",
+          "enabled": {
+            "on": "Partilhar trajeto durante uma emergência",
+            "off": "Não partilhar trajeto durante uma emergência"
+          }
+        },
+        "collection_interval": {
+          "title": "Intervalo de recolha",
+          "description": "Tempo entre recolhas de localização"
+        }
+      },
+      "audio": {
+        "title": "Gravação de áudio",
+        "enabled": {
+          "on": "Gravar áudio durante emergência",
+          "off": "Não gravar áudio durante emergência"
+        }
       }
     },
-    "note": "Depois de tocar em Iniciar, verás uma confirmação final. Os alertas são enviados automaticamente quando o temporizador expira.",
-    "cta": "Ativar temporizador de segurança"
+    "contacts": {
+      "title": "Enviar para",
+      "contact": ["contacto", "contactos"],
+      "selected": ["selecionado", "selecionados"],
+      "sms": ["sms", "sms"],
+      "email": ["email", "emails"],
+      "none": "Nenhum contacto selecionado"
+    },
+    "custom": {
+      "title": "Destinos Personalizados",
+      "subtitle": ["destino personalizado", "destinos personalizados"],
+      "none": "Nenhum destino personalizado",
+      "phone": {
+        "title": "Número de\nTelefone (SMS)",
+        "hint": "Insire um número de telefone",
+        "validation": "Não é um número de telefone válido!"
+      },
+      "email": {
+        "title": "Endereço de\nEmail",
+        "hint": "Insire um endereço de email",
+        "validation": "Não é um endereço de email válido!"
+      }
+    },
+    "integrations": {
+      "title": "Integrações do Temporizador",
+      "selected": ["selecionado", "selecionados"],
+      "none": "Nenhum plugin selecionado",
+      "account": ["plugin", "plugins"],
+      "destination": ["destino", "destinos"],
+      "no_integrations": "Nenhuma integração disponível.\nConsulte a página de integrações.",
+      "no_destinations": "Nenhum destino disponível.\nConsulte a página de integrações."
+    },
+    "create": "Criar temporizador de segurança",
+    "edit": "Guardar temporizador de segurança",
+    "delete": [
+      "Tens acerteza? O teu temporizador será PERMANENTEMENTE apagado.",
+      "Apagar Temporizador",
+      "apagado com sucesso!"
+    ]
   },
   "active_monitoring": {
     "title": "Monitorização",
@@ -229,7 +309,7 @@
   "contacts_list": {
     "title": "Contactos",
     "search": "Procurar contactos",
-    "sections": ["Favoritos", "Todos os contactos"],
+    "sections": ["Favoritos", "Todos os contactos", "Neste temporizador"],
     "not_found": "Nenhum contacto encontrado.",
     "edit": "Editar contacto",
     "is_quick": {
@@ -376,6 +456,7 @@
       "expired": "Emergência acionada",
       "alert": ["alerta", "alertas"],
       "sent": ["enviado", "enviados"],
+      "boolean": ["Sim", "Não"],
       "details": {
         "type": "Tipo",
         "timer": "Temporizador",
@@ -384,10 +465,10 @@
         "duration": "Duração",
         "grace": "Tolerância",
         "remaining": "Restante",
-        "pin_protected": "Protegido por PIN",
-        "pin_verified": "PIN Verificado",
-        "alarm": "Alarme Ativado",
-        "audio": "Áudio Gravado",
+        "pin_protected": "Protegido por PIN?",
+        "pin_verified": "PIN Verificado?",
+        "alarm": "Alarme Ativado?",
+        "audio": "Áudio Gravado?",
         "location": "Localização",
         "route": "Rota",
         "sms_length": "SMS Enviados",
@@ -432,9 +513,9 @@
       "privacy": {
         "title": "Privacidade e Localização",
         "labels": [
-          "Partilhar localização em direto",
+          "Partilhar localização",
           "Durante emergência ativa",
-          "Partilhar rota em direto",
+          "Partilhar trajeto",
           "Gravar caminho percorrido durante temporizador ativo",
           "Gravação de áudio automática",
           "Durante emergência ativa"

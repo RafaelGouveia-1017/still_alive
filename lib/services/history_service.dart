@@ -45,8 +45,8 @@ enum HistoryColorTones {
         return scheme.error;
       case HistoryColorTones.warning:
         return scheme.error.withValues(
-          green: scheme.error.g + 30,
-          blue: scheme.error.b + 30,
+          green: scheme.error.g + 0.3,
+          blue: scheme.error.b + 0.3,
         );
       case HistoryColorTones.muted:
         return scheme.onSurfaceVariant;
@@ -70,9 +70,9 @@ enum HistoryColorTones {
         return scheme.error.withAlpha(38);
       case HistoryColorTones.warning:
         return scheme.error.withValues(
-          alpha: 38,
-          green: scheme.error.g + 30,
-          blue: scheme.error.b + 30,
+          alpha: 0.38,
+          green: scheme.error.g + 0.3,
+          blue: scheme.error.b + 0.3,
         );
       case HistoryColorTones.muted:
         return scheme.onSurfaceVariant.withAlpha(38);
@@ -173,15 +173,15 @@ class HistoryService {
                   history.value,
                   '\$.events',
                   (
-                      SELECT json_group_array(value)
-                      FROM (
-                          SELECT json_each.value AS value
-                          FROM json_each(history.value, '\$.events')
+                    SELECT json_group_array(json(value))
+                    FROM (
+                        SELECT json_each.value AS value
+                        FROM json_each(history.value, '\$.events')
 
-                          UNION ALL
+                        UNION ALL
 
-                          SELECT json('${jsonEncode(eventJson)}')
-                      )
+                        SELECT json('${jsonEncode(eventJson)}')
+                    )
                   )
               ),
               '\$.count',
@@ -191,15 +191,15 @@ class HistoryService {
                           history.value,
                           '\$.events',
                           (
-                              SELECT json_group_array(value)
-                              FROM (
-                                  SELECT json_each.value AS value
-                                  FROM json_each(history.value, '\$.events')
+                            SELECT json_group_array(json(value))
+                            FROM (
+                                SELECT json_each.value AS value
+                                FROM json_each(history.value, '\$.events')
 
-                                  UNION ALL
+                                UNION ALL
 
-                                  SELECT json('${jsonEncode(eventJson)}')
-                              )
+                                SELECT json('${jsonEncode(eventJson)}')
+                            )
                           )
                       ),
                       '\$.events'
@@ -339,9 +339,9 @@ abstract class HistoryEvent {
   TableRow _row(
     String label,
     Object? value,
-    ColorScheme scheme,
+    ColorScheme scheme, {
     VoidCallback? onTap,
-  ) {
+  }) {
     Widget child = Padding(
       padding: const EdgeInsets.all(8),
       child: Text(
@@ -436,47 +436,38 @@ class TimerStartedEvent extends HistoryEvent {
       columnWidths: const {0: IntrinsicColumnWidth(), 1: FlexColumnWidth()},
       border: TableBorder.all(color: scheme.outline),
       children: [
-        _row(
-          local.translate("history_logs.events.details.type"),
-          type,
-          scheme,
-          null,
-        ),
+        _row(local.translate("history_logs.events.details.type"), type, scheme),
         _row(
           local.translate("history_logs.events.details.timer"),
           timerName,
           scheme,
-          null,
         ),
         _row(
           local.translate("history_logs.events.details.started"),
           startedAt,
           scheme,
-          null,
         ),
         _row(
           local.translate("history_logs.events.details.ended"),
           endedAt,
           scheme,
-          null,
         ),
         _row(
           local.translate("history_logs.events.details.duration"),
           '${durationSeconds}s',
           scheme,
-          null,
         ),
         _row(
           local.translate("history_logs.events.details.grace"),
           '${gracePeriodSeconds}s',
           scheme,
-          null,
         ),
         _row(
           local.translate("history_logs.events.details.pin_protected"),
-          passwordProtected,
+          (passwordProtected)
+              ? local.translate("history_logs.events.boolean.0")
+              : local.translate("history_logs.events.boolean.1"),
           scheme,
-          null,
         ),
       ],
     );
@@ -538,35 +529,26 @@ class TimerWarningEvent extends HistoryEvent {
       columnWidths: const {0: IntrinsicColumnWidth(), 1: FlexColumnWidth()},
       border: TableBorder.all(color: scheme.outline),
       children: [
-        _row(
-          local.translate("history_logs.events.details.type"),
-          type,
-          scheme,
-          null,
-        ),
+        _row(local.translate("history_logs.events.details.type"), type, scheme),
         _row(
           local.translate("history_logs.events.details.timer"),
           timerName,
           scheme,
-          null,
         ),
         _row(
           local.translate("history_logs.events.details.started"),
           startedAt,
           scheme,
-          null,
         ),
         _row(
           local.translate("history_logs.events.details.ended"),
           endedAt,
           scheme,
-          null,
         ),
         _row(
           local.translate("history_logs.events.details.remaining"),
           '${remainingSeconds}s',
           scheme,
-          null,
         ),
       ],
     );
@@ -590,12 +572,14 @@ class TimerPausedEvent extends HistoryEvent {
 
   /// The remaining duration, in seconds, when the timer was paused.
   final int remainingSeconds;
+  final bool passwordVerified;
 
   TimerPausedEvent({
     required super.timerName,
     required super.startedAt,
     required super.endedAt,
     required this.remainingSeconds,
+    required this.passwordVerified,
   });
 
   factory TimerPausedEvent.fromJson(Map<String, dynamic> json) {
@@ -606,12 +590,16 @@ class TimerPausedEvent extends HistoryEvent {
       startedAt: DateTime.parse(json['started_at']),
       endedAt: DateTime.parse(json['ended_at']),
       remainingSeconds: details['remaining_seconds'],
+      passwordVerified: details['password_verified'],
     );
   }
 
   @override
   Map<String, dynamic> detailsToJson() {
-    return {'remaining_seconds': remainingSeconds};
+    return {
+      'remaining_seconds': remainingSeconds,
+      'password_verified': passwordVerified,
+    };
   }
 
   @override
@@ -630,35 +618,33 @@ class TimerPausedEvent extends HistoryEvent {
       columnWidths: const {0: IntrinsicColumnWidth(), 1: FlexColumnWidth()},
       border: TableBorder.all(color: scheme.outline),
       children: [
-        _row(
-          local.translate("history_logs.events.details.type"),
-          type,
-          scheme,
-          null,
-        ),
+        _row(local.translate("history_logs.events.details.type"), type, scheme),
         _row(
           local.translate("history_logs.events.details.timer"),
           timerName,
           scheme,
-          null,
         ),
         _row(
           local.translate("history_logs.events.details.started"),
           startedAt,
           scheme,
-          null,
         ),
         _row(
           local.translate("history_logs.events.details.ended"),
           endedAt,
           scheme,
-          null,
         ),
         _row(
           local.translate("history_logs.events.details.remaining"),
           '${remainingSeconds}s',
           scheme,
-          null,
+        ),
+        _row(
+          local.translate("history_logs.events.details.pin_verified"),
+          (passwordVerified)
+              ? local.translate("history_logs.events.boolean.0")
+              : local.translate("history_logs.events.boolean.1"),
+          scheme,
         ),
       ],
     );
@@ -746,41 +732,33 @@ class TimerCancelledEvent extends HistoryEvent {
       columnWidths: const {0: IntrinsicColumnWidth(), 1: FlexColumnWidth()},
       border: TableBorder.all(color: scheme.outline),
       children: [
-        _row(
-          local.translate("history_logs.events.details.type"),
-          type,
-          scheme,
-          null,
-        ),
+        _row(local.translate("history_logs.events.details.type"), type, scheme),
         _row(
           local.translate("history_logs.events.details.timer"),
           timerName,
           scheme,
-          null,
         ),
         _row(
           local.translate("history_logs.events.details.started"),
           startedAt,
           scheme,
-          null,
         ),
         _row(
           local.translate("history_logs.events.details.ended"),
           endedAt,
           scheme,
-          null,
         ),
         _row(
           local.translate("history_logs.events.details.remaining"),
           '${remainingSeconds}s',
           scheme,
-          null,
         ),
         _row(
           local.translate("history_logs.events.details.pin_verified"),
-          passwordVerified,
+          (passwordVerified)
+              ? local.translate("history_logs.events.boolean.0")
+              : local.translate("history_logs.events.boolean.1"),
           scheme,
-          null,
         ),
       ],
     );
@@ -896,46 +874,44 @@ class TimerExpiredEvent extends HistoryEvent {
             local.translate("history_logs.events.details.type"),
             type,
             scheme,
-            null,
           ),
           _row(
             local.translate("history_logs.events.details.timer"),
             timerName,
             scheme,
-            null,
           ),
           _row(
             local.translate("history_logs.events.details.started"),
             startedAt,
             scheme,
-            null,
           ),
           _row(
             local.translate("history_logs.events.details.ended"),
             endedAt,
             scheme,
-            null,
           ),
           _row(
             local.translate("history_logs.events.details.alarm"),
-            alarmTriggered,
+            (alarmTriggered)
+                ? local.translate("history_logs.events.boolean.0")
+                : local.translate("history_logs.events.boolean.1"),
             scheme,
-            null,
           ),
           _row(
             local.translate("history_logs.events.details.audio"),
-            audioRecorded,
+            (audioRecorded)
+                ? local.translate("history_logs.events.boolean.0")
+                : local.translate("history_logs.events.boolean.1"),
             scheme,
-            null,
           ),
 
           _row(
             local.translate("history_logs.events.details.location"),
-            location == null
+            (location == null)
                 ? "-"
                 : '${location!["latitude"]}, ${location!["longitude"]}',
             scheme,
-            location == null
+            onTap: (location == null)
                 ? null
                 : () {
                     Clipboard.setData(
@@ -954,9 +930,9 @@ class TimerExpiredEvent extends HistoryEvent {
           ),
           _row(
             "${local.translate("history_logs.events.details.route")} (Polyline)",
-            polyline == null ? "-" : polyline!,
+            (polyline == null) ? "-" : polyline!,
             scheme,
-            polyline == null
+            onTap: (polyline == null)
                 ? null
                 : () {
                     Clipboard.setData(
@@ -993,19 +969,16 @@ class TimerExpiredEvent extends HistoryEvent {
             local.translate("history_logs.events.details.sms_length"),
             sms.length,
             scheme,
-            null,
           ),
           _row(
             local.translate("history_logs.events.details.emails_length"),
             emails.length,
             scheme,
-            null,
           ),
           _row(
             local.translate("history_logs.events.details.channels_length"),
             channels.length,
             scheme,
-            null,
           ),
 
           ...sms.asMap().entries.map(
@@ -1013,7 +986,6 @@ class TimerExpiredEvent extends HistoryEvent {
               "SMS ${e.key + 1}",
               "${e.value['recipient']} (${e.value['status']})",
               scheme,
-              null,
             ),
           ),
 
@@ -1022,7 +994,6 @@ class TimerExpiredEvent extends HistoryEvent {
               "Email ${e.key + 1}",
               "${e.value['recipient']} (${e.value['status']})",
               scheme,
-              null,
             ),
           ),
 
@@ -1031,7 +1002,6 @@ class TimerExpiredEvent extends HistoryEvent {
               "${local.translate("history_logs.events.details.channel")} ${e.key + 1}",
               "${e.value['platform']} (${e.value['status']})",
               scheme,
-              null,
             ),
           ),
         ],

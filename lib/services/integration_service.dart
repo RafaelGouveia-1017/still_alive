@@ -172,10 +172,11 @@ class IntegrationService {
             accountId: accountId,
           );
 
-      await TimerService.instance.removeDeletedAccountDestinationFromTimers(
-        integrationKey,
-        accountId,
-      );
+      await TimerService.instance
+          .removeDeletedAccountDestinationFromActiveTimer(
+            integrationKey,
+            accountId,
+          );
 
       return destinations;
     } catch (e, st) {
@@ -396,10 +397,11 @@ class IntegrationService {
         );
       }).toList();
 
-      await TimerService.instance.removeDeletedIntegrationAccountFromTimers(
-        integrationKey,
-        accountId,
-      );
+      await TimerService.instance
+          .removeDeletedIntegrationAccountFromActiveTimer(
+            integrationKey,
+            accountId,
+          );
 
       return integrationItems;
     } catch (e, st) {
@@ -563,7 +565,13 @@ class IntegrationService {
                 labelText: local.translate("integrations.setup.discord.9"),
                 hintText: local.translate("integrations.setup.discord.10"),
                 border: OutlineInputBorder(),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.xxxs,
+                  vertical: AppSpacing.xxxs,
+                ),
                 prefixIcon: Icon(LucideIcons.keyRound),
+                filled: false,
+                fillColor: Colors.transparent,
               ),
               onChanged: (text) {
                 credentialToken = text.trim();
@@ -727,7 +735,13 @@ class IntegrationService {
                 labelText: local.translate("integrations.setup.telegram.8"),
                 hintText: local.translate("integrations.setup.telegram.9"),
                 border: OutlineInputBorder(),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.xxxs,
+                  vertical: AppSpacing.xxxs,
+                ),
                 prefixIcon: Icon(LucideIcons.keyRound),
+                filled: false,
+                fillColor: Colors.transparent,
               ),
               onChanged: (text) {
                 credentialToken = text.trim();

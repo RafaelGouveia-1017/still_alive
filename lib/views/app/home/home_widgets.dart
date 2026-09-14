@@ -54,16 +54,14 @@ class _TimerCountdownRingState extends State<TimerCountdownRing>
   }
 
   void _configPeriodicTimer() async {
-    bool active = await TimerService.instance.hasActiveTimer;
-
-    if (active) {
-      _uiTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    setState(() {});
+    if (TimerService.instance.hasActiveTimer) {
+      _uiTimer = Timer.periodic(const Duration(seconds: 1), (_) {
         if (mounted) {
           setState(() {});
         }
       });
     } else {
-      setState(() {});
       _uiTimer?.cancel();
     }
   }
@@ -85,10 +83,10 @@ class _TimerCountdownRingState extends State<TimerCountdownRing>
   }
 
   @override
-  void didPopNext() async {
-    setState(() {});
-    _configPeriodicTimer();
+  void didPopNext() {
     super.didPopNext();
+    if (!mounted) return;
+    _configPeriodicTimer();
   }
 
   @override
@@ -114,15 +112,13 @@ class _TimerCountdownRingState extends State<TimerCountdownRing>
   bool _expirationScheduled = false;
 
   void _checkTimerExpiration() {
-    final timer = TimerService.instance.activeTimer;
-
-    if (timer.run.state != TimerState.running || _expirationScheduled) {
+    if (!TimerService.instance.hasActiveTimer || _expirationScheduled) {
       return;
     }
 
     final now = DateTime.now().toUtc().millisecondsSinceEpoch;
 
-    if (now < timer.run.expiresAtMs) {
+    if (now < TimerService.instance.activeTimer.run.expiresAtMs) {
       return;
     }
 
@@ -140,10 +136,10 @@ class _TimerCountdownRingState extends State<TimerCountdownRing>
     AppLocalizations local = AppLocalizations.of(context)!;
 
     ActiveTimer timer = TimerService.instance.activeTimer;
-    bool timerIsActive = (timer.run.state == TimerState.running);
+    bool timerIsActive = TimerService.instance.hasActiveTimer;
 
-    Duration remaining;
     double progress = 1.0;
+    Duration remaining = Duration(seconds: timer.config.durationSecs);
     if (timerIsActive) {
       final now = DateTime.now().toUtc().millisecondsSinceEpoch;
       remaining = timer.remaining();
@@ -152,8 +148,21 @@ class _TimerCountdownRingState extends State<TimerCountdownRing>
           ((now - timer.run.startedAtMs) /
                   (timer.run.expiresAtMs - timer.run.startedAtMs))
               .clamp(0.0, 1.0);
-    } else {
-      remaining = Duration(seconds: timer.config.durationSecs);
+    } else if (timer.run.state == TimerState.paused) {
+      progress =
+          ((timer.run.pausedAtMs! - timer.run.startedAtMs) /
+                  (timer.run.expiresAtMs - timer.run.startedAtMs))
+              .clamp(0.0, 1.0);
+
+      final pausedAt = DateTime.fromMillisecondsSinceEpoch(
+        timer.run.pausedAtMs!,
+        isUtc: true,
+      );
+      final expiresAt = DateTime.fromMillisecondsSinceEpoch(
+        timer.run.expiresAtMs,
+        isUtc: true,
+      ).add(Duration(seconds: 1));
+      remaining = expiresAt.difference(pausedAt);
     }
 
     _checkTimerExpiration();
@@ -161,32 +170,15 @@ class _TimerCountdownRingState extends State<TimerCountdownRing>
     return Column(
       children: [
         Center(
-          child: FutureBuilder<bool>(
-            future: TimerService.instance.hasActiveTimer,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                if (snapshot.data!) {
-                  return Pill(
-                    label: local.translate("home.active"),
-                    backColor: scheme.tertiary,
-                  );
-                } else {
-                  return Pill(
-                    label: local.translate("home.inactive"),
-                    backColor: scheme.onSurfaceVariant,
-                  );
-                }
-              } else {
-                return SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: Center(
-                    child: CircularProgressIndicator(color: scheme.tertiary),
-                  ),
-                );
-              }
-            },
-          ),
+          child: (TimerService.instance.hasActiveTimer)
+              ? Pill(
+                  label: local.translate("home.active"),
+                  backColor: scheme.tertiary,
+                )
+              : Pill(
+                  label: local.translate("home.inactive"),
+                  backColor: scheme.onSurfaceVariant,
+                ),
         ),
         const SizedBox(height: AppSpacing.lg),
         CountdownRing(
@@ -194,16 +186,25 @@ class _TimerCountdownRingState extends State<TimerCountdownRing>
           label: timer.config.name,
           color: scheme.primary,
           progress: progress,
-          caption: local.translate("home.tap_to_configure"),
-          onTap: () => Navigator.of(context).push(
-            AppRoute(
-              page: TimerConfigScreen.existingTimer(
-                timerKey: timer.key,
-                timerData: timer.config,
-              ),
-              transition: AppRouteTransitionType.slideRight,
-            ),
-          ),
+          caption: (!timerIsActive)
+              ? local.translate("home.tap_to_configure")
+              : null,
+          diameter: MediaQuery.of(context).size.width - 90,
+          onTap: () {
+            if (!timerIsActive) {
+              Navigator.of(context).push(
+                AppRoute(
+                  page: (timer.key == "timer0")
+                      ? TimerConfigScreen.newTimer()
+                      : TimerConfigScreen.existingTimer(
+                          timerKey: timer.key,
+                          timerData: timer.config,
+                        ),
+                  transition: AppRouteTransitionType.slideLeft,
+                ),
+              );
+            }
+          },
         ),
       ],
     );
@@ -267,6 +268,37 @@ class _TimerControlsState extends State<TimerControls> {
     super.dispose();
   }
 
+  Widget _animatedControls({required Key key, required Widget child}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+      child: AnimatedSwitcher(
+        duration: AppMotion.faster,
+        reverseDuration: AppMotion.fasterer,
+        switchInCurve: Curves.easeOutCubic,
+        switchOutCurve: Curves.easeInCubic,
+
+        transitionBuilder: (child, animation) {
+          return FadeTransition(
+            opacity: animation,
+            child: ScaleTransition(
+              scale: Tween<double>(begin: 0.95, end: 1.0).animate(
+                CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+              ),
+              child: child,
+            ),
+          );
+        },
+        child: KeyedSubtree(
+          key: key,
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: child,
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     ColorScheme scheme = Theme.of(context).colorScheme;
@@ -276,82 +308,136 @@ class _TimerControlsState extends State<TimerControls> {
     TimerState currentState = timer.run.state;
 
     if (_isLoading) {
-      return SizedBox(
-        width: 40,
-        height: 40,
-        child: Center(child: CircularProgressIndicator(color: scheme.tertiary)),
+      return _animatedControls(
+        key: const ValueKey('loading'),
+        child: SizedBox(
+          width: 40,
+          height: 40,
+          child: Center(
+            child: CircularProgressIndicator(color: scheme.tertiary),
+          ),
+        ),
       );
     }
 
     switch (currentState) {
       case TimerState.running:
-        return Row(
-          children: [
-            SizedBox(
-              width: 64,
-              child: PrimaryButton(
-                icon: LucideIcons.pause,
-                color: ButtonColor.tertiary,
-                onPressed: () async {
-                  setLoading(true);
-                  bool? passwordVerified = false;
-                  if (timer.config.passwordProtected) {
-                    passwordVerified = await TimerService.instance
-                        .showPasswordPrompt(context);
-                  }
-                  if (passwordVerified != null) {
-                    await TimerService.instance.pauseTimer(
-                      passwordVerified: passwordVerified,
-                    );
-                  }
-                  setLoading(false);
-                },
+        return _animatedControls(
+          key: const ValueKey('running'),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 64,
+                child: PrimaryButton(
+                  icon: LucideIcons.pause,
+                  color: ButtonColor.tertiary,
+                  onPressed: () async {
+                    setLoading(true);
+
+                    bool? passwordVerified = false;
+
+                    if (timer.config.passwordProtected) {
+                      passwordVerified = await TimerService.instance
+                          .showPasswordPrompt(context);
+                    }
+
+                    if (passwordVerified != null) {
+                      await TimerService.instance.pauseTimer(
+                        passwordVerified: passwordVerified,
+                      );
+                    }
+
+                    setLoading(false);
+                  },
+                ),
               ),
-            ),
-            const SizedBox(width: AppSpacing.lg),
-            Expanded(
-              child: PrimaryButton(
-                label: local.translate("home.buttons.cancel"),
-                icon: LucideIcons.ban,
-                onPressed: () async {
-                  setLoading(true);
-                  bool? passwordVerified = false;
-                  if (timer.config.passwordProtected) {
-                    passwordVerified = await TimerService.instance
-                        .showPasswordPrompt(context);
-                  }
-                  if (passwordVerified != null) {
-                    await TimerService.instance.cancelTimer(
-                      passwordVerified: passwordVerified,
-                    );
-                  }
-                  setLoading(false);
-                },
+              const SizedBox(width: AppSpacing.lg),
+              Expanded(
+                child: PrimaryButton(
+                  label: local.translate("home.buttons.cancel"),
+                  icon: LucideIcons.ban,
+                  onPressed: () async {
+                    setLoading(true);
+
+                    bool? passwordVerified = false;
+
+                    if (timer.config.passwordProtected) {
+                      passwordVerified = await TimerService.instance
+                          .showPasswordPrompt(context);
+                    }
+
+                    if (passwordVerified != null) {
+                      await TimerService.instance.cancelTimer(
+                        passwordVerified: passwordVerified,
+                      );
+                    }
+
+                    setLoading(false);
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
 
       case TimerState.paused:
-        return PrimaryButton(
-          label: local.translate("home.buttons.resume"),
-          icon: LucideIcons.play,
-          onPressed: () async {
-            setLoading(true);
-            await TimerService.instance.resumeTimer();
-            setLoading(false);
-          },
+        return _animatedControls(
+          key: const ValueKey('paused'),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 64,
+                child: PrimaryButton(
+                  icon: LucideIcons.ban,
+                  color: ButtonColor.tertiary,
+                  onPressed: () async {
+                    setLoading(true);
+
+                    bool? passwordVerified = false;
+
+                    if (timer.config.passwordProtected) {
+                      passwordVerified = await TimerService.instance
+                          .showPasswordPrompt(context);
+                    }
+
+                    if (passwordVerified != null) {
+                      await TimerService.instance.cancelTimer(
+                        passwordVerified: passwordVerified,
+                      );
+                    }
+
+                    setLoading(false);
+                  },
+                ),
+              ),
+              const SizedBox(width: AppSpacing.lg),
+              Expanded(
+                child: PrimaryButton(
+                  label: local.translate("home.buttons.resume"),
+                  icon: LucideIcons.play,
+                  onPressed: () async {
+                    setLoading(true);
+                    await TimerService.instance.resumeTimer();
+                    setLoading(false);
+                  },
+                ),
+              ),
+            ],
+          ),
         );
 
       default:
-        return PrimaryButton(
-          label: local.translate("home.buttons.start"),
-          icon: LucideIcons.play,
-          onPressed: () async {
-            setLoading(true);
-            await TimerService.instance.startTimer();
-            setLoading(false);
-          },
+        return _animatedControls(
+          key: const ValueKey('default'),
+          child: PrimaryButton(
+            label: local.translate("home.buttons.start"),
+            icon: LucideIcons.shield,
+            onPressed: () async {
+              setLoading(true);
+              await TimerService.instance.startTimer();
+              setLoading(false);
+            },
+          ),
         );
     }
   }

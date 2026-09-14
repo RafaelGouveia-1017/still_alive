@@ -372,3 +372,89 @@ pub fn update_timer_run_state(updated_run: &TimerRun, now_ms: i64) -> Result<()>
 
     Ok(())
 }
+
+/// Deletes a timer from persistent storage.
+///
+/// The timer's associated run is deleted automatically by the database's
+/// `ON DELETE CASCADE` constraint.
+///
+/// `timer0` cannot be deleted.
+///
+/// This function does not create a replacement timer run. The caller is
+/// responsible for reconciling the active timer after deletion.
+///
+/// # Arguments
+///
+/// * `key` - Identifier of the timer to delete.
+///
+/// # Errors
+///
+/// Returns an error if `timer0` is requested or if the database operation
+/// fails.
+#[frb(ignore)]
+pub fn delete_timer(key: &str) -> Result<()> {
+    log::info!("Deleting timer with key: '{}'", key);
+
+    if key == "timer0" {
+        anyhow::bail!("The base timer 'timer0' cannot be deleted");
+    }
+
+    let db = db();
+
+    db.as_ref()
+        .unwrap()
+        .execute("DELETE FROM timers WHERE key = ?1", [key])
+        .context("Failed to delete timer")?;
+
+    Ok(())
+}
+
+/// Returns a timer configuration that should be used to create a replacement
+/// timer run.
+///
+/// If multiple timers remain, a random timer is selected. If only `timer0`
+/// remains, `timer0` is selected.
+#[frb(ignore)]
+pub fn get_random_remaining_timer() -> Result<(String, TimerConfig)> {
+    log::info!("Selecting timer for replacement run...");
+
+    let db = db();
+
+    let (key, json): (String, String) = db
+        .as_ref()
+        .unwrap()
+        .query_one(
+            r#"
+            SELECT key, value
+            FROM timers
+            ORDER BY
+                CASE WHEN key = 'timer0' THEN 1 ELSE 0 END,
+                RANDOM()
+            LIMIT 1
+            "#,
+            [],
+            |row| Ok((row.get(0)?, row.get(1)?)),
+        )?
+        .context("Failed to select replacement timer")?;
+
+    let config: TimerConfig =
+        serde_json::from_str(&json).context("Failed to deserialize replacement timer")?;
+
+    Ok((key, config))
+}
+
+/// Returns whether the timer_run table currently contains a run.
+#[frb(ignore)]
+pub fn timer_run_exists() -> Result<bool> {
+    let db = db();
+
+    let exists: bool = db
+        .as_ref()
+        .unwrap()
+        .query_one("SELECT EXISTS(SELECT 1 FROM timer_run)", [], |row| {
+            row.get(0)
+        })?
+        .context("Failed to check for timer run")?;
+
+    Ok(exists)
+}

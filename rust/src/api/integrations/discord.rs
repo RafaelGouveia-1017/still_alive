@@ -2,7 +2,7 @@ use crate::api::integrations::traits::*;
 use flutter_rust_bridge::frb;
 
 use anyhow::{anyhow, Ok, Result};
-use reqwest::Client;
+use reqwest::{header, Client};
 use serde::{Deserialize, Serialize};
 
 /// Persisted Discord integration configuration.
@@ -95,10 +95,7 @@ impl Integration for DiscordIntegration {
 
         let response = client
             .get(discord_url("users/@me"))
-            .header(
-                reqwest::header::AUTHORIZATION,
-                format!("Bot {}", credential),
-            )
+            .header(header::AUTHORIZATION, format!("Bot {}", credential))
             .send()
             .await?;
 
@@ -148,7 +145,7 @@ impl Integration for DiscordIntegration {
 
         let guilds_response = client
             .get(discord_url("users/@me/guilds"))
-            .header(reqwest::header::AUTHORIZATION, &auth_header)
+            .header(header::AUTHORIZATION, &auth_header)
             .send()
             .await?;
 
@@ -180,7 +177,7 @@ impl Integration for DiscordIntegration {
 
             let channels_response = client
                 .get(url)
-                .header(reqwest::header::AUTHORIZATION, &auth_header)
+                .header(header::AUTHORIZATION, &auth_header)
                 .send()
                 .await?;
 
@@ -317,10 +314,7 @@ impl Integration for DiscordIntegration {
 
         let response = client
             .post(url)
-            .header(
-                reqwest::header::AUTHORIZATION,
-                format!("Bot {}", credential),
-            )
+            .header(header::AUTHORIZATION, format!("Bot {}", credential))
             .json(&DiscordCreateMessage { content: message })
             .send()
             .await?;
@@ -373,10 +367,7 @@ impl Integration for DiscordIntegration {
 
         let response = client
             .get(url)
-            .header(
-                reqwest::header::AUTHORIZATION,
-                format!("Bot {}", credential),
-            )
+            .header(header::AUTHORIZATION, format!("Bot {}", credential))
             .send()
             .await?;
 
@@ -409,10 +400,7 @@ impl Integration for DiscordIntegration {
 
         let response = client
             .get(discord_url("users/@me"))
-            .header(
-                reqwest::header::AUTHORIZATION,
-                format!("Bot {}", credential),
-            )
+            .header(header::AUTHORIZATION, format!("Bot {}", credential))
             .send()
             .await?;
 

@@ -10,7 +10,7 @@ crate-type = ["cdylib", "staticlib"]
 anyhow = "1.0.104"
 chrono = { version = "0.4.45", features = ["serde"] }
 flutter_rust_bridge = "=2.13.0"
-log = "0.4.33"
+log = "0.4.34"
 reqwest = { version = "0.12.28", default-features = false, features = [
     "json",
     "rustls-tls-webpki-roots",

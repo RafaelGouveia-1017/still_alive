@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:still_alive/services/timer_service.dart';
 import 'package:still_alive/src/rust/api/timer/config.dart';
+import 'package:still_alive/src/rust/api/timer/state.dart';
 import 'package:still_alive/views/app/home/timer_selection.dart';
 
 import 'quick_contacts.dart';
@@ -61,40 +62,46 @@ class _HomeScreenState extends State<HomeScreen> {
     ColorScheme scheme = Theme.of(context).colorScheme;
     AppLocalizations local = AppLocalizations.of(context)!;
 
-    TimerConfig timerData = TimerService.instance.activeTimer.config;
+    final timer = TimerService.instance.activeTimer;
+    final timerData = timer.config;
 
     int contacts = timerData.contacts.length;
     int integrations = 0;
-    if (timerData.integrations.discord.accounts.isNotEmpty) integrations++;
-    if (timerData.integrations.telegram.accounts.isNotEmpty) integrations++;
+    TimerIntegration discord = timerData.integrations.discord;
+    TimerIntegration telegram = timerData.integrations.telegram;
+    if (discord.accounts.isNotEmpty) {
+      integrations += discord.accounts.length;
+    }
+    if (telegram.accounts.isNotEmpty) {
+      integrations += telegram.accounts.length;
+    }
 
     return ScreenBase(
       bottomNavDestination: 'home',
       header: AppHeader(
         title: local.translate('app_name'),
-        left: FutureBuilder<bool>(
-          future: TimerService.instance.hasActiveTimer,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return CircleIconButton(
-                icon: (snapshot.data!)
-                    ? LucideIcons.shield
-                    : LucideIcons.shieldOff,
-                foreground: scheme.primary,
-              );
-            } else {
-              return SizedBox(
-                width: 40,
-                height: 40,
-                child: Center(
-                  child: CircularProgressIndicator(color: scheme.tertiary),
-                ),
-              );
-            }
+        left: ListenableBuilder(
+          listenable: TimerService.instance,
+          builder: (context, child) {
+            final timer = TimerService.instance.activeTimer;
+
+            return CircleIconButton(
+              icon: switch (timer.run.state) {
+                TimerState.running => LucideIcons.shield,
+                TimerState.warning => LucideIcons.shieldAlert,
+                TimerState.expired => LucideIcons.shieldX,
+                _ => LucideIcons.shieldOff,
+              },
+              foreground: switch (timer.run.state) {
+                TimerState.warning || TimerState.expired => scheme.error,
+                _ => scheme.tertiary,
+              },
+              background: scheme.surface,
+            );
           },
         ),
         right: CircleIconButton(
-          icon: LucideIcons.list,
+          icon: LucideIcons.clockPlus,
           onTap: () => Navigator.of(context).push(
             AppRoute(
               page: TimerSelectionScreen(),
@@ -111,6 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 shrinkWrap: true,
                 physics: const ClampingScrollPhysics(),
                 children: [
+                  const SizedBox(height: AppSpacing.lg),
                   TimerCountdownRing(),
                   const SizedBox(height: AppSpacing.xxl),
                   PhoneStatus(contacts: contacts, integrations: integrations),
@@ -118,6 +126,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   TimerControls(),
                   const SizedBox(height: AppSpacing.xl),
                   QuickContacts(),
+                  const SizedBox(height: AppSpacing.lg),
                 ],
               ),
             ),

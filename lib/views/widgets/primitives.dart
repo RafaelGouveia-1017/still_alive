@@ -245,7 +245,6 @@ class PrimaryButton extends StatelessWidget {
               padding: AppSpacing.primaryButton,
               alignment: Alignment.center,
               child: Row(
-                mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   if (icon != null) ...[
@@ -253,9 +252,12 @@ class PrimaryButton extends StatelessWidget {
                     if (label != null) const SizedBox(width: AppSpacing.sm),
                   ],
                   if (label != null)
-                    Text(
-                      label!,
-                      style: AppText.body(scheme).copyWith(color: fg),
+                    Flexible(
+                      child: Text(
+                        label!,
+                        style: AppText.body(scheme).copyWith(color: fg),
+                        softWrap: true,
+                      ),
                     ),
                 ],
               ),
@@ -365,7 +367,7 @@ class Pill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.ms,
-        vertical: AppSpacing.xxxs,
+        vertical: AppSpacing.xxs,
       ),
       decoration: BoxDecoration(
         color: backColor.withAlpha(38),
@@ -1149,9 +1151,11 @@ class _AppSearchBarState extends State<AppSearchBar> {
                   _focusNode.unfocus();
                 },
                 style: AppText.bodySm(scheme),
+                cursorColor: scheme.primary,
                 decoration: InputDecoration(
                   isDense: true,
                   filled: false,
+                  fillColor: Colors.transparent,
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.zero,
                   hintText: widget.hint,

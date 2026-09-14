@@ -169,7 +169,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
               return matchesSearch && matchesFilter;
             }).toList();
 
-            return _Group(group.day, items);
+            return _Group(group.day, items.reversed.toList());
           })
           .where((group) => group.items.isNotEmpty)
           .toList();
@@ -236,7 +236,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             builder: (context) {
                               DateTime date = DateTime.parse(g.day);
                               return SectionTitle(
-                                '${local.translate("history_logs.sections.months.${date.month}")} ${date.day}',
+                                '${local.translate("history_logs.sections.months.${date.month - 1}")} ${date.day}',
                               );
                             },
                           ),
@@ -253,7 +253,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                       showBlurredBottomSheet(
                                         context: context,
                                         scheme: scheme,
-                                        child: g.items[i].toTable(context),
+                                        child: SingleChildScrollView(
+                                          child: g.items[i].toTable(context),
+                                        ),
                                       );
                                     },
                                     child: AppRow(
