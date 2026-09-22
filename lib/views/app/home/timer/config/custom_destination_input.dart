@@ -162,7 +162,9 @@ class _CustomDestinationInputState extends State<CustomDestinationInput> {
                   '${local.translate("timer_configuration.custom.subtitle.1")}',
           },
           subtitle: _getSubtitle(),
-          icon: LucideIcons.user,
+          icon: (_sms.value.length + _email.value.length != 0)
+              ? LucideIcons.user
+              : LucideIcons.userX,
           iconColor: scheme.secondary,
           trailing: Icon(
             LucideIcons.chevronRight,

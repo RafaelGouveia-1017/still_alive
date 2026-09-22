@@ -20,13 +20,38 @@ pub struct TimerConfig {
     /// Stored password hash used to verify protected operations.
     pub password_hash: Option<String>,
 
-    /// Whether location sharing is enabled for this timer.
+    /// Whether the timer should obtain the device's location when an emergency
+    /// is triggered.
+    ///
+    /// When this is `true` and [routeSharingEnabled] is `false`, the application
+    /// obtains the device's current location at emergency time and shares that
+    /// single location.
+    ///
+    /// When [routeSharingEnabled] is `true`, location collection is implicitly
+    /// enabled and the application records a GPS route throughout the active
+    /// timer run instead of obtaining only a single location at emergency time.
     pub location_sharing_enabled: bool,
 
-    /// Whether route sharing is enabled for this timer.
+    /// Whether the timer should record and share a complete GPS route.
+    ///
+    /// When this is `true`, location collection is implicitly enabled. The
+    /// [locationCollectionIntervalSecs] value determines the minimum interval
+    /// between persisted GPS route points.
+    ///
+    /// When this is `false` but [locationSharingEnabled] is `true`, no continuous
+    /// route is recorded. Instead, the application's current location is obtained
+    /// when an emergency is triggered and that single location is shared.
+    ///
+    /// When both [locationSharingEnabled] and [routeSharingEnabled] are `false`,
+    /// no location is collected or shared.
     pub route_sharing_enabled: bool,
 
-    /// Optional interval, in seconds, at which location data should be collected.
+    /// The minimum number of seconds between persisted GPS route points.
+    ///
+    /// This value is only used when [routeSharingEnabled] is `true`.
+    ///
+    /// When route sharing is disabled, this value has no effect because the
+    /// application does not continuously record the device's location.
     pub location_collection_interval_secs: Option<i64>,
 
     /// Whether audio recording is enabled for this timer.

@@ -5,6 +5,7 @@ import 'package:still_alive/main.dart';
 import 'package:still_alive/services/timer_service.dart';
 import 'package:still_alive/src/rust/api/data/db.dart';
 import 'package:still_alive/src/rust/api/timer/config.dart';
+import 'package:still_alive/src/rust/api/timer/state.dart';
 
 import 'timer/config/timer_config.dart';
 import '../../../data/all.dart';
@@ -170,7 +171,9 @@ class _TimerSelectionScreenState extends State<TimerSelectionScreen>
     AppLocalizations local = AppLocalizations.of(context)!;
 
     List<_TimerConfigData> filteredTimers = [];
-    bool hasTimerActive = TimerService.instance.hasActiveTimer;
+
+    final state = TimerService.instance.timerRunCurrentState;
+    bool active = (state == TimerState.running || state == TimerState.paused);
 
     if (!_isLoading) {
       for (var timer in _timerList) {
@@ -284,7 +287,7 @@ class _TimerSelectionScreenState extends State<TimerSelectionScreen>
                   for (var timer in filteredTimers)
                     timer.buildExpandableCardRow(
                       context,
-                      hasTimerActive,
+                      active,
                       startLoading: () => setState(() => _isLoading = true),
                       endLoading: () => setState(() => _isLoading = false),
                     ),

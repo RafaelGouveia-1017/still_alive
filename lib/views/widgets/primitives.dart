@@ -27,14 +27,10 @@ import '../../data/all.dart';
 /// )
 /// ```
 class ScreenBase extends StatefulWidget {
-  const ScreenBase({
-    super.key,
-    required this.child,
-    this.bottomNavDestination = '',
-    this.header,
-  });
+  const ScreenBase({super.key, required this.child, this.noSpacing = false, this.bottomNavDestination = '', this.header});
 
   final Widget child;
+  final bool noSpacing;
   final String bottomNavDestination;
   final AppHeader? header;
 
@@ -55,29 +51,20 @@ class _ScreenBaseState extends State<ScreenBase> {
       extendBodyBehindAppBar: true,
       body: SafeArea(
         child: (widget.bottomNavDestination == '' && widget.header == null)
-            ? Padding(padding: AppSpacing.screen, child: widget.child)
+            ? Padding(padding: (widget.noSpacing) ? EdgeInsets.zero : AppSpacing.screen, child: widget.child)
             : Column(
                 children: [
                   ?widget.header,
                   Expanded(
-                    child: Padding(
-                      padding: AppSpacing.screen,
-                      child: widget.child,
-                    ),
+                    child: Padding(padding: (widget.noSpacing) ? EdgeInsets.zero : AppSpacing.screen, child: widget.child),
                   ),
                   if (widget.bottomNavDestination != '' && !keyboardVisible)
                     Hero(
                       tag: 'nav',
                       curve: AppMotion.easeInOut,
-                      flightShuttleBuilder:
-                          (context, animation, direction, from, to) {
-                            return Material(
-                              type: MaterialType.transparency,
-                              child: direction == HeroFlightDirection.push
-                                  ? to.widget
-                                  : from.widget,
-                            );
-                          },
+                      flightShuttleBuilder: (context, animation, direction, from, to) {
+                        return Material(type: MaterialType.transparency, child: direction == HeroFlightDirection.push ? to.widget : from.widget);
+                      },
                       child: BottomNav(active: widget.bottomNavDestination),
                     ),
                 ],
@@ -174,14 +161,7 @@ enum ButtonColor {
 ///
 /// Must be used instead of raw [ElevatedButton] for consistency.
 class PrimaryButton extends StatelessWidget {
-  const PrimaryButton({
-    super.key,
-    this.label,
-    this.icon,
-    this.color = ButtonColor.primary,
-    this.width = double.infinity,
-    this.onPressed,
-  });
+  const PrimaryButton({super.key, this.label, this.icon, this.color = ButtonColor.primary, this.width = double.infinity, this.onPressed});
 
   final String? label;
   final IconData? icon;
@@ -224,10 +204,7 @@ class PrimaryButton extends StatelessWidget {
     }
 
     return DecoratedBox(
-      decoration: BoxDecoration(
-        borderRadius: AppRadius.button,
-        boxShadow: shadow,
-      ),
+      decoration: BoxDecoration(borderRadius: AppRadius.button, boxShadow: shadow),
       child: Material(
         color: Colors.transparent,
         borderRadius: AppRadius.button,
@@ -236,10 +213,7 @@ class PrimaryButton extends StatelessWidget {
           onTap: onPressed,
           borderRadius: AppRadius.button,
           child: Ink(
-            decoration: BoxDecoration(
-              color: bg,
-              borderRadius: AppRadius.button,
-            ),
+            decoration: BoxDecoration(color: bg, borderRadius: AppRadius.button),
             child: Container(
               width: width,
               padding: AppSpacing.primaryButton,
@@ -247,17 +221,10 @@ class PrimaryButton extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  if (icon != null) ...[
-                    Icon(icon, size: 18, color: fg),
-                    if (label != null) const SizedBox(width: AppSpacing.sm),
-                  ],
+                  if (icon != null) ...[Icon(icon, size: 18, color: fg), if (label != null) const SizedBox(width: AppSpacing.sm)],
                   if (label != null)
                     Flexible(
-                      child: Text(
-                        label!,
-                        style: AppText.body(scheme).copyWith(color: fg),
-                        softWrap: true,
-                      ),
+                      child: Text(label!, style: AppText.body(scheme).copyWith(color: fg), softWrap: true),
                     ),
                 ],
               ),
@@ -278,13 +245,7 @@ class PrimaryButton extends StatelessWidget {
 ///
 /// Unlike [InkWell], this widget does not display a Material ripple effect.
 class Pressable extends StatefulWidget {
-  const Pressable({
-    super.key,
-    required this.onTap,
-    required this.child,
-    this.borderRadius = AppRadius.card,
-    this.factory = NoSplash.splashFactory,
-  });
+  const Pressable({super.key, required this.onTap, required this.child, this.borderRadius = AppRadius.card, this.factory = NoSplash.splashFactory});
 
   final VoidCallback? onTap;
   final Widget child;
@@ -330,12 +291,7 @@ class _PressableState extends State<Pressable> {
           offset: _pressed ? const Offset(0, 0.015) : Offset.zero,
           duration: AppMotion.fastest,
           curve: Curves.easeOut,
-          child: AnimatedScale(
-            scale: _pressed ? 0.96 : 1.0,
-            duration: AppMotion.fastest,
-            curve: Curves.easeOut,
-            child: widget.child,
-          ),
+          child: AnimatedScale(scale: _pressed ? 0.96 : 1.0, duration: AppMotion.fastest, curve: Curves.easeOut, child: widget.child),
         ),
       ),
     );
@@ -351,12 +307,7 @@ class _PressableState extends State<Pressable> {
 ///
 /// All text is automatically transformed to uppercase for visual consistency.
 class Pill extends StatelessWidget {
-  const Pill({
-    super.key,
-    required this.label,
-    required this.backColor,
-    this.leading,
-  });
+  const Pill({super.key, required this.label, required this.backColor, this.leading});
 
   final String label;
   final Color backColor;
@@ -365,25 +316,13 @@ class Pill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.ms,
-        vertical: AppSpacing.xxs,
-      ),
-      decoration: BoxDecoration(
-        color: backColor.withAlpha(38),
-        borderRadius: AppRadius.chip,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.ms, vertical: AppSpacing.xxs),
+      decoration: BoxDecoration(color: backColor.withAlpha(38), borderRadius: AppRadius.chip),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (leading != null) ...[
-            leading!,
-            const SizedBox(width: AppSpacing.xs),
-          ],
-          Text(
-            label.toUpperCase(),
-            style: AppText.pillLabel.copyWith(color: backColor),
-          ),
+          if (leading != null) ...[leading!, const SizedBox(width: AppSpacing.xs)],
+          Text(label.toUpperCase(), style: AppText.pillLabel.copyWith(color: backColor)),
         ],
       ),
     );
@@ -439,17 +378,10 @@ class AppRow extends StatelessWidget {
             Container(
               width: 40,
               height: 40,
-              decoration: BoxDecoration(
-                color: iconBackground ?? scheme.surfaceContainerHigh,
-                borderRadius: BorderRadius.circular(AppRadius.md),
-              ),
+              decoration: BoxDecoration(color: iconBackground ?? scheme.surfaceContainerHigh, borderRadius: BorderRadius.circular(AppRadius.md)),
               child: Transform.rotate(
                 angle: iconRotateAngle,
-                child: Icon(
-                  icon,
-                  size: iconSize,
-                  color: iconColor ?? scheme.onSurface,
-                ),
+                child: Icon(icon, size: iconSize, color: iconColor ?? scheme.onSurface),
               ),
             ),
             const SizedBox(width: AppSpacing.md),
@@ -459,8 +391,7 @@ class AppRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(title, style: AppText.body(scheme)),
-                if (subtitle != null)
-                  Text(subtitle!, style: AppText.caption(scheme)),
+                if (subtitle != null) Text(subtitle!, style: AppText.caption(scheme)),
               ],
             ),
           ),
@@ -494,12 +425,7 @@ class SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     ColorScheme scheme = colorScheme ?? Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.only(
-        left: AppSpacing.xxs,
-        right: AppSpacing.xxs,
-        top: 0,
-        bottom: AppSpacing.sm,
-      ),
+      padding: const EdgeInsets.only(left: AppSpacing.xxs, right: AppSpacing.xxs, top: 0, bottom: AppSpacing.sm),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -522,12 +448,7 @@ class SectionTitle extends StatelessWidget {
 /// * Tap toggles state if [onChanged] is provided
 /// * Uses theme colors for active/inactive states
 class AppToggle extends StatelessWidget {
-  const AppToggle({
-    super.key,
-    required this.on,
-    this.onChanged,
-    this.colorScheme,
-  });
+  const AppToggle({super.key, required this.on, this.onChanged, this.colorScheme});
 
   final bool on;
   final ValueChanged<bool>? onChanged;
@@ -547,11 +468,7 @@ class AppToggle extends StatelessWidget {
         alignment: on ? Alignment.centerRight : Alignment.centerLeft,
         decoration: BoxDecoration(
           color: on ? scheme.tertiary : scheme.surfaceContainerHighest,
-          border: BoxBorder.all(
-            color: on ? scheme.tertiary : scheme.onSurfaceVariant,
-            width: 1.2,
-            style: BorderStyle.solid,
-          ),
+          border: BoxBorder.all(color: on ? scheme.tertiary : scheme.onSurfaceVariant, width: 1.2, style: BorderStyle.solid),
           borderRadius: AppRadius.chip,
         ),
         child: AnimatedScale(
@@ -561,10 +478,7 @@ class AppToggle extends StatelessWidget {
           child: Container(
             width: 20,
             height: 20,
-            decoration: BoxDecoration(
-              color: on ? scheme.onSurface : scheme.onSurfaceVariant,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: on ? scheme.onSurface : scheme.onSurfaceVariant, shape: BoxShape.circle),
           ),
         ),
       ),
@@ -616,13 +530,7 @@ class AppHeader extends StatelessWidget {
   final ColorScheme? colorScheme;
   final bool bottomLine;
 
-  static Widget flight(
-    BuildContext context,
-    Animation<double> animation,
-    HeroFlightDirection direction,
-    BuildContext from,
-    BuildContext to,
-  ) {
+  static Widget flight(BuildContext context, Animation<double> animation, HeroFlightDirection direction, BuildContext from, BuildContext to) {
     final fadeOut = CurvedAnimation(
       parent: animation,
       curve: const Interval(0.0, 0.4, curve: AppMotion.easeOut),
@@ -662,20 +570,13 @@ class AppHeader extends StatelessWidget {
     return Container(
       decoration: (bottomLine)
           ? BoxDecoration(
-              border: Border(
-                bottom: BorderSide(color: scheme.outlineVariant, width: 1),
-              ),
+              border: Border(bottom: BorderSide(color: scheme.outlineVariant, width: 1)),
             )
           : null,
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(
-              0,
-              AppSpacing.ms,
-              0,
-              AppSpacing.ms,
-            ),
+            padding: const EdgeInsets.fromLTRB(0, AppSpacing.ms, 0, AppSpacing.ms),
             child: Row(
               children: [
                 Padding(
@@ -685,9 +586,7 @@ class AppHeader extends StatelessWidget {
                     width: 45,
                     child: Hero(
                       tag: 'header-left',
-                      flightShuttleBuilder:
-                          (context, animation, direction, from, to) =>
-                              flight(context, animation, direction, from, to),
+                      flightShuttleBuilder: (context, animation, direction, from, to) => flight(context, animation, direction, from, to),
                       child: Material(
                         type: MaterialType.transparency,
                         child: left ?? ColoredBox(color: scheme.surface),
@@ -699,10 +598,7 @@ class AppHeader extends StatelessWidget {
                   child: LayoutBuilder(
                     builder: (context, constraints) {
                       final titlePainter = TextPainter(
-                        text: TextSpan(
-                          text: title,
-                          style: AppText.title(scheme),
-                        ),
+                        text: TextSpan(text: title, style: AppText.title(scheme)),
                         maxLines: 1,
                         textDirection: Directionality.of(context),
                       )..layout();
@@ -716,24 +612,14 @@ class AppHeader extends StatelessWidget {
                         children: [
                           Hero(
                             tag: 'header-title',
-                            flightShuttleBuilder:
-                                (context, animation, direction, from, to) =>
-                                    flight(
-                                      context,
-                                      animation,
-                                      direction,
-                                      from,
-                                      to,
-                                    ),
+                            flightShuttleBuilder: (context, animation, direction, from, to) => flight(context, animation, direction, from, to),
                             child: Material(
                               type: MaterialType.transparency,
                               child: Text(
                                 title,
                                 maxLines: 1,
                                 softWrap: false,
-                                overflow: (isOverflowing)
-                                    ? TextOverflow.ellipsis
-                                    : TextOverflow.visible,
+                                overflow: (isOverflowing) ? TextOverflow.ellipsis : TextOverflow.visible,
                                 style: AppText.title(scheme),
                                 textAlign: TextAlign.center,
                               ),
@@ -741,26 +627,12 @@ class AppHeader extends StatelessWidget {
                           ),
                           Hero(
                             tag: 'header-subtitle',
-                            flightShuttleBuilder:
-                                (context, animation, direction, from, to) =>
-                                    flight(
-                                      context,
-                                      animation,
-                                      direction,
-                                      from,
-                                      to,
-                                    ),
+                            flightShuttleBuilder: (context, animation, direction, from, to) => flight(context, animation, direction, from, to),
                             child: Material(
                               type: MaterialType.transparency,
                               child: subtitle == null
                                   ? const SizedBox(height: 0)
-                                  : Text(
-                                      subtitle!,
-                                      maxLines: 1,
-                                      softWrap: false,
-                                      overflow: TextOverflow.visible,
-                                      style: AppText.micro(scheme),
-                                    ),
+                                  : Text(subtitle!, maxLines: 1, softWrap: false, overflow: TextOverflow.visible, style: AppText.micro(scheme)),
                             ),
                           ),
                         ],
@@ -775,9 +647,7 @@ class AppHeader extends StatelessWidget {
                     height: 45,
                     child: Hero(
                       tag: 'header-right',
-                      flightShuttleBuilder:
-                          (context, animation, direction, from, to) =>
-                              flight(context, animation, direction, from, to),
+                      flightShuttleBuilder: (context, animation, direction, from, to) => flight(context, animation, direction, from, to),
                       child: Material(
                         type: MaterialType.transparency,
                         child: Align(
@@ -793,32 +663,18 @@ class AppHeader extends StatelessWidget {
           ),
           if (searchBar != null)
             Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.xxxl,
-                0,
-                AppSpacing.xxxl,
-                AppSpacing.ms,
-              ),
+              padding: const EdgeInsets.fromLTRB(AppSpacing.xxxl, 0, AppSpacing.xxxl, AppSpacing.ms),
               child: Hero(
                 tag: 'header-search',
-                flightShuttleBuilder:
-                    (context, animation, direction, from, to) =>
-                        flight(context, animation, direction, from, to),
-                child: Material(
-                  type: MaterialType.transparency,
-                  child: searchBar!,
-                ),
+                flightShuttleBuilder: (context, animation, direction, from, to) => flight(context, animation, direction, from, to),
+                child: Material(type: MaterialType.transparency, child: searchBar!),
               ),
             ),
           if (filterBar != null)
             Hero(
               tag: 'header-filter',
-              flightShuttleBuilder: (context, animation, direction, from, to) =>
-                  flight(context, animation, direction, from, to),
-              child: Material(
-                type: MaterialType.transparency,
-                child: filterBar!,
-              ),
+              flightShuttleBuilder: (context, animation, direction, from, to) => flight(context, animation, direction, from, to),
+              child: Material(type: MaterialType.transparency, child: filterBar!),
             ),
         ],
       ),
@@ -835,12 +691,7 @@ class AppHeader extends StatelessWidget {
 /// * Inactive dots remain small and subtle
 /// * Fully theme-aware
 class ProgressDots extends StatelessWidget {
-  const ProgressDots({
-    super.key,
-    required this.active,
-    this.count = 3,
-    this.colorScheme,
-  });
+  const ProgressDots({super.key, required this.active, this.count = 3, this.colorScheme});
 
   final int active;
   final int count;
@@ -857,10 +708,7 @@ class ProgressDots extends StatelessWidget {
           margin: const EdgeInsets.symmetric(horizontal: AppSpacing.xxxs),
           width: on ? 24 : 6,
           height: 4,
-          decoration: BoxDecoration(
-            color: on ? scheme.primary : scheme.surfaceContainerHighest,
-            borderRadius: AppRadius.chip,
-          ),
+          decoration: BoxDecoration(color: on ? scheme.primary : scheme.surfaceContainerHighest, borderRadius: AppRadius.chip),
         );
       }),
     );
@@ -881,14 +729,7 @@ class ProgressDots extends StatelessWidget {
 ///
 /// Does not include built-in ripple; uses GestureDetector for minimal UI.
 class CircleIconButton extends StatelessWidget {
-  const CircleIconButton({
-    super.key,
-    required this.icon,
-    this.onTap,
-    this.background,
-    this.foreground,
-    this.colorScheme,
-  });
+  const CircleIconButton({super.key, required this.icon, this.onTap, this.background, this.foreground, this.colorScheme});
 
   final IconData icon;
   final VoidCallback? onTap;
@@ -903,17 +744,12 @@ class CircleIconButton extends StatelessWidget {
     final container = Container(
       width: 45,
       height: 45,
-      decoration: BoxDecoration(
-        color: background ?? scheme.surfaceContainer,
-        shape: BoxShape.circle,
-      ),
+      decoration: BoxDecoration(color: background ?? scheme.surfaceContainer, shape: BoxShape.circle),
       alignment: Alignment.center,
       child: Icon(icon, size: 24, color: (foreground ?? scheme.onSurface)),
     );
 
-    return onTap == null
-        ? container
-        : Pressable(onTap: onTap, child: container);
+    return onTap == null ? container : Pressable(onTap: onTap, child: container);
   }
 }
 
@@ -979,16 +815,12 @@ Future<T?> showBlurredBottomSheet<T>({
               child: Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
-                  margin: EdgeInsets.symmetric(
-                    horizontal: marginHorizontal,
-                  ).add(EdgeInsetsGeometry.only(top: 110)),
+                  margin: EdgeInsets.symmetric(horizontal: marginHorizontal).add(EdgeInsetsGeometry.only(top: 110)),
                   child: Material(
                     color: scheme.surfaceContainerHigh,
                     elevation: 0,
                     shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(16),
-                      ),
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
                       side: BorderSide(color: Colors.transparent),
                     ),
                     child: Padding(padding: AppSpacing.card, child: child),
@@ -1045,10 +877,7 @@ void showToast({
     child: Container(
       width: double.infinity,
       padding: EdgeInsets.all(AppSpacing.lg),
-      decoration: BoxDecoration(
-        color: scheme.surfaceContainerHighest,
-        borderRadius: AppRadius.card,
-      ),
+      decoration: BoxDecoration(color: scheme.surfaceContainerHighest, borderRadius: AppRadius.card),
       child: toast,
     ),
     toastDuration: Duration(seconds: secs),
@@ -1070,11 +899,7 @@ void showGenericErrorMessage(BuildContext context, double? bottom) {
   AppLocalizations local = AppLocalizations.of(context)!;
   showToast(
     scheme: scheme,
-    toast: Text(
-      local.translate("generic_error"),
-      style: AppText.bodySm(scheme),
-      textAlign: TextAlign.center,
-    ),
+    toast: Text(local.translate("generic_error"), style: AppText.bodySm(scheme), textAlign: TextAlign.center),
     gravity: ToastGravity.BOTTOM,
     position: (context, child, gravity) {
       return Positioned(bottom: bottom, left: 100, right: 100, child: child);
@@ -1159,15 +984,9 @@ class _AppSearchBarState extends State<AppSearchBar> {
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.zero,
                   hintText: widget.hint,
-                  hintStyle: AppText.bodySm(
-                    scheme,
-                  ).copyWith(color: scheme.onSurfaceVariant),
+                  hintStyle: AppText.bodySm(scheme).copyWith(color: scheme.onSurfaceVariant),
                 ),
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(
-                    RegExp(r'[\p{L}\p{N} ]', unicode: true),
-                  ),
-                ],
+                inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[\p{L}\p{N} ]', unicode: true))],
               ),
             ),
           ],
@@ -1183,30 +1002,15 @@ class _AppSearchBarState extends State<AppSearchBar> {
 /// whether the filter is visually highlighted, and an optional [onPressed]
 /// callback that is invoked when the filter is selected.
 class AppFilterBarOption {
-  const AppFilterBarOption({
-    required this.id,
-    required this.label,
-    required this.active,
-    this.onPressed,
-  });
+  const AppFilterBarOption({required this.id, required this.label, required this.active, this.onPressed});
 
   final String id;
   final String label;
   final bool active;
   final VoidCallback? onPressed;
 
-  AppFilterBarOption copyWith({
-    String? id,
-    String? label,
-    bool? active,
-    VoidCallback? onPressed,
-  }) {
-    return AppFilterBarOption(
-      id: id ?? this.id,
-      label: label ?? this.label,
-      active: active ?? this.active,
-      onPressed: onPressed ?? this.onPressed,
-    );
+  AppFilterBarOption copyWith({String? id, String? label, bool? active, VoidCallback? onPressed}) {
+    return AppFilterBarOption(id: id ?? this.id, label: label ?? this.label, active: active ?? this.active, onPressed: onPressed ?? this.onPressed);
   }
 }
 
@@ -1218,11 +1022,7 @@ class AppFilterBarOption {
 /// When [searchBarAbove] is `true`, the filter bar is rendered immediately
 /// below an external search bar. Otherwise, additional top spacing is applied.
 class AppFilterBar extends StatefulWidget {
-  const AppFilterBar({
-    super.key,
-    required this.filters,
-    this.searchBarAbove = true,
-  });
+  const AppFilterBar({super.key, required this.filters, this.searchBarAbove = true});
 
   final List<AppFilterBarOption> filters;
   final bool searchBarAbove;
@@ -1246,12 +1046,7 @@ class _AppFilterBarState extends State<AppFilterBar> {
     ColorScheme scheme = Theme.of(context).colorScheme;
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(
-        0,
-        (widget.searchBarAbove) ? 0 : AppSpacing.md,
-        0,
-        AppSpacing.md,
-      ),
+      padding: EdgeInsets.fromLTRB(0, (widget.searchBarAbove) ? 0 : AppSpacing.md, 0, AppSpacing.md),
       child: SizedBox(
         height: 32,
         child: Center(
@@ -1271,23 +1066,12 @@ class _AppFilterBarState extends State<AppFilterBar> {
               return Pressable(
                 onTap: filter.onPressed,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.md,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
                   alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: (filter.active)
-                        ? scheme.primary
-                        : scheme.surfaceContainerHigh,
-                    borderRadius: AppRadius.chip,
-                  ),
+                  decoration: BoxDecoration(color: (filter.active) ? scheme.primary : scheme.surfaceContainerHigh, borderRadius: AppRadius.chip),
                   child: Text(
                     filter.label,
-                    style: AppText.caption(scheme).copyWith(
-                      color: (filter.active)
-                          ? scheme.onSurface
-                          : scheme.onSurfaceVariant,
-                    ),
+                    style: AppText.caption(scheme).copyWith(color: (filter.active) ? scheme.onSurface : scheme.onSurfaceVariant),
                   ),
                 ),
               );
@@ -1311,11 +1095,7 @@ class _AppFilterBarState extends State<AppFilterBar> {
 /// Expandable sections are provided through [AppExpandableItem]
 /// implementations.
 class AppExpandableGroup extends StatefulWidget {
-  const AppExpandableGroup({
-    super.key,
-    required this.children,
-    this.spacing = AppSpacing.md,
-  });
+  const AppExpandableGroup({super.key, required this.children, this.spacing = AppSpacing.md});
 
   final List<AppExpandableItem> children;
   final double spacing;
@@ -1342,10 +1122,7 @@ class _AppExpandableGroupState extends State<AppExpandableGroup> {
     return Column(
       children: [
         for (int i = 0; i < widget.children.length; i++) ...[
-          widget.children[i].build(
-            expanded: expandedIndex == i,
-            onPressed: () => _toggle(i),
-          ),
+          widget.children[i].build(expanded: expandedIndex == i, onPressed: () => _toggle(i)),
           if (i != widget.children.length - 1) SizedBox(height: widget.spacing),
         ],
       ],
@@ -1519,8 +1296,7 @@ class _AppExpandableCardView extends StatefulWidget {
 ///
 /// The animation direction is updated whenever the parent's [expanded]
 /// value changes.
-class _AppExpandableCardViewState extends State<_AppExpandableCardView>
-    with SingleTickerProviderStateMixin {
+class _AppExpandableCardViewState extends State<_AppExpandableCardView> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _size;
   late final Animation<double> _fade;
@@ -1529,11 +1305,7 @@ class _AppExpandableCardViewState extends State<_AppExpandableCardView>
   void initState() {
     super.initState();
 
-    _controller = AnimationController(
-      vsync: this,
-      duration: AppMotion.faster,
-      value: widget.expanded ? 1 : 0,
-    );
+    _controller = AnimationController(vsync: this, duration: AppMotion.faster, value: widget.expanded ? 1 : 0);
 
     _size = CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic);
 
@@ -1568,17 +1340,9 @@ class _AppExpandableCardViewState extends State<_AppExpandableCardView>
             height: 44,
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
-              color:
-                  widget.iconBackground ??
-                  ((widget.iconGradient == null)
-                      ? scheme.surfaceContainerHigh
-                      : null),
+              color: widget.iconBackground ?? ((widget.iconGradient == null) ? scheme.surfaceContainerHigh : null),
               gradient: (widget.iconGradient != null)
-                  ? LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: widget.iconGradient!,
-                    )
+                  ? LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: widget.iconGradient!)
                   : null,
               borderRadius: BorderRadius.circular(AppRadius.lg),
             ),
@@ -1589,11 +1353,7 @@ class _AppExpandableCardViewState extends State<_AppExpandableCardView>
                   ? Icon(
                       widget.icon,
                       size: widget.iconSize,
-                      color:
-                          widget.iconColor ??
-                          ((widget.iconGradient == null)
-                              ? scheme.onSurface
-                              : Colors.white),
+                      color: widget.iconColor ?? ((widget.iconGradient == null) ? scheme.onSurface : Colors.white),
                     )
                   : widget.iconWidget,
             ),
@@ -1619,19 +1379,8 @@ class _AppExpandableCardViewState extends State<_AppExpandableCardView>
                     if (widget.iconHeroID != null) ...[
                       Hero(
                         tag: widget.iconHeroID!,
-                        flightShuttleBuilder:
-                            (context, animation, direction, from, to) =>
-                                AppHeader.flight(
-                                  context,
-                                  animation,
-                                  direction,
-                                  from,
-                                  to,
-                                ),
-                        child: Material(
-                          type: MaterialType.transparency,
-                          child: iconContainer,
-                        ),
+                        flightShuttleBuilder: (context, animation, direction, from, to) => AppHeader.flight(context, animation, direction, from, to),
+                        child: Material(type: MaterialType.transparency, child: iconContainer),
                       ),
                     ] else
                       iconContainer,
@@ -1643,11 +1392,7 @@ class _AppExpandableCardViewState extends State<_AppExpandableCardView>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(widget.title, style: AppText.body(scheme)),
-                        if (widget.subtitle != null)
-                          Text(
-                            widget.subtitle!,
-                            style: AppText.caption(scheme),
-                          ),
+                        if (widget.subtitle != null) Text(widget.subtitle!, style: AppText.caption(scheme)),
                       ],
                     ),
                   ),
@@ -1679,15 +1424,111 @@ class _AppExpandableCardViewState extends State<_AppExpandableCardView>
               child: FadeTransition(
                 opacity: _fade,
                 child: Padding(
-                  padding: EdgeInsets.only(
-                    bottom: AppSpacing.card.vertical / 2,
-                  ),
+                  padding: EdgeInsets.only(bottom: AppSpacing.card.vertical / 2),
                   child: widget.child,
                 ),
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// A compact action tile with a translucent, blurred background.
+///
+/// [BlurActionTile] displays an [icon] and/or [label] centered within a
+/// rounded container. The container uses [BackdropFilter] to create a
+/// frosted-glass effect over the content behind it.
+///
+/// The tile's appearance is controlled through [background], [border], and
+/// [foreground] colors. When [onTap] is provided, the tile responds to user
+/// interaction; otherwise, the callback is passed through as `null`.
+///
+/// Example:
+/// ```dart
+/// BlurActionTile(
+///   icon: Icons.add,
+///   label: 'Add item',
+///   background: Colors.white,
+///   border: Colors.white,
+///   foreground: Colors.black,
+///   onTap: _handleAddItem,
+/// )
+/// ```
+class BlurActionTile extends StatelessWidget {
+  /// Creates a [BlurActionTile].
+  const BlurActionTile({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.background,
+    required this.border,
+    required this.foreground,
+    this.onTap,
+  });
+
+  /// The icon displayed at the start of the tile's content.
+  final IconData? icon;
+
+  /// The text displayed next to [icon].
+  final String? label;
+
+  /// The base color of the tile's translucent background.
+  ///
+  /// The color is rendered with reduced opacity to preserve the frosted-glass
+  /// appearance.
+  final Color background;
+
+  /// The color used for the tile's border.
+  ///
+  /// The border is rendered with reduced opacity.
+  final Color border;
+
+  /// The color applied to both the icon and label.
+  final Color foreground;
+
+  /// Called when the tile is tapped.
+  ///
+  /// If `null`, the tile does not have a tap callback.
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    ColorScheme scheme = Theme.of(context).colorScheme;
+
+    return Pressable(
+      onTap: onTap,
+      child: ClipRRect(
+        borderRadius: AppRadius.card,
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
+            decoration: BoxDecoration(
+              color: background.withAlpha(160),
+              borderRadius: AppRadius.card,
+              border: Border.all(color: border.withAlpha(100)),
+            ),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+              alignment: Alignment.center,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (icon != null) Icon(icon, size: 16, color: foreground),
+                  if (label != null) ...[
+                    const SizedBox(width: AppSpacing.sm),
+                    Flexible(
+                      child: Text(label!, style: AppText.bodySm(scheme).copyWith(color: foreground), softWrap: true),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

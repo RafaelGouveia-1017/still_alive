@@ -146,8 +146,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
           .map((f) => f.id)
           .toSet();
 
-      bool is24HourFormat = MediaQuery.of(context).alwaysUse24HourFormat;
-
       groupsFiltered = _groups
           .map((group) {
             List<HistoryEvent> items = group.items.where((event) {

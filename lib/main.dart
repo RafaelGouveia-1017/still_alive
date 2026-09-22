@@ -51,10 +51,7 @@ void main() async {
       AppLogger.log.info("Connected Rust logger to AppLogger.");
 
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
-      await SystemChrome.setPreferredOrientations([
-        DeviceOrientation.portraitUp,
-        DeviceOrientation.portraitDown,
-      ]);
+      await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
       AppLogger.log.info("SystemChrome setup finish.");
 
       FlutterError.onError = (FlutterErrorDetails details) {
@@ -70,9 +67,7 @@ void main() async {
 
       Directory documentDirectory = await getApplicationDocumentsDirectory();
       try {
-        await initDatabase(
-          path: p.join(documentDirectory.path, await getDatabaseName()),
-        );
+        await initDatabase(path: p.join(documentDirectory.path, await getDatabaseName()));
       } catch (e, st) {
         AppLogger.log.severe('Database Error', e, st);
         return;
@@ -82,9 +77,7 @@ void main() async {
       await TimerService.initialize();
       AppLogger.log.info("TimerService initialized.");
 
-      AppMethodChannel.instance.setMethodCallHandler(
-        TimerService.instance.handleNativeCall,
-      );
+      AppMethodChannel.instance.setMethodCallHandler(TimerService.instance.handleNativeCall);
       AppLogger.log.info("Native handler registered.");
 
       String label = await CustomTheme.load();
@@ -184,9 +177,7 @@ class MyAppState extends State<MyApp> {
     _themeData = widget.theme;
     _currentTheme = widget.currentTheme;
 
-    _lifecycleListener = AppLifecycleListener(
-      onResume: () => PermissionManager.instance.verifyPermissions(),
-    );
+    _lifecycleListener = AppLifecycleListener(onResume: () => PermissionManager.instance.verifyPermissions());
   }
 
   @override
@@ -213,9 +204,7 @@ class MyAppState extends State<MyApp> {
   /// Intended to evaluate onboarding, permissions, and application
   /// state before routing the user to the appropriate destination.
   Future<Widget> getLandingPage() async {
-    String tutorialMode = await selectOne(
-      sql: "SELECT value FROM settings WHERE key = 'tutorial'",
-    );
+    String tutorialMode = await selectOne(sql: "SELECT value FROM settings WHERE key = 'tutorial'");
 
     if (tutorialMode == 'true') {
       return OnboardingScreen(startPage: 0);

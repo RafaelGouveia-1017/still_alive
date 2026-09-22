@@ -75,7 +75,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.13.0';
 
   @override
-  int get rustContentHash => -979948008;
+  int get rustContentHash => -1998313609;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -319,10 +319,6 @@ abstract class RustLibApi extends BaseApi {
 
   Stream<RustLogRecord> crateApiDataLoggingCreateRustLogStream();
 
-  Future<void> crateApiTimerActiveTimerCreateTimer({
-    required TimerConfig config,
-  });
-
   Future<void> crateApiDataDbDatabasePathStr();
 
   Future<void> crateApiIntegrationsPublicTraitsDeleteIntegrationAccount({
@@ -369,6 +365,11 @@ abstract class RustLibApi extends BaseApi {
   crateApiIntegrationsPublicTraitsLoadAllIntegrations();
 
   Future<void> crateApiDataDbOpenDatabase();
+
+  Future<void> crateApiTimerActiveTimerPersistTimer({
+    String? key,
+    required TimerConfig config,
+  });
 
   Future<void> crateApiDataDbPurgeDatabase();
 
@@ -2152,39 +2153,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<void> crateApiTimerActiveTimerCreateTimer({
-    required TimerConfig config,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
-            config,
-            serializer,
-          );
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 48,
-            port: port_,
-          );
-        },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_unit,
-          decodeErrorData: sse_decode_AnyhowException,
-        ),
-        constMeta: kCrateApiTimerActiveTimerCreateTimerConstMeta,
-        argValues: [config],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiTimerActiveTimerCreateTimerConstMeta =>
-      const TaskConstMeta(debugName: "create_timer", argNames: ["config"]);
-
-  @override
   Future<void> crateApiDataDbDatabasePathStr() {
     return handler.executeNormal(
       NormalTask(
@@ -2193,7 +2161,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 49,
+            funcId: 48,
             port: port_,
           );
         },
@@ -2225,7 +2193,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 50,
+            funcId: 49,
             port: port_,
           );
         },
@@ -2263,7 +2231,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 51,
+            funcId: 50,
             port: port_,
           );
         },
@@ -2295,7 +2263,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 52,
+            funcId: 51,
             port: port_,
           );
         },
@@ -2323,7 +2291,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 53,
+            funcId: 52,
             port: port_,
           );
         },
@@ -2351,7 +2319,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 54,
+            funcId: 53,
             port: port_,
           );
         },
@@ -2379,7 +2347,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 55,
+            funcId: 54,
             port: port_,
           );
         },
@@ -2407,7 +2375,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 56,
+            funcId: 55,
             port: port_,
           );
         },
@@ -2434,7 +2402,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 57,
+            funcId: 56,
             port: port_,
           );
         },
@@ -2461,7 +2429,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 58,
+            funcId: 57,
             port: port_,
           );
         },
@@ -2489,7 +2457,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 59,
+            funcId: 58,
             port: port_,
           );
         },
@@ -2521,7 +2489,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 60,
+            funcId: 59,
             port: port_,
           );
         },
@@ -2551,7 +2519,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 61,
+            funcId: 60,
             port: port_,
           );
         },
@@ -2578,7 +2546,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 62,
+            funcId: 61,
             port: port_,
           );
         },
@@ -2606,7 +2574,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 63,
+            funcId: 62,
             port: port_,
           );
         },
@@ -2633,7 +2601,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 64,
+            funcId: 63,
             port: port_,
           );
         },
@@ -2661,7 +2629,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 65,
+            funcId: 64,
             port: port_,
           );
         },
@@ -2690,7 +2658,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 66,
+            funcId: 65,
             port: port_,
           );
         },
@@ -2707,6 +2675,44 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kCrateApiDataDbOpenDatabaseConstMeta =>
       const TaskConstMeta(debugName: "open_database", argNames: []);
+
+  @override
+  Future<void> crateApiTimerActiveTimerPersistTimer({
+    String? key,
+    required TimerConfig config,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_opt_String(key, serializer);
+          sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTimerConfig(
+            config,
+            serializer,
+          );
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 66,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: sse_decode_AnyhowException,
+        ),
+        constMeta: kCrateApiTimerActiveTimerPersistTimerConstMeta,
+        argValues: [key, config],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiTimerActiveTimerPersistTimerConstMeta =>
+      const TaskConstMeta(
+        debugName: "persist_timer",
+        argNames: ["key", "config"],
+      );
 
   @override
   Future<void> crateApiDataDbPurgeDatabase() {

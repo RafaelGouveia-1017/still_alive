@@ -133,11 +133,17 @@ class _CountdownRingState extends State<CountdownRing>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  widget.label.toUpperCase(),
-                  style: AppText.sectionLabel(
-                    scheme,
-                  ).copyWith(letterSpacing: 2),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width - 150,
+                  child: Text(
+                    widget.label.toUpperCase(),
+                    style: AppText.sectionLabel(
+                      scheme,
+                    ).copyWith(letterSpacing: 2),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                  ),
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 Text(

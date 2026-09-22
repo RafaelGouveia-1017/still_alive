@@ -83,16 +83,16 @@ class _HomeScreenState extends State<HomeScreen> {
         left: ListenableBuilder(
           listenable: TimerService.instance,
           builder: (context, child) {
-            final timer = TimerService.instance.activeTimer;
+            final state = TimerService.instance.timerRunCurrentState;
 
             return CircleIconButton(
-              icon: switch (timer.run.state) {
-                TimerState.running => LucideIcons.shield,
+              icon: switch (state) {
+                TimerState.running || TimerState.paused => LucideIcons.shield,
                 TimerState.warning => LucideIcons.shieldAlert,
                 TimerState.expired => LucideIcons.shieldX,
                 _ => LucideIcons.shieldOff,
               },
-              foreground: switch (timer.run.state) {
+              foreground: switch (state) {
                 TimerState.warning || TimerState.expired => scheme.error,
                 _ => scheme.tertiary,
               },

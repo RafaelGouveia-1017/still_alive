@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
@@ -409,55 +410,72 @@ class _SettingsScreenState extends State<SettingsScreen> with RouteAware {
                   },
                 ),
 
-                GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () => launchUrl(
-                    Uri.parse("https://buymeacoffee.com/rafaelgouveia"),
-                  ),
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            FutureBuilder<PackageInfo>(
-                              future: PackageInfo.fromPlatform(),
-                              builder: (context, snapshot) {
-                                if (snapshot.data == null) {
-                                  return Text(
-                                    local.translate('app_name'),
-                                    style: AppText.micro(scheme),
-                                  );
-                                } else {
-                                  return Text(
-                                    '${local.translate('app_name')} v${snapshot.data!.version} • Build ${snapshot.data!.buildNumber}',
-                                    style: AppText.micro(scheme),
-                                  );
-                                }
-                              },
-                            ),
-                          ],
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    CircleIconButton(
+                      icon: FontAwesomeIcons.github.data,
+                      onTap: () => launchUrl(
+                        Uri.parse(
+                          "https://github.com/RafaelGouveia-1017/still_alive",
                         ),
-                        const SizedBox(height: AppSpacing.sm),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              local.translate("settings.footer"),
-                              style: AppText.micro(scheme),
-                            ),
-                            const SizedBox(width: AppSpacing.xxs),
-                            Image.asset(
-                              "lib/assets/bmc-logo.png",
-                              height: 20,
-                              filterQuality: FilterQuality.high,
-                            ),
-                          ],
-                        ),
-                      ],
+                        mode: LaunchMode.externalApplication,
+                      ),
                     ),
-                  ),
+                    Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              FutureBuilder<PackageInfo>(
+                                future: PackageInfo.fromPlatform(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.data == null) {
+                                    return Text(
+                                      local.translate('app_name'),
+                                      style: AppText.micro(scheme),
+                                    );
+                                  } else {
+                                    return Text(
+                                      '${local.translate('app_name')} '
+                                      'v${snapshot.data!.version} '
+                                      '• Build ${snapshot.data!.buildNumber}',
+                                      style: AppText.micro(scheme),
+                                    );
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: AppSpacing.sm),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                local.translate("settings.footer"),
+                                style: AppText.micro(scheme),
+                              ),
+                              const SizedBox(width: AppSpacing.xxs),
+                              Image.asset(
+                                "lib/assets/bmc-logo.png",
+                                height: 20,
+                                filterQuality: FilterQuality.high,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    CircleIconButton(
+                      icon: FontAwesomeIcons.koFi.data,
+                      onTap: () => launchUrl(
+                        Uri.parse("https://ko-fi.com/rafaelgouveia1017"),
+                        mode: LaunchMode.externalApplication,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

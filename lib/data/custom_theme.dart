@@ -77,6 +77,8 @@ enum CustomTheme {
         return CustomTheme.dracula;
       case "Alucard":
         return CustomTheme.alucard;
+      case "Colbalt2":
+        return CustomTheme.colbalt2;
       case "Solarized Dark":
         return CustomTheme.solarizedDark;
       case "Solarized Light":

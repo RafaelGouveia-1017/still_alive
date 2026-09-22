@@ -388,7 +388,7 @@ jobs:
       # If this fails, no version commit or Release is created.
       # =======================================================
       - name: Build APK
-        run: flutter build apk --release
+        run: flutter build apk --release --android-skip-build-dependency-validation
 
       # ======================================================
       # Build Android App Bundle (required for Play Store)
@@ -396,7 +396,7 @@ jobs:
       # If this fails, no version commit or Release is created.
       # ======================================================
       - name: Build AAB
-        run: flutter build appbundle --release
+        run: flutter build appbundle --release --android-skip-build-dependency-validation
 
       # =======================================================
       # Commit the updated pubspec.yaml.

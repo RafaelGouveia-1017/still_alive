@@ -22,6 +22,16 @@
       "completed": ["Protocolo de emergência para", "foi concluído."]
     }
   },
+  "time_map_viewer": {
+    "title": "Mapa",
+    "no_route": "Nenhum trajeto dísponível...",
+    "no_internet": "A aguardar uma ligação com a internet...",
+    "location_error": "Ativa os serviços de Localização!!!",
+    "route_notif": [
+      "A gravar a teu trajeto",
+      "A tua localização está a ser registada.\n(entre o intervalo configurado)"
+    ]
+  },
   "welcome": {
     "title": "Bem-vindo",
     "tagline": "O teu guardião silencioso. Ativa um temporizador de segurança — iremos alertar os teus contactos se não deres check-in.",
@@ -98,6 +108,7 @@
     "inactive": "Monitorização Inativa",
     "active": "Monitorização Ativa",
     "tap_to_configure": "Tocar para configurar",
+    "tap_for_details": "Tocar para detalhes",
     "online": "Online",
     "offline": "Offline",
     "contacts": "contactos",
@@ -235,33 +246,44 @@
       "no_destinations": "Nenhum destino disponível.\nConsulte a página de integrações."
     },
     "create": "Criar temporizador de segurança",
-    "edit": "Guardar temporizador de segurança",
+    "edit": "Guardar temporizador\nde segurança",
     "delete": [
       "Tens acerteza? O teu temporizador será PERMANENTEMENTE apagado.",
       "Apagar Temporizador",
       "apagado com sucesso!"
+    ],
+    "unsaved": [
+      "Tens alterações não guardadas.\nTens a certeza que queres sair?",
+      "Descartar"
     ]
   },
   "active_monitoring": {
     "title": "Monitorização",
-    "status": "Em direto",
-    "description": "Monitorização de segurança ativa",
-    "labels": {
-      "time_remaining": "Tempo restante",
-      "tap_to_configure": "Tocar para configurar",
+    "location": {
       "location_tracking": "Localização",
-      "live": "Em direto"
+      "live": "Direto",
+      "updated": "Atualizado à",
+      "ago": " • ±",
+      "interval": "de intervalo"
     },
-    "location": "Atualizado há 12s · precisão ±5m",
-    "started": "Iniciado às 9:18",
-    "trigger_time": "Ativará alerta às 9:48",
+    "time": {
+      "started": "Foi iniciado às",
+      "trigger_time": "Será acionado às"
+    },
+    "destinations": {
+      "sending_to": "Enviando para...",
+      "contact": ["contacto", "contactos"],
+      "custom": ["personalizado", "personalizados"],
+      "integrations": ["integração", "integrações"]
+    },
+    "message": "Mensagem personalizada:",
     "actions": {
       "pause": "Pausar",
       "cancel": "Cancelar"
     },
     "pin_requirement": {
-      "on": "Cancelar requer PIN",
-      "off": "Cancelar NÃO requer PIN"
+      "on": "Requer PIN",
+      "off": "NÃO requer PIN"
     }
   },
   "pre_alert_warning": {
@@ -279,7 +301,7 @@
   },
   "emergency_active": {
     "title": "EMERGÊNCIA ATIVA",
-    "status": "Em direto",
+    "status": "Direto",
     "alert": "Alerta enviado",
     "timer": "02:14 decorrido · gravação de áudio automática",
     "location": "Localização partilhada",

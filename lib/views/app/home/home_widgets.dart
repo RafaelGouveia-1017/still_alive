@@ -4,6 +4,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:still_alive/services/timer_service.dart';
 import 'package:still_alive/src/rust/api/timer/active_timer.dart';
 import 'package:still_alive/src/rust/api/timer/state.dart';
+import 'package:still_alive/views/app/home/timer/monitoring/active_monitoring.dart';
 
 import 'timer/config/timer_config.dart';
 import '../../../main.dart';
@@ -55,7 +56,7 @@ class _TimerCountdownRingState extends State<TimerCountdownRing>
 
   void _configPeriodicTimer() async {
     setState(() {});
-    if (TimerService.instance.hasActiveTimer) {
+    if (TimerService.instance.timerRunCurrentState == TimerState.running) {
       _uiTimer = Timer.periodic(const Duration(seconds: 1), (_) {
         if (mounted) {
           setState(() {});
@@ -111,8 +112,8 @@ class _TimerCountdownRingState extends State<TimerCountdownRing>
 
   bool _expirationScheduled = false;
 
-  void _checkTimerExpiration() {
-    if (!TimerService.instance.hasActiveTimer || _expirationScheduled) {
+  void _checkTimerExpiration(bool timerIsRunning) {
+    if (!timerIsRunning || _expirationScheduled) {
       return;
     }
 
@@ -136,11 +137,13 @@ class _TimerCountdownRingState extends State<TimerCountdownRing>
     AppLocalizations local = AppLocalizations.of(context)!;
 
     ActiveTimer timer = TimerService.instance.activeTimer;
-    bool timerIsActive = TimerService.instance.hasActiveTimer;
+    TimerState state = TimerService.instance.timerRunCurrentState;
+    bool timerIsRunning = (state == TimerState.running);
+    bool timerIsPaused = (state == TimerState.paused);
 
     double progress = 1.0;
     Duration remaining = Duration(seconds: timer.config.durationSecs);
-    if (timerIsActive) {
+    if (timerIsRunning) {
       final now = DateTime.now().toUtc().millisecondsSinceEpoch;
       remaining = timer.remaining();
 
@@ -148,7 +151,7 @@ class _TimerCountdownRingState extends State<TimerCountdownRing>
           ((now - timer.run.startedAtMs) /
                   (timer.run.expiresAtMs - timer.run.startedAtMs))
               .clamp(0.0, 1.0);
-    } else if (timer.run.state == TimerState.paused) {
+    } else if (timerIsPaused) {
       progress =
           ((timer.run.pausedAtMs! - timer.run.startedAtMs) /
                   (timer.run.expiresAtMs - timer.run.startedAtMs))
@@ -165,48 +168,72 @@ class _TimerCountdownRingState extends State<TimerCountdownRing>
       remaining = expiresAt.difference(pausedAt);
     }
 
-    _checkTimerExpiration();
+    _checkTimerExpiration(timerIsRunning);
 
-    return Column(
-      children: [
-        Center(
-          child: (TimerService.instance.hasActiveTimer)
-              ? Pill(
-                  label: local.translate("home.active"),
-                  backColor: scheme.tertiary,
-                )
-              : Pill(
-                  label: local.translate("home.inactive"),
-                  backColor: scheme.onSurfaceVariant,
-                ),
-        ),
-        const SizedBox(height: AppSpacing.lg),
-        CountdownRing(
-          time: _formatDuration(remaining),
-          label: timer.config.name,
-          color: scheme.primary,
-          progress: progress,
-          caption: (!timerIsActive)
-              ? local.translate("home.tap_to_configure")
-              : null,
-          diameter: MediaQuery.of(context).size.width - 90,
-          onTap: () {
-            if (!timerIsActive) {
-              Navigator.of(context).push(
-                AppRoute(
-                  page: (timer.key == "timer0")
-                      ? TimerConfigScreen.newTimer()
-                      : TimerConfigScreen.existingTimer(
-                          timerKey: timer.key,
-                          timerData: timer.config,
-                        ),
-                  transition: AppRouteTransitionType.slideLeft,
-                ),
-              );
-            }
-          },
-        ),
-      ],
+    final canConfigure =
+        !timerIsRunning &&
+        !timerIsPaused &&
+        !_expirationScheduled &&
+        remaining.inSeconds > 10;
+
+    return Hero(
+      tag: 'timer-countdown',
+      flightShuttleBuilder: (context, animation, direction, from, to) =>
+          AppHeader.flight(context, animation, direction, from, to),
+      child: Column(
+        children: [
+          Center(
+            child: (timerIsRunning || timerIsPaused)
+                ? Pill(
+                    label: local.translate("home.active"),
+                    backColor: scheme.tertiary,
+                  )
+                : Pill(
+                    label: local.translate("home.inactive"),
+                    backColor: scheme.onSurfaceVariant,
+                  ),
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          CountdownRing(
+            time: _formatDuration(remaining),
+            label: timer.config.name,
+            color: scheme.primary,
+            progress: progress,
+            caption: canConfigure
+                ? local.translate("home.tap_to_configure")
+                : (timerIsRunning && remaining.inSeconds > 10)
+                ? local.translate("home.tap_for_details")
+                : null,
+
+            diameter: MediaQuery.of(context).size.width - 90,
+            onTap: () {
+              if (!timerIsRunning && !timerIsPaused) {
+                Navigator.of(context).push(
+                  AppRoute(
+                    page: (timer.key == "timer0")
+                        ? TimerConfigScreen.newTimer()
+                        : TimerConfigScreen.existingTimer(
+                            timerKey: timer.key,
+                            timerData: timer.config,
+                          ),
+                    transition: AppRouteTransitionType.slideLeft,
+                  ),
+                );
+              } else if (timer.key != "timer0" &&
+                  !_expirationScheduled &&
+                  remaining.inSeconds > 10 &&
+                  !timerIsPaused) {
+                Navigator.of(context).push(
+                  AppRoute(
+                    page: ActiveMonitoringScreen(),
+                    transition: AppRouteTransitionType.slideLeft,
+                  ),
+                );
+              }
+            },
+          ),
+        ],
+      ),
     );
   }
 }

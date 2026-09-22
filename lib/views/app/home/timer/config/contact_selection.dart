@@ -99,7 +99,9 @@ class _ContactSelectionState extends State<ContactSelection> {
                   '${local.translate("timer_configuration.contacts.contact.1")} '
                   '${local.translate("timer_configuration.contacts.selected.1")}',
           },
-          icon: LucideIcons.bookUser,
+          icon: (widget.timerContacts.value.isNotEmpty)
+              ? LucideIcons.bookUser
+              : LucideIcons.book,
           iconColor: scheme.secondary,
           trailing: Icon(
             LucideIcons.chevronRight,

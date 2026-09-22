@@ -64,8 +64,8 @@ class _LocationInputsState extends State<LocationInputs> {
   late bool _routeGranted;
 
   late Duration _collectionInterval;
-  int get _maxCollectionIntervalSeconds =>
-      (widget.timerDuration.value.inSeconds ~/ 4).clamp(3, 0x7fffffff);
+  int get _maxCollectionIntervalSeconds => (widget.timerDuration.value.inSeconds ~/ 4).clamp(3, 0x7fffffff);
+  int get _recommendedCollectionIntervalSeconds => (_maxCollectionIntervalSeconds ~/ 3).clamp(3, 0x7fffffff);
 
   bool _intervalDrawerOpen = false;
 
@@ -84,9 +84,7 @@ class _LocationInputsState extends State<LocationInputs> {
 
     bool locationEnabled;
     if (widget.locationEnabled == null) {
-      String value = await selectOne(
-        sql: "SELECT value FROM settings WHERE key = 'location'",
-      );
+      String value = await selectOne(sql: "SELECT value FROM settings WHERE key = 'location'");
       locationEnabled = (value == "true") && whenInUseGranted;
       widget.onLocationChanged(locationEnabled);
     } else {
@@ -95,9 +93,7 @@ class _LocationInputsState extends State<LocationInputs> {
 
     bool routeEnabled;
     if (widget.routeEnabled == null) {
-      String value = await selectOne(
-        sql: "SELECT value FROM settings WHERE key = 'route'",
-      );
+      String value = await selectOne(sql: "SELECT value FROM settings WHERE key = 'route'");
       routeEnabled = (value == "true") && alwaysGranted;
       widget.onRouteChanged(routeEnabled);
     } else {
@@ -106,7 +102,7 @@ class _LocationInputsState extends State<LocationInputs> {
 
     Duration collectionInterval;
     if (widget.collectionInterval == null) {
-      collectionInterval = Duration(seconds: _maxCollectionIntervalSeconds);
+      collectionInterval = Duration(seconds: _recommendedCollectionIntervalSeconds);
     } else {
       collectionInterval = Duration(seconds: widget.collectionInterval!);
     }
@@ -116,8 +112,7 @@ class _LocationInputsState extends State<LocationInputs> {
       _routeEnabled = routeEnabled;
       _locationGranted = whenInUseGranted;
       _routeGranted = (whenInUseGranted && alwaysGranted);
-      _intervalDrawerOpen =
-          ((whenInUseGranted && alwaysGranted) && routeEnabled);
+      _intervalDrawerOpen = ((whenInUseGranted && alwaysGranted) && routeEnabled);
       _collectionInterval = collectionInterval;
       _isLoading = false;
     });
@@ -146,11 +141,15 @@ class _LocationInputsState extends State<LocationInputs> {
       _routeEnabled = value;
       _intervalDrawerOpen = value;
       if (!value) {
-        _collectionInterval = Duration(seconds: _maxCollectionIntervalSeconds);
+        _collectionInterval = Duration(seconds: _recommendedCollectionIntervalSeconds);
       }
     });
     widget.onRouteChanged(value);
-    if (!value) widget.onCollectionIntervalChanged(null);
+    if (!value) {
+      widget.onCollectionIntervalChanged(null);
+    } else {
+      widget.onCollectionIntervalChanged(_recommendedCollectionIntervalSeconds);
+    }
   }
 
   void _setCollectionInterval(Duration value) {
@@ -164,14 +163,12 @@ class _LocationInputsState extends State<LocationInputs> {
   void _onTimerDurationChanged() {
     if (_isLoading) return;
 
-    final int maxSeconds = _maxCollectionIntervalSeconds;
-
-    if (_collectionInterval.inSeconds <= maxSeconds) {
+    if (_collectionInterval.inSeconds <= _recommendedCollectionIntervalSeconds) {
       setState(() {});
       return;
     }
 
-    final Duration value = Duration(seconds: maxSeconds);
+    final Duration value = Duration(seconds: _recommendedCollectionIntervalSeconds);
 
     setState(() {
       _collectionInterval = value;
@@ -206,19 +203,12 @@ class _LocationInputsState extends State<LocationInputs> {
     final int maxSeconds = _maxCollectionIntervalSeconds;
 
     return AppCard(
-      padding: EdgeInsets.fromLTRB(
-        AppSpacing.sm,
-        AppSpacing.sm,
-        AppSpacing.sm,
-        (_intervalDrawerOpen) ? 0 : AppSpacing.sm,
-      ),
+      padding: EdgeInsets.fromLTRB(AppSpacing.sm, AppSpacing.sm, AppSpacing.sm, (_intervalDrawerOpen) ? 0 : AppSpacing.sm),
       child: (_isLoading)
           ? SizedBox(
               width: 40,
               height: 40,
-              child: Center(
-                child: CircularProgressIndicator(color: scheme.tertiary),
-              ),
+              child: Center(child: CircularProgressIndicator(color: scheme.tertiary)),
             )
           : Column(
               children: [
@@ -232,23 +222,12 @@ class _LocationInputsState extends State<LocationInputs> {
                           _setLocationEnabled(!_locationEnabled);
                         },
                         child: AppRow(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: AppSpacing.xxxs,
-                            horizontal: AppSpacing.sm,
-                          ),
-                          title: local.translate(
-                            "timer_configuration.security.location.when_in_use.title",
-                          ),
+                          padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxxs, horizontal: AppSpacing.sm),
+                          title: local.translate("timer_configuration.security.location.when_in_use.title"),
                           subtitle: _locationEnabled
-                              ? local.translate(
-                                  "timer_configuration.security.location.when_in_use.enabled.on",
-                                )
-                              : local.translate(
-                                  "timer_configuration.security.location.when_in_use.enabled.off",
-                                ),
-                          icon: (_locationGranted && _locationEnabled)
-                              ? LucideIcons.mapPin
-                              : LucideIcons.mapPinOff,
+                              ? local.translate("timer_configuration.security.location.when_in_use.enabled.on")
+                              : local.translate("timer_configuration.security.location.when_in_use.enabled.off"),
+                          icon: (_locationGranted && _locationEnabled) ? LucideIcons.mapPin : LucideIcons.mapPinOff,
                           iconColor: scheme.secondary,
                           trailing: AppToggle(on: _locationEnabled),
                         ),
@@ -258,20 +237,13 @@ class _LocationInputsState extends State<LocationInputs> {
                       Positioned.fill(
                         child: Container(
                           decoration: BoxDecoration(
-                            color: scheme.surfaceContainer.withValues(
-                              alpha: 0.8,
-                            ),
+                            color: scheme.surfaceContainer.withValues(alpha: 0.8),
                             borderRadius: BorderRadius.circular(AppSpacing.sm),
                           ),
                           child: Center(
                             child: Text(
-                              local.translate(
-                                "timer_configuration.security.permission",
-                              ),
-                              style: AppText.body(scheme).copyWith(
-                                color: scheme.onSurface,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              local.translate("timer_configuration.security.permission"),
+                              style: AppText.body(scheme).copyWith(color: scheme.onSurface, fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),
@@ -293,23 +265,12 @@ class _LocationInputsState extends State<LocationInputs> {
                           _setRouteEnabled(!_routeEnabled);
                         },
                         child: AppRow(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: AppSpacing.xxxs,
-                            horizontal: AppSpacing.sm,
-                          ),
-                          title: local.translate(
-                            "timer_configuration.security.location.always.title",
-                          ),
+                          padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxxs, horizontal: AppSpacing.sm),
+                          title: local.translate("timer_configuration.security.location.always.title"),
                           subtitle: _routeEnabled
-                              ? local.translate(
-                                  "timer_configuration.security.location.always.enabled.on",
-                                )
-                              : local.translate(
-                                  "timer_configuration.security.location.always.enabled.off",
-                                ),
-                          icon: (_routeGranted && _routeEnabled)
-                              ? LucideIcons.route
-                              : LucideIcons.routeOff,
+                              ? local.translate("timer_configuration.security.location.always.enabled.on")
+                              : local.translate("timer_configuration.security.location.always.enabled.off"),
+                          icon: (_routeGranted && _routeEnabled) ? LucideIcons.route : LucideIcons.routeOff,
                           iconColor: scheme.secondary,
                           trailing: AppToggle(on: _routeEnabled),
                         ),
@@ -319,20 +280,13 @@ class _LocationInputsState extends State<LocationInputs> {
                       Positioned.fill(
                         child: Container(
                           decoration: BoxDecoration(
-                            color: scheme.surfaceContainer.withValues(
-                              alpha: 0.8,
-                            ),
+                            color: scheme.surfaceContainer.withValues(alpha: 0.8),
                             borderRadius: BorderRadius.circular(AppSpacing.sm),
                           ),
                           child: Center(
                             child: Text(
-                              local.translate(
-                                "timer_configuration.security.permission",
-                              ),
-                              style: AppText.body(scheme).copyWith(
-                                color: scheme.onSurface,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              local.translate("timer_configuration.security.permission"),
+                              style: AppText.body(scheme).copyWith(color: scheme.onSurface, fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),
@@ -349,69 +303,45 @@ class _LocationInputsState extends State<LocationInputs> {
                     alignment: Alignment.topCenter,
                     child: _intervalDrawerOpen
                         ? Padding(
-                            padding: const EdgeInsets.only(
-                              top: AppSpacing.xxs,
-                              bottom: AppSpacing.xxs,
-                            ),
+                            padding: const EdgeInsets.only(top: AppSpacing.xxs, bottom: AppSpacing.xxs),
                             child: AppCard(
-                              padding: const EdgeInsets.fromLTRB(
-                                AppSpacing.lg,
-                                AppSpacing.ms,
-                                AppSpacing.lg,
-                                0,
-                              ),
+                              padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.ms, AppSpacing.lg, 0),
                               borderColor: scheme.surfaceContainer,
                               child: Column(
                                 children: [
                                   AppRow(
                                     padding: EdgeInsets.zero,
-                                    title: local.translate(
-                                      "timer_configuration.security.location.collection_interval.title",
-                                    ),
-                                    subtitle: local.translate(
-                                      "timer_configuration.security.location.collection_interval.description",
-                                    ),
-                                    trailing: Pill(
-                                      label: _formatDuration(
-                                        _collectionInterval,
-                                      ),
-                                      backColor: scheme.secondary,
-                                    ),
+                                    title: local.translate("timer_configuration.security.location.collection_interval.title"),
+                                    subtitle: local.translate("timer_configuration.security.location.collection_interval.description"),
+                                    trailing: Pill(label: _formatDuration(_collectionInterval), backColor: scheme.secondary),
                                   ),
                                   const SizedBox(height: AppSpacing.sm),
-                                  SliderTheme(
-                                    data: SliderTheme.of(context).copyWith(
-                                      trackHeight: 4,
+                                  if (maxSeconds > 3)
+                                    SliderTheme(
+                                      data: SliderTheme.of(context).copyWith(
+                                        trackHeight: 4,
 
-                                      trackShape: MajorTickSliderTrackShape(),
+                                        trackShape: MajorTickSliderTrackShape(),
 
-                                      thumbShape: const RoundSliderThumbShape(
-                                        enabledThumbRadius: AppRadius.sm,
+                                        thumbShape: const RoundSliderThumbShape(enabledThumbRadius: AppRadius.sm),
+                                        tickMarkShape: SliderTickMarkShape.noTickMark,
                                       ),
-                                      tickMarkShape:
-                                          SliderTickMarkShape.noTickMark,
+                                      child: Slider(
+                                        // ignore: deprecated_member_use
+                                        year2023: true,
+                                        activeColor: scheme.primary,
+                                        inactiveColor: scheme.surfaceContainerLow,
+                                        secondaryActiveColor: scheme.primary.withAlpha(155),
+                                        thumbColor: scheme.onSurface,
+                                        value: _collectionInterval.inSeconds.clamp(1, maxSeconds).toDouble(),
+                                        min: 3,
+                                        max: maxSeconds.toDouble(),
+                                        divisions: maxSeconds - 1,
+                                        onChanged: (value) {
+                                          _setCollectionInterval(Duration(seconds: value.round()));
+                                        },
+                                      ),
                                     ),
-                                    child: Slider(
-                                      // ignore: deprecated_member_use
-                                      year2023: true,
-                                      activeColor: scheme.primary,
-                                      inactiveColor: scheme.surfaceContainerLow,
-                                      secondaryActiveColor: scheme.primary
-                                          .withAlpha(155),
-                                      thumbColor: scheme.onSurface,
-                                      value: _collectionInterval.inSeconds
-                                          .clamp(1, maxSeconds)
-                                          .toDouble(),
-                                      min: 3,
-                                      max: maxSeconds.toDouble(),
-                                      divisions: maxSeconds - 1,
-                                      onChanged: (value) {
-                                        _setCollectionInterval(
-                                          Duration(seconds: value.round()),
-                                        );
-                                      },
-                                    ),
-                                  ),
                                 ],
                               ),
                             ),

@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:still_alive/data/all.dart';
+import 'package:still_alive/services/timer_service.dart';
 import 'package:still_alive/src/rust/api/data/db.dart';
 import 'package:still_alive/views/widgets/primitives.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -447,19 +448,24 @@ class TimerStartedEvent extends HistoryEvent {
           startedAt,
           scheme,
         ),
-        _row(
-          local.translate("history_logs.events.details.ended"),
-          endedAt,
-          scheme,
-        ),
+        if (endedAt != null)
+          _row(
+            local.translate("history_logs.events.details.ended"),
+            endedAt,
+            scheme,
+          ),
         _row(
           local.translate("history_logs.events.details.duration"),
-          '${durationSeconds}s',
+          TimerService.formatDuration(Duration(seconds: durationSeconds)),
           scheme,
         ),
         _row(
           local.translate("history_logs.events.details.grace"),
-          '${gracePeriodSeconds}s',
+          (gracePeriodSeconds != null)
+              ? TimerService.formatDuration(
+                  Duration(seconds: gracePeriodSeconds!),
+                )
+              : 0,
           scheme,
         ),
         _row(
@@ -547,7 +553,7 @@ class TimerWarningEvent extends HistoryEvent {
         ),
         _row(
           local.translate("history_logs.events.details.remaining"),
-          '${remainingSeconds}s',
+          TimerService.formatDuration(Duration(seconds: remainingSeconds)),
           scheme,
         ),
       ],
@@ -636,7 +642,7 @@ class TimerPausedEvent extends HistoryEvent {
         ),
         _row(
           local.translate("history_logs.events.details.remaining"),
-          '${remainingSeconds}s',
+          TimerService.formatDuration(Duration(seconds: remainingSeconds)),
           scheme,
         ),
         _row(
@@ -750,7 +756,7 @@ class TimerCancelledEvent extends HistoryEvent {
         ),
         _row(
           local.translate("history_logs.events.details.remaining"),
-          '${remainingSeconds}s',
+          TimerService.formatDuration(Duration(seconds: remainingSeconds)),
           scheme,
         ),
         _row(

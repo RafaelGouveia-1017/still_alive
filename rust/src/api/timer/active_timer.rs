@@ -406,22 +406,26 @@ pub fn get_unique_timer_id() -> Option<String> {
     }
 }
 
-/// Creates a new timer from the given configuration.
+/// Persists a timer from the given key & configuration.
 ///
 /// # Arguments
 ///
+/// * `key` - Identifier of the timer to edit.
 /// * `config` - Configuration for the new timer.
 ///
 /// # Errors
 ///
 /// Returns an error if the new timer configuration cannot be
 /// persisted to the database.
-pub fn create_timer(config: TimerConfig) -> Result<()> {
-    let key = get_unique_timer_id().context("Failed to get unique id for timer")?;
+pub fn persist_timer(key: Option<String>, config: TimerConfig) -> Result<()> {
+    let timer_key = match key {
+        Some(value) => value,
+        None => get_unique_timer_id().context("Failed to get unique id for timer")?,
+    };
 
-    log::info!("Creating timer with key '{}'", key);
+    log::info!("Persisting timer with key '{}'", timer_key);
 
-    save_timer(&key, &config).context("Failed to persist timer to database")?;
+    save_timer(&timer_key, &config).context("Failed to persist timer to database")?;
 
     Ok(())
 }

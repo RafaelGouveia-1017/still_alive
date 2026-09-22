@@ -112,7 +112,7 @@ Future<void> importDatabase({required String path}) =>
 Future<void> purgeDatabase() =>
     RustLib.instance.api.crateApiDataDbPurgeDatabase();
 
-/// Returns a single row.
+/// Returns a single row & column.
 ///
 /// Returns `None` if no matching row exists.
 Future<String> selectOne({required String sql}) =>

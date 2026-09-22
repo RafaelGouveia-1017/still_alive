@@ -22,6 +22,16 @@
       "completed": ["Emergency protocol for", "has been completed."]
     }
   },
+  "time_map_viewer": {
+    "title": "Map",
+    "no_route": "No route data available...",
+    "no_internet": "Waiting for an internet connection...",
+    "location_error": "Turn on Location services!!!",
+    "route_notif": [
+      "Recording your route",
+      "Your location is being recorded.\n(between your configured interval)"
+    ]
+  },
   "welcome": {
     "title": "Welcome",
     "tagline": "Your silent guardian. Activate a safety timer — we'll alert your circle if you don't check in.",
@@ -98,6 +108,7 @@
     "inactive": "Monitoring inactive",
     "active": "Monitoring active",
     "tap_to_configure": "Tap to configure",
+    "tap_for_details": "Tap for details",
     "online": "Online",
     "offline": "Offline",
     "contacts": "contacts",
@@ -240,28 +251,39 @@
       "Are you sure? Your timer will be PERMENANTLY deleted.",
       "Delete Timer",
       "deleted sucessfully!"
+    ],
+    "unsaved": [
+      "You have unsaved changes.\nAre you sure you want to leave?",
+      "Discard"
     ]
   },
   "active_monitoring": {
     "title": "Monitoring",
-    "status": "Live",
-    "description": "Safety monitoring active",
-    "labels": {
-      "time_remaining": "Time remaining",
-      "tap_to_configure": "Tap to configure",
+    "location": {
       "location_tracking": "Location tracking",
-      "live": "Live"
+      "live": "Live",
+      "updated": "Updated",
+      "ago": "ago • ±",
+      "interval": "interval"
     },
-    "location": "Updated 12s ago · ±5m accuracy",
-    "started": "Started at 9:18 AM",
-    "trigger_time": "Will trigger alert at 9:48 AM",
+    "time": {
+      "started": "Timer started at",
+      "trigger_time": "Will trigger at"
+    },
+    "destinations": {
+      "sending_to": "Sending to...",
+      "contact": ["contact", "contacts"],
+      "custom": ["custom", "custom"],
+      "integrations": ["integration", "integrations"]
+    },
+    "message": "Custom message:",
     "actions": {
       "pause": "Pause",
       "cancel": "Cancel"
     },
     "pin_requirement": {
-      "on": "Cancelling requires your PIN",
-      "off": "Cancelling will NOT require your PIN"
+      "on": "Requires your PIN",
+      "off": "Will NOT require your PIN"
     }
   },
   "pre_alert_warning": {

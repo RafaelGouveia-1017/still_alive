@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:still_alive/views/widgets/primitives.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -143,11 +144,15 @@ class GlobalErrorDialog {
                         ),
                         mode: LaunchMode.externalApplication,
                       ),
-                      child: SizedBox(
+                      child: Container(
                         width: 48,
                         height: 48,
+                        decoration: BoxDecoration(
+                          color: scheme.surfaceContainer,
+                          borderRadius: AppRadius.button,
+                        ),
                         child: Icon(
-                          LucideIcons.externalLink,
+                          FontAwesomeIcons.github.data,
                           size: 24,
                           color: scheme.onSurface,
                         ),

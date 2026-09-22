@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:bcrypt/bcrypt.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:still_alive/data/all.dart';
+import 'package:still_alive/services/location_service.dart';
 import 'package:still_alive/services/history_service.dart';
 import 'package:still_alive/services/native/method_channel.dart';
 import 'package:still_alive/services/notification_service_android.dart';
@@ -26,10 +28,7 @@ extension ActiveTimerExtension on ActiveTimer {
   /// of a negative duration.
   Duration remaining() {
     final now = DateTime.now().toUtc();
-    final expiresAt = DateTime.fromMillisecondsSinceEpoch(
-      run.expiresAtMs,
-      isUtc: true,
-    ).add(Duration(seconds: 1));
+    final expiresAt = DateTime.fromMillisecondsSinceEpoch(run.expiresAtMs, isUtc: true).add(Duration(seconds: 1));
 
     final difference = expiresAt.difference(now);
     if (difference.isNegative) {
@@ -69,8 +68,8 @@ class TimerService extends ChangeNotifier {
     return _activeTimer;
   }
 
-  /// Whether the current active timer has an active timer run.
-  bool get hasActiveTimer => _activeTimer.run.state == TimerState.running;
+  /// Gets the current state in the timer run.
+  TimerState get timerRunCurrentState => _activeTimer.run.state;
 
   /// Initializes the singleton timer service and reconciles the persisted
   /// active timer state.
@@ -83,6 +82,11 @@ class TimerService extends ChangeNotifier {
   ///
   /// If an active timer can be restored, it is stored as the current
   /// [activeTimer] and listeners are notified of the updated state.
+  ///
+  /// When the restored timer requires continuous route sharing, the persisted
+  /// GPS recording state is also restored. This allows route collection to
+  /// continue after the Flutter process has been recreated while the timer
+  /// remains active.
   Future<void> reconcile() async {
     final now = DateTime.now().toUtc().millisecondsSinceEpoch;
 
@@ -92,32 +96,47 @@ class TimerService extends ChangeNotifier {
 
     _initialized = true;
 
+    if (_activeTimer.config.routeSharingEnabled && _activeTimer.run.state == TimerState.running) {
+      try {
+        await _startLocationRecordingIfRequired(resetRoute: false);
+      } catch (e) {
+        // Continuing without route tracking, because timer might already be running.
+      }
+    }
+
     notifyListeners();
   }
 
   /// Starts a new timer run for the active timer.
   ///
-  /// Schedules a native alarm for the timer's expiration time, notifies
-  /// listeners of the state change, and records the timer start in history.
+  /// Schedules a native alarm for the timer's expiration time, starts
+  /// continuous GPS route recording when [TimerConfig.routeSharingEnabled] is
+  /// enabled, notifies listeners of the state change, and records the timer
+  /// start in history.
+  ///
+  /// When location sharing is enabled without route sharing, no continuous GPS
+  /// recording is started. The current location is obtained only when the
+  /// emergency is triggered.
   Future<void> startTimer() async {
+    try {
+      await _startLocationRecordingIfRequired(resetRoute: true);
+    } catch (e) {
+      return;
+    }
+
     final now = DateTime.now().toUtc().millisecondsSinceEpoch;
 
     await _activeTimer.startTimerRun(nowMs: now);
 
-    await _scheduleAlarm(
-      alarmId: _activeTimer.key,
-      triggerAt: _activeTimer.run.expiresAtMs,
-    );
+    await _scheduleAlarm(alarmId: _activeTimer.key, triggerAt: _activeTimer.run.expiresAtMs);
 
     launchTimerNotification();
     notifyListeners();
 
-    HistoryService.insertHistoryRecord(
+    await HistoryService.insertHistoryRecord(
       TimerStartedEvent(
         timerName: _activeTimer.config.name,
-        startedAt: DateTime.fromMillisecondsSinceEpoch(
-          _activeTimer.run.startedAtMs,
-        ),
+        startedAt: DateTime.fromMillisecondsSinceEpoch(_activeTimer.run.startedAtMs),
         endedAt: null,
         durationSeconds: _activeTimer.config.durationSecs,
         gracePeriodSeconds: _activeTimer.config.gracePeriodSecs,
@@ -128,29 +147,31 @@ class TimerService extends ChangeNotifier {
 
   /// Pauses the currently active timer run.
   ///
-  /// Cancels the scheduled native alarm, notifies listeners, and records the
-  /// pause event in timer history.
+  /// Cancels the scheduled native alarm and stops continuous GPS route
+  /// recording. The persisted route is retained in the database so recording
+  /// can continue from the same route when the timer is resumed.
   ///
   /// The [passwordVerified] value indicates whether any required password
   /// verification was successfully completed before pausing the timer.
+  ///
+  /// A timer configured for single-location sharing does not have an active GPS
+  /// recording to stop.
   Future<void> pauseTimer({required bool passwordVerified}) async {
     final now = DateTime.now().toUtc().millisecondsSinceEpoch;
-    await _activeTimer.pauseTimerRun(
-      nowMs: now,
-      passwordVerified: passwordVerified,
-    );
+
+    await _activeTimer.pauseTimerRun(nowMs: now, passwordVerified: passwordVerified);
 
     await _cancelAlarm(alarmId: _activeTimer.key);
+
+    await _stopLocationRecording();
 
     launchTimerNotification();
     notifyListeners();
 
-    HistoryService.insertHistoryRecord(
+    await HistoryService.insertHistoryRecord(
       TimerPausedEvent(
         timerName: _activeTimer.config.name,
-        startedAt: DateTime.fromMillisecondsSinceEpoch(
-          _activeTimer.run.startedAtMs,
-        ),
+        startedAt: DateTime.fromMillisecondsSinceEpoch(_activeTimer.run.startedAtMs),
         endedAt: DateTime.fromMillisecondsSinceEpoch(now),
         remainingSeconds: _activeTimer.remaining().inSeconds,
         passwordVerified: passwordVerified,
@@ -160,48 +181,57 @@ class TimerService extends ChangeNotifier {
 
   /// Resumes the currently paused timer run.
   ///
-  /// Schedules a new native alarm for the timer's expiration time and notifies
-  /// listeners of the state change.
+  /// Schedules a new native alarm for the timer's expiration time and resumes
+  /// continuous GPS route recording when route sharing is enabled.
+  ///
+  /// The existing persisted route is restored before recording resumes so new
+  /// GPS points are appended to the existing route rather than creating a new
+  /// route segment.
+  ///
+  /// When only single-location sharing is enabled, no location recording is
+  /// started during resume.
   Future<void> resumeTimer() async {
+    try {
+      await _startLocationRecordingIfRequired(resetRoute: false);
+    } catch (e) {
+      return;
+    }
+
     final now = DateTime.now().toUtc().millisecondsSinceEpoch;
 
     await _activeTimer.resumeTimerRun(nowMs: now);
 
-    await _scheduleAlarm(
-      alarmId: _activeTimer.key,
-      triggerAt: _activeTimer.run.expiresAtMs,
-    );
+    await _scheduleAlarm(alarmId: _activeTimer.key, triggerAt: _activeTimer.run.expiresAtMs);
 
     notifyListeners();
   }
 
   /// Cancels the currently active timer run.
   ///
-  /// Cancels the scheduled native alarm, notifies listeners, and records the
-  /// cancellation in timer history.
+  /// Cancels the scheduled native alarm and stops any active continuous GPS
+  /// route recording. The persisted route is retained in the database so that
+  /// it remains available for history or other application purposes.
   ///
   /// The [passwordVerified] value indicates whether any required password
   /// verification was successfully completed before cancelling the timer.
   Future<void> cancelTimer({required bool passwordVerified}) async {
     final now = DateTime.now().toUtc().millisecondsSinceEpoch;
-    await _activeTimer.cancelTimerRun(
-      nowMs: now,
-      passwordVerified: passwordVerified,
-    );
+
+    await _activeTimer.cancelTimerRun(nowMs: now, passwordVerified: passwordVerified);
 
     if (_activeTimer.run.state == TimerState.cancelled) {
       await _cancelAlarm(alarmId: _activeTimer.key);
+
+      await _stopLocationRecording();
     }
 
     launchTimerNotification();
     notifyListeners();
 
-    HistoryService.insertHistoryRecord(
+    await HistoryService.insertHistoryRecord(
       TimerCancelledEvent(
         timerName: _activeTimer.config.name,
-        startedAt: DateTime.fromMillisecondsSinceEpoch(
-          _activeTimer.run.startedAtMs,
-        ),
+        startedAt: DateTime.fromMillisecondsSinceEpoch(_activeTimer.run.startedAtMs),
         endedAt: DateTime.fromMillisecondsSinceEpoch(now),
         remainingSeconds: _activeTimer.remaining().inSeconds,
         passwordVerified: passwordVerified,
@@ -230,9 +260,7 @@ class TimerService extends ChangeNotifier {
     AppLogger.log.info("TimerService.handleNativeCall() called...");
 
     if (!_initialized) {
-      AppLogger.log.severe(
-        "Alarm received before TimerService initialization.",
-      );
+      AppLogger.log.severe("Alarm received before TimerService initialization.");
       return;
     }
 
@@ -255,9 +283,13 @@ class TimerService extends ChangeNotifier {
   /// Once the state has been updated, a timer notification is launched and the
   /// appropriate screen is displayed:
   ///
-  /// * [TimerState.warning] navigates to [PreAlertWarningScreen] and records a
+  /// * [TimerState.warning] navigates to [PreAlertWarningScreen], continuous
+  /// route recording remains active when route sharing is enabled (because the
+  /// route may be needed by the eventual emergency response) and records a
   /// [TimerWarningEvent] in the timer history.
-  /// * [TimerState.expired] navigates to [EmergencyActiveScreen].
+  /// * [TimerState.expired] navigates to [EmergencyActiveScreen] and
+  /// [triggerEmergency] is invoked, where the complete recorded route or a
+  /// single current location is obtained depending on the timer configuration.
   /// * Any other state results in no navigation.
   ///
   /// This method requires a mounted application navigator. If
@@ -270,20 +302,17 @@ class TimerService extends ChangeNotifier {
   ///
   /// This method should be called after the native platform reports that the
   /// timer alarm has fired.
+  ///
   Future<void> timerHasExpired() async {
-    if (_activeTimer.run.state == TimerState.expired ||
-        _activeTimer.run.state == TimerState.warning) {
-      AppLogger.log.info(
-        "timerHasExpired() called, but timer is already expired.",
-      );
+    if (_activeTimer.run.state == TimerState.expired || _activeTimer.run.state == TimerState.warning) {
+      AppLogger.log.info('timerHasExpired() called, but timer is already expired or warning.');
       return;
     }
 
     final now = DateTime.now().toUtc().millisecondsSinceEpoch;
     _activeTimer.updateRunState(nowMs: now);
 
-    NavigatorState? navigator =
-        PermissionManager.instance.navigatorKey.currentState;
+    NavigatorState? navigator = PermissionManager.instance.navigatorKey.currentState;
 
     while (navigator == null) {
       AppLogger.log.warning("Navigator not ready to handle timer expiration.");
@@ -295,40 +324,24 @@ class TimerService extends ChangeNotifier {
 
     switch (_activeTimer.run.state) {
       case TimerState.warning:
-        HistoryService.insertHistoryRecord(
+        await HistoryService.insertHistoryRecord(
           TimerWarningEvent(
             timerName: _activeTimer.config.name,
-            startedAt: DateTime.fromMillisecondsSinceEpoch(
-              _activeTimer.run.startedAtMs,
-            ),
-            endedAt: DateTime.fromMillisecondsSinceEpoch(
-              _activeTimer.run.expiresAtMs,
-            ),
+            startedAt: DateTime.fromMillisecondsSinceEpoch(_activeTimer.run.startedAtMs),
+            endedAt: DateTime.fromMillisecondsSinceEpoch(_activeTimer.run.expiresAtMs),
             remainingSeconds: _activeTimer.config.gracePeriodSecs!,
           ),
         );
 
         AppLogger.log.info("\n\ntimer state change: running -> warning\n\n");
 
-        navigator.pushAndRemoveUntil(
-          AppRoute(
-            page: PreAlertWarningScreen(),
-            transition: AppRouteTransitionType.slideLeft,
-          ),
-          (route) => false,
-        );
+        navigator.pushAndRemoveUntil(AppRoute(page: PreAlertWarningScreen(), transition: AppRouteTransitionType.slideLeft), (route) => false);
         break;
 
       case TimerState.expired:
         AppLogger.log.info("\n\ntimer state change: running -> expired\n\n");
 
-        navigator.pushAndRemoveUntil(
-          AppRoute(
-            page: EmergencyActiveScreen(),
-            transition: AppRouteTransitionType.slideLeft,
-          ),
-          (route) => false,
-        );
+        navigator.pushAndRemoveUntil(AppRoute(page: EmergencyActiveScreen(), transition: AppRouteTransitionType.slideLeft), (route) => false);
         break;
 
       default:
@@ -345,23 +358,121 @@ class TimerService extends ChangeNotifier {
   /// The [alarmId] identifies the alarm associated with the timer.
   /// The [triggerAt] specifies when the alarm should fire, in milliseconds
   /// since the Unix epoch.
-  Future<void> _scheduleAlarm({
-    required String alarmId,
-    required int triggerAt,
-  }) async {
-    await AppMethodChannel.instance.invokeMethod('scheduleAlarm', {
-      'alarmId': alarmId.hashCode,
-      'triggerAt': triggerAt,
-    });
+  Future<void> _scheduleAlarm({required String alarmId, required int triggerAt}) async {
+    await AppMethodChannel.instance.invokeMethod('scheduleAlarm', {'alarmId': alarmId.hashCode, 'triggerAt': triggerAt});
   }
 
   /// Cancels a previously scheduled native alarm.
   ///
   /// The [alarmId] identifies the alarm associated with the timer.
   Future<void> _cancelAlarm({required String alarmId}) async {
-    await AppMethodChannel.instance.invokeMethod('cancelAlarm', {
-      'alarmId': alarmId.hashCode,
-    });
+    await AppMethodChannel.instance.invokeMethod('cancelAlarm', {'alarmId': alarmId.hashCode});
+  }
+
+  /// Starts continuous GPS route recording when the active timer is configured
+  /// to share a route. Can also restore continuous GPS route recording for a
+  /// timer whose state survived application process recreation or was resumed
+  /// after being paused. Start or Restore mode is defined by [resetRoute].
+  ///
+  /// Continuous location recording is controlled by
+  /// [ActiveTimer.config.routeSharingEnabled]. Route sharing implicitly enables
+  /// location collection.
+  ///
+  /// [ActiveTimer.config.locationSharingEnabled] without route sharing does not
+  /// start a background recording. In that configuration, a single current
+  /// location is obtained when the emergency is triggered instead.
+  ///
+  /// If restoring, the existing persisted route is restored before new GPS
+  /// points are accepted so the route remains a single continuous polyline.
+  ///
+  /// This method does nothing when route sharing is disabled.
+  ///
+  /// Location permission or GPS availability failures are logged and do not
+  /// prevent the timer itself from running.
+  Future<void> _startLocationRecordingIfRequired({required bool resetRoute}) async {
+    final config = _activeTimer.config;
+
+    if (!config.routeSharingEnabled) {
+      return;
+    }
+
+    if (LocationService.instance.isRecording) {
+      return;
+    }
+
+    final interval = config.locationCollectionIntervalSecs;
+
+    if (interval == null) {
+      if (resetRoute) {
+        AppLogger.log.severe(
+          'Route sharing is enabled but no location collection interval '
+          'is configured.',
+        );
+      } else {
+        AppLogger.log.severe(
+          'Unable to restore location recording because route sharing is '
+          'enabled without a location collection interval.',
+        );
+      }
+      return;
+    }
+
+    try {
+      await LocationService.instance.startRecording(secondsInterval: interval.toInt(), resetRoute: resetRoute);
+
+      if (resetRoute) {
+        AppLogger.log.info(
+          'Location route recording started for timer "${config.name}" '
+          'with ${interval.toInt()} second interval.',
+        );
+      } else {
+        AppLogger.log.info('Location route recording restored for timer "${config.name}".');
+      }
+    } on LocationServiceException catch (e, st) {
+      AppLogger.log.warning('Unable to ${(resetRoute) ? 'start' : 'restore'} location route recording: $e', e, st);
+
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        BuildContext? context = PermissionManager.instance.navigatorKey.currentContext;
+        if (context == null) return;
+
+        ColorScheme scheme = Theme.of(context).colorScheme;
+        AppLocalizations local = AppLocalizations.of(context)!;
+        showToast(
+          scheme: scheme,
+          toast: Text(local.translate("time_map_viewer.location_error"), style: AppText.bodySm(scheme), textAlign: TextAlign.center),
+          gravity: ToastGravity.TOP,
+          position: (context, child, gravity) {
+            return Positioned(top: 150, left: 60, right: 60, child: child);
+          },
+          secs: 7,
+        );
+      });
+      rethrow;
+    } catch (e, st) {
+      AppLogger.log.severe('Unexpected error while ${(resetRoute) ? 'starting' : 'restoring'} location route recording.', e, st);
+      rethrow;
+    }
+  }
+
+  /// Stops continuous GPS route recording when it is currently active.
+  ///
+  /// The persisted route remains in the database after recording stops so that
+  /// it can be retrieved later by [LocationService.loadRoute].
+  ///
+  /// Stopping route recording is intentionally independent from the
+  /// [TimerConfig.locationSharingEnabled] value. Continuous recording only
+  /// occurs when [TimerConfig.routeSharingEnabled] is enabled.
+  Future<List<LatLng>?> _stopLocationRecording() async {
+    if (!LocationService.instance.isRecording) {
+      return null;
+    }
+
+    try {
+      return await LocationService.instance.stopRecording().whenComplete(() => AppLogger.log.info('Location route recording stopped.'));
+    } catch (e, st) {
+      AppLogger.log.severe('Failed to stop location route recording.', e, st);
+      return null;
+    }
   }
 
   /// Launches a notification reflecting the current state of the active timer.
@@ -377,9 +488,7 @@ class TimerService extends ChangeNotifier {
     final context = PermissionManager.instance.navigatorKey.currentContext;
 
     if (context == null || !context.mounted) {
-      AppLogger.log.warning(
-        "Cannot launch timer notification: navigator context unavailable.",
-      );
+      AppLogger.log.warning("Cannot launch timer notification: navigator context unavailable.");
       return;
     }
 
@@ -477,10 +586,7 @@ class TimerService extends ChangeNotifier {
       passFocus.unfocus();
 
       if (passController.text.isEmpty) return;
-      bool result = verifyPassword(
-        passController.text,
-        _activeTimer.config.passwordHash!,
-      );
+      bool result = verifyPassword(passController.text, _activeTimer.config.passwordHash!);
 
       try {
         if (result) {
@@ -488,11 +594,7 @@ class TimerService extends ChangeNotifier {
         } else {
           showToast(
             scheme: scheme,
-            toast: Text(
-              local.translate("home.password_invalid"),
-              style: AppText.bodySm(scheme),
-              textAlign: TextAlign.center,
-            ),
+            toast: Text(local.translate("home.password_invalid"), style: AppText.bodySm(scheme), textAlign: TextAlign.center),
             gravity: ToastGravity.TOP,
             position: (context, child, gravity) {
               return Positioned(bottom: 150, left: 60, right: 60, child: child);
@@ -524,9 +626,7 @@ class TimerService extends ChangeNotifier {
                 style: AppText.body(scheme),
                 cursorColor: scheme.primary,
                 scrollPadding: const EdgeInsets.all(0),
-                inputFormatters: [
-                  FilteringTextInputFormatter.singleLineFormatter,
-                ],
+                inputFormatters: [FilteringTextInputFormatter.singleLineFormatter],
                 decoration: InputDecoration(
                   hintText: local.translate("home.password_hint"),
                   counterText: '',
@@ -537,10 +637,7 @@ class TimerService extends ChangeNotifier {
                 ),
                 obscureText: true,
                 onTap: () {
-                  passController.selection = TextSelection(
-                    baseOffset: 0,
-                    extentOffset: passController.text.length,
-                  );
+                  passController.selection = TextSelection(baseOffset: 0, extentOffset: passController.text.length);
                 },
                 onSubmitted: (_) => passwordWritten(),
               ),
@@ -549,11 +646,7 @@ class TimerService extends ChangeNotifier {
               padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
               child: SizedBox(
                 height: 64,
-                child: PrimaryButton(
-                  width: 64,
-                  icon: LucideIcons.keySquare,
-                  onPressed: () => passwordWritten(),
-                ),
+                child: PrimaryButton(width: 64, icon: LucideIcons.keySquare, onPressed: () => passwordWritten()),
               ),
             ),
           ],
@@ -577,17 +670,66 @@ class TimerService extends ChangeNotifier {
   }
 
   Future<void> triggerEmergency() async {
-    //TODO trigger emergency protocols (send messages & stuff)
+    final config = _activeTimer.config;
 
-    //TODO when sending, create a list of unique emails (combine contact emails & custom emails) and a list of unique phone numbers (combine contact numbers & custom numbers)
+    LatLng? currentLocation;
+    String polyline = '';
 
-    HistoryService.insertHistoryRecord(
+    // Continuous route recording is no longer required.
+    List<LatLng>? route = await _stopLocationRecording();
+    if (route != null) currentLocation = route.last;
+
+    if (config.routeSharingEnabled) {
+      try {
+        polyline = await LocationService.instance.loadEncodedRoute();
+        AppLogger.log.info('Loaded recorded route for emergency sharing.');
+      } catch (e, st) {
+        AppLogger.log.severe('Failed to load recorded route for emergency.', e, st);
+      }
+    } else if (config.locationSharingEnabled) {
+      try {
+        currentLocation = await LocationService.instance.getCurrentLocation();
+
+        AppLogger.log.info('Obtained current location for emergency sharing.');
+      } on LocationServiceException catch (e, st) {
+        AppLogger.log.warning('Unable to obtain current location for emergency sharing: $e', e, st);
+      } catch (e, st) {
+        AppLogger.log.severe('Unexpected error while obtaining current location.', e, st);
+      }
+    }
+
+    // TODO:
+    //
+    // Combine and deduplicate:
+    //
+    //   _activeTimer.config.contacts[*].email
+    //   _activeTimer.config.customEmail
+    //
+    // and:
+    //
+    //   _activeTimer.config.contacts[*].sms
+    //   _activeTimer.config.customSms
+    //
+    // TODO:
+    //
+    // Send the current location or encoded route through the configured
+    // emergency channels.
+    //
+    // TODO:
+    //
+    // Trigger Discord/Telegram integrations.
+
+    final location = (currentLocation == null)
+        ? null
+        : <String, dynamic>{'latitude': currentLocation.latitude, 'longitude': currentLocation.longitude};
+
+    await HistoryService.insertHistoryRecord(
       TimerExpiredEvent(
-        timerName: _activeTimer.config.name,
-        startedAt: DateTime.now(),
+        timerName: config.name,
+        startedAt: DateTime.fromMillisecondsSinceEpoch(_activeTimer.run.startedAtMs),
         endedAt: DateTime.now(),
-        location: {},
-        polyline: '',
+        location: location,
+        polyline: polyline,
         sms: [],
         emails: [],
         channels: [],
@@ -595,6 +737,10 @@ class TimerService extends ChangeNotifier {
         audioRecorded: false,
       ),
     );
+
+    // The emergency flow has consumed the route/current location.
+    // Continuous route recording is no longer required.
+    await _stopLocationRecording();
   }
 
   /// Formats a [Duration] into a compact human-readable string.
@@ -684,9 +830,7 @@ class TimerService extends ChangeNotifier {
           """,
     );
 
-    _activeTimer.config.contacts.removeWhere(
-      (contact) => contact.id == contactID,
-    );
+    _activeTimer.config.contacts.removeWhere((contact) => contact.id == contactID);
   }
 
   /// Removes deleted destinations from an account in the active timer's
@@ -698,10 +842,7 @@ class TimerService extends ChangeNotifier {
   /// the integration account are removed. Other destinations remain unchanged.
   ///
   /// Throws an [Exception] if [integrationKey] is not a supported integration.
-  Future<void> removeDeletedAccountDestinationFromActiveTimer(
-    String integrationKey,
-    String accountID,
-  ) async {
+  Future<void> removeDeletedAccountDestinationFromActiveTimer(String integrationKey, String accountID) async {
     final result = await select(
       sql:
           '''
@@ -716,9 +857,7 @@ class TimerService extends ChangeNotifier {
 
     final rows = jsonDecode(result) as List<dynamic>;
 
-    final destinations = rows
-        .map((row) => row['destination_id'] as String)
-        .toList();
+    final destinations = rows.map((row) => row['destination_id'] as String).toList();
 
     final activeIntegration = switch (integrationKey) {
       'discord' => _activeTimer.config.integrations.discord,
@@ -739,18 +878,13 @@ class TimerService extends ChangeNotifier {
   /// integration remain unchanged.
   ///
   /// Throws an [Exception] if [integrationKey] is not a supported integration.
-  Future<void> removeDeletedIntegrationAccountFromActiveTimer(
-    String integrationKey,
-    String accountID,
-  ) async {
+  Future<void> removeDeletedIntegrationAccountFromActiveTimer(String integrationKey, String accountID) async {
     final activeIntegration = switch (integrationKey) {
       'discord' => _activeTimer.config.integrations.discord,
       'telegram' => _activeTimer.config.integrations.telegram,
       _ => throw Exception("somehow there's an unknown integration key here"),
     };
 
-    activeIntegration.accounts.removeWhere(
-      (account) => account.id == accountID,
-    );
+    activeIntegration.accounts.removeWhere((account) => account.id == accountID);
   }
 }

@@ -67,7 +67,19 @@
 		<true />
 		<key>UIViewControllerBasedStatusBarAppearance</key>
 		<false />
+
 		<key>NSCameraUsageDescription</key>
 		<string>This app needs camera access to scan QR codes.</string>
+
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string> This app uses your location to record routes. </string>
+
+		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+		<string> This app uses your location in the background while recording a route. </string>
+
+		<key>UIBackgroundModes</key>
+		<array>
+			<string>location</string>
+		</array>
 	</dict>
 </plist>

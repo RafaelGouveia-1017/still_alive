@@ -143,6 +143,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
     TorchState torchState = controller.value.torchState;
 
     return ScreenBase(
+      noSpacing: true,
       header: AppHeader(
         title: local.translate("qr_pairing.title"),
         subtitle: local.translate("qr_pairing.description"),

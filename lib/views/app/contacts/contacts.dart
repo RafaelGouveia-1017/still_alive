@@ -33,16 +33,9 @@ import '../../widgets/primitives.dart';
 /// changes made outside the screen, such as edits to device contacts, are
 /// reflected in the displayed list.
 class ContactsScreen extends StatefulWidget {
-  const ContactsScreen.showAllContacts({super.key})
-    : selectMode = false,
-      timerContacts = null,
-      onChanged = null;
+  const ContactsScreen.showAllContacts({super.key}) : selectMode = false, timerContacts = null, onChanged = null;
 
-  const ContactsScreen.selectContactsForTimer({
-    super.key,
-    required this.timerContacts,
-    required this.onChanged,
-  }) : selectMode = true;
+  const ContactsScreen.selectContactsForTimer({super.key, required this.timerContacts, required this.onChanged}) : selectMode = true;
 
   final bool selectMode;
   final List<config.Contact>? timerContacts;
@@ -93,9 +86,7 @@ class _ContactsScreenState extends State<ContactsScreen> with RouteAware {
       _isLoading = true;
     });
 
-    String jsonString = await selectOne(
-      sql: "SELECT value FROM contacts WHERE key = 'quick'",
-    );
+    String jsonString = await selectOne(sql: "SELECT value FROM contacts WHERE key = 'quick'");
     Map<String, dynamic> json = jsonDecode(jsonString);
     if (json['count'] != 0) {
       for (String id in json['ids']) {
@@ -103,9 +94,7 @@ class _ContactsScreenState extends State<ContactsScreen> with RouteAware {
       }
     }
 
-    jsonString = await selectOne(
-      sql: "SELECT value FROM contacts WHERE key = 'emergency'",
-    );
+    jsonString = await selectOne(sql: "SELECT value FROM contacts WHERE key = 'emergency'");
     json = jsonDecode(jsonString);
     if (json['count'] != 0) {
       for (String id in json['ids']) {
@@ -121,9 +110,7 @@ class _ContactsScreenState extends State<ContactsScreen> with RouteAware {
       }
     }
 
-    jsonString = await selectOne(
-      sql: "SELECT value FROM contacts WHERE key = 'preferences'",
-    );
+    jsonString = await selectOne(sql: "SELECT value FROM contacts WHERE key = 'preferences'");
     json = jsonDecode(jsonString);
     List<Map<String, dynamic>> prefsContacts = [];
     if (json['count'] != 0) {
@@ -133,37 +120,26 @@ class _ContactsScreenState extends State<ContactsScreen> with RouteAware {
     }
 
     List<Contact> allContacts = await FlutterContacts.getAll(
-      properties: {
-        ContactProperty.name,
-        ContactProperty.photoThumbnail,
-        ContactProperty.relation,
-        ContactProperty.phone,
-        ContactProperty.favorite,
-      },
+      properties: {ContactProperty.name, ContactProperty.photoThumbnail, ContactProperty.relation, ContactProperty.phone, ContactProperty.favorite},
     );
 
     if (allContacts.isNotEmpty) {
       if (!mounted) return;
-      List<({List<Color> gradient, Color text})> colorOpts =
-          ContactService.colorOptions(context);
+      List<({List<Color> gradient, Color text})> colorOpts = ContactService.colorOptions(context);
 
       for (Contact? contact in allContacts) {
         if (contact != null) {
+          if (contact.name == null || contact.displayName == null) continue;
+
           final colors = colorOpts[Random().nextInt(colorOpts.length)];
 
           bool isFavorite = false;
           if (Platform.isAndroid) {
-            isFavorite = (contact.android!.isFavorite != null)
-                ? contact.android!.isFavorite!
-                : false;
+            isFavorite = (contact.android!.isFavorite != null) ? contact.android!.isFavorite! : false;
           }
 
-          bool isQuick = (quickContacts.isEmpty)
-              ? false
-              : quickContacts.any((c) => c == contact.id);
-          bool isEmergency = (emergencyContacts.isEmpty)
-              ? false
-              : emergencyContacts.any((c) => c == contact.id);
+          bool isQuick = (quickContacts.isEmpty) ? false : quickContacts.any((c) => c == contact.id);
+          bool isEmergency = (emergencyContacts.isEmpty) ? false : emergencyContacts.any((c) => c == contact.id);
 
           String role = '';
           if (contact.name?.nickname != null) {
@@ -205,10 +181,7 @@ class _ContactsScreenState extends State<ContactsScreen> with RouteAware {
       json['contacts'] = prefsContacts;
       json['count'] = prefsContacts.length;
 
-      executeSql(
-        sql:
-            "UPDATE contacts SET value = '${jsonEncode(json).replaceAll("'", "''")}' WHERE key = 'preferences'",
-      );
+      executeSql(sql: "UPDATE contacts SET value = '${jsonEncode(json).replaceAll("'", "''")}' WHERE key = 'preferences'");
     }
 
     if (!mounted) return;
@@ -311,11 +284,7 @@ class _ContactsScreenState extends State<ContactsScreen> with RouteAware {
     return subtitle;
   }
 
-  Widget _getContactRow(
-    String heroID,
-    ContactData data, {
-    bool compact = true,
-  }) {
+  Widget _getContactRow(String heroID, ContactData data, {bool compact = true}) {
     if (widget.selectMode) {
       return ContactRow(
         heroID: heroID,
@@ -354,8 +323,7 @@ class _ContactsScreenState extends State<ContactsScreen> with RouteAware {
         filteredContacts = contacts
             .where(
               (c) =>
-                  (c.name != null &&
-                      c.name!.toLowerCase().contains(searchQuery)) ||
+                  (c.name != null && c.name!.toLowerCase().contains(searchQuery)) ||
                   c.role.toLowerCase().contains(searchQuery) ||
                   c.phone.toLowerCase().contains(searchQuery),
             )
@@ -368,9 +336,7 @@ class _ContactsScreenState extends State<ContactsScreen> with RouteAware {
 
       if (widget.selectMode) {
         List<String> ids = timerContacts.map((c) => c.id).toList();
-        timerFilteredContacts = filteredContacts
-            .where((c) => ids.contains(c.id))
-            .toList();
+        timerFilteredContacts = filteredContacts.where((c) => ids.contains(c.id)).toList();
       }
     }
 
@@ -379,23 +345,13 @@ class _ContactsScreenState extends State<ContactsScreen> with RouteAware {
       header: AppHeader(
         title: local.translate("contacts_list.title"),
         subtitle: (widget.selectMode) ? _getSubtitle() : null,
-        left: (widget.selectMode)
-            ? CircleIconButton(
-                icon: LucideIcons.chevronLeft,
-                onTap: () => Navigator.pop(context),
-              )
-            : null,
+        left: (widget.selectMode) ? CircleIconButton(icon: LucideIcons.chevronLeft, onTap: () => Navigator.pop(context)) : null,
         right: (widget.selectMode)
             ? null
             : CircleIconButton(
                 icon: LucideIcons.shieldAlert,
                 foreground: scheme.error,
-                onTap: () => Navigator.of(context).push(
-                  AppRoute(
-                    page: EmergencyContactsScreen(),
-                    transition: AppRouteTransitionType.slideLeft,
-                  ),
-                ),
+                onTap: () => Navigator.of(context).push(AppRoute(page: EmergencyContactsScreen(), transition: AppRouteTransitionType.slideLeft)),
               ),
         searchBar: AppSearchBar(
           hint: local.translate("contacts_list.search"),
@@ -410,53 +366,31 @@ class _ContactsScreenState extends State<ContactsScreen> with RouteAware {
           ? SizedBox(
               width: double.infinity,
               height: double.infinity,
-              child: Center(
-                child: CircularProgressIndicator(color: scheme.tertiary),
-              ),
+              child: Center(child: CircularProgressIndicator(color: scheme.tertiary)),
             )
           : Column(
               children: [
                 Expanded(
                   child: ListView(
                     physics: const ClampingScrollPhysics(),
-                    padding: const EdgeInsets.only(
-                      top: AppSpacing.xl,
-                      bottom: AppSpacing.lg,
-                    ),
+                    padding: const EdgeInsets.only(top: AppSpacing.xl, bottom: AppSpacing.lg),
                     children: [
-                      if (widget.selectMode &&
-                          timerFilteredContacts.isNotEmpty) ...[
+                      if (widget.selectMode && timerFilteredContacts.isNotEmpty) ...[
                         SectionTitle(
                           local.translate("contacts_list.sections.2"),
-                          action: Text(
-                            '${timerFilteredContacts.length}',
-                            style: AppText.micro(scheme),
-                          ),
+                          action: Text('${timerFilteredContacts.length}', style: AppText.micro(scheme)),
                         ),
                         AppCard(
                           padding: EdgeInsets.all(AppSpacing.lg),
                           child: Column(
                             children: [
-                              for (
-                                int i = 0;
-                                i < timerFilteredContacts.length;
-                                i++
-                              ) ...[
-                                _getContactRow(
-                                  'contact-pic-${timerFilteredContacts[i].id}-timer',
-                                  timerFilteredContacts[i],
-                                  compact: false,
-                                ),
+                              for (int i = 0; i < timerFilteredContacts.length; i++) ...[
+                                _getContactRow('contact-pic-${timerFilteredContacts[i].id}-timer', timerFilteredContacts[i], compact: false),
 
                                 if (i < timerFilteredContacts.length - 1)
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: AppSpacing.md,
-                                    ),
-                                    child: Divider(
-                                      height: 1,
-                                      color: scheme.outlineVariant,
-                                    ),
+                                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                                    child: Divider(height: 1, color: scheme.outlineVariant),
                                   ),
                               ],
                             ],
@@ -466,33 +400,18 @@ class _ContactsScreenState extends State<ContactsScreen> with RouteAware {
                       ],
 
                       if (starred.isNotEmpty) ...[
-                        SectionTitle(
-                          local.translate("contacts_list.sections.0"),
-                          action: Text(
-                            '${starred.length}',
-                            style: AppText.micro(scheme),
-                          ),
-                        ),
+                        SectionTitle(local.translate("contacts_list.sections.0"), action: Text('${starred.length}', style: AppText.micro(scheme))),
                         AppCard(
                           padding: EdgeInsets.all(AppSpacing.lg),
                           child: Column(
                             children: [
                               for (int i = 0; i < starred.length; i++) ...[
-                                _getContactRow(
-                                  'contact-pic-${starred[i].id}-starred',
-                                  starred[i],
-                                  compact: false,
-                                ),
+                                _getContactRow('contact-pic-${starred[i].id}-starred', starred[i], compact: false),
 
                                 if (i < starred.length - 1)
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: AppSpacing.ms,
-                                    ),
-                                    child: Divider(
-                                      height: 1,
-                                      color: scheme.outlineVariant,
-                                    ),
+                                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.ms),
+                                    child: Divider(height: 1, color: scheme.outlineVariant),
                                   ),
                               ],
                             ],
@@ -510,27 +429,15 @@ class _ContactsScreenState extends State<ContactsScreen> with RouteAware {
                               height: 80,
                               decoration: BoxDecoration(
                                 color: scheme.surfaceContainer,
-                                borderRadius: BorderRadius.circular(
-                                  AppRadius.xxl,
-                                ),
-                                border: Border.all(
-                                  color: scheme.outlineVariant,
-                                ),
+                                borderRadius: BorderRadius.circular(AppRadius.xxl),
+                                border: Border.all(color: scheme.outlineVariant),
                               ),
-                              child: Icon(
-                                (widget.selectMode)
-                                    ? LucideIcons.bookX
-                                    : LucideIcons.userX,
-                                size: 36,
-                                color: scheme.onSurfaceVariant,
-                              ),
+                              child: Icon((widget.selectMode) ? LucideIcons.bookX : LucideIcons.userX, size: 36, color: scheme.onSurfaceVariant),
                             ),
                             const SizedBox(height: AppSpacing.lg),
                             Text(
                               local.translate("contacts_list.not_found"),
-                              style: AppText.bodySm(
-                                scheme,
-                              ).copyWith(color: scheme.onSurfaceVariant),
+                              style: AppText.bodySm(scheme).copyWith(color: scheme.onSurfaceVariant),
                               textAlign: TextAlign.center,
                             ),
                           ],
@@ -538,34 +445,19 @@ class _ContactsScreenState extends State<ContactsScreen> with RouteAware {
                       ] else ...[
                         SectionTitle(
                           local.translate("contacts_list.sections.1"),
-                          action: Text(
-                            '${filteredContacts.length}',
-                            style: AppText.micro(scheme),
-                          ),
+                          action: Text('${filteredContacts.length}', style: AppText.micro(scheme)),
                         ),
                         AppCard(
                           padding: EdgeInsets.all(AppSpacing.lg),
                           child: Column(
                             children: [
-                              for (
-                                int i = 0;
-                                i < filteredContacts.length;
-                                i++
-                              ) ...[
-                                _getContactRow(
-                                  'contact-pic-${filteredContacts[i].id}',
-                                  filteredContacts[i],
-                                ),
+                              for (int i = 0; i < filteredContacts.length; i++) ...[
+                                _getContactRow('contact-pic-${filteredContacts[i].id}', filteredContacts[i]),
 
                                 if (i < filteredContacts.length - 1)
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: AppSpacing.md,
-                                    ),
-                                    child: Divider(
-                                      height: 1,
-                                      color: scheme.outlineVariant,
-                                    ),
+                                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                                    child: Divider(height: 1, color: scheme.outlineVariant),
                                   ),
                               ],
                             ],

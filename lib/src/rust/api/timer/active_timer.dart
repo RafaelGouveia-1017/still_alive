@@ -40,18 +40,21 @@ Future<ActiveTimer?> reconcileActiveTimer({required PlatformInt64 nowMs}) =>
 Future<String?> getUniqueTimerId() =>
     RustLib.instance.api.crateApiTimerActiveTimerGetUniqueTimerId();
 
-/// Creates a new timer from the given configuration.
+/// Persists a timer from the given key & configuration.
 ///
 /// # Arguments
 ///
+/// * `key` - Identifier of the timer to edit.
 /// * `config` - Configuration for the new timer.
 ///
 /// # Errors
 ///
 /// Returns an error if the new timer configuration cannot be
 /// persisted to the database.
-Future<void> createTimer({required TimerConfig config}) =>
-    RustLib.instance.api.crateApiTimerActiveTimerCreateTimer(config: config);
+Future<void> persistTimer({String? key, required TimerConfig config}) => RustLib
+    .instance
+    .api
+    .crateApiTimerActiveTimerPersistTimer(key: key, config: config);
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ActiveTimer>>
 abstract class ActiveTimer implements RustOpaqueInterface {

@@ -1,9 +1,12 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:collection/collection.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:still_alive/services/timer_service.dart';
 import 'package:still_alive/src/rust/api/timer/active_timer.dart';
 import 'package:still_alive/src/rust/api/timer/config.dart';
+import 'package:still_alive/src/rust/api/timer/state.dart';
 
 import '../../../../../data/all.dart';
 import '../../../../widgets/primitives.dart';
@@ -31,20 +34,13 @@ class TimerConfigScreen extends StatefulWidget {
   ///
   /// The timer key is generated when the screen loads, and the timer
   /// configuration is initialized with the application's default values.
-  const TimerConfigScreen.newTimer({super.key})
-    : isNew = true,
-      timerKey = null,
-      timerData = null;
+  const TimerConfigScreen.newTimer({super.key}) : isNew = true, timerKey = null, timerData = null;
 
   /// Creates a screen for editing an existing timer.
   ///
   /// The existing timer's [timerKey] and [timerData] are used as the initial
   /// configuration values displayed by the form.
-  const TimerConfigScreen.existingTimer({
-    super.key,
-    required String this.timerKey,
-    required TimerConfig this.timerData,
-  }) : isNew = false;
+  const TimerConfigScreen.existingTimer({super.key, required String this.timerKey, required TimerConfig this.timerData}) : isNew = false;
 
   /// Whether this screen is configuring a new timer.
   ///
@@ -108,28 +104,46 @@ class _TimerConfigScreenState extends State<TimerConfigScreen> {
 
     try {
       String key = widget.timerKey ?? (await getUniqueTimerId())!;
-      TimerConfig data =
-          widget.timerData ??
-          TimerConfig(
-            name: "",
-            durationSecs: 0,
-            gracePeriodSecs: null,
-            passwordProtected: false,
-            passwordHash: null,
-            locationSharingEnabled: false,
-            routeSharingEnabled: false,
-            locationCollectionIntervalSecs: null,
-            audioRecordingEnabled: false,
-            contacts: [],
-            customSms: [],
-            customEmail: [],
-            integrations: TimerIntegrations(
-              discord: TimerIntegration(accounts: []),
-              telegram: TimerIntegration(accounts: []),
-            ),
-            createdAt: "",
-            updatedAt: "",
-          );
+      TimerConfig data = (widget.timerData != null)
+          ? TimerConfig(
+              name: widget.timerData!.name,
+              durationSecs: widget.timerData!.durationSecs,
+              gracePeriodSecs: widget.timerData!.gracePeriodSecs,
+              passwordProtected: widget.timerData!.passwordProtected,
+              passwordHash: widget.timerData!.passwordHash,
+              locationSharingEnabled: widget.timerData!.locationSharingEnabled,
+              routeSharingEnabled: widget.timerData!.routeSharingEnabled,
+              locationCollectionIntervalSecs: widget.timerData!.locationCollectionIntervalSecs,
+              audioRecordingEnabled: widget.timerData!.audioRecordingEnabled,
+              contacts: widget.timerData!.contacts,
+              customSms: widget.timerData!.customSms,
+              customEmail: widget.timerData!.customEmail,
+              integrations: widget.timerData!.integrations,
+              createdAt: widget.timerData!.name,
+              updatedAt: widget.timerData!.name,
+            )
+          : TimerConfig(
+              name: "",
+              durationSecs: 0,
+              gracePeriodSecs: null,
+              passwordProtected: false,
+              passwordHash: null,
+              locationSharingEnabled: false,
+              routeSharingEnabled: false,
+              locationCollectionIntervalSecs: null,
+              audioRecordingEnabled: false,
+              contacts: [],
+              customSms: [],
+              customEmail: [],
+              integrations: TimerIntegrations(
+                discord: TimerIntegration(accounts: []),
+                telegram: TimerIntegration(accounts: []),
+              ),
+              createdAt: "",
+              updatedAt: "",
+            );
+
+      //TODO add message field, input, etc to TimerConfig
 
       setState(() {
         _timerKey = key;
@@ -152,411 +166,419 @@ class _TimerConfigScreenState extends State<TimerConfigScreen> {
     super.dispose();
   }
 
+  bool _contactsEqual(List<Contact> a, List<Contact> b) {
+    if (a.length != b.length) return false;
+
+    for (var i = 0; i < a.length; i++) {
+      final x = a[i];
+      final y = b[i];
+
+      if (x.id != y.id) return false;
+      if (!const ListEquality<String>().equals(x.sms, y.sms)) return false;
+      if (!const ListEquality<String>().equals(x.email, y.email)) return false;
+    }
+
+    return true;
+  }
+
+  bool timerIntegrationAccountEqual(TimerIntegrationAccount a, TimerIntegrationAccount b) {
+    return a.id == b.id && const ListEquality<String>().equals(a.destinations, b.destinations);
+  }
+
+  bool timerIntegrationAccountsEqual(List<TimerIntegrationAccount> a, List<TimerIntegrationAccount> b) {
+    if (a.length != b.length) return false;
+
+    for (var i = 0; i < a.length; i++) {
+      if (!timerIntegrationAccountEqual(a[i], b[i])) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  bool timerIntegrationsEqual(TimerIntegrations a, TimerIntegrations b) {
+    return timerIntegrationAccountsEqual(a.discord.accounts, b.discord.accounts) &&
+        timerIntegrationAccountsEqual(a.telegram.accounts, b.telegram.accounts);
+  }
+
+  Future<void> _handleBack(BuildContext context, ColorScheme scheme, AppLocalizations local) async {
+    bool hasUnsavedChanges = false;
+
+    if (widget.isNew) {
+      hasUnsavedChanges = true;
+    } else if (_timerData.name != widget.timerData!.name ||
+        _timerData.durationSecs != widget.timerData!.durationSecs ||
+        _timerData.gracePeriodSecs != widget.timerData!.gracePeriodSecs ||
+        _timerData.passwordProtected != widget.timerData!.passwordProtected ||
+        _timerData.locationSharingEnabled != widget.timerData!.locationSharingEnabled ||
+        _timerData.routeSharingEnabled != widget.timerData!.routeSharingEnabled ||
+        _timerData.locationCollectionIntervalSecs != widget.timerData!.locationCollectionIntervalSecs ||
+        _timerData.audioRecordingEnabled != widget.timerData!.audioRecordingEnabled ||
+        !_contactsEqual(_timerData.contacts, widget.timerData!.contacts) ||
+        !listEquals(_timerData.customSms, widget.timerData!.customSms) ||
+        !listEquals(_timerData.customEmail, widget.timerData!.customEmail) ||
+        !timerIntegrationsEqual(_timerData.integrations, widget.timerData!.integrations)) {
+      hasUnsavedChanges = true;
+    }
+
+    if (!hasUnsavedChanges) {
+      Navigator.pop(context);
+      return;
+    }
+
+    bool? go = await showBlurredBottomSheet<bool>(
+      context: context,
+      scheme: scheme,
+      marginHorizontal: 40,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(local.translate("timer_configuration.unsaved.0"), style: AppText.body(scheme), textAlign: TextAlign.center),
+          Padding(
+            padding: const EdgeInsets.only(top: AppSpacing.lg, bottom: AppSpacing.ms, left: AppSpacing.xxxxl, right: AppSpacing.xxxxl),
+            child: PrimaryButton(
+              onPressed: () => Navigator.pop(context, true),
+              label: local.translate("timer_configuration.unsaved.1"),
+              icon: LucideIcons.brushCleaning,
+              color: ButtonColor.warning,
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (go == true && context.mounted) {
+      Navigator.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     ColorScheme scheme = Theme.of(context).colorScheme;
     AppLocalizations local = AppLocalizations.of(context)!;
 
-    bool hasActiveTimer = TimerService.instance.hasActiveTimer;
+    final state = TimerService.instance.timerRunCurrentState;
+    bool hasActiveTimer = (state == TimerState.running || state == TimerState.paused);
 
     ActiveTimer activeTimer = TimerService.instance.activeTimer;
     String key = activeTimer.key;
 
-    bool shouldReplace =
-        key == 'timer0' ||
-        (!hasActiveTimer && (widget.isNew || key == widget.timerKey));
+    bool shouldReplace = key == 'timer0' || (!hasActiveTimer && (widget.isNew || _timerKey == activeTimer.key));
 
-    return ScreenBase(
-      header: AppHeader(
-        title: (widget.isNew)
-            ? local.translate("timer_configuration.title_new")
-            : local.translate("timer_configuration.title_edit"),
-        left: (_isLoading)
-            ? SizedBox(
-                width: 40,
-                height: 40,
-                child: Center(
-                  child: CircularProgressIndicator(color: scheme.tertiary),
-                ),
-              )
-            : CircleIconButton(
-                icon: LucideIcons.chevronLeft,
-                onTap: () => Navigator.pop(context),
-              ),
-      ),
-      child: Column(
-        children: [
-          Expanded(
-            child: Form(
-              key: _formKey,
-              child: SingleChildScrollView(
-                physics: const ClampingScrollPhysics(),
-                padding: const EdgeInsets.only(bottom: AppSpacing.xxxl),
-                child: Column(
-                  children: [
-                    const SizedBox(height: AppSpacing.lg),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        _handleBack(context, scheme, local);
+      },
+      child: ScreenBase(
+        header: AppHeader(
+          title: (widget.isNew) ? local.translate("timer_configuration.title_new") : local.translate("timer_configuration.title_edit"),
+          left: (_isLoading)
+              ? SizedBox(
+                  width: 40,
+                  height: 40,
+                  child: Center(child: CircularProgressIndicator(color: scheme.tertiary)),
+                )
+              : CircleIconButton(icon: LucideIcons.chevronLeft, onTap: () => _handleBack(context, scheme, local)),
+        ),
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                Expanded(
+                  child: Form(
+                    key: _formKey,
+                    child: SingleChildScrollView(
+                      physics: const ClampingScrollPhysics(),
+                      padding: const EdgeInsets.only(bottom: AppSpacing.xxxl),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: AppSpacing.lg),
 
-                    if (_isLoading) ...[
-                      Padding(
-                        padding: EdgeInsets.only(top: AppSpacing.lg),
-                        child: SizedBox(
-                          width: 44,
-                          height: 44,
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              color: scheme.tertiary,
+                          if (_isLoading) ...[
+                            Padding(
+                              padding: EdgeInsets.only(top: AppSpacing.lg),
+                              child: SizedBox(
+                                width: 44,
+                                height: 44,
+                                child: Center(child: CircularProgressIndicator(color: scheme.tertiary)),
+                              ),
                             ),
-                          ),
-                        ),
-                      ),
-                    ] else ...[
-                      SectionTitle(
-                        local.translate("timer_configuration.name.title"),
-                      ),
-                      NameInput(
-                        name: (widget.isNew) ? null : _timerData.name,
-                        onChanged: (String value) => _timerData.name = value,
-                      ),
-                      const SizedBox(height: AppSpacing.lg),
+                          ] else ...[
+                            SectionTitle(local.translate("timer_configuration.name.title")),
+                            NameInput(name: (widget.isNew) ? null : _timerData.name, onChanged: (String value) => _timerData.name = value),
+                            const SizedBox(height: AppSpacing.lg),
 
-                      SectionTitle(
-                        local.translate("timer_configuration.duration.title"),
-                      ),
-                      DurationInput(
-                        durationTimer: (widget.isNew)
-                            ? null
-                            : Duration(seconds: _timerData.durationSecs),
-                        onChanged: (Duration value) {
-                          _timerData.durationSecs = value.inSeconds;
-                          _timerDuration.value = value;
-                        },
-                      ),
-                      const SizedBox(height: AppSpacing.lg),
-
-                      SectionTitle(
-                        local.translate(
-                          "timer_configuration.grace_period.title",
-                        ),
-                      ),
-                      GraceInput(
-                        gracePeriod:
-                            (widget.isNew || _timerData.gracePeriodSecs == null)
-                            ? null
-                            : Duration(seconds: _timerData.gracePeriodSecs!),
-                        onChanged: (Duration value) =>
-                            _timerData.gracePeriodSecs = (value.inSeconds == 0)
-                            ? null
-                            : value.inSeconds,
-                      ),
-                      const SizedBox(height: AppSpacing.lg),
-
-                      SectionTitle(
-                        local.translate("timer_configuration.security.title"),
-                      ),
-                      if (widget.isNew) ...[
-                        PasswordInput.newTimer(
-                          onProtectedChanged: (bool value) =>
-                              _timerData.passwordProtected = value,
-                          onHashChanged: (String? value) =>
-                              _timerData.passwordHash = value,
-                        ),
-                      ] else ...[
-                        PasswordInput.existingTimer(
-                          protected: _timerData.passwordProtected,
-                          hasHash: _timerData.passwordHash == null,
-                          onProtectedChanged: (bool value) =>
-                              _timerData.passwordProtected = value,
-                          onHashChanged: (String? value) =>
-                              _timerData.passwordHash = value,
-                        ),
-                      ],
-                      const SizedBox(height: AppSpacing.md),
-
-                      LocationInputs(
-                        timerDuration: _timerDuration,
-                        locationEnabled: (widget.isNew)
-                            ? null
-                            : _timerData.locationSharingEnabled,
-                        routeEnabled: (widget.isNew)
-                            ? null
-                            : _timerData.routeSharingEnabled,
-                        collectionInterval:
-                            (widget.isNew ||
-                                _timerData.locationCollectionIntervalSecs ==
-                                    null)
-                            ? null
-                            : _timerData.locationCollectionIntervalSecs!,
-                        onLocationChanged: (bool value) =>
-                            _timerData.locationSharingEnabled = value,
-                        onRouteChanged: (bool value) =>
-                            _timerData.routeSharingEnabled = value,
-                        onCollectionIntervalChanged: (int? value) =>
-                            _timerData.locationCollectionIntervalSecs = value,
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-
-                      AudioInput(
-                        enabled: (widget.isNew)
-                            ? null
-                            : _timerData.audioRecordingEnabled,
-                        onChanged: (bool value) =>
-                            _timerData.audioRecordingEnabled = value,
-                      ),
-
-                      const SizedBox(height: AppSpacing.lg),
-                      SectionTitle(
-                        local.translate("timer_configuration.contacts.title"),
-                      ),
-                      FormField(
-                        builder: (field) => Column(
-                          children: [
-                            ContactSelection(
-                              timerContacts: _timerContacts,
-                              onChanged: (List<Contact>? value) {
-                                final contacts = List<Contact>.of(value ?? []);
-
-                                _timerData.contacts = contacts;
-                                _timerContacts.value = contacts;
+                            SectionTitle(local.translate("timer_configuration.duration.title")),
+                            DurationInput(
+                              durationTimer: (widget.isNew) ? null : Duration(seconds: _timerData.durationSecs),
+                              onChanged: (Duration value) {
+                                _timerData.durationSecs = value.inSeconds;
+                                _timerDuration.value = value;
                               },
                             ),
-                            const SizedBox(height: AppSpacing.md),
+                            const SizedBox(height: AppSpacing.lg),
 
-                            CustomDestinationInput(
-                              customSms: [],
-                              customEmail: [],
-                              onSmsChanged: (List<String>? value) =>
-                                  _timerData.customSms = value ?? [],
-                              onEmailChanged: (List<String>? value) =>
-                                  _timerData.customEmail = value ?? [],
+                            SectionTitle(local.translate("timer_configuration.grace_period.title")),
+                            GraceInput(
+                              gracePeriod: (widget.isNew || _timerData.gracePeriodSecs == null)
+                                  ? null
+                                  : Duration(seconds: _timerData.gracePeriodSecs!),
+                              onChanged: (Duration value) => _timerData.gracePeriodSecs = (value.inSeconds == 0) ? null : value.inSeconds,
                             ),
-                            const SizedBox(height: AppSpacing.md),
+                            const SizedBox(height: AppSpacing.lg),
 
-                            IntegrationSelection(
-                              integrations: _timerData.integrations,
-                              onChanged: (TimerIntegrations value) =>
-                                  _timerData.integrations = value,
-                            ),
-
-                            if (field.hasError)
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  top: AppSpacing.xs,
-                                ),
-                                child: Text(
-                                  field.errorText!,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Theme.of(context).colorScheme.error,
-                                    fontSize: 12,
-                                  ),
-                                ),
+                            SectionTitle(local.translate("timer_configuration.security.title")),
+                            if (widget.isNew) ...[
+                              PasswordInput.newTimer(
+                                onProtectedChanged: (bool value) => _timerData.passwordProtected = value,
+                                onHashChanged: (String? value) => _timerData.passwordHash = value,
                               ),
-                          ],
-                        ),
-                        validator: (_) {
-                          if (_timerData.contacts.isEmpty &&
-                              _timerData.customSms.isEmpty &&
-                              _timerData.customEmail.isEmpty &&
-                              _timerData
-                                  .integrations
-                                  .discord
-                                  .accounts
-                                  .isEmpty &&
-                              _timerData
-                                  .integrations
-                                  .telegram
-                                  .accounts
-                                  .isEmpty) {
-                            return local.translate(
-                              "timer_configuration.validation",
-                            );
-                          }
-                          return null;
-                        },
-                      ),
+                            ] else ...[
+                              PasswordInput.existingTimer(
+                                protected: _timerData.passwordProtected,
+                                hasHash: _timerData.passwordHash != null,
+                                onProtectedChanged: (bool value) => _timerData.passwordProtected = value,
+                                onHashChanged: (String? value) => _timerData.passwordHash = value,
+                              ),
+                            ],
+                            const SizedBox(height: AppSpacing.md),
 
-                      const SizedBox(height: AppSpacing.xl),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.lg,
-                        ),
-                        child: Row(
-                          children: [
-                            if (!widget.isNew) ...[
-                              Pressable(
-                                onTap: null,
-                                child: SizedBox(
-                                  width: 64,
-                                  child: PrimaryButton(
-                                    icon: LucideIcons.trash,
-                                    color: ButtonColor.warning,
-                                    onPressed: () async {
-                                      setState(() => _isLoading = true);
+                            LocationInputs(
+                              timerDuration: _timerDuration,
+                              locationEnabled: (widget.isNew) ? null : _timerData.locationSharingEnabled,
+                              routeEnabled: (widget.isNew) ? null : _timerData.routeSharingEnabled,
+                              collectionInterval: (widget.isNew || _timerData.locationCollectionIntervalSecs == null)
+                                  ? null
+                                  : _timerData.locationCollectionIntervalSecs!,
+                              onLocationChanged: (bool value) => _timerData.locationSharingEnabled = value,
+                              onRouteChanged: (bool value) => _timerData.routeSharingEnabled = value,
+                              onCollectionIntervalChanged: (int? value) => _timerData.locationCollectionIntervalSecs = value,
+                            ),
+                            const SizedBox(height: AppSpacing.md),
 
-                                      bool?
-                                      deleted = await showBlurredBottomSheet<bool>(
-                                        context: context,
-                                        scheme: scheme,
-                                        marginHorizontal: 50,
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Text(
-                                              local.translate(
-                                                "timer_configuration.delete.0",
-                                              ),
-                                              style: AppText.body(scheme),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                top: AppSpacing.xl,
-                                                bottom: AppSpacing.lg,
-                                              ),
-                                              child: PrimaryButton(
-                                                label: local.translate(
-                                                  "timer_configuration.delete.1",
-                                                ),
-                                                color: ButtonColor.warning,
-                                                onPressed: () async {
-                                                  setState(
-                                                    () => _isLoading = true,
-                                                  );
+                            AudioInput(
+                              enabled: (widget.isNew) ? null : _timerData.audioRecordingEnabled,
+                              onChanged: (bool value) => _timerData.audioRecordingEnabled = value,
+                            ),
 
-                                                  bool
-                                                  result = await TimerService
-                                                      .instance
-                                                      .removeTimerFromDatabase(
-                                                        _timerKey,
-                                                      );
+                            const SizedBox(height: AppSpacing.lg),
+                            SectionTitle(local.translate("timer_configuration.contacts.title")),
+                            FormField(
+                              builder: (field) => Column(
+                                children: [
+                                  ContactSelection(
+                                    timerContacts: _timerContacts,
+                                    onChanged: (List<Contact>? value) {
+                                      final contacts = List<Contact>.of(value ?? []);
 
-                                                  if (!context.mounted) return;
-                                                  Navigator.pop(
-                                                    context,
-                                                    result,
-                                                  );
-                                                },
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-
-                                      deleted ??= false;
-                                      setState(() => _isLoading = false);
-
-                                      if (deleted) {
-                                        showToast(
-                                          scheme: scheme,
-                                          toast: Text(
-                                            '"${_timerData.name}" ${local.translate("timer_configuration.delete.2")}',
-                                            style: AppText.bodySm(scheme),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                          gravity: ToastGravity.BOTTOM,
-                                          position: (context, child, gravity) {
-                                            return Positioned(
-                                              bottom: 140,
-                                              left: 40,
-                                              right: 40,
-                                              child: child,
-                                            );
-                                          },
-                                        );
-                                        if (!context.mounted) return;
-                                        Navigator.pop(context);
-                                      } else {
-                                        if (!context.mounted) return;
-                                        showGenericErrorMessage(context, null);
-                                      }
+                                      _timerData.contacts = contacts;
+                                      _timerContacts.value = contacts;
                                     },
                                   ),
+                                  const SizedBox(height: AppSpacing.md),
+
+                                  CustomDestinationInput(
+                                    customSms: _timerData.customSms,
+                                    customEmail: _timerData.customEmail,
+                                    onSmsChanged: (List<String>? value) => _timerData.customSms = value ?? [],
+                                    onEmailChanged: (List<String>? value) => _timerData.customEmail = value ?? [],
+                                  ),
+                                  const SizedBox(height: AppSpacing.md),
+
+                                  IntegrationSelection(
+                                    integrations: _timerData.integrations,
+                                    onChanged: (TimerIntegrations value) => _timerData.integrations = value,
+                                  ),
+
+                                  if (field.hasError)
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: AppSpacing.xs),
+                                      child: Text(
+                                        field.errorText!,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 12),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                              validator: (_) {
+                                if (_timerData.contacts.isEmpty &&
+                                    _timerData.customSms.isEmpty &&
+                                    _timerData.customEmail.isEmpty &&
+                                    _timerData.integrations.discord.accounts.isEmpty &&
+                                    _timerData.integrations.telegram.accounts.isEmpty) {
+                                  return local.translate("timer_configuration.validation");
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 72),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [scheme.surface, scheme.surface.withAlpha(64), scheme.surface.withAlpha(0)],
+                    stops: const [0.3, 0.75, 1],
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.xl),
+                  child: (_isLoading)
+                      ? Center(
+                          child: Padding(
+                            padding: EdgeInsets.only(top: AppSpacing.lg),
+                            child: SizedBox(
+                              width: 44,
+                              height: 44,
+                              child: Center(child: CircularProgressIndicator(color: scheme.tertiary)),
+                            ),
+                          ),
+                        )
+                      : Row(
+                          children: [
+                            if (!widget.isNew) ...[
+                              SizedBox(
+                                width: 64,
+                                child: BlurActionTile(
+                                  icon: LucideIcons.trash,
+                                  label: null,
+                                  background: scheme.error,
+                                  border: scheme.errorContainer.withAlpha(77),
+                                  foreground: scheme.onError,
+                                  onTap: () async {
+                                    bool? deleted = await showBlurredBottomSheet<bool>(
+                                      context: context,
+                                      scheme: scheme,
+                                      marginHorizontal: 50,
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            local.translate("timer_configuration.delete.0"),
+                                            style: AppText.body(scheme),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(top: AppSpacing.xl, bottom: AppSpacing.lg),
+                                            child: PrimaryButton(
+                                              label: local.translate("timer_configuration.delete.1"),
+                                              color: ButtonColor.warning,
+                                              onPressed: () async {
+                                                setState(() => _isLoading = true);
+
+                                                bool result = await TimerService.instance.removeTimerFromDatabase(_timerKey);
+
+                                                if (!context.mounted) {
+                                                  return;
+                                                }
+                                                Navigator.pop(context, result);
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+
+                                    deleted ??= false;
+                                    setState(() => _isLoading = false);
+
+                                    if (deleted) {
+                                      showToast(
+                                        scheme: scheme,
+                                        toast: Text(
+                                          '"${_timerData.name}" ${local.translate("timer_configuration.delete.2")}',
+                                          style: AppText.bodySm(scheme),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        gravity: ToastGravity.BOTTOM,
+                                        position: (context, child, gravity) {
+                                          return Positioned(bottom: 140, left: 40, right: 40, child: child);
+                                        },
+                                      );
+                                      if (!context.mounted) return;
+                                      Navigator.pop(context);
+                                    }
+                                  },
                                 ),
                               ),
                               const SizedBox(width: AppSpacing.lg),
                             ],
 
                             Expanded(
-                              child: Pressable(
-                                onTap: null,
-                                child: PrimaryButton(
-                                  label: (widget.isNew)
-                                      ? local.translate(
-                                          "timer_configuration.create",
-                                        )
-                                      : local.translate(
-                                          "timer_configuration.edit",
-                                        ),
-                                  icon: (shouldReplace)
-                                      ? LucideIcons.shieldCheck
-                                      : LucideIcons.shield,
-                                  color: ButtonColor.tertiary,
-                                  onPressed: () async {
-                                    if (!_formKey.currentState!.validate()) {
-                                      showToast(
-                                        scheme: scheme,
-                                        toast: Text(
-                                          local.translate(
-                                            "timer_configuration.validation_error",
-                                          ),
-                                          style: AppText.bodySm(scheme),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        gravity: ToastGravity.BOTTOM,
-                                        position: (context, child, gravity) {
-                                          return Positioned(
-                                            bottom: 140,
-                                            left: 60,
-                                            right: 60,
-                                            child: child,
-                                          );
-                                        },
+                              child: BlurActionTile(
+                                icon: (shouldReplace) ? LucideIcons.shieldCheck : LucideIcons.shield,
+                                label: (widget.isNew) ? local.translate("timer_configuration.create") : local.translate("timer_configuration.edit"),
+                                background: scheme.tertiary,
+                                border: scheme.tertiary.withAlpha(77),
+                                foreground: scheme.onTertiary,
+                                onTap: () async {
+                                  if (!_formKey.currentState!.validate()) {
+                                    showToast(
+                                      scheme: scheme,
+                                      toast: Text(
+                                        local.translate("timer_configuration.validation_error"),
+                                        style: AppText.bodySm(scheme),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      gravity: ToastGravity.BOTTOM,
+                                      position: (context, child, gravity) {
+                                        return Positioned(bottom: 140, left: 60, right: 60, child: child);
+                                      },
+                                    );
+                                    return;
+                                  }
+
+                                  String now = DateTime.now().toIso8601String();
+                                  if (widget.isNew) {
+                                    _timerData.createdAt = now;
+                                  }
+                                  _timerData.updatedAt = now;
+
+                                  try {
+                                    setState(() {
+                                      _isLoading = true;
+                                    });
+
+                                    if (shouldReplace) {
+                                      await activeTimer.replaceActiveTimer(
+                                        key: _timerKey,
+                                        config: _timerData,
+                                        nowMs: DateTime.now().toUtc().millisecondsSinceEpoch,
                                       );
-                                      return;
+                                    } else {
+                                      await persistTimer(key: widget.timerKey, config: _timerData);
                                     }
-
-                                    String now = DateTime.now()
-                                        .toIso8601String();
-                                    if (widget.isNew) {
-                                      _timerData.createdAt = now;
+                                  } finally {
+                                    if (context.mounted) {
+                                      Navigator.pop(context);
                                     }
-                                    _timerData.updatedAt = now;
-
-                                    try {
-                                      setState(() {
-                                        _isLoading = true;
-                                      });
-
-                                      if (shouldReplace) {
-                                        await activeTimer.replaceActiveTimer(
-                                          key: _timerKey,
-                                          config: _timerData,
-                                          nowMs: DateTime.now()
-                                              .toUtc()
-                                              .millisecondsSinceEpoch,
-                                        );
-                                      } else {
-                                        await createTimer(config: _timerData);
-                                      }
-                                    } finally {
-                                      if (context.mounted) {
-                                        Navigator.pop(context);
-                                      }
-                                    }
-                                  },
-                                ),
+                                  }
+                                },
                               ),
                             ),
                           ],
                         ),
-                      ),
-                    ],
-                  ],
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

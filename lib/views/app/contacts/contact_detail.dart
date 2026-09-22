@@ -89,9 +89,7 @@ class _ContactDetailState extends State<ContactDetailScreen> {
     super.initState();
 
     if (widget.onChanged != null) {
-      _timerContact =
-          widget.timerContact ??
-          config.Contact(id: widget.contactID, sms: [], email: []);
+      _timerContact = widget.timerContact ?? config.Contact(id: widget.contactID, sms: [], email: []);
     } else {
       _timerContact = null;
     }
@@ -122,9 +120,7 @@ class _ContactDetailState extends State<ContactDetailScreen> {
     if (contact != null) {
       bool isFavorite = false;
       if (Platform.isAndroid) {
-        isFavorite = (contact.android!.isFavorite != null)
-            ? contact.android!.isFavorite!
-            : false;
+        isFavorite = (contact.android!.isFavorite != null) ? contact.android!.isFavorite! : false;
       }
 
       try {
@@ -177,9 +173,7 @@ class _ContactDetailState extends State<ContactDetailScreen> {
                 AND json_extract(j.value, '\$.id') = '${widget.contactID}';
               """,
         );
-        Map<String, dynamic> preferences = (result == "None")
-            ? {"id": widget.contactID, "location": true, "audio": true}
-            : jsonDecode(result);
+        Map<String, dynamic> preferences = (result == "None") ? {"id": widget.contactID, "location": true, "audio": true} : jsonDecode(result);
 
         setState(() {
           _isQuick = isQuick;
@@ -199,6 +193,9 @@ class _ContactDetailState extends State<ContactDetailScreen> {
   }
 
   void checkIfAllPrefsTrue() async {
+    bool isSame = const DeepCollectionEquality().equals(_preferences, _ori);
+    if (isSame) return;
+
     try {
       if (_preferences["location"] == true && _preferences["audio"] == true) {
         ContactService.deleteContactPrefs(widget.contactID);
@@ -214,16 +211,13 @@ class _ContactDetailState extends State<ContactDetailScreen> {
 
   @override
   void dispose() {
-    bool isSame = const DeepCollectionEquality().equals(_preferences, _ori);
-    if (!isSame) checkIfAllPrefsTrue();
+    checkIfAllPrefsTrue();
     _lifecycleListener.dispose();
     super.dispose();
   }
 
   String getPhoneNumber(Phone phone) {
-    return (Platform.isAndroid && phone.normalizedNumber != null)
-        ? phone.normalizedNumber!
-        : phone.number;
+    return (Platform.isAndroid && phone.normalizedNumber != null) ? phone.normalizedNumber! : phone.number;
   }
 
   bool isNumberInTimer(String number) {
@@ -280,9 +274,7 @@ class _ContactDetailState extends State<ContactDetailScreen> {
     bool hasImage = false;
     String letter = '', role = '';
     if (!_isLoading) {
-      letter = (_contact.name == null || _contact.displayName == '')
-          ? '?'
-          : _contact.displayName![0];
+      letter = (_contact.name == null || _contact.displayName == null || _contact.displayName == '') ? '?' : _contact.displayName![0];
 
       hasImage = _contact.photo?.fullSize != null;
 
@@ -296,29 +288,18 @@ class _ContactDetailState extends State<ContactDetailScreen> {
     return ScreenBase(
       header: AppHeader(
         title: local.translate("contact_detail.title"),
-        left: CircleIconButton(
-          icon: LucideIcons.chevronLeft,
-          onTap: () => Navigator.pop(context),
-        ),
+        left: CircleIconButton(icon: LucideIcons.chevronLeft, onTap: () => Navigator.pop(context)),
         right: (widget.onChanged != null)
             ? (!_isLoading)
-                  ? (_contact
-                            .phones
-                            .isEmpty) //add _contact.emails.isEmpty check for email support
+                  ? (_contact.phones.isEmpty) //add _contact.emails.isEmpty check for email support
                         ? null
                         : CircleIconButton(
                             icon:
-                                (_contact.phones.length ==
-                                    _timerContact!
-                                        .sms
-                                        .length) //add _contact.emails.length check for email support
+                                (_contact.phones.length == _timerContact!.sms.length) //add _contact.emails.length check for email support
                                 ? LucideIcons.squareCheckBig
                                 : LucideIcons.square,
                             onTap: () {
-                              if (_contact.phones.length ==
-                                  _timerContact!
-                                      .sms
-                                      .length) //add _contact.emails.length check for email support
+                              if (_contact.phones.length == _timerContact!.sms.length) //add _contact.emails.length check for email support
                               {
                                 _timerContact!.sms.clear();
                                 _timerContact!.email.clear();
@@ -343,11 +324,7 @@ class _ContactDetailState extends State<ContactDetailScreen> {
                   : SizedBox(
                       width: 30,
                       height: 30,
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          color: scheme.tertiary,
-                        ),
-                      ),
+                      child: Center(child: CircularProgressIndicator(color: scheme.tertiary)),
                     )
             : CircleIconButton(
                 icon: LucideIcons.pencil,
@@ -361,10 +338,7 @@ class _ContactDetailState extends State<ContactDetailScreen> {
           Expanded(
             child: ListView(
               physics: const ClampingScrollPhysics(),
-              padding: const EdgeInsets.only(
-                top: AppSpacing.xl,
-                bottom: AppSpacing.xl,
-              ),
+              padding: const EdgeInsets.only(top: AppSpacing.xl, bottom: AppSpacing.xl),
               children: [
                 Center(
                   child: Pressable(
@@ -375,15 +349,8 @@ class _ContactDetailState extends State<ContactDetailScreen> {
                       children: [
                         Hero(
                           tag: widget.heroID,
-                          flightShuttleBuilder:
-                              (context, animation, direction, from, to) =>
-                                  AppHeader.flight(
-                                    context,
-                                    animation,
-                                    direction,
-                                    from,
-                                    to,
-                                  ),
+                          flightShuttleBuilder: (context, animation, direction, from, to) =>
+                              AppHeader.flight(context, animation, direction, from, to),
                           child: Material(
                             type: MaterialType.transparency,
                             child: Container(
@@ -391,14 +358,8 @@ class _ContactDetailState extends State<ContactDetailScreen> {
                               height: 96,
                               clipBehavior: Clip.antiAlias,
                               decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: widget.gradient,
-                                ),
-                                borderRadius: BorderRadius.circular(
-                                  AppRadius.xxl,
-                                ),
+                                gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: widget.gradient),
+                                borderRadius: BorderRadius.circular(AppRadius.xxl),
                                 boxShadow: [
                                   BoxShadow(
                                     color: widget.gradient.last.withAlpha(153),
@@ -410,16 +371,8 @@ class _ContactDetailState extends State<ContactDetailScreen> {
                               ),
                               alignment: Alignment.center,
                               child: (hasImage)
-                                  ? Image.memory(
-                                      _contact.photo!.fullSize!,
-                                      filterQuality: FilterQuality.high,
-                                    )
-                                  : Text(
-                                      letter,
-                                      style: AppText.h1(
-                                        scheme,
-                                      ).copyWith(color: widget.textColor),
-                                    ),
+                                  ? Image.memory(_contact.photo!.fullSize!, filterQuality: FilterQuality.high)
+                                  : Text(letter, style: AppText.h1(scheme).copyWith(color: widget.textColor)),
                             ),
                           ),
                         ),
@@ -429,27 +382,17 @@ class _ContactDetailState extends State<ContactDetailScreen> {
                           SizedBox(
                             width: 56,
                             height: 56,
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                color: scheme.tertiary,
-                              ),
-                            ),
+                            child: Center(child: CircularProgressIndicator(color: scheme.tertiary)),
                           ),
                         ] else ...[
-                          Text(
-                            _contact.displayName ?? '?',
-                            style: AppText.h2(scheme),
-                            textAlign: TextAlign.center,
-                          ),
+                          Text(_contact.displayName ?? '?', style: AppText.h2(scheme), textAlign: TextAlign.center),
                           const SizedBox(height: AppSpacing.xxxs),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               if (role.isNotEmpty)
                                 Text(
-                                  (_isQuick || _isEmergency || _isFavorite)
-                                      ? '$role • '
-                                      : role,
+                                  (_isQuick || _isEmergency || _isFavorite) ? '$role • ' : role,
                                   style: AppText.caption(scheme),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
@@ -471,36 +414,18 @@ class _ContactDetailState extends State<ContactDetailScreen> {
 
                               if (_isFavorite)
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: AppSpacing.xxxs,
-                                  ),
-                                  child: Icon(
-                                    LucideIcons.star,
-                                    size: 12,
-                                    color: scheme.primary,
-                                  ),
+                                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxxs),
+                                  child: Icon(LucideIcons.star, size: 12, color: scheme.primary),
                                 ),
                               if (_isEmergency)
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: AppSpacing.xxxs,
-                                  ),
-                                  child: Icon(
-                                    LucideIcons.shieldAlert,
-                                    size: 12,
-                                    color: scheme.error,
-                                  ),
+                                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxxs),
+                                  child: Icon(LucideIcons.shieldAlert, size: 12, color: scheme.error),
                                 ),
                               if (_isQuick)
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: AppSpacing.xxxs,
-                                  ),
-                                  child: Icon(
-                                    LucideIcons.zap,
-                                    size: 12,
-                                    color: scheme.tertiary,
-                                  ),
+                                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxxs),
+                                  child: Icon(LucideIcons.zap, size: 12, color: scheme.tertiary),
                                 ),
                             ],
                           ),
@@ -510,9 +435,7 @@ class _ContactDetailState extends State<ContactDetailScreen> {
                   ),
                 ),
                 if (!_isLoading) ...[
-                  if (widget.onChanged == null &&
-                      (_contact.phones.isNotEmpty ||
-                          _contact.emails.isNotEmpty)) ...[
+                  if (widget.onChanged == null && (_contact.phones.isNotEmpty || _contact.emails.isNotEmpty)) ...[
                     const SizedBox(height: AppSpacing.lg),
                     Row(
                       children: [
@@ -520,22 +443,12 @@ class _ContactDetailState extends State<ContactDetailScreen> {
                           Expanded(
                             child: Pressable(
                               onTap: () {
-                                Phone? primary =
-                                    _contact.phones.firstWhereOrNull(
-                                      (p) => p.isPrimary ?? false,
-                                    ) ??
-                                    _contact.phones.first;
+                                Phone? primary = _contact.phones.firstWhereOrNull((p) => p.isPrimary ?? false) ?? _contact.phones.first;
 
                                 String number = getPhoneNumber(primary);
                                 launchUrl(Uri.parse('tel:$number'));
                               },
-                              child: _QuickAction(
-                                icon: LucideIcons.phone,
-                                label: local.translate(
-                                  "contact_detail.actions.0",
-                                ),
-                                color: scheme.primary,
-                              ),
+                              child: _QuickAction(icon: LucideIcons.phone, label: local.translate("contact_detail.actions.0"), color: scheme.primary),
                             ),
                           ),
                           SizedBox(width: AppSpacing.xxs),
@@ -545,46 +458,30 @@ class _ContactDetailState extends State<ContactDetailScreen> {
                           Expanded(
                             child: Pressable(
                               onTap: () {
-                                Phone? primary =
-                                    _contact.phones.firstWhereOrNull(
-                                      (p) => p.isPrimary ?? false,
-                                    ) ??
-                                    _contact.phones.first;
+                                Phone? primary = _contact.phones.firstWhereOrNull((p) => p.isPrimary ?? false) ?? _contact.phones.first;
                                 String number = getPhoneNumber(primary);
                                 launchUrl(Uri.parse('sms:$number'));
                               },
                               child: _QuickAction(
                                 icon: LucideIcons.messageSquare,
-                                label: local.translate(
-                                  "contact_detail.actions.1",
-                                ),
+                                label: local.translate("contact_detail.actions.1"),
                                 color: scheme.tertiary,
                               ),
                             ),
                           ),
-                          if (_contact.emails.isNotEmpty)
-                            SizedBox(width: AppSpacing.xxs),
+                          if (_contact.emails.isNotEmpty) SizedBox(width: AppSpacing.xxs),
                         ],
                         if (_contact.emails.isNotEmpty) ...[
-                          if (_contact.phones.isNotEmpty)
-                            SizedBox(width: AppSpacing.xxs),
+                          if (_contact.phones.isNotEmpty) SizedBox(width: AppSpacing.xxs),
                           Expanded(
                             child: Pressable(
                               onTap: () {
-                                Email? primary =
-                                    _contact.emails.firstWhereOrNull(
-                                      (p) => p.isPrimary ?? false,
-                                    ) ??
-                                    _contact.emails.first;
-                                launchUrl(
-                                  Uri.parse('mailto:${primary.address}'),
-                                );
+                                Email? primary = _contact.emails.firstWhereOrNull((p) => p.isPrimary ?? false) ?? _contact.emails.first;
+                                launchUrl(Uri.parse('mailto:${primary.address}'));
                               },
                               child: _QuickAction(
                                 icon: LucideIcons.mail,
-                                label: local.translate(
-                                  "contact_detail.actions.2",
-                                ),
+                                label: local.translate("contact_detail.actions.2"),
                                 color: scheme.secondary,
                               ),
                             ),
@@ -594,23 +491,17 @@ class _ContactDetailState extends State<ContactDetailScreen> {
                     ),
                   ],
 
-                  if (_contact.phones.isNotEmpty ||
-                      _contact.emails.isNotEmpty) ...[
+                  if (_contact.phones.isNotEmpty || _contact.emails.isNotEmpty) ...[
                     const SizedBox(height: AppSpacing.xl),
                     SectionTitle(local.translate("contact_detail.sections.0")),
                     AppCard(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.lg,
-                        vertical: AppSpacing.xxs,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.xxs),
                       child: Column(
                         children: [
                           for (int i = 0; i < _contact.phones.length; i++) ...[
                             Pressable(
                               onTap: () {
-                                String number = getPhoneNumber(
-                                  _contact.phones[i],
-                                );
+                                String number = getPhoneNumber(_contact.phones[i]);
                                 if (widget.onChanged != null) {
                                   if (isNumberInTimer(number)) {
                                     deselectSms(number);
@@ -626,83 +517,49 @@ class _ContactDetailState extends State<ContactDetailScreen> {
                                 title: _contact.phones[i].number,
                                 subtitle:
                                     _contact.phones[i].label.customLabel ??
-                                    _contact.phones[i].label.label.name[0]
-                                            .toUpperCase() +
-                                        _contact.phones[i].label.label.name
-                                            .substring(1),
+                                    _contact.phones[i].label.label.name[0].toUpperCase() + _contact.phones[i].label.label.name.substring(1),
                                 trailing: (widget.onChanged != null)
                                     ? Icon(
-                                        (isNumberInTimer(
-                                              getPhoneNumber(
-                                                _contact.phones[i],
-                                              ),
-                                            ))
-                                            ? LucideIcons.squareCheck
-                                            : LucideIcons.square,
+                                        (isNumberInTimer(getPhoneNumber(_contact.phones[i]))) ? LucideIcons.squareCheck : LucideIcons.square,
                                         size: 20,
                                         color: scheme.onSurface,
                                       )
                                     : null,
                               ),
                             ),
-                            if (i < _contact.phones.length - 1)
-                              Divider(height: 1, color: scheme.outlineVariant),
+                            if (i < _contact.phones.length - 1) Divider(height: 1, color: scheme.outlineVariant),
                           ],
-                          if (_contact.emails.isNotEmpty &&
-                              widget.onChanged ==
-                                  null) //delete widget.onChanged check for email support
+                          if (_contact.emails.isNotEmpty && widget.onChanged == null) //delete widget.onChanged check for email support
                             Divider(height: 1, color: scheme.outlineVariant),
                           for (int i = 0; i < _contact.emails.length; i++) ...[
-                            if (widget.onChanged ==
-                                null) //delete widget.onChanged check for email support
+                            if (widget.onChanged == null) //delete widget.onChanged check for email support
                             ...[
                               Pressable(
                                 onTap: (widget.onChanged != null)
                                     ? () {
-                                        if (isEmailInTimer(
-                                          _contact.emails[i].address,
-                                        )) {
-                                          deselectEmail(
-                                            _contact.emails[i].address,
-                                          );
+                                        if (isEmailInTimer(_contact.emails[i].address)) {
+                                          deselectEmail(_contact.emails[i].address);
                                         } else {
-                                          selectEmail(
-                                            _contact.emails[i].address,
-                                          );
+                                          selectEmail(_contact.emails[i].address);
                                         }
                                       }
-                                    : () => launchUrl(
-                                        Uri.parse(
-                                          'mailto:${_contact.emails[i].address}',
-                                        ),
-                                      ),
+                                    : () => launchUrl(Uri.parse('mailto:${_contact.emails[i].address}')),
                                 child: AppRow(
                                   icon: LucideIcons.mail,
                                   title: _contact.emails[i].address,
                                   subtitle:
                                       _contact.emails[i].label.customLabel ??
-                                      _contact.emails[i].label.label.name[0]
-                                              .toUpperCase() +
-                                          _contact.emails[i].label.label.name
-                                              .substring(1),
+                                      _contact.emails[i].label.label.name[0].toUpperCase() + _contact.emails[i].label.label.name.substring(1),
                                   trailing: (widget.onChanged != null)
                                       ? Icon(
-                                          (isEmailInTimer(
-                                                _contact.emails[i].address,
-                                              ))
-                                              ? LucideIcons.squareCheck
-                                              : LucideIcons.square,
+                                          (isEmailInTimer(_contact.emails[i].address)) ? LucideIcons.squareCheck : LucideIcons.square,
                                           size: 20,
                                           color: scheme.onSurface,
                                         )
                                       : null,
                                 ),
                               ),
-                              if (i < _contact.emails.length - 1)
-                                Divider(
-                                  height: 1,
-                                  color: scheme.outlineVariant,
-                                ),
+                              if (i < _contact.emails.length - 1) Divider(height: 1, color: scheme.outlineVariant),
                             ],
                           ],
                         ],
@@ -719,14 +576,12 @@ class _ContactDetailState extends State<ContactDetailScreen> {
                           behavior: HitTestBehavior.opaque,
                           onTap: () {
                             setState(() {
-                              _preferences["location"] =
-                                  !_preferences["location"];
+                              _preferences["location"] = !_preferences["location"];
+                              checkIfAllPrefsTrue();
                             });
                           },
                           child: AppRow(
-                            title: local.translate(
-                              "contact_detail.preferences.2",
-                            ),
+                            title: local.translate("contact_detail.preferences.2"),
                             trailing: AppToggle(on: _preferences["location"]),
                           ),
                         ),
@@ -736,12 +591,11 @@ class _ContactDetailState extends State<ContactDetailScreen> {
                           onTap: () {
                             setState(() {
                               _preferences["audio"] = !_preferences["audio"];
+                              checkIfAllPrefsTrue();
                             });
                           },
                           child: AppRow(
-                            title: local.translate(
-                              "contact_detail.preferences.3",
-                            ),
+                            title: local.translate("contact_detail.preferences.3"),
                             trailing: AppToggle(on: _preferences["audio"]),
                           ),
                         ),
@@ -780,28 +634,14 @@ class _ContactDetailState extends State<ContactDetailScreen> {
                         ? SizedBox(
                             width: 56,
                             height: 56,
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                color: scheme.tertiary,
-                              ),
-                            ),
+                            child: Center(child: CircularProgressIndicator(color: scheme.tertiary)),
                           )
                         : SizedBox(
                             height: 56,
                             child: PrimaryButton(
-                              icon: _isQuick
-                                  ? LucideIcons.trash2
-                                  : LucideIcons.plus,
-                              label: _isQuick
-                                  ? local.translate(
-                                      "contacts_list.is_quick.true",
-                                    )
-                                  : local.translate(
-                                      "contacts_list.is_quick.false",
-                                    ),
-                              color: _isQuick
-                                  ? ButtonColor.warning
-                                  : ButtonColor.primary,
+                              icon: _isQuick ? LucideIcons.trash2 : LucideIcons.plus,
+                              label: _isQuick ? local.translate("contacts_list.is_quick.true") : local.translate("contacts_list.is_quick.false"),
+                              color: _isQuick ? ButtonColor.warning : ButtonColor.primary,
                             ),
                           ),
                   ),
@@ -825,11 +665,7 @@ class _ContactDetailState extends State<ContactDetailScreen> {
 /// the appropriate semantic or theme color while sharing the same layout and
 /// visual treatment.
 class _QuickAction extends StatelessWidget {
-  const _QuickAction({
-    required this.icon,
-    required this.label,
-    required this.color,
-  });
+  const _QuickAction({required this.icon, required this.label, required this.color});
   final IconData icon;
   final String label;
   final Color color;

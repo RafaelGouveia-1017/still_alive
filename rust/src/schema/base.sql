@@ -466,3 +466,29 @@ CREATE TRIGGER keep_only_one_timer_run BEFORE INSERT ON timer_run BEGIN
 DELETE FROM timer_run;
 
 END;
+
+CREATE TABLE
+    route_recording (
+        timer_id VARCHAR(200) PRIMARY KEY,
+        polyline TEXT NOT NULL DEFAULT '',
+        point_count INTEGER NOT NULL DEFAULT 0,
+        started_at_ms INTEGER NOT NULL,
+        stopped_at_ms INTEGER,
+        FOREIGN KEY (timer_id) REFERENCES timers (key) ON DELETE CASCADE
+    );
+
+CREATE TRIGGER reset_route_recording_after_timer_run_insert AFTER INSERT ON timer_run BEGIN
+DELETE FROM route_recording;
+
+INSERT INTO
+    route_recording (
+        timer_id,
+        polyline,
+        point_count,
+        started_at_ms,
+        stopped_at_ms
+    )
+VALUES
+    (NEW.timer_id, '', 0, 0, NULL);
+
+END;

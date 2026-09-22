@@ -209,9 +209,11 @@ class _PasswordInputState extends State<PasswordInput> {
               children: [
                 GestureDetector(
                   behavior: HitTestBehavior.opaque,
-                  onTap: () {
-                    _setProtected(!_protected);
-                  },
+                  onTap: (_hasHash)
+                      ? null
+                      : () {
+                          _setProtected(!_protected);
+                        },
                   child: AppRow(
                     padding: const EdgeInsets.symmetric(
                       vertical: AppSpacing.xxxs,

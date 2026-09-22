@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:still_alive/services/timer_service.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -30,9 +31,9 @@ extension IntegrationInfoExtension on IntegrationInfo {
   IconData get iconData {
     switch (key) {
       case 'discord':
-        return Icons.discord;
+        return FontAwesomeIcons.discord.data;
       case 'telegram':
-        return Icons.telegram;
+        return FontAwesomeIcons.telegram.data;
       default:
         return LucideIcons.webhook;
     }

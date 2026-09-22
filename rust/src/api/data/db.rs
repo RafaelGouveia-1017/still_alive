@@ -178,7 +178,7 @@ pub fn purge_database() {
     Database::purge(path);
 }
 
-/// Returns a single row.
+/// Returns a single row & column.
 ///
 /// Returns `None` if no matching row exists.
 pub fn select_one(sql: &str) -> String {

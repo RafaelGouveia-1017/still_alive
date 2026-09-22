@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -121,7 +123,8 @@ class _IntegrationSelectionState extends State<IntegrationSelection> {
                   '${local.translate("timer_configuration.integrations.selected.1")}',
           },
           subtitle: _getSubtitle(plugins, destinations),
-          icon: LucideIcons.blocks,
+          icon: (plugins != 0) ? LucideIcons.blocks : LucideIcons.grid2X2X,
+          iconRotateAngle: (plugins != 0) ? 0 : -math.pi / 2,
           iconColor: scheme.secondary,
           trailing: Icon(
             LucideIcons.chevronRight,

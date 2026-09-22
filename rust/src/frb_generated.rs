@@ -41,7 +41,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.13.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -979948008;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -1998313609;
 
 // Section: executor
 
@@ -2379,41 +2379,6 @@ fn wire__crate__api__data__logging__create_rust_log_stream_impl(
         },
     )
 }
-fn wire__crate__api__timer__active_timer__create_timer_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
-    rust_vec_len_: i32,
-    data_len_: i32,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "create_timer",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let message = unsafe {
-                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
-                    ptr_,
-                    rust_vec_len_,
-                    data_len_,
-                )
-            };
-            let mut deserializer =
-                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
-            let api_config = <TimerConfig>::sse_decode(&mut deserializer);
-            deserializer.end();
-            move |context| {
-                transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
-                    (move || {
-                        let output_ok = crate::api::timer::active_timer::create_timer(api_config)?;
-                        std::result::Result::Ok(output_ok)
-                    })(),
-                )
-            }
-        },
-    )
-}
 fn wire__crate__api__data__db__database_path_str_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
@@ -3013,6 +2978,43 @@ fn wire__crate__api__data__db__open_database_impl(
                 transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
                     (move || {
                         let output_ok = crate::api::data::db::open_database()?;
+                        std::result::Result::Ok(output_ok)
+                    })(),
+                )
+            }
+        },
+    )
+}
+fn wire__crate__api__timer__active_timer__persist_timer_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "persist_timer",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_key = <Option<String>>::sse_decode(&mut deserializer);
+            let api_config = <TimerConfig>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
+                    (move || {
+                        let output_ok =
+                            crate::api::timer::active_timer::persist_timer(api_key, api_config)?;
                         std::result::Result::Ok(output_ok)
                     })(),
                 )
@@ -4053,20 +4055,14 @@ fn pde_ffi_dispatcher_primary_impl(
             rust_vec_len,
             data_len,
         ),
-        48 => wire__crate__api__timer__active_timer__create_timer_impl(
+        48 => wire__crate__api__data__db__database_path_str_impl(port, ptr, rust_vec_len, data_len),
+        49 => wire__crate__api__integrations__public_traits__delete_integration_account_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        49 => wire__crate__api__data__db__database_path_str_impl(port, ptr, rust_vec_len, data_len),
-        50 => wire__crate__api__integrations__public_traits__delete_integration_account_impl(
-            port,
-            ptr,
-            rust_vec_len,
-            data_len,
-        ),
-        51 => {
+        50 => {
             wire__crate__api__integrations__public_traits__discover_integration_destinations_impl(
                 port,
                 ptr,
@@ -4074,41 +4070,47 @@ fn pde_ffi_dispatcher_primary_impl(
                 data_len,
             )
         }
-        52 => wire__crate__api__data__logging__dispose_rust_log_stream_impl(
+        51 => wire__crate__api__data__logging__dispose_rust_log_stream_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        53 => wire__crate__api__data__db__execute_batch_sql_impl(port, ptr, rust_vec_len, data_len),
-        54 => wire__crate__api__data__db__execute_sql_impl(port, ptr, rust_vec_len, data_len),
-        55 => wire__crate__api__backup__export_backup_impl(port, ptr, rust_vec_len, data_len),
-        56 => wire__crate__api__data__db__export_database_impl(port, ptr, rust_vec_len, data_len),
-        57 => wire__crate__api__data__db__get_database_name_impl(port, ptr, rust_vec_len, data_len),
-        58 => wire__crate__api__timer__active_timer__get_unique_timer_id_impl(
+        52 => wire__crate__api__data__db__execute_batch_sql_impl(port, ptr, rust_vec_len, data_len),
+        53 => wire__crate__api__data__db__execute_sql_impl(port, ptr, rust_vec_len, data_len),
+        54 => wire__crate__api__backup__export_backup_impl(port, ptr, rust_vec_len, data_len),
+        55 => wire__crate__api__data__db__export_database_impl(port, ptr, rust_vec_len, data_len),
+        56 => wire__crate__api__data__db__get_database_name_impl(port, ptr, rust_vec_len, data_len),
+        57 => wire__crate__api__timer__active_timer__get_unique_timer_id_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        59 => wire__crate__api__main__greet_impl(port, ptr, rust_vec_len, data_len),
-        60 => wire__crate__api__backup__import_backup_impl(port, ptr, rust_vec_len, data_len),
-        61 => wire__crate__api__data__db__import_database_impl(port, ptr, rust_vec_len, data_len),
-        62 => wire__crate__api__main__init_app_impl(port, ptr, rust_vec_len, data_len),
-        63 => wire__crate__api__data__db__init_database_impl(port, ptr, rust_vec_len, data_len),
-        64 => wire__crate__api__data__logging__init_rust_logging_impl(
+        58 => wire__crate__api__main__greet_impl(port, ptr, rust_vec_len, data_len),
+        59 => wire__crate__api__backup__import_backup_impl(port, ptr, rust_vec_len, data_len),
+        60 => wire__crate__api__data__db__import_database_impl(port, ptr, rust_vec_len, data_len),
+        61 => wire__crate__api__main__init_app_impl(port, ptr, rust_vec_len, data_len),
+        62 => wire__crate__api__data__db__init_database_impl(port, ptr, rust_vec_len, data_len),
+        63 => wire__crate__api__data__logging__init_rust_logging_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        65 => wire__crate__api__integrations__public_traits__load_all_integrations_impl(
+        64 => wire__crate__api__integrations__public_traits__load_all_integrations_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        66 => wire__crate__api__data__db__open_database_impl(port, ptr, rust_vec_len, data_len),
+        65 => wire__crate__api__data__db__open_database_impl(port, ptr, rust_vec_len, data_len),
+        66 => wire__crate__api__timer__active_timer__persist_timer_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
         67 => wire__crate__api__data__db__purge_database_impl(port, ptr, rust_vec_len, data_len),
         68 => wire__crate__api__timer__active_timer__reconcile_active_timer_impl(
             port,
