@@ -21,40 +21,17 @@ class ContactService {
   ///
   /// The accompanying `text` color is chosen to provide appropriate contrast
   /// against each gradient.
-  static List<({List<Color> gradient, Color text})> colorOptions(
-    BuildContext context,
-  ) {
+  static List<({List<Color> gradient, Color text})> colorOptions(BuildContext context) {
     ColorScheme scheme = Theme.of(context).colorScheme;
     return [
-      (
-        gradient: [scheme.primary, scheme.primaryContainer],
-        text: scheme.onPrimary,
-      ),
-      (
-        gradient: [scheme.secondary, scheme.secondaryContainer],
-        text: scheme.onSecondary,
-      ),
-      (
-        gradient: [scheme.tertiary, scheme.tertiaryContainer],
-        text: scheme.onTertiary,
-      ),
+      (gradient: [scheme.primary, scheme.primaryContainer], text: scheme.onPrimary),
+      (gradient: [scheme.secondary, scheme.secondaryContainer], text: scheme.onSecondary),
+      (gradient: [scheme.tertiary, scheme.tertiaryContainer], text: scheme.onTertiary),
       (gradient: [scheme.error, scheme.errorContainer], text: scheme.onError),
-      (
-        gradient: rotateHue([scheme.primary, scheme.primaryContainer]),
-        text: scheme.onPrimary,
-      ),
-      (
-        gradient: rotateHue([scheme.secondary, scheme.secondaryContainer]),
-        text: scheme.onSecondary,
-      ),
-      (
-        gradient: rotateHue([scheme.tertiary, scheme.tertiaryContainer]),
-        text: scheme.onTertiary,
-      ),
-      (
-        gradient: rotateHue([scheme.error, scheme.errorContainer]),
-        text: scheme.onError,
-      ),
+      (gradient: rotateHue([scheme.primary, scheme.primaryContainer]), text: scheme.onPrimary),
+      (gradient: rotateHue([scheme.secondary, scheme.secondaryContainer]), text: scheme.onSecondary),
+      (gradient: rotateHue([scheme.tertiary, scheme.tertiaryContainer]), text: scheme.onTertiary),
+      (gradient: rotateHue([scheme.error, scheme.errorContainer]), text: scheme.onError),
     ];
   }
 
@@ -70,10 +47,7 @@ class ContactService {
     double rand = Random().nextDouble() * 360;
     HSVColor hsv0 = HSVColor.fromColor(gradient[0]);
     HSVColor hsv1 = HSVColor.fromColor(gradient[1]);
-    return [
-      hsv0.withHue((hsv0.hue + rand) % 360).toColor(),
-      hsv1.withHue((hsv1.hue + rand) % 360).toColor(),
-    ];
+    return [hsv0.withHue((hsv0.hue + rand) % 360).toColor(), hsv1.withHue((hsv1.hue + rand) % 360).toColor()];
   }
 
   /// Adds [contactID] to the list of quick contacts.
@@ -142,9 +116,7 @@ class ContactService {
   /// updated to reflect the total number of stored preference objects.
   ///
   /// The [contactPrefs] map must contain an `id` key.
-  static Future<void> insertContactPrefs(
-    Map<String, dynamic> contactPrefs,
-  ) async {
+  static Future<void> insertContactPrefs(Map<String, dynamic> contactPrefs) async {
     final id = contactPrefs['id'];
     await executeBatchSql(
       sql:

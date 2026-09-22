@@ -16,23 +16,17 @@ import '../../widgets/primitives.dart';
 /// destination also provides actions for testing the connection and
 /// generating a QR code for the destination.
 class IntegrationDestinationsScreen extends StatefulWidget {
-  const IntegrationDestinationsScreen({
-    super.key,
-    required this.integration,
-    required this.account,
-  });
+  const IntegrationDestinationsScreen({super.key, required this.integration, required this.account});
 
   final IntegrationInfo integration;
   final IntegrationAccount account;
 
   @override
-  State<IntegrationDestinationsScreen> createState() =>
-      _IntegrationDestinationsScreenState();
+  State<IntegrationDestinationsScreen> createState() => _IntegrationDestinationsScreenState();
 }
 
 /// State implementation for [IntegrationDestinationsScreen].
-class _IntegrationDestinationsScreenState
-    extends State<IntegrationDestinationsScreen> {
+class _IntegrationDestinationsScreenState extends State<IntegrationDestinationsScreen> {
   List<MessageDestination> _destinationItems = [];
 
   late List<AppFilterBarOption> _filters = [];
@@ -59,12 +53,7 @@ class _IntegrationDestinationsScreenState
       setState(() {
         _filters = List.generate(
           filterLabels.length,
-          (i) => AppFilterBarOption(
-            id: filterLabels[i][0],
-            label: filterLabels[i][1],
-            active: i == index,
-            onPressed: () => loadFilters(i),
-          ),
+          (i) => AppFilterBarOption(id: filterLabels[i][0], label: filterLabels[i][1], active: i == index, onPressed: () => loadFilters(i)),
         );
       });
       return;
@@ -89,9 +78,7 @@ class _IntegrationDestinationsScreenState
         );
       }).toList();
 
-      bool allActive = updated.every(
-        (filter) => (filter.id == "all") ? true : filter.active,
-      );
+      bool allActive = updated.every((filter) => (filter.id == "all") ? true : filter.active);
       if (allActive) {
         for (int i = 0; i < updated.length; i++) {
           updated[i] = updated[i].copyWith(active: false);
@@ -114,22 +101,18 @@ class _IntegrationDestinationsScreenState
     });
 
     try {
-      List<MessageDestination> destinations =
-          await IntegrationService.discoverDestinations(
-            context: context,
-            integrationKey: widget.integration.key,
-            accountId: widget.account.id,
-          );
+      List<MessageDestination> destinations = await IntegrationService.discoverDestinations(
+        context: context,
+        integrationKey: widget.integration.key,
+        accountId: widget.account.id,
+      );
 
       if (!mounted || destinations.isEmpty) return;
 
       final sorted = IntegrationService.sortedDestinations(destinations);
 
       // Build filters from destination parent names.
-      List<String?> parentNames = sorted
-          .map((destination) => destination.parentName)
-          .toSet()
-          .toList();
+      List<String?> parentNames = sorted.map((destination) => destination.parentName).toSet().toList();
 
       parentNames.sort((a, b) {
         // Keep destinations without a parent at the end.
@@ -144,34 +127,19 @@ class _IntegrationDestinationsScreenState
       AppLocalizations local = AppLocalizations.of(context)!;
 
       // Build filters from destination type.
-      final destinationKind = sorted
-          .map((destination) => destination.kind)
-          .toSet()
-          .toList();
+      final destinationKind = sorted.map((destination) => destination.kind).toSet().toList();
 
       final destinationTypes = destinationKind
           .map((kind) {
             switch (kind) {
               case DestinationKind.directMessage:
-                return [
-                  kind.name.toLowerCase(),
-                  local.translate("integration_destinations.kinds.0"),
-                ];
+                return [kind.name.toLowerCase(), local.translate("integration_destinations.kinds.0")];
               case DestinationKind.group:
-                return [
-                  kind.name.toLowerCase(),
-                  local.translate("integration_destinations.kinds.1"),
-                ];
+                return [kind.name.toLowerCase(), local.translate("integration_destinations.kinds.1")];
               case DestinationKind.channel:
-                return [
-                  kind.name.toLowerCase(),
-                  local.translate("integration_destinations.kinds.2"),
-                ];
+                return [kind.name.toLowerCase(), local.translate("integration_destinations.kinds.2")];
               case DestinationKind.serverChannel:
-                return [
-                  kind.name.toLowerCase(),
-                  local.translate("integration_destinations.kinds.3"),
-                ];
+                return [kind.name.toLowerCase(), local.translate("integration_destinations.kinds.3")];
             }
           })
           .toSet()
@@ -185,12 +153,7 @@ class _IntegrationDestinationsScreenState
         ['all', local.translate("integration_destinations.filters.0")],
 
         if (parentNames.isNotEmpty)
-          ...parentNames.map(
-            (name) => [
-              name?.toLowerCase() ?? '__no_parent__',
-              name ?? local.translate("integration_destinations.filters.1"),
-            ],
-          ),
+          ...parentNames.map((name) => [name?.toLowerCase() ?? '__no_parent__', name ?? local.translate("integration_destinations.filters.1")]),
 
         ...destinationTypes,
       ];
@@ -211,8 +174,7 @@ class _IntegrationDestinationsScreenState
 
     switch (widget.integration.provider) {
       case IntegrationProvider.discord:
-        link =
-            "https://discord.com/oauth2/authorize?client_id=${account.appId}&scope=bot&permissions=3072";
+        link = "https://discord.com/oauth2/authorize?client_id=${account.appId}&scope=bot&permissions=3072";
       case IntegrationProvider.telegram:
         link = "https://t.me/${account.name.substring(1, account.name.length)}";
     }
@@ -235,32 +197,24 @@ class _IntegrationDestinationsScreenState
     ColorScheme scheme = Theme.of(context).colorScheme;
     AppLocalizations local = AppLocalizations.of(context)!;
 
-    Map<String, List<MessageDestination>> groupedDestinations =
-        <String, List<MessageDestination>>{};
+    Map<String, List<MessageDestination>> groupedDestinations = <String, List<MessageDestination>>{};
 
     String? subtitle;
 
     if (!_isLoading) {
-      Set<String> activeFilters = (_filters.isNotEmpty)
-          ? _filters.where((f) => f.active).map((f) => f.id).toSet()
-          : {};
+      Set<String> activeFilters = (_filters.isNotEmpty) ? _filters.where((f) => f.active).map((f) => f.id).toSet() : {};
 
-      List<MessageDestination> destinationsFiltered = _destinationItems.where((
-        group,
-      ) {
+      List<MessageDestination> destinationsFiltered = _destinationItems.where((group) {
         // Search query
         bool matchesSearch =
             searchQuery.isEmpty ||
             group.name.toLowerCase().contains(searchQuery) ||
-            (group.parentName != null &&
-                group.parentName!.toLowerCase().contains(searchQuery));
+            (group.parentName != null && group.parentName!.toLowerCase().contains(searchQuery));
 
         // Active filters
         bool matchesFilter = (_filters.isNotEmpty)
             ? activeFilters.contains('all') ||
-                  activeFilters.contains(
-                    group.parentName?.toLowerCase() ?? '__no_parent__',
-                  ) ||
+                  activeFilters.contains(group.parentName?.toLowerCase() ?? '__no_parent__') ||
                   activeFilters.contains(group.kind.name.toLowerCase())
             : true;
 
@@ -268,18 +222,12 @@ class _IntegrationDestinationsScreenState
       }).toList();
 
       for (final destination in destinationsFiltered) {
-        final parentName =
-            destination.parentName ??
-            local.translate("integration_destinations.filters.1");
+        final parentName = destination.parentName ?? local.translate("integration_destinations.filters.1");
         groupedDestinations.putIfAbsent(parentName, () => []).add(destination);
       }
 
       subtitle = IntegrationService.subtitle(
-        IntegrationAccount(
-          id: widget.account.id,
-          name: widget.account.name,
-          destinations: _destinationItems,
-        ),
+        IntegrationAccount(id: widget.account.id, name: widget.account.name, destinations: _destinationItems),
         context,
       );
     }
@@ -287,13 +235,8 @@ class _IntegrationDestinationsScreenState
     return ScreenBase(
       header: AppHeader(
         title: widget.account.name,
-        subtitle: (_isLoading)
-            ? "..."
-            : subtitle ?? local.translate("integration_destinations.not_found"),
-        left: CircleIconButton(
-          icon: LucideIcons.chevronLeft,
-          onTap: () => Navigator.pop(context),
-        ),
+        subtitle: (_isLoading) ? "..." : subtitle ?? local.translate("integration_destinations.not_found"),
+        left: CircleIconButton(icon: LucideIcons.chevronLeft, onTap: () => Navigator.pop(context)),
         right: CircleIconButton(
           icon: LucideIcons.qrCode,
           onTap: () {
@@ -319,17 +262,13 @@ class _IntegrationDestinationsScreenState
                   });
                 },
               ),
-        filterBar: (_filters.length <= 2)
-            ? null
-            : AppFilterBar(filters: _filters),
+        filterBar: (_filters.length <= 2) ? null : AppFilterBar(filters: _filters),
       ),
       child: (_isLoading)
           ? SizedBox(
               width: double.infinity,
               height: double.infinity,
-              child: Center(
-                child: CircularProgressIndicator(color: scheme.tertiary),
-              ),
+              child: Center(child: CircularProgressIndicator(color: scheme.tertiary)),
             )
           : Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -343,20 +282,14 @@ class _IntegrationDestinationsScreenState
                       borderRadius: BorderRadius.circular(AppRadius.xxl),
                       border: Border.all(color: scheme.outlineVariant),
                     ),
-                    child: Icon(
-                      LucideIcons.searchX,
-                      size: 36,
-                      color: scheme.onSurfaceVariant,
-                    ),
+                    child: Icon(LucideIcons.searchX, size: 36, color: scheme.onSurfaceVariant),
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   Text(
                     (searchQuery.isNotEmpty)
                         ? local.translate("integration_destinations.not_found")
                         : local.translate("integration_destinations.warning"),
-                    style: AppText.bodySm(
-                      scheme,
-                    ).copyWith(color: scheme.onSurfaceVariant),
+                    style: AppText.bodySm(scheme).copyWith(color: scheme.onSurfaceVariant),
                     textAlign: TextAlign.center,
                   ),
                   if (searchQuery.isEmpty) ...[
@@ -366,32 +299,19 @@ class _IntegrationDestinationsScreenState
                       children: [
                         Text(
                           switch (widget.integration.provider) {
-                            IntegrationProvider.telegram => local.translate(
-                              "integration_destinations.solutions.telegram.0",
-                            ),
-                            _ => local.translate(
-                              "integration_destinations.solutions.discord.0",
-                            ),
+                            IntegrationProvider.telegram => local.translate("integration_destinations.solutions.telegram.0"),
+                            _ => local.translate("integration_destinations.solutions.discord.0"),
                           },
-                          style: AppText.bodySm(scheme).copyWith(
-                            color: scheme.onSurfaceVariant,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: AppText.bodySm(scheme).copyWith(color: scheme.onSurfaceVariant, fontWeight: FontWeight.bold),
                           textAlign: TextAlign.left,
                         ),
                         SizedBox(height: AppSpacing.sm),
                         Text(
                           switch (widget.integration.provider) {
-                            IntegrationProvider.telegram => local.translate(
-                              "integration_destinations.solutions.telegram.1",
-                            ),
-                            _ => local.translate(
-                              "integration_destinations.solutions.discord.1",
-                            ),
+                            IntegrationProvider.telegram => local.translate("integration_destinations.solutions.telegram.1"),
+                            _ => local.translate("integration_destinations.solutions.discord.1"),
                           },
-                          style: AppText.bodySm(
-                            scheme,
-                          ).copyWith(color: scheme.onSurfaceVariant),
+                          style: AppText.bodySm(scheme).copyWith(color: scheme.onSurfaceVariant),
                           textAlign: TextAlign.left,
                         ),
                       ],
@@ -407,36 +327,27 @@ class _IntegrationDestinationsScreenState
                           SizedBox(height: AppSpacing.lg),
                           if (destinationsHaveParents) SectionTitle(entry.key),
                           AppCard(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: AppSpacing.xxs,
-                              vertical: AppSpacing.xxs,
-                            ),
+                            padding: EdgeInsets.symmetric(horizontal: AppSpacing.xxs, vertical: AppSpacing.xxs),
                             child: Column(
                               children: [
                                 for (final d in entry.value) ...[
                                   IntegrationRow(
                                     title: d.name,
                                     subtitle: null,
-                                    onTest: () =>
-                                        IntegrationService.testDestination(
-                                          context: context,
-                                          integrationKey:
-                                              widget.integration.key,
-                                          accountId: widget.account.id,
-                                          destinationId: d.id,
-                                          scheme: scheme,
-                                        ),
+                                    onTest: () => IntegrationService.testDestination(
+                                      context: context,
+                                      integrationKey: widget.integration.key,
+                                      accountId: widget.account.id,
+                                      destinationId: d.id,
+                                      scheme: scheme,
+                                    ),
                                     getExtLink: () {
                                       switch (widget.integration.provider) {
                                         case IntegrationProvider.discord:
                                           if (d.parentId == null) {
-                                            return Uri.parse(
-                                              "https://discord.com/channels/@me/${d.id}",
-                                            );
+                                            return Uri.parse("https://discord.com/channels/@me/${d.id}");
                                           } else {
-                                            return Uri.parse(
-                                              "https://discord.com/channels/${d.parentId}/${d.id}",
-                                            );
+                                            return Uri.parse("https://discord.com/channels/${d.parentId}/${d.id}");
                                           }
                                         case IntegrationProvider.telegram:
                                           return Uri.parse("https://t.me/");

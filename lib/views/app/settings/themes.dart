@@ -19,12 +19,7 @@ import 'package:still_alive/main.dart';
 /// It is primarily used by [ThemesScreen] to render a list of available
 /// themes with visual previews and selection state.
 class _AppThemeOption {
-  const _AppThemeOption(
-    this.theme,
-    this.themeData,
-    this.swatches, {
-    this.active = false,
-  });
+  const _AppThemeOption(this.theme, this.themeData, this.swatches, {this.active = false});
   final CustomTheme theme;
   final ThemeData themeData;
   final List<Color> swatches;
@@ -53,8 +48,7 @@ class ThemesScreen extends StatefulWidget {
 /// State implementation for [ThemesScreen].
 class _ThemesScreenState extends State<ThemesScreen> {
   final ItemScrollController scrollController = ItemScrollController();
-  final ItemPositionsListener positionsListener =
-      ItemPositionsListener.create();
+  final ItemPositionsListener positionsListener = ItemPositionsListener.create();
 
   @override
   void initState() {
@@ -74,12 +68,7 @@ class _ThemesScreenState extends State<ThemesScreen> {
 
     if (!scrollController.isAttached) return;
 
-    scrollController.scrollTo(
-      index: index,
-      duration: AppMotion.fast,
-      curve: AppMotion.easeInOut,
-      alignment: 0.4,
-    );
+    scrollController.scrollTo(index: index, duration: AppMotion.fast, curve: AppMotion.easeInOut, alignment: 0.4);
   }
 
   @override
@@ -107,15 +96,8 @@ class _ThemesScreenState extends State<ThemesScreen> {
       header: AppHeader(
         title: local.translate("themes.title"),
         subtitle: local.translate("themes.subtitle"),
-        left: CircleIconButton(
-          icon: LucideIcons.chevronLeft,
-          onTap: () => Navigator.of(context).pop(),
-        ),
-        right: CircleIconButton(
-          icon: LucideIcons.palette,
-          background: scheme.secondary.withAlpha(38),
-          foreground: scheme.secondary,
-        ),
+        left: CircleIconButton(icon: LucideIcons.chevronLeft, onTap: () => Navigator.of(context).pop()),
+        right: CircleIconButton(icon: LucideIcons.palette, background: scheme.secondary.withAlpha(38), foreground: scheme.secondary),
       ),
       child: Column(
         children: [
@@ -128,16 +110,8 @@ class _ThemesScreenState extends State<ThemesScreen> {
               itemBuilder: (context, index) {
                 if (index == themeOptions.length) {
                   return Padding(
-                    padding: const EdgeInsets.only(
-                      top: AppSpacing.ms,
-                      bottom: AppSpacing.xl,
-                    ),
-                    child: Center(
-                      child: Text(
-                        local.translate("themes.footer"),
-                        style: AppText.micro(scheme),
-                      ),
-                    ),
+                    padding: const EdgeInsets.only(top: AppSpacing.ms, bottom: AppSpacing.xl),
+                    child: Center(child: Text(local.translate("themes.footer"), style: AppText.micro(scheme))),
                   );
                 }
 
@@ -154,15 +128,9 @@ class _ThemesScreenState extends State<ThemesScreen> {
                       child: Container(
                         padding: const EdgeInsets.all(AppSpacing.lg),
                         decoration: BoxDecoration(
-                          color: t.active
-                              ? scheme.tertiary.withAlpha(15)
-                              : scheme.surfaceContainer,
+                          color: t.active ? scheme.tertiary.withAlpha(15) : scheme.surfaceContainer,
                           borderRadius: AppRadius.card,
-                          border: Border.all(
-                            color: t.active
-                                ? scheme.tertiary.withAlpha(153)
-                                : scheme.outlineVariant,
-                          ),
+                          border: Border.all(color: t.active ? scheme.tertiary.withAlpha(153) : scheme.outlineVariant),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -172,23 +140,15 @@ class _ThemesScreenState extends State<ThemesScreen> {
                               children: [
                                 Row(
                                   children: [
-                                    Text(
-                                      t.theme.label(),
-                                      style: AppText.body(scheme),
-                                    ),
+                                    Text(t.theme.label(), style: AppText.body(scheme)),
                                     if (t.active) ...[
                                       const SizedBox(width: AppSpacing.sm),
-                                      Pill(
-                                        label: local.translate("themes.status"),
-                                        backColor: scheme.tertiary,
-                                      ),
+                                      Pill(label: local.translate("themes.status"), backColor: scheme.tertiary),
                                     ],
                                   ],
                                 ),
                                 Icon(
-                                  t.themeData.brightness == Brightness.dark
-                                      ? LucideIcons.moon
-                                      : LucideIcons.sun,
+                                  t.themeData.brightness == Brightness.dark ? LucideIcons.moon : LucideIcons.sun,
                                   color: scheme.onSurface.withAlpha(175),
                                 ),
                               ],
@@ -197,19 +157,14 @@ class _ThemesScreenState extends State<ThemesScreen> {
                             Row(
                               children: [
                                 for (int i = 0; i < t.swatches.length; i++) ...[
-                                  if (i > 0)
-                                    const SizedBox(width: AppSpacing.xs),
+                                  if (i > 0) const SizedBox(width: AppSpacing.xs),
                                   Expanded(
                                     child: Container(
                                       height: 30,
                                       decoration: BoxDecoration(
                                         color: t.swatches[i],
-                                        borderRadius: BorderRadius.circular(
-                                          AppRadius.sm,
-                                        ),
-                                        border: Border.all(
-                                          color: scheme.outline,
-                                        ),
+                                        borderRadius: BorderRadius.circular(AppRadius.sm),
+                                        border: Border.all(color: scheme.outline),
                                       ),
                                     ),
                                   ),

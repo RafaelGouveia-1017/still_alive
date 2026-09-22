@@ -38,9 +38,7 @@ class _AudioInputState extends State<AudioInput> {
 
     bool enabled;
     if (widget.enabled == null) {
-      String value = await selectOne(
-        sql: "SELECT value FROM settings WHERE key = 'microphone'",
-      );
+      String value = await selectOne(sql: "SELECT value FROM settings WHERE key = 'microphone'");
 
       enabled = (value == "true");
 
@@ -72,17 +70,12 @@ class _AudioInputState extends State<AudioInput> {
     AppLocalizations local = AppLocalizations.of(context)!;
 
     return AppCard(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.sm,
-        vertical: AppSpacing.sm,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.sm),
       child: (_isLoading)
           ? SizedBox(
               width: 40,
               height: 40,
-              child: Center(
-                child: CircularProgressIndicator(color: scheme.tertiary),
-              ),
+              child: Center(child: CircularProgressIndicator(color: scheme.tertiary)),
             )
           : Stack(
               children: [
@@ -94,23 +87,12 @@ class _AudioInputState extends State<AudioInput> {
                       _setEnabled(!_enabled);
                     },
                     child: AppRow(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: AppSpacing.xxxs,
-                        horizontal: AppSpacing.sm,
-                      ),
-                      title: local.translate(
-                        "timer_configuration.security.audio.title",
-                      ),
+                      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxxs, horizontal: AppSpacing.sm),
+                      title: local.translate("timer_configuration.security.audio.title"),
                       subtitle: _enabled
-                          ? local.translate(
-                              "timer_configuration.security.audio.enabled.on",
-                            )
-                          : local.translate(
-                              "timer_configuration.security.audio.enabled.off",
-                            ),
-                      icon: (_permissionGranted && _enabled)
-                          ? LucideIcons.mic
-                          : LucideIcons.micOff,
+                          ? local.translate("timer_configuration.security.audio.enabled.on")
+                          : local.translate("timer_configuration.security.audio.enabled.off"),
+                      icon: (_permissionGranted && _enabled) ? LucideIcons.mic : LucideIcons.micOff,
                       iconColor: scheme.secondary,
                       trailing: AppToggle(on: _enabled),
                     ),
@@ -126,13 +108,8 @@ class _AudioInputState extends State<AudioInput> {
                       ),
                       child: Center(
                         child: Text(
-                          local.translate(
-                            "timer_configuration.security.permission",
-                          ),
-                          style: AppText.body(scheme).copyWith(
-                            color: scheme.onSurface,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          local.translate("timer_configuration.security.permission"),
+                          style: AppText.body(scheme).copyWith(color: scheme.onSurface, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),

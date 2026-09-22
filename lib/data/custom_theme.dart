@@ -108,15 +108,11 @@ enum CustomTheme {
   ///
   /// Load the currently selected theme from the application database.
   static Future<String> load() async {
-    return await selectOne(
-      sql: "SELECT value FROM settings WHERE key = 'theme'",
-    );
+    return await selectOne(sql: "SELECT value FROM settings WHERE key = 'theme'");
   }
 
   /// Persist the selected theme to the application database.
   static Future<void> save(String label) async {
-    await executeSql(
-      sql: "UPDATE settings SET value = '$label' WHERE key = 'theme'",
-    );
+    await executeSql(sql: "UPDATE settings SET value = '$label' WHERE key = 'theme'");
   }
 }

@@ -25,8 +25,7 @@ class TimerSelectionScreen extends StatefulWidget {
 /// Manages loading, searching, displaying, and selecting timer configurations.
 /// Also observes route changes to refresh the timer list when returning to this
 /// screen.
-class _TimerSelectionScreenState extends State<TimerSelectionScreen>
-    with RouteAware {
+class _TimerSelectionScreenState extends State<TimerSelectionScreen> with RouteAware {
   List<_TimerConfigData> _timerList = [];
 
   bool _isLoading = true;
@@ -53,9 +52,7 @@ class _TimerSelectionScreenState extends State<TimerSelectionScreen>
     List<_TimerConfigData> list = [];
 
     try {
-      String timersJsonString = await select(
-        sql: "SELECT * FROM timers WHERE key <> 'timer0'",
-      );
+      String timersJsonString = await select(sql: "SELECT * FROM timers WHERE key <> 'timer0'");
 
       List<dynamic> data = jsonDecode(timersJsonString);
       for (var timer in data) {
@@ -63,42 +60,20 @@ class _TimerSelectionScreenState extends State<TimerSelectionScreen>
 
         final List<Contact> contacts = (timerData["contacts"] as List)
             .map(
-              (contact) => Contact(
-                id: contact["id"],
-                sms: List<String>.from(contact["sms"] ?? []),
-                email: List<String>.from(contact["email"] ?? []),
-              ),
+              (contact) => Contact(id: contact["id"], sms: List<String>.from(contact["sms"] ?? []), email: List<String>.from(contact["email"] ?? [])),
             )
             .toList();
 
         final TimerIntegrations integrations = TimerIntegrations(
           discord: TimerIntegration(
-            accounts:
-                (timerData["integrations"]["discord"]["accounts"] as List? ??
-                        [])
-                    .map(
-                      (account) => TimerIntegrationAccount(
-                        id: account["id"],
-                        destinations: List<String>.from(
-                          account["destinations"],
-                        ),
-                      ),
-                    )
-                    .toList(),
+            accounts: (timerData["integrations"]["discord"]["accounts"] as List? ?? [])
+                .map((account) => TimerIntegrationAccount(id: account["id"], destinations: List<String>.from(account["destinations"])))
+                .toList(),
           ),
           telegram: TimerIntegration(
-            accounts:
-                (timerData["integrations"]["telegram"]["accounts"] as List? ??
-                        [])
-                    .map(
-                      (account) => TimerIntegrationAccount(
-                        id: account["id"],
-                        destinations: List<String>.from(
-                          account["destinations"],
-                        ),
-                      ),
-                    )
-                    .toList(),
+            accounts: (timerData["integrations"]["telegram"]["accounts"] as List? ?? [])
+                .map((account) => TimerIntegrationAccount(id: account["id"], destinations: List<String>.from(account["destinations"])))
+                .toList(),
           ),
         );
 
@@ -110,8 +85,7 @@ class _TimerSelectionScreenState extends State<TimerSelectionScreen>
           passwordHash: timerData["password_hash"],
           locationSharingEnabled: timerData["location_sharing_enabled"],
           routeSharingEnabled: timerData["route_sharing_enabled"],
-          locationCollectionIntervalSecs:
-              timerData["location_collection_interval_secs"],
+          locationCollectionIntervalSecs: timerData["location_collection_interval_secs"],
           audioRecordingEnabled: timerData["audio_recording_enabled"],
 
           contacts: contacts,
@@ -126,11 +100,7 @@ class _TimerSelectionScreenState extends State<TimerSelectionScreen>
         list.add(_TimerConfigData(timer["key"], timerConfig));
       }
 
-      list.sort(
-        (a, b) => a.timerData.name.toLowerCase().compareTo(
-          b.timerData.name.toLowerCase(),
-        ),
-      );
+      list.sort((a, b) => a.timerData.name.toLowerCase().compareTo(b.timerData.name.toLowerCase()));
     } catch (e, st) {
       AppLogger.log.severe('SQL failed', e, st);
       if (!mounted) return;
@@ -178,9 +148,7 @@ class _TimerSelectionScreenState extends State<TimerSelectionScreen>
     if (!_isLoading) {
       for (var timer in _timerList) {
         bool matchesSearch =
-            _searchQuery.isEmpty ||
-            timer.timerData.name.toLowerCase().contains(_searchQuery) ||
-            timer.key.toLowerCase().contains(_searchQuery);
+            _searchQuery.isEmpty || timer.timerData.name.toLowerCase().contains(_searchQuery) || timer.key.toLowerCase().contains(_searchQuery);
 
         if (matchesSearch) filteredTimers.add(timer);
       }
@@ -193,31 +161,19 @@ class _TimerSelectionScreenState extends State<TimerSelectionScreen>
             ? SizedBox(
                 width: 40,
                 height: 40,
-                child: Center(
-                  child: CircularProgressIndicator(color: scheme.tertiary),
-                ),
+                child: Center(child: CircularProgressIndicator(color: scheme.tertiary)),
               )
-            : CircleIconButton(
-                icon: LucideIcons.chevronLeft,
-                onTap: () => Navigator.pop(context),
-              ),
+            : CircleIconButton(icon: LucideIcons.chevronLeft, onTap: () => Navigator.pop(context)),
         right: (_isLoading)
             ? SizedBox(
                 width: 40,
                 height: 40,
-                child: Center(
-                  child: CircularProgressIndicator(color: scheme.tertiary),
-                ),
+                child: Center(child: CircularProgressIndicator(color: scheme.tertiary)),
               )
             : CircleIconButton(
                 icon: LucideIcons.plus,
                 onTap: () {
-                  Navigator.of(context).push(
-                    AppRoute(
-                      page: TimerConfigScreen.newTimer(),
-                      transition: AppRouteTransitionType.slideLeft,
-                    ),
-                  );
+                  Navigator.of(context).push(AppRoute(page: TimerConfigScreen.newTimer(), transition: AppRouteTransitionType.slideLeft));
                 },
               ),
         searchBar: AppSearchBar(
@@ -233,18 +189,14 @@ class _TimerSelectionScreenState extends State<TimerSelectionScreen>
           ? SizedBox(
               width: 56,
               height: 56,
-              child: Center(
-                child: CircularProgressIndicator(color: scheme.tertiary),
-              ),
+              child: Center(child: CircularProgressIndicator(color: scheme.tertiary)),
             )
           : (filteredTimers.isEmpty)
           ? Column(
               children: [
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.xxxxl,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxxxl),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -256,22 +208,12 @@ class _TimerSelectionScreenState extends State<TimerSelectionScreen>
                             borderRadius: BorderRadius.circular(AppRadius.xxl),
                             border: Border.all(color: const Color(0x0DFFFFFF)),
                           ),
-                          child: Icon(
-                            (_searchQuery.isNotEmpty)
-                                ? LucideIcons.searchX
-                                : LucideIcons.timerOff,
-                            size: 36,
-                            color: scheme.error,
-                          ),
+                          child: Icon((_searchQuery.isNotEmpty) ? LucideIcons.searchX : LucideIcons.timerOff, size: 36, color: scheme.error),
                         ),
                         const SizedBox(height: AppSpacing.xl),
                         Text(
-                          (_searchQuery.isNotEmpty)
-                              ? local.translate("timer_selection.not_found")
-                              : local.translate("timer_selection.message"),
-                          style: AppText.bodySm(
-                            scheme,
-                          ).copyWith(color: scheme.onSurfaceVariant),
+                          (_searchQuery.isNotEmpty) ? local.translate("timer_selection.not_found") : local.translate("timer_selection.message"),
+                          style: AppText.bodySm(scheme).copyWith(color: scheme.onSurfaceVariant),
                           textAlign: TextAlign.center,
                         ),
                       ],
@@ -319,12 +261,7 @@ class _TimerConfigData {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(title, style: AppText.body(scheme)),
-        Text(
-          detail,
-          style: AppText.bodySm(
-            scheme,
-          ).copyWith(color: scheme.onSurfaceVariant),
-        ),
+        Text(detail, style: AppText.bodySm(scheme).copyWith(color: scheme.onSurfaceVariant)),
       ],
     );
   }
@@ -372,15 +309,11 @@ class _TimerConfigData {
     ColorScheme scheme = Theme.of(context).colorScheme;
     AppLocalizations local = AppLocalizations.of(context)!;
 
-    final String timerDuration = TimerService.formatDuration(
-      Duration(seconds: timerData.durationSecs),
-    );
+    final String timerDuration = TimerService.formatDuration(Duration(seconds: timerData.durationSecs));
 
     String timerGraceDuration = '';
     if (timerData.gracePeriodSecs != null) {
-      timerGraceDuration = TimerService.formatDuration(
-        Duration(seconds: timerData.gracePeriodSecs!),
-      );
+      timerGraceDuration = TimerService.formatDuration(Duration(seconds: timerData.gracePeriodSecs!));
     }
 
     String subtitle = timerDuration;
@@ -390,9 +323,7 @@ class _TimerConfigData {
 
     String locationCollectionIntervalDuration = '';
     if (timerData.locationCollectionIntervalSecs != null) {
-      locationCollectionIntervalDuration = TimerService.formatDuration(
-        Duration(seconds: timerData.locationCollectionIntervalSecs!),
-      );
+      locationCollectionIntervalDuration = TimerService.formatDuration(Duration(seconds: timerData.locationCollectionIntervalSecs!));
     }
 
     int integrations = 0;
@@ -404,17 +335,9 @@ class _TimerConfigData {
     return AppExpandableCard(
       title: timerData.name,
       subtitle: subtitle,
-      trailing: isSelected
-          ? Pill(
-              label: local.translate("themes.status"),
-              backColor: scheme.tertiary,
-            )
-          : null,
+      trailing: isSelected ? Pill(label: local.translate("themes.status"), backColor: scheme.tertiary) : null,
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.xxxl,
-          vertical: AppSpacing.xxs,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxxl, vertical: AppSpacing.xxs),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -422,26 +345,18 @@ class _TimerConfigData {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 if (hasTimerActive || isSelected) ...[
-                  PrimaryButton(
-                    icon: LucideIcons.shieldOff,
-                    color: ButtonColor.muted,
-                    onPressed: null,
-                    width: 80,
-                  ),
+                  PrimaryButton(icon: LucideIcons.shieldOff, color: ButtonColor.muted, onPressed: null, width: 80),
                 ] else ...[
                   PrimaryButton(
                     icon: LucideIcons.shieldCheck,
                     color: ButtonColor.tertiary,
                     onPressed: () async {
                       startLoading();
-                      await TimerService.instance.activeTimer
-                          .replaceActiveTimer(
-                            key: key,
-                            config: timerData,
-                            nowMs: DateTime.now()
-                                .toUtc()
-                                .millisecondsSinceEpoch,
-                          );
+                      await TimerService.instance.activeTimer.replaceActiveTimer(
+                        key: key,
+                        config: timerData,
+                        nowMs: DateTime.now().toUtc().millisecondsSinceEpoch,
+                      );
                       if (context.mounted) {
                         Navigator.of(context).pop();
                       } else {
@@ -453,12 +368,7 @@ class _TimerConfigData {
                 ],
 
                 if (hasTimerActive && isSelected) ...[
-                  PrimaryButton(
-                    icon: LucideIcons.pencilOff,
-                    color: ButtonColor.muted,
-                    onPressed: null,
-                    width: 80,
-                  ),
+                  PrimaryButton(icon: LucideIcons.pencilOff, color: ButtonColor.muted, onPressed: null, width: 80),
                 ] else ...[
                   PrimaryButton(
                     icon: LucideIcons.pencil,
@@ -466,10 +376,7 @@ class _TimerConfigData {
                     onPressed: () async {
                       Navigator.of(context).push(
                         AppRoute(
-                          page: TimerConfigScreen.existingTimer(
-                            timerKey: key,
-                            timerData: timerData,
-                          ),
+                          page: TimerConfigScreen.existingTimer(timerKey: key, timerData: timerData),
                           transition: AppRouteTransitionType.slideLeft,
                         ),
                       );
@@ -480,101 +387,57 @@ class _TimerConfigData {
               ],
             ),
             const SizedBox(height: AppSpacing.lg),
-            buildDetailRow(
-              local.translate("timer_selection.details.duration"),
-              timerDuration,
-              scheme,
-            ),
+            buildDetailRow(local.translate("timer_selection.details.duration"), timerDuration, scheme),
             paddingWithDivider(scheme),
-            buildDetailRow(
-              local.translate("timer_selection.details.grace"),
-              (timerData.gracePeriodSecs == null) ? "-" : timerGraceDuration,
-              scheme,
-            ),
+            buildDetailRow(local.translate("timer_selection.details.grace"), (timerData.gracePeriodSecs == null) ? "-" : timerGraceDuration, scheme),
             paddingWithDivider(scheme),
             buildDetailRow(
               local.translate("timer_selection.details.password_protected"),
-              (timerData.passwordProtected)
-                  ? local.translate("timer_selection.bool.true")
-                  : local.translate("timer_selection.bool.false"),
+              (timerData.passwordProtected) ? local.translate("timer_selection.bool.true") : local.translate("timer_selection.bool.false"),
               scheme,
             ),
             paddingWithDivider(scheme),
             buildDetailRow(
-              local.translate(
-                "timer_selection.details.location_sharing_enabled",
-              ),
-              (timerData.locationSharingEnabled)
-                  ? local.translate("timer_selection.bool.true")
-                  : local.translate("timer_selection.bool.false"),
+              local.translate("timer_selection.details.location_sharing_enabled"),
+              (timerData.locationSharingEnabled) ? local.translate("timer_selection.bool.true") : local.translate("timer_selection.bool.false"),
               scheme,
             ),
             paddingWithDivider(scheme),
             buildDetailRow(
               local.translate("timer_selection.details.route_sharing_enabled"),
-              (timerData.routeSharingEnabled)
-                  ? local.translate("timer_selection.bool.true")
-                  : local.translate("timer_selection.bool.false"),
+              (timerData.routeSharingEnabled) ? local.translate("timer_selection.bool.true") : local.translate("timer_selection.bool.false"),
               scheme,
             ),
             paddingWithDivider(scheme),
             buildDetailRow(
-              local.translate(
-                "timer_selection.details.location_collection_interval_secs",
-              ),
-              (timerData.locationCollectionIntervalSecs != null)
-                  ? locationCollectionIntervalDuration
-                  : "-",
+              local.translate("timer_selection.details.location_collection_interval_secs"),
+              (timerData.locationCollectionIntervalSecs != null) ? locationCollectionIntervalDuration : "-",
               scheme,
             ),
             paddingWithDivider(scheme),
             buildDetailRow(
-              local.translate(
-                "timer_selection.details.audio_recording_enabled",
-              ),
-              (timerData.audioRecordingEnabled)
-                  ? local.translate("timer_selection.bool.true")
-                  : local.translate("timer_selection.bool.false"),
+              local.translate("timer_selection.details.audio_recording_enabled"),
+              (timerData.audioRecordingEnabled) ? local.translate("timer_selection.bool.true") : local.translate("timer_selection.bool.false"),
               scheme,
             ),
             paddingWithDivider(scheme),
-            buildDetailRow(
-              local.translate("timer_selection.details.contacts"),
-              timerData.contacts.length.toString(),
-              scheme,
-            ),
+            buildDetailRow(local.translate("timer_selection.details.contacts"), timerData.contacts.length.toString(), scheme),
             paddingWithDivider(scheme),
-            buildDetailRow(
-              local.translate("timer_selection.details.custom_sms"),
-              timerData.customSms.length.toString(),
-              scheme,
-            ),
+            buildDetailRow(local.translate("timer_selection.details.custom_sms"), timerData.customSms.length.toString(), scheme),
             paddingWithDivider(scheme),
-            buildDetailRow(
-              local.translate("timer_selection.details.custom_email"),
-              timerData.customEmail.length.toString(),
-              scheme,
-            ),
+            buildDetailRow(local.translate("timer_selection.details.custom_email"), timerData.customEmail.length.toString(), scheme),
             paddingWithDivider(scheme),
-            buildDetailRow(
-              local.translate("timer_selection.details.integrations"),
-              integrations.toString(),
-              scheme,
-            ),
+            buildDetailRow(local.translate("timer_selection.details.integrations"), integrations.toString(), scheme),
             paddingWithDivider(scheme),
             buildDetailRow(
               local.translate("timer_selection.details.created_at"),
-              timerData.createdAt
-                  .substring(0, timerData.createdAt.length - 7)
-                  .replaceFirst('T', ' - '),
+              timerData.createdAt.substring(0, timerData.createdAt.length - 7).replaceFirst('T', ' - '),
               scheme,
             ),
             paddingWithDivider(scheme),
             buildDetailRow(
               local.translate("timer_selection.details.updated_at"),
-              timerData.updatedAt
-                  .substring(0, timerData.updatedAt.length - 7)
-                  .replaceFirst('T', ' - '),
+              timerData.updatedAt.substring(0, timerData.updatedAt.length - 7).replaceFirst('T', ' - '),
               scheme,
             ),
             const SizedBox(height: AppSpacing.xxs),

@@ -102,12 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         right: CircleIconButton(
           icon: LucideIcons.clockPlus,
-          onTap: () => Navigator.of(context).push(
-            AppRoute(
-              page: TimerSelectionScreen(),
-              transition: AppRouteTransitionType.slideLeft,
-            ),
-          ),
+          onTap: () => Navigator.of(context).push(AppRoute(page: TimerSelectionScreen(), transition: AppRouteTransitionType.slideLeft)),
         ),
       ),
       child: Column(

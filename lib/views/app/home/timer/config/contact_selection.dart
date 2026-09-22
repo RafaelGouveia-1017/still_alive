@@ -19,11 +19,7 @@ import '../../../../widgets/primitives.dart';
 /// underlying value. Changes made in the contact selection screen are
 /// propagated through [onChanged].
 class ContactSelection extends StatefulWidget {
-  const ContactSelection({
-    super.key,
-    required this.timerContacts,
-    required this.onChanged,
-  });
+  const ContactSelection({super.key, required this.timerContacts, required this.onChanged});
 
   final ValueListenable<List<Contact>> timerContacts;
   final ValueChanged<List<Contact>?> onChanged;
@@ -80,10 +76,7 @@ class _ContactSelectionState extends State<ContactSelection> {
       child: Pressable(
         onTap: () => Navigator.of(context).push(
           AppRoute(
-            page: ContactsScreen.selectContactsForTimer(
-              timerContacts: widget.timerContacts.value,
-              onChanged: (value) => widget.onChanged(value),
-            ),
+            page: ContactsScreen.selectContactsForTimer(timerContacts: widget.timerContacts.value, onChanged: (value) => widget.onChanged(value)),
             transition: AppRouteTransitionType.slideLeft,
           ),
         ),
@@ -99,15 +92,9 @@ class _ContactSelectionState extends State<ContactSelection> {
                   '${local.translate("timer_configuration.contacts.contact.1")} '
                   '${local.translate("timer_configuration.contacts.selected.1")}',
           },
-          icon: (widget.timerContacts.value.isNotEmpty)
-              ? LucideIcons.bookUser
-              : LucideIcons.book,
+          icon: (widget.timerContacts.value.isNotEmpty) ? LucideIcons.bookUser : LucideIcons.book,
           iconColor: scheme.secondary,
-          trailing: Icon(
-            LucideIcons.chevronRight,
-            size: 18,
-            color: scheme.onSurfaceVariant,
-          ),
+          trailing: Icon(LucideIcons.chevronRight, size: 18, color: scheme.onSurfaceVariant),
         ),
       ),
     );

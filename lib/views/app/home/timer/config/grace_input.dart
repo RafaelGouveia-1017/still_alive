@@ -23,11 +23,7 @@ class GraceInput extends StatefulWidget {
   /// 10 seconds.
   ///
   /// [onChanged] is called whenever the selected grace period changes.
-  const GraceInput({
-    super.key,
-    required this.gracePeriod,
-    required this.onChanged,
-  });
+  const GraceInput({super.key, required this.gracePeriod, required this.onChanged});
 
   /// The initial grace period.
   ///
@@ -88,10 +84,7 @@ class _GraceInputState extends State<GraceInput> {
     AppLocalizations local = AppLocalizations.of(context)!;
 
     return AppCard(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.lg,
-        vertical: AppSpacing.ms,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.ms),
       child: Column(
         children: [
           AppRow(
@@ -102,10 +95,7 @@ class _GraceInputState extends State<GraceInput> {
                 : '${local.translate("timer_configuration.grace_period.buzzer.0")}'
                       ' ${_formatDuration(_seconds)} '
                       '${local.translate("timer_configuration.grace_period.buzzer.1")}',
-            trailing: Pill(
-              label: _formatDuration(_seconds),
-              backColor: scheme.secondary,
-            ),
+            trailing: Pill(label: _formatDuration(_seconds), backColor: scheme.secondary),
           ),
           const SizedBox(height: AppSpacing.sm),
           SliderTheme(
@@ -114,9 +104,7 @@ class _GraceInputState extends State<GraceInput> {
               trackShape: const MajorTickSliderTrackShape(),
 
               // The thumb.
-              thumbShape: const RoundSliderThumbShape(
-                enabledThumbRadius: AppRadius.sm,
-              ),
+              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: AppRadius.sm),
 
               // Hide Flutter's normal tick marks because
               // we're drawing our own.
@@ -175,8 +163,7 @@ class MajorTickSliderTrackShape extends SliderTrackShape {
     bool isDiscrete = false,
   }) {
     final double trackHeight = sliderTheme.trackHeight ?? 4;
-    final double trackTop =
-        offset.dy + (parentBox.size.height - trackHeight) / 2;
+    final double trackTop = offset.dy + (parentBox.size.height - trackHeight) / 2;
 
     return Rect.fromLTWH(0.0, trackTop, parentBox.size.width, trackHeight);
   }
@@ -196,38 +183,19 @@ class MajorTickSliderTrackShape extends SliderTrackShape {
   }) {
     final canvas = context.canvas;
 
-    final trackRect = getPreferredRect(
-      parentBox: parentBox,
-      offset: offset,
-      sliderTheme: sliderTheme,
-      isEnabled: isEnabled,
-      isDiscrete: isDiscrete,
-    );
+    final trackRect = getPreferredRect(parentBox: parentBox, offset: offset, sliderTheme: sliderTheme, isEnabled: isEnabled, isDiscrete: isDiscrete);
 
-    final activePaint = Paint()
-      ..color = sliderTheme.activeTrackColor ?? Colors.blue;
+    final activePaint = Paint()..color = sliderTheme.activeTrackColor ?? Colors.blue;
 
-    final inactivePaint = Paint()
-      ..color = sliderTheme.inactiveTrackColor ?? Colors.grey;
+    final inactivePaint = Paint()..color = sliderTheme.inactiveTrackColor ?? Colors.grey;
 
     // Draw inactive track.
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(trackRect, const Radius.circular(2)),
-      inactivePaint,
-    );
+    canvas.drawRRect(RRect.fromRectAndRadius(trackRect, const Radius.circular(2)), inactivePaint);
 
     // Draw active track.
-    final activeRect = Rect.fromLTRB(
-      trackRect.left,
-      trackRect.top,
-      thumbCenter.dx.clamp(trackRect.left, trackRect.right),
-      trackRect.bottom,
-    );
+    final activeRect = Rect.fromLTRB(trackRect.left, trackRect.top, thumbCenter.dx.clamp(trackRect.left, trackRect.right), trackRect.bottom);
 
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(activeRect, const Radius.circular(2)),
-      activePaint,
-    );
+    canvas.drawRRect(RRect.fromRectAndRadius(activeRect, const Radius.circular(2)), activePaint);
 
     // Draw major points.
     final tickPaint = Paint()

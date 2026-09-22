@@ -155,22 +155,15 @@ class _CustomDestinationInputState extends State<CustomDestinationInput> {
           padding: EdgeInsets.zero,
           title: switch (_sms.value.length + _email.value.length) {
             0 => local.translate("timer_configuration.custom.none"),
-            1 =>
-              '1 ${local.translate("timer_configuration.custom.subtitle.0")}',
+            1 => '1 ${local.translate("timer_configuration.custom.subtitle.0")}',
             _ =>
               '${_sms.value.length + _email.value.length} '
                   '${local.translate("timer_configuration.custom.subtitle.1")}',
           },
           subtitle: _getSubtitle(),
-          icon: (_sms.value.length + _email.value.length != 0)
-              ? LucideIcons.user
-              : LucideIcons.userX,
+          icon: (_sms.value.length + _email.value.length != 0) ? LucideIcons.user : LucideIcons.userX,
           iconColor: scheme.secondary,
-          trailing: Icon(
-            LucideIcons.chevronRight,
-            size: 18,
-            color: scheme.onSurfaceVariant,
-          ),
+          trailing: Icon(LucideIcons.chevronRight, size: 18, color: scheme.onSurfaceVariant),
         ),
       ),
     );
@@ -215,13 +208,11 @@ class CustomDestinationInputScreen extends StatefulWidget {
   final ValueChanged<List<String>?> onEmailChanged;
 
   @override
-  State<CustomDestinationInputScreen> createState() =>
-      _CustomDestinationInputScreenState();
+  State<CustomDestinationInputScreen> createState() => _CustomDestinationInputScreenState();
 }
 
 /// State implementation for [CustomDestinationInputScreen].
-class _CustomDestinationInputScreenState
-    extends State<CustomDestinationInputScreen> {
+class _CustomDestinationInputScreenState extends State<CustomDestinationInputScreen> {
   late List<String> _sms, _email;
 
   @override
@@ -304,10 +295,7 @@ class _CustomDestinationInputScreenState
       header: AppHeader(
         title: local.translate("timer_configuration.custom.title"),
         subtitle: _getSubtitle(),
-        left: CircleIconButton(
-          icon: LucideIcons.chevronLeft,
-          onTap: () => Navigator.pop(context),
-        ),
+        left: CircleIconButton(icon: LucideIcons.chevronLeft, onTap: () => Navigator.pop(context)),
         right: CircleIconButton(
           icon: LucideIcons.plus,
           onTap: () {
@@ -342,19 +330,11 @@ class _CustomDestinationInputScreenState
                               mainAxisSize: MainAxisSize.min,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(
-                                  LucideIcons.messageSquare,
-                                  size: AppSpacing.xxxxl,
-                                  color: scheme.primary,
-                                ),
+                                Icon(LucideIcons.messageSquare, size: AppSpacing.xxxxl, color: scheme.primary),
                                 const SizedBox(height: AppSpacing.sm),
                                 Text(
-                                  local.translate(
-                                    "timer_configuration.custom.phone.title",
-                                  ),
-                                  style: AppText.caption(
-                                    scheme,
-                                  ).copyWith(color: scheme.onSurface),
+                                  local.translate("timer_configuration.custom.phone.title"),
+                                  style: AppText.caption(scheme).copyWith(color: scheme.onSurface),
                                   textAlign: TextAlign.center,
                                 ),
                               ],
@@ -419,10 +399,7 @@ class _CustomDestinationInputScreenState
           Expanded(
             child: ListView(
               physics: const ClampingScrollPhysics(),
-              padding: const EdgeInsets.only(
-                top: AppSpacing.xl,
-                bottom: AppSpacing.lg,
-              ),
+              padding: const EdgeInsets.only(top: AppSpacing.xl, bottom: AppSpacing.lg),
               children: [
                 if (_sms.isEmpty && _email.isEmpty) ...[
                   Column(
@@ -436,31 +413,19 @@ class _CustomDestinationInputScreenState
                           borderRadius: BorderRadius.circular(AppRadius.xxl),
                           border: Border.all(color: scheme.outlineVariant),
                         ),
-                        child: Icon(
-                          LucideIcons.userX,
-                          size: 36,
-                          color: scheme.onSurfaceVariant,
-                        ),
+                        child: Icon(LucideIcons.userX, size: 36, color: scheme.onSurfaceVariant),
                       ),
                       const SizedBox(height: AppSpacing.lg),
                       Text(
                         local.translate("timer_configuration.custom.none"),
-                        style: AppText.bodySm(
-                          scheme,
-                        ).copyWith(color: scheme.onSurfaceVariant),
+                        style: AppText.bodySm(scheme).copyWith(color: scheme.onSurfaceVariant),
                         textAlign: TextAlign.center,
                       ),
                     ],
                   ),
                 ] else ...[
                   if (_sms.isNotEmpty) ...[
-                    SectionTitle(
-                      local.translate("timer_configuration.contacts.sms.1"),
-                      action: Text(
-                        '${_sms.length}',
-                        style: AppText.micro(scheme),
-                      ),
-                    ),
+                    SectionTitle(local.translate("timer_configuration.contacts.sms.1"), action: Text('${_sms.length}', style: AppText.micro(scheme))),
                     AppCard(
                       padding: EdgeInsets.all(AppSpacing.lg),
                       child: Column(
@@ -471,20 +436,12 @@ class _CustomDestinationInputScreenState
                                 _sms.remove(_sms[i]);
                                 widget.onSmsChanged(_sms);
                               },
-                              child: AppRow(
-                                title: _sms[i],
-                                trailing: Icon(LucideIcons.trash, size: 20),
-                              ),
+                              child: AppRow(title: _sms[i], trailing: Icon(LucideIcons.trash, size: 20)),
                             ),
                             if (i < _sms.length - 1)
                               Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: AppSpacing.md,
-                                ),
-                                child: Divider(
-                                  height: 1,
-                                  color: scheme.outlineVariant,
-                                ),
+                                padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                                child: Divider(height: 1, color: scheme.outlineVariant),
                               ),
                           ],
                         ],
@@ -495,10 +452,7 @@ class _CustomDestinationInputScreenState
                   if (_email.isNotEmpty) ...[
                     SectionTitle(
                       local.translate("timer_configuration.contacts.email.1"),
-                      action: Text(
-                        '${_email.length}',
-                        style: AppText.micro(scheme),
-                      ),
+                      action: Text('${_email.length}', style: AppText.micro(scheme)),
                     ),
                     AppCard(
                       padding: EdgeInsets.all(AppSpacing.lg),
@@ -510,20 +464,12 @@ class _CustomDestinationInputScreenState
                                 _email.remove(_email[i]);
                                 widget.onEmailChanged(_email);
                               },
-                              child: AppRow(
-                                title: _email[i],
-                                trailing: Icon(LucideIcons.trash, size: 20),
-                              ),
+                              child: AppRow(title: _email[i], trailing: Icon(LucideIcons.trash, size: 20)),
                             ),
                             if (i < _email.length - 1)
                               Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: AppSpacing.md,
-                                ),
-                                child: Divider(
-                                  height: 1,
-                                  color: scheme.outlineVariant,
-                                ),
+                                padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                                child: Divider(height: 1, color: scheme.outlineVariant),
                               ),
                           ],
                         ],
@@ -548,10 +494,7 @@ class _CustomDestinationInputScreenState
 ///
 /// Returns the entered and validated value, or null if the prompt is
 /// dismissed without submitting a valid value.
-Future<String?> _showTextPrompt(
-  BuildContext context, {
-  String mode = 'sms',
-}) async {
+Future<String?> _showTextPrompt(BuildContext context, {String mode = 'sms'}) async {
   ColorScheme scheme = Theme.of(context).colorScheme;
   AppLocalizations local = AppLocalizations.of(context)!;
 
@@ -591,9 +534,7 @@ Future<String?> _showTextPrompt(
         scheme: scheme,
         toast: Text(
           switch (mode) {
-            'email' => local.translate(
-              "timer_configuration.custom.email.validation",
-            ),
+            'email' => local.translate("timer_configuration.custom.email.validation"),
             _ => local.translate("timer_configuration.custom.phone.validation"),
           },
           style: AppText.bodySm(scheme),
@@ -601,13 +542,7 @@ Future<String?> _showTextPrompt(
         ),
         gravity: ToastGravity.TOP,
         position: (context, child, gravity) {
-          return Positioned(
-            top: (valueFocus.hasFocus) ? 38 : null,
-            bottom: (valueFocus.hasFocus) ? null : 160,
-            left: 60,
-            right: 60,
-            child: child,
-          );
+          return Positioned(top: (valueFocus.hasFocus) ? 38 : null, bottom: (valueFocus.hasFocus) ? null : 160, left: 60, right: 60, child: child);
         },
       );
     }
@@ -634,14 +569,10 @@ Future<String?> _showTextPrompt(
               style: AppText.body(scheme),
               cursorColor: scheme.primary,
               scrollPadding: const EdgeInsets.all(0),
-              inputFormatters: [
-                FilteringTextInputFormatter.singleLineFormatter,
-              ],
+              inputFormatters: [FilteringTextInputFormatter.singleLineFormatter],
               decoration: InputDecoration(
                 hintText: switch (mode) {
-                  'email' => local.translate(
-                    "timer_configuration.custom.email.hint",
-                  ),
+                  'email' => local.translate("timer_configuration.custom.email.hint"),
                   _ => local.translate("timer_configuration.custom.phone.hint"),
                 },
                 counterText: '',
@@ -652,10 +583,7 @@ Future<String?> _showTextPrompt(
               ),
               obscureText: false,
               onTap: () {
-                valueController.selection = TextSelection(
-                  baseOffset: 0,
-                  extentOffset: valueController.text.length,
-                );
+                valueController.selection = TextSelection(baseOffset: 0, extentOffset: valueController.text.length);
               },
               onSubmitted: (_) => valueWritten(),
             ),

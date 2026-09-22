@@ -46,10 +46,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with RouteAware {
 
     currentPage = widget.startPage;
 
-    _controller = PageController(
-      viewportFraction: 1.1,
-      initialPage: widget.startPage,
-    );
+    _controller = PageController(viewportFraction: 1.1, initialPage: widget.startPage);
   }
 
   @override
@@ -67,31 +64,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> with RouteAware {
 
   Future<void> _nextPage() async {
     if (currentPage < 2) {
-      _controller.nextPage(
-        duration: AppMotion.fast,
-        curve: AppMotion.emphasized,
-      );
+      _controller.nextPage(duration: AppMotion.fast, curve: AppMotion.emphasized);
     } else {
       ColorScheme scheme = Theme.of(context).colorScheme;
       AppLocalizations local = AppLocalizations.of(context)!;
 
       if (await PermissionManager.instance.hasAllNeededPermissions()) {
         try {
-          int result = (await executeSql(
-            sql: "UPDATE settings SET value = 'false' WHERE key = 'tutorial'",
-          )).toInt();
+          int result = (await executeSql(sql: "UPDATE settings SET value = 'false' WHERE key = 'tutorial'")).toInt();
 
           if (!mounted) return;
 
           if (result >= 1) {
-            Navigator.pushAndRemoveUntil(
-              context,
-              AppRoute(
-                page: HomeScreen(),
-                transition: AppRouteTransitionType.slideRight,
-              ),
-              (route) => false,
-            );
+            Navigator.pushAndRemoveUntil(context, AppRoute(page: HomeScreen(), transition: AppRouteTransitionType.slideRight), (route) => false);
             return;
           } else {
             throw Exception("SQL didn't work somehow.");
@@ -99,11 +84,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with RouteAware {
         } catch (e) {
           showToast(
             scheme: scheme,
-            toast: Text(
-              e.toString(),
-              style: AppText.bodySm(scheme),
-              textAlign: TextAlign.center,
-            ),
+            toast: Text(e.toString(), style: AppText.bodySm(scheme), textAlign: TextAlign.center),
             secs: 10,
           );
           return;
@@ -114,11 +95,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with RouteAware {
 
       showToast(
         scheme: scheme,
-        toast: Text(
-          local.translate("permissions.error"),
-          style: AppText.bodySm(scheme),
-          textAlign: TextAlign.center,
-        ),
+        toast: Text(local.translate("permissions.error"), style: AppText.bodySm(scheme), textAlign: TextAlign.center),
         gravity: ToastGravity.BOTTOM,
         position: (context, child, gravity) {
           return Positioned(bottom: 170, left: 30, right: 30, child: child);
@@ -129,10 +106,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with RouteAware {
 
   void _previousPage() {
     if (currentPage > 0) {
-      _controller.previousPage(
-        duration: AppMotion.fast,
-        curve: AppMotion.emphasized,
-      );
+      _controller.previousPage(duration: AppMotion.fast, curve: AppMotion.emphasized);
     }
   }
 
@@ -140,20 +114,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> with RouteAware {
   Widget build(BuildContext context) {
     AppLocalizations local = AppLocalizations.of(context)!;
 
-    List<String> buttonLabels = [
-      local.translate("welcome.cta"),
-      local.translate("privacy.cta"),
-      local.translate("permissions.cta"),
-    ];
+    List<String> buttonLabels = [local.translate("welcome.cta"), local.translate("privacy.cta"), local.translate("permissions.cta")];
 
     return ScreenBase(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(
-          0,
-          AppSpacing.xxxxl,
-          0,
-          AppSpacing.xxxxl,
-        ),
+        padding: const EdgeInsets.fromLTRB(0, AppSpacing.xxxxl, 0, AppSpacing.xxxxl),
         child: Column(
           children: [
             Expanded(
@@ -176,19 +141,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> with RouteAware {
                       currentPage = index;
                     });
                   },
-                  children: const [
-                    WelcomePage(),
-                    PrivacyPage(),
-                    PermissionsPage(),
-                  ],
+                  children: const [WelcomePage(), PrivacyPage(), PermissionsPage()],
                 ),
               ),
             ),
 
-            PrimaryButton(
-              label: buttonLabels[currentPage],
-              onPressed: _nextPage,
-            ),
+            PrimaryButton(label: buttonLabels[currentPage], onPressed: _nextPage),
             const SizedBox(height: AppSpacing.lg),
             ProgressDots(active: currentPage),
           ],

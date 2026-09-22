@@ -10,13 +10,7 @@ import '../../widgets/primitives.dart';
 /// The row provides actions for testing the destination connection and
 /// generating a QR code that can be scanned to access the destination.
 class IntegrationRow extends StatefulWidget {
-  const IntegrationRow({
-    super.key,
-    required this.title,
-    required this.subtitle,
-    required this.onTest,
-    required this.getExtLink,
-  });
+  const IntegrationRow({super.key, required this.title, required this.subtitle, required this.onTest, required this.getExtLink});
 
   final String title;
   final String? subtitle;
@@ -77,9 +71,7 @@ class _IntegrationRowState extends State<IntegrationRow> {
         child: SizedBox(
           width: 24,
           height: 24,
-          child: Center(
-            child: CircularProgressIndicator(color: scheme.tertiary),
-          ),
+          child: Center(child: CircularProgressIndicator(color: scheme.tertiary)),
         ),
       );
     }
@@ -88,11 +80,7 @@ class _IntegrationRowState extends State<IntegrationRow> {
       final connected = _canSend!;
 
       return IconButton(
-        icon: Icon(
-          connected ? LucideIcons.check : LucideIcons.x,
-          size: 24,
-          color: connected ? scheme.tertiary : scheme.error,
-        ),
+        icon: Icon(connected ? LucideIcons.check : LucideIcons.x, size: 24, color: connected ? scheme.tertiary : scheme.error),
         onPressed: null,
       );
     }
@@ -116,20 +104,12 @@ class _IntegrationRowState extends State<IntegrationRow> {
         children: [
           _buildTestButton(scheme),
           IconButton(
-            icon: Icon(
-              LucideIcons.externalLink,
-              size: 24,
-              color: scheme.secondary,
-            ),
+            icon: Icon(LucideIcons.externalLink, size: 24, color: scheme.secondary),
             onPressed: () {
               try {
                 launchUrl(widget.getExtLink());
               } catch (e, st) {
-                AppLogger.log.severe(
-                  "Bruh has no app that can open an app schema. smh",
-                  e,
-                  st,
-                );
+                AppLogger.log.severe("Bruh has no app that can open an app schema. smh", e, st);
               }
             },
           ),

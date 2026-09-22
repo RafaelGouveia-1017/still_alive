@@ -46,9 +46,7 @@ extension IntegrationInfoExtension on IntegrationInfo {
 
   /// Returns accounts that have at least one selected destination.
   List<IntegrationAccount> get connectedAccounts {
-    return accounts
-        .where((account) => account.destinations.isNotEmpty)
-        .toList();
+    return accounts.where((account) => account.destinations.isNotEmpty).toList();
   }
 
   /// Returns all channels across all accounts.
@@ -64,10 +62,8 @@ extension IntegrationInfoExtension on IntegrationInfo {
   ///
   /// Each account mapping uses the guild name as its key and contains all
   /// channels belonging to that guild as its value.
-  Map<IntegrationAccount, Map<String, List<MessageDestination>>>
-  get groupDestinationsByAccount {
-    final result =
-        <IntegrationAccount, Map<String, List<MessageDestination>>>{};
+  Map<IntegrationAccount, Map<String, List<MessageDestination>>> get groupDestinationsByAccount {
+    final result = <IntegrationAccount, Map<String, List<MessageDestination>>>{};
     for (final account in accounts) {
       final groups = <String, List<MessageDestination>>{};
       for (final destination in account.destinations) {
@@ -77,9 +73,7 @@ extension IntegrationInfoExtension on IntegrationInfo {
       }
       // Sort each guild/server by channel name.
       for (final destinations in groups.values) {
-        destinations.sort(
-          (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
-        );
+        destinations.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
       }
       result[account] = groups;
     }
@@ -118,12 +112,7 @@ class IntegrationService {
 
     int destinations = ac.destinations.length;
     int users = ac.destinations
-        .where(
-          (test) =>
-              (test.parentId == null &&
-              test.parentName == null &&
-              test.kind == DestinationKind.directMessage),
-        )
+        .where((test) => (test.parentId == null && test.parentName == null && test.kind == DestinationKind.directMessage))
         .length;
     int channels = destinations - users;
 
@@ -134,11 +123,7 @@ class IntegrationService {
     if (users == 0 && channels == 0) return null;
 
     if (users == 0) {
-      return countLabel(
-        channels,
-        "integrations.channel",
-        "integrations.channels",
-      );
+      return countLabel(channels, "integrations.channel", "integrations.channels");
     }
 
     if (channels == 0) {
@@ -167,25 +152,13 @@ class IntegrationService {
     required String accountId,
   }) async {
     try {
-      List<MessageDestination> destinations =
-          await discoverIntegrationDestinations(
-            key: integrationKey,
-            accountId: accountId,
-          );
+      List<MessageDestination> destinations = await discoverIntegrationDestinations(key: integrationKey, accountId: accountId);
 
-      await TimerService.instance
-          .removeDeletedAccountDestinationFromActiveTimer(
-            integrationKey,
-            accountId,
-          );
+      await TimerService.instance.removeDeletedAccountDestinationFromActiveTimer(integrationKey, accountId);
 
       return destinations;
     } catch (e, st) {
-      AppLogger.log.severe(
-        'Failed to discover integration destinations.',
-        e,
-        st,
-      );
+      AppLogger.log.severe('Failed to discover integration destinations.', e, st);
       if (context.mounted) {
         showGenericErrorMessage(context, null);
       }
@@ -201,14 +174,10 @@ class IntegrationService {
   ///
   /// The original [destinations] list is not modified. A new sorted list is
   /// returned.
-  static List<MessageDestination> sortedDestinations(
-    List<MessageDestination> destinations,
-  ) {
+  static List<MessageDestination> sortedDestinations(List<MessageDestination> destinations) {
     final result = [...destinations];
     result.sort((a, b) {
-      final guildComparison = (a.parentName ?? '').toLowerCase().compareTo(
-        (b.parentName ?? '').toLowerCase(),
-      );
+      final guildComparison = (a.parentName ?? '').toLowerCase().compareTo((b.parentName ?? '').toLowerCase());
       if (guildComparison != 0) {
         return guildComparison;
       }
@@ -241,23 +210,16 @@ class IntegrationService {
   }) async {
     AppLocalizations local = AppLocalizations.of(context)!;
     try {
-      DestinationTestResult result = await testIntegrationDestination(
-        key: integrationKey,
-        accountId: accountId,
-        destinationId: destinationId,
-      );
+      DestinationTestResult result = await testIntegrationDestination(key: integrationKey, accountId: accountId, destinationId: destinationId);
       showToast(
         scheme: scheme,
         toast: Text(
-          (result.canSend)
-              ? local.translate("integration_destinations.test_result.0")
-              : local.translate("integration_destinations.test_result.1"),
+          (result.canSend) ? local.translate("integration_destinations.test_result.0") : local.translate("integration_destinations.test_result.1"),
           style: AppText.bodySm(scheme),
           textAlign: TextAlign.center,
         ),
         gravity: ToastGravity.BOTTOM,
-        position: (context, child, gravity) =>
-            Positioned(bottom: 170, left: 80, right: 80, child: child),
+        position: (context, child, gravity) => Positioned(bottom: 170, left: 80, right: 80, child: child),
       );
       return (canSend: result.canSend, message: result.message);
     } catch (e, st) {
@@ -287,10 +249,7 @@ class IntegrationService {
     required String accountId,
   }) async {
     try {
-      DestinationTestResult result = await testIntegrationAccount(
-        key: integrationKey,
-        accountId: accountId,
-      );
+      DestinationTestResult result = await testIntegrationAccount(key: integrationKey, accountId: accountId);
 
       return (canSend: result.canSend, message: result.message);
     } catch (e, st) {
@@ -317,10 +276,7 @@ class IntegrationService {
     required Map<String, String> integrationCredentials,
   }) async {
     try {
-      IntegrationAccount account = await connectIntegrationAccount(
-        key: integrationKey,
-        credentials: integrationCredentials,
-      );
+      IntegrationAccount account = await connectIntegrationAccount(key: integrationKey, credentials: integrationCredentials);
       integrationItems = integrationItems.map((integration) {
         if (integration.key != integrationKey) {
           return integration;
@@ -343,14 +299,9 @@ class IntegrationService {
         showToast(
           secs: 6,
           scheme: scheme,
-          toast: Text(
-            e.toString(),
-            style: AppText.bodySm(scheme),
-            textAlign: TextAlign.center,
-          ),
+          toast: Text(e.toString(), style: AppText.bodySm(scheme), textAlign: TextAlign.center),
           gravity: ToastGravity.BOTTOM,
-          position: (context, child, gravity) =>
-              Positioned(bottom: 170, left: 40, right: 40, child: child),
+          position: (context, child, gravity) => Positioned(bottom: 170, left: 40, right: 40, child: child),
         );
       }
       return null;
@@ -384,9 +335,7 @@ class IntegrationService {
           return integration;
         }
 
-        final updatedAccounts = integration.accounts
-            .where((account) => account.id != accountId)
-            .toList();
+        final updatedAccounts = integration.accounts.where((account) => account.id != accountId).toList();
 
         return IntegrationInfo(
           key: integration.key,
@@ -398,11 +347,7 @@ class IntegrationService {
         );
       }).toList();
 
-      await TimerService.instance
-          .removeDeletedIntegrationAccountFromActiveTimer(
-            integrationKey,
-            accountId,
-          );
+      await TimerService.instance.removeDeletedIntegrationAccountFromActiveTimer(integrationKey, accountId);
 
       return integrationItems;
     } catch (e, st) {
@@ -436,12 +381,7 @@ class IntegrationService {
     required String message, //TODO will this just be string?
   }) async {
     try {
-      return await sendIntegrationMessage(
-        key: integrationKey,
-        accountId: accountId,
-        destinationId: destinationId,
-        message: message,
-      );
+      return await sendIntegrationMessage(key: integrationKey, accountId: accountId, destinationId: destinationId, message: message);
     } catch (e, st) {
       AppLogger.log.severe('Failed to send message.', e, st);
       return null;
@@ -480,54 +420,28 @@ class IntegrationService {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Center(
-              child: Text(
-                local.translate("integrations.setup.discord.0"),
-                style: AppText.title(
-                  scheme,
-                ).copyWith(fontWeight: FontWeight.bold),
-              ),
+              child: Text(local.translate("integrations.setup.discord.0"), style: AppText.title(scheme).copyWith(fontWeight: FontWeight.bold)),
             ),
 
             const SizedBox(height: AppSpacing.sm),
 
-            Text(
-              local.translate("integrations.setup.discord.1"),
-              style: AppText.body(scheme),
-            ),
+            Text(local.translate("integrations.setup.discord.1"), style: AppText.body(scheme)),
 
             const SizedBox(height: AppSpacing.xl),
 
-            Text(
-              local.translate("integrations.setup.discord.2"),
-              style: AppText.bodySm(scheme),
-            ),
+            Text(local.translate("integrations.setup.discord.2"), style: AppText.bodySm(scheme)),
 
             const SizedBox(height: AppSpacing.md),
 
-            _InstructionStep(
-              number: 1,
-              text: local.translate("integrations.setup.discord.3"),
-            ),
+            _InstructionStep(number: 1, text: local.translate("integrations.setup.discord.3")),
 
-            _InstructionStep(
-              number: 2,
-              text: local.translate("integrations.setup.discord.4"),
-            ),
+            _InstructionStep(number: 2, text: local.translate("integrations.setup.discord.4")),
 
-            _InstructionStep(
-              number: 3,
-              text: local.translate("integrations.setup.discord.5"),
-            ),
+            _InstructionStep(number: 3, text: local.translate("integrations.setup.discord.5")),
 
-            _InstructionStep(
-              number: 4,
-              text: local.translate("integrations.setup.discord.6"),
-            ),
+            _InstructionStep(number: 4, text: local.translate("integrations.setup.discord.6")),
 
-            _InstructionStep(
-              number: 5,
-              text: local.translate("integrations.setup.discord.7"),
-            ),
+            _InstructionStep(number: 5, text: local.translate("integrations.setup.discord.7")),
 
             const SizedBox(height: AppSpacing.sm),
 
@@ -535,23 +449,12 @@ class IntegrationService {
               alignment: Alignment.centerLeft,
               child: TextButton.icon(
                 onPressed: () async {
-                  final uri = Uri.parse(
-                    'https://discord.com/developers/applications',
-                  );
+                  final uri = Uri.parse('https://discord.com/developers/applications');
 
                   await launchUrl(uri, mode: LaunchMode.externalApplication);
                 },
-                icon: Icon(
-                  LucideIcons.externalLink,
-                  size: 20,
-                  color: scheme.tertiary,
-                ),
-                label: Text(
-                  local.translate("integrations.setup.discord.8"),
-                  style: AppText.bodySm(
-                    scheme,
-                  ).copyWith(color: scheme.tertiary),
-                ),
+                icon: Icon(LucideIcons.externalLink, size: 20, color: scheme.tertiary),
+                label: Text(local.translate("integrations.setup.discord.8"), style: AppText.bodySm(scheme).copyWith(color: scheme.tertiary)),
               ),
             ),
 
@@ -566,10 +469,7 @@ class IntegrationService {
                 labelText: local.translate("integrations.setup.discord.9"),
                 hintText: local.translate("integrations.setup.discord.10"),
                 border: OutlineInputBorder(),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.xxxs,
-                  vertical: AppSpacing.xxxs,
-                ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxxs, vertical: AppSpacing.xxxs),
                 prefixIcon: Icon(LucideIcons.keyRound),
                 filled: false,
                 fillColor: Colors.transparent,
@@ -656,40 +556,17 @@ class IntegrationService {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Center(
-              child: Text(
-                local.translate("integrations.setup.telegram.0"),
-                style: AppText.title(
-                  scheme,
-                ).copyWith(fontWeight: FontWeight.bold),
-              ),
+              child: Text(local.translate("integrations.setup.telegram.0"), style: AppText.title(scheme).copyWith(fontWeight: FontWeight.bold)),
             ),
             const SizedBox(height: AppSpacing.sm),
-            Text(
-              local.translate("integrations.setup.telegram.1"),
-              style: AppText.body(scheme),
-            ),
+            Text(local.translate("integrations.setup.telegram.1"), style: AppText.body(scheme)),
             const SizedBox(height: AppSpacing.xl),
-            Text(
-              local.translate("integrations.setup.telegram.2"),
-              style: AppText.bodySm(scheme),
-            ),
+            Text(local.translate("integrations.setup.telegram.2"), style: AppText.bodySm(scheme)),
             const SizedBox(height: AppSpacing.md),
-            _InstructionStep(
-              number: 1,
-              text: local.translate("integrations.setup.telegram.3"),
-            ),
-            _InstructionStep(
-              number: 2,
-              text: local.translate("integrations.setup.telegram.4"),
-            ),
-            _InstructionStep(
-              number: 3,
-              text: local.translate("integrations.setup.telegram.5"),
-            ),
-            _InstructionStep(
-              number: 4,
-              text: local.translate("integrations.setup.telegram.6"),
-            ),
+            _InstructionStep(number: 1, text: local.translate("integrations.setup.telegram.3")),
+            _InstructionStep(number: 2, text: local.translate("integrations.setup.telegram.4")),
+            _InstructionStep(number: 3, text: local.translate("integrations.setup.telegram.5")),
+            _InstructionStep(number: 4, text: local.translate("integrations.setup.telegram.6")),
 
             const SizedBox(height: AppSpacing.sm),
 
@@ -697,31 +574,17 @@ class IntegrationService {
               alignment: Alignment.centerLeft,
               child: TextButton.icon(
                 onPressed: () async {
-                  final telegramUri = Uri.parse(
-                    'tg://resolve?domain=BotFather',
-                  );
+                  final telegramUri = Uri.parse('tg://resolve?domain=BotFather');
                   final webUri = Uri.parse('https://t.me/BotFather');
 
                   if (await canLaunchUrl(telegramUri)) {
                     await launchUrl(telegramUri);
                   } else {
-                    await launchUrl(
-                      webUri,
-                      mode: LaunchMode.externalApplication,
-                    );
+                    await launchUrl(webUri, mode: LaunchMode.externalApplication);
                   }
                 },
-                icon: Icon(
-                  LucideIcons.externalLink,
-                  size: 20,
-                  color: scheme.tertiary,
-                ),
-                label: Text(
-                  local.translate("integrations.setup.telegram.7"),
-                  style: AppText.bodySm(
-                    scheme,
-                  ).copyWith(color: scheme.tertiary),
-                ),
+                icon: Icon(LucideIcons.externalLink, size: 20, color: scheme.tertiary),
+                label: Text(local.translate("integrations.setup.telegram.7"), style: AppText.bodySm(scheme).copyWith(color: scheme.tertiary)),
               ),
             ),
 
@@ -736,10 +599,7 @@ class IntegrationService {
                 labelText: local.translate("integrations.setup.telegram.8"),
                 hintText: local.translate("integrations.setup.telegram.9"),
                 border: OutlineInputBorder(),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.xxxs,
-                  vertical: AppSpacing.xxxs,
-                ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxxs, vertical: AppSpacing.xxxs),
                 prefixIcon: Icon(LucideIcons.keyRound),
                 filled: false,
                 fillColor: Colors.transparent,
@@ -814,15 +674,10 @@ class _InstructionStep extends StatelessWidget {
             width: 24,
             height: 24,
             alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: scheme.primary,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: scheme.primary, shape: BoxShape.circle),
             child: Text(
               '$number',
-              style: AppText.body(
-                scheme,
-              ).copyWith(color: scheme.onPrimary, fontWeight: FontWeight.bold),
+              style: AppText.body(scheme).copyWith(color: scheme.onPrimary, fontWeight: FontWeight.bold),
             ),
           ),
           const SizedBox(width: AppSpacing.md),

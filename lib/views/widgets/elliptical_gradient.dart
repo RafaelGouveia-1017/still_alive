@@ -114,19 +114,11 @@ class EllipticalGradient extends Gradient {
   @override
   Shader createShader(Rect rect, {TextDirection? textDirection}) {
     return RadialGradient(
-      center: Alignment(
-        ellipseRelativeCenter.dx * 2 - 1,
-        ellipseRelativeCenter.dy * 2 - 1,
-      ),
-      colors: colors
-          .map((color) => Color.alphaBlend(color, backgroundColor))
-          .toList(),
+      center: Alignment(ellipseRelativeCenter.dx * 2 - 1, ellipseRelativeCenter.dy * 2 - 1),
+      colors: colors.map((color) => Color.alphaBlend(color, backgroundColor)).toList(),
       radius: 1,
       stops: stops,
-      transform: _EllipseTransform(
-        ellipseRelativeCenter: ellipseRelativeCenter,
-        ellipseScale: ellipseScale,
-      ),
+      transform: _EllipseTransform(ellipseRelativeCenter: ellipseRelativeCenter, ellipseScale: ellipseScale),
     ).createShader(rect, textDirection: textDirection);
   }
 
@@ -138,9 +130,7 @@ class EllipticalGradient extends Gradient {
   EllipticalGradient scale(double factor) {
     return EllipticalGradient(
       backgroundColor: backgroundColor,
-      colors: colors
-          .map<Color>((Color color) => Color.lerp(null, color, factor)!)
-          .toList(),
+      colors: colors.map<Color>((Color color) => Color.lerp(null, color, factor)!).toList(),
       ellipseRelativeCenter: ellipseRelativeCenter,
       ellipseScale: ellipseScale * factor,
     );
@@ -154,9 +144,7 @@ class EllipticalGradient extends Gradient {
   @override
   EllipticalGradient withOpacity(double opacity) {
     return EllipticalGradient(
-      colors: <Color>[
-        for (final Color color in colors) color.withValues(alpha: opacity),
-      ],
+      colors: <Color>[for (final Color color in colors) color.withValues(alpha: opacity)],
       stops: stops,
       backgroundColor: backgroundColor,
       ellipseRelativeCenter: ellipseRelativeCenter,
@@ -186,10 +174,7 @@ class _EllipseTransform extends GradientTransform {
   final Scale ellipseScale;
 
   /// Creates an ellipse transformation.
-  const _EllipseTransform({
-    required this.ellipseRelativeCenter,
-    required this.ellipseScale,
-  });
+  const _EllipseTransform({required this.ellipseRelativeCenter, required this.ellipseScale});
 
   /// Calculates the transformation matrix for the supplied gradient bounds.
   ///
@@ -211,24 +196,18 @@ class _EllipseTransform extends GradientTransform {
       widthFactor = ellipseScale.widthFactor;
     }
 
-    final transformMatrix = Matrix4.identity()
-      ..scaleByDouble(widthFactor, heightFactor, widthFactor, 1);
+    final transformMatrix = Matrix4.identity()..scaleByDouble(widthFactor, heightFactor, widthFactor, 1);
 
     final Offset originalCenterOffset = Offset(
       bounds.left + bounds.width * ellipseRelativeCenter.dx,
       bounds.top + bounds.height * ellipseRelativeCenter.dy,
     );
 
-    final List<double> offsetLocation = transformMatrix.applyToVector3Array([
-      originalCenterOffset.dx,
-      originalCenterOffset.dy,
-      0.0,
-    ]);
+    final List<double> offsetLocation = transformMatrix.applyToVector3Array([originalCenterOffset.dx, originalCenterOffset.dy, 0.0]);
     final dx = originalCenterOffset.dx - offsetLocation[0];
     final dy = originalCenterOffset.dy - offsetLocation[1];
 
-    return transformMatrix
-      ..translateByVector3(Vector3(dx / widthFactor, dy / heightFactor, 0));
+    return transformMatrix..translateByVector3(Vector3(dx / widthFactor, dy / heightFactor, 0));
   }
 }
 
@@ -260,8 +239,5 @@ class Scale {
 
   const Scale({required this.heightFactor, required this.widthFactor});
 
-  Scale operator *(double factor) => Scale(
-    heightFactor: heightFactor * factor,
-    widthFactor: widthFactor * factor,
-  );
+  Scale operator *(double factor) => Scale(heightFactor: heightFactor * factor, widthFactor: widthFactor * factor);
 }

@@ -13,12 +13,7 @@ class DangerSection extends StatefulWidget {
   final AppLocalizations local;
   final VoidCallback onPurge;
 
-  const DangerSection({
-    super.key,
-    required this.scheme,
-    required this.local,
-    required this.onPurge,
-  });
+  const DangerSection({super.key, required this.scheme, required this.local, required this.onPurge});
 
   @override
   State<DangerSection> createState() => _DangerSectionState();
@@ -33,10 +28,7 @@ class _DangerSectionState extends State<DangerSection> {
       children: [
         SectionTitle(widget.local.translate("settings.sections.danger.title")),
         AppCard(
-          padding: EdgeInsets.symmetric(
-            horizontal: AppSpacing.lg,
-            vertical: AppSpacing.xxs,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.xxs),
           margin: const EdgeInsets.only(bottom: AppSpacing.xl),
           child: Pressable(
             onTap: () {
@@ -48,21 +40,14 @@ class _DangerSectionState extends State<DangerSection> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      widget.local.translate(
-                        "settings.sections.danger.labels.2",
-                      ),
+                      widget.local.translate("settings.sections.danger.labels.2"),
                       style: AppText.body(widget.scheme),
                       textAlign: TextAlign.center,
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(
-                        top: AppSpacing.xl,
-                        bottom: AppSpacing.lg,
-                      ),
+                      padding: const EdgeInsets.only(top: AppSpacing.xl, bottom: AppSpacing.lg),
                       child: PrimaryButton(
-                        label: widget.local.translate(
-                          "settings.sections.danger.labels.0",
-                        ),
+                        label: widget.local.translate("settings.sections.danger.labels.0"),
                         color: ButtonColor.warning,
                         onPressed: widget.onPurge,
                       ),
@@ -75,17 +60,9 @@ class _DangerSectionState extends State<DangerSection> {
               icon: LucideIcons.trash2,
               iconColor: scheme.error,
               iconBackground: scheme.error.withAlpha(31),
-              title: widget.local.translate(
-                "settings.sections.danger.labels.0",
-              ),
-              subtitle: widget.local.translate(
-                "settings.sections.danger.labels.1",
-              ),
-              trailing: Icon(
-                LucideIcons.chevronRight,
-                size: 18,
-                color: widget.scheme.error,
-              ),
+              title: widget.local.translate("settings.sections.danger.labels.0"),
+              subtitle: widget.local.translate("settings.sections.danger.labels.1"),
+              trailing: Icon(LucideIcons.chevronRight, size: 18, color: widget.scheme.error),
             ),
           ),
         ),

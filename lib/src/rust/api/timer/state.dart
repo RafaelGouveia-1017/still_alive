@@ -29,16 +29,12 @@ enum TimerState {
   completed;
 
   /// Returns the string representation used when persisting the state.
-  Future<void> asStr() =>
-      RustLib.instance.api.crateApiTimerStateTimerStateAsStr(that: this);
+  Future<void> asStr() => RustLib.instance.api.crateApiTimerStateTimerStateAsStr(that: this);
 
   /// Converts a persisted timer state string into a [`TimerState`].
   ///
   /// # Errors
   ///
   /// Returns an error if `value` does not match a known timer state.
-  static Future<TimerState> stateFromStr({required String value}) => RustLib
-      .instance
-      .api
-      .crateApiTimerStateTimerStateStateFromStr(value: value);
+  static Future<TimerState> stateFromStr({required String value}) => RustLib.instance.api.crateApiTimerStateTimerStateStateFromStr(value: value);
 }

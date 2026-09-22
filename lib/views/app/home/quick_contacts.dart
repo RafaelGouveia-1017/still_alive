@@ -47,34 +47,22 @@ class _QuickContactsState extends State<QuickContacts> with RouteAware {
       _isLoading = true;
     });
 
-    final String jsonString = await selectOne(
-      sql: "SELECT value FROM contacts WHERE key = 'quick'",
-    );
+    final String jsonString = await selectOne(sql: "SELECT value FROM contacts WHERE key = 'quick'");
 
     final Map<String, dynamic> jsonQuick = jsonDecode(jsonString);
 
     if (jsonQuick['count'] != 0) {
       if (!mounted) return;
-      List<({List<Color> gradient, Color text})> colorOpts =
-          ContactService.colorOptions(context);
+      List<({List<Color> gradient, Color text})> colorOpts = ContactService.colorOptions(context);
 
       for (String id in jsonQuick['ids']) {
         try {
-          Contact? contact = await FlutterContacts.get(
-            id,
-            properties: {ContactProperty.name, ContactProperty.photoThumbnail},
-          );
+          Contact? contact = await FlutterContacts.get(id, properties: {ContactProperty.name, ContactProperty.photoThumbnail});
           if (contact != null) {
             final colors = colorOpts[Random().nextInt(colorOpts.length)];
 
             quickContacts.add(
-              _QuickContactData(
-                id: id,
-                name: contact.displayName,
-                image: contact.photo,
-                gradient: colors.gradient,
-                textColor: colors.text,
-              ),
+              _QuickContactData(id: id, name: contact.displayName, image: contact.photo, gradient: colors.gradient, textColor: colors.text),
             );
           }
         } catch (e) {
@@ -86,13 +74,7 @@ class _QuickContactsState extends State<QuickContacts> with RouteAware {
     }
 
     quickContacts.add(
-      _QuickContactData(
-        id: '+',
-        name: '+',
-        image: null,
-        gradient: [Colors.transparent, Colors.transparent],
-        textColor: Colors.transparent,
-      ),
+      _QuickContactData(id: '+', name: '+', image: null, gradient: [Colors.transparent, Colors.transparent], textColor: Colors.transparent),
     );
 
     if (!mounted) return;
@@ -143,39 +125,21 @@ class _QuickContactsState extends State<QuickContacts> with RouteAware {
         if (movableContacts.isEmpty) ...[
           GestureDetector(
             behavior: HitTestBehavior.opaque,
-            onTap: () => Navigator.of(context).push(
-              AppRoute(
-                page: ContactsScreen.showAllContacts(),
-                transition: AppRouteTransitionType.slideRight,
-              ),
-            ),
+            onTap: () => Navigator.of(context).push(AppRoute(page: ContactsScreen.showAllContacts(), transition: AppRouteTransitionType.slideRight)),
             child: Padding(
-              padding: const EdgeInsets.only(
-                top: AppSpacing.xs,
-                left: AppSpacing.ms,
-              ),
-              child: CircleIconButton(
-                icon: LucideIcons.plus,
-                background: scheme.surfaceContainer,
-              ),
+              padding: const EdgeInsets.only(top: AppSpacing.xs, left: AppSpacing.ms),
+              child: CircleIconButton(icon: LucideIcons.plus, background: scheme.surfaceContainer),
             ),
           ),
         ] else ...[
           ReorderableBuilder(
             onReorder: (ReorderedListFunction reorder) {
               setState(() {
-                final reordered =
-                    reorder(movableContacts) as List<_QuickContactData>;
+                final reordered = reorder(movableContacts) as List<_QuickContactData>;
 
-                Map<String, dynamic> json = {
-                  'count': reordered.length,
-                  'ids': reordered.map((contact) => contact.id).toList(),
-                };
+                Map<String, dynamic> json = {'count': reordered.length, 'ids': reordered.map((contact) => contact.id).toList()};
 
-                executeSql(
-                  sql:
-                      "UPDATE contacts SET value = '${jsonEncode(json).replaceAll("'", "''")}' WHERE key = 'quick'",
-                );
+                executeSql(sql: "UPDATE contacts SET value = '${jsonEncode(json).replaceAll("'", "''")}' WHERE key = 'quick'");
 
                 quickContacts = [...reordered, addContact];
               });
@@ -218,13 +182,7 @@ class _QuickContactsState extends State<QuickContacts> with RouteAware {
 /// Stores the contact's identifier, display information, appearance,
 /// and the destination screen opened when the tile is tapped.
 class _QuickContactData {
-  const _QuickContactData({
-    required this.id,
-    required this.name,
-    required this.image,
-    required this.gradient,
-    required this.textColor,
-  });
+  const _QuickContactData({required this.id, required this.name, required this.image, required this.gradient, required this.textColor});
 
   final String id;
   final String? name;
@@ -246,9 +204,7 @@ class _QuickContact extends StatelessWidget {
   Widget build(BuildContext context) {
     ColorScheme scheme = Theme.of(context).colorScheme;
 
-    String letter = (data.name == null || data.name == '')
-        ? '?'
-        : data.name![0];
+    String letter = (data.name == null || data.name == '') ? '?' : data.name![0];
 
     bool hasImage = data.image?.thumbnail != null;
     bool isAdd = data.name![0] == '+';
@@ -259,15 +215,8 @@ class _QuickContact extends StatelessWidget {
         AppRoute(
           page: (isAdd)
               ? ContactsScreen.showAllContacts()
-              : ContactDetailScreen(
-                  contactID: data.id,
-                  heroID: 'contact-pic-${data.id}',
-                  gradient: data.gradient,
-                  textColor: data.textColor,
-                ),
-          transition: (isAdd)
-              ? AppRouteTransitionType.slideRight
-              : AppRouteTransitionType.slideLeft,
+              : ContactDetailScreen(contactID: data.id, heroID: 'contact-pic-${data.id}', gradient: data.gradient, textColor: data.textColor),
+          transition: (isAdd) ? AppRouteTransitionType.slideRight : AppRouteTransitionType.slideLeft,
         ),
       ),
       child: Column(
@@ -275,8 +224,7 @@ class _QuickContact extends StatelessWidget {
         children: [
           Hero(
             tag: 'contact-pic-${data.id}',
-            flightShuttleBuilder: (context, animation, direction, from, to) =>
-                AppHeader.flight(context, animation, direction, from, to),
+            flightShuttleBuilder: (context, animation, direction, from, to) => AppHeader.flight(context, animation, direction, from, to),
             child: Material(
               type: MaterialType.transparency,
               child: Container(
@@ -284,42 +232,22 @@ class _QuickContact extends StatelessWidget {
                 height: 56,
                 clipBehavior: Clip.antiAlias,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: data.gradient,
-                  ),
+                  gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: data.gradient),
                   borderRadius: BorderRadius.circular(AppRadius.lg),
                 ),
                 alignment: Alignment.center,
                 child: isAdd
-                    ? CircleIconButton(
-                        icon: LucideIcons.plus,
-                        background: scheme.surfaceContainer,
-                      )
+                    ? CircleIconButton(icon: LucideIcons.plus, background: scheme.surfaceContainer)
                     : (hasImage)
-                    ? Image.memory(
-                        data.image!.thumbnail!,
-                        filterQuality: FilterQuality.high,
-                      )
-                    : Text(
-                        letter,
-                        style: AppText.title(
-                          scheme,
-                        ).copyWith(color: data.textColor),
-                      ),
+                    ? Image.memory(data.image!.thumbnail!, filterQuality: FilterQuality.high)
+                    : Text(letter, style: AppText.title(scheme).copyWith(color: data.textColor)),
               ),
             ),
           ),
           const SizedBox(height: AppSpacing.xs),
           isAdd
               ? Text("", style: AppText.micro(scheme))
-              : Text(
-                  data.name ?? '?',
-                  style: AppText.micro(scheme),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+              : Text(data.name ?? '?', style: AppText.micro(scheme), maxLines: 1, overflow: TextOverflow.ellipsis),
         ],
       ),
     );

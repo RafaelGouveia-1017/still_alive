@@ -52,11 +52,7 @@ class _FullMapScreenState extends State<FullMapScreen> {
   Widget build(BuildContext context) {
     return ScreenBase(
       noSpacing: true,
-      child: TileMapViewer(
-        route: _route,
-        height: MediaQuery.of(context).size.height - 80,
-        expandMode: true,
-      ),
+      child: TileMapViewer(route: _route, height: MediaQuery.of(context).size.height - 80, expandMode: true),
     );
   }
 }

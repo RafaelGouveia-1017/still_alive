@@ -54,10 +54,7 @@ class _NameInputState extends State<NameInput> {
     AppLocalizations local = AppLocalizations.of(context)!;
 
     return AppCard(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.sm,
-        vertical: AppSpacing.ms,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.ms),
       child: TextFormField(
         controller: _nameController,
         focusNode: _nameFocus,
@@ -71,12 +68,8 @@ class _NameInputState extends State<NameInput> {
         scrollPadding: const EdgeInsets.all(0),
         inputFormatters: [FilteringTextInputFormatter.singleLineFormatter],
         decoration: InputDecoration(
-          hintText: (_name.isNotEmpty)
-              ? ''
-              : local.translate("timer_configuration.name.hint"),
-          hintStyle: AppText.body(
-            scheme,
-          ).copyWith(color: scheme.onSurfaceVariant),
+          hintText: (_name.isNotEmpty) ? '' : local.translate("timer_configuration.name.hint"),
+          hintStyle: AppText.body(scheme).copyWith(color: scheme.onSurfaceVariant),
           counterText: '',
           contentPadding: EdgeInsets.zero,
           border: InputBorder.none,
@@ -94,20 +87,14 @@ class _NameInputState extends State<NameInput> {
           setState(() => _name = value);
         },
         onTap: () {
-          _nameController.selection = TextSelection(
-            baseOffset: 0,
-            extentOffset: _nameController.text.length,
-          );
+          _nameController.selection = TextSelection(baseOffset: 0, extentOffset: _nameController.text.length);
         },
         errorBuilder: (context, errorText) => Align(
           alignment: Alignment.bottomCenter,
           child: Text(
             errorText,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.error,
-              fontSize: 12,
-            ),
+            style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 12),
           ),
         ),
         validator: (value) {

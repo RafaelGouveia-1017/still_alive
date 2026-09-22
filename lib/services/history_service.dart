@@ -45,10 +45,7 @@ enum HistoryColorTones {
       case HistoryColorTones.danger:
         return scheme.error;
       case HistoryColorTones.warning:
-        return scheme.error.withValues(
-          green: scheme.error.g + 0.3,
-          blue: scheme.error.b + 0.3,
-        );
+        return scheme.error.withValues(green: scheme.error.g + 0.3, blue: scheme.error.b + 0.3);
       case HistoryColorTones.muted:
         return scheme.onSurfaceVariant;
       default:
@@ -70,11 +67,7 @@ enum HistoryColorTones {
       case HistoryColorTones.danger:
         return scheme.error.withAlpha(38);
       case HistoryColorTones.warning:
-        return scheme.error.withValues(
-          alpha: 0.38,
-          green: scheme.error.g + 0.3,
-          blue: scheme.error.b + 0.3,
-        );
+        return scheme.error.withValues(alpha: 0.38, green: scheme.error.g + 0.3, blue: scheme.error.b + 0.3);
       case HistoryColorTones.muted:
         return scheme.onSurfaceVariant.withAlpha(38);
       default:
@@ -148,11 +141,7 @@ class HistoryService {
   /// Otherwise, a new history record is created containing only the supplied
   /// event.
   static Future<void> insertHistoryRecord(HistoryEvent event) async {
-    String date = DateTime.now()
-        .copyWith(hour: 0, minute: 0, second: 0, millisecond: 0, microsecond: 0)
-        .toIso8601String()
-        .split('T')
-        .first;
+    String date = DateTime.now().copyWith(hour: 0, minute: 0, second: 0, millisecond: 0, microsecond: 0).toIso8601String().split('T').first;
 
     final eventJson = event.toJson();
     final value = jsonEncode({
@@ -246,11 +235,7 @@ abstract class HistoryEvent {
   final DateTime startedAt;
   final DateTime? endedAt;
 
-  const HistoryEvent({
-    required this.timerName,
-    required this.startedAt,
-    required this.endedAt,
-  });
+  const HistoryEvent({required this.timerName, required this.startedAt, required this.endedAt});
 
   /// Converts this history event into its JSON representation.
   ///
@@ -337,31 +322,17 @@ abstract class HistoryEvent {
   /// This helper is intended for subclasses when implementing [toTable].
   ///
   /// If [value] is `null`, a dash (`-`) is displayed instead.
-  TableRow _row(
-    String label,
-    Object? value,
-    ColorScheme scheme, {
-    VoidCallback? onTap,
-  }) {
+  TableRow _row(String label, Object? value, ColorScheme scheme, {VoidCallback? onTap}) {
     Widget child = Padding(
       padding: const EdgeInsets.all(8),
-      child: Text(
-        value?.toString() ?? "-",
-        style: AppText.caption(scheme),
-        maxLines: 3,
-        overflow: TextOverflow.ellipsis,
-        softWrap: false,
-      ),
+      child: Text(value?.toString() ?? "-", style: AppText.caption(scheme), maxLines: 3, overflow: TextOverflow.ellipsis, softWrap: false),
     );
 
     return TableRow(
       children: [
         Padding(
           padding: const EdgeInsets.all(8),
-          child: Text(
-            label,
-            style: AppText.micro(scheme).copyWith(fontWeight: FontWeight.bold),
-          ),
+          child: Text(label, style: AppText.micro(scheme).copyWith(fontWeight: FontWeight.bold)),
         ),
         if (onTap != null) Pressable(onTap: onTap, child: child) else child,
       ],
@@ -403,9 +374,7 @@ class TimerStartedEvent extends HistoryEvent {
     return TimerStartedEvent(
       timerName: json['timer_name'],
       startedAt: DateTime.parse(json['started_at']),
-      endedAt: json['ended_at'] == null
-          ? null
-          : DateTime.parse(json['ended_at']),
+      endedAt: json['ended_at'] == null ? null : DateTime.parse(json['ended_at']),
       durationSeconds: details['duration_seconds'],
       gracePeriodSeconds: details['grace_period_seconds'],
       passwordProtected: details['password_protected'],
@@ -414,20 +383,14 @@ class TimerStartedEvent extends HistoryEvent {
 
   @override
   Map<String, dynamic> detailsToJson() {
-    return {
-      'duration_seconds': durationSeconds,
-      'grace_period_seconds': gracePeriodSeconds,
-      'password_protected': passwordProtected,
-    };
+    return {'duration_seconds': durationSeconds, 'grace_period_seconds': gracePeriodSeconds, 'password_protected': passwordProtected};
   }
 
   @override
-  String getTitle(AppLocalizations local) =>
-      local.translate("history_logs.events.started");
+  String getTitle(AppLocalizations local) => local.translate("history_logs.events.started");
 
   @override
-  String getSubtitle(bool is24HourFormat, AppLocalizations local) =>
-      _formatTime(startedAt, is24HourFormat);
+  String getSubtitle(bool is24HourFormat, AppLocalizations local) => _formatTime(startedAt, is24HourFormat);
 
   @override
   Widget toTable(BuildContext context) {
@@ -438,41 +401,18 @@ class TimerStartedEvent extends HistoryEvent {
       border: TableBorder.all(color: scheme.outline),
       children: [
         _row(local.translate("history_logs.events.details.type"), type, scheme),
-        _row(
-          local.translate("history_logs.events.details.timer"),
-          timerName,
-          scheme,
-        ),
-        _row(
-          local.translate("history_logs.events.details.started"),
-          startedAt,
-          scheme,
-        ),
-        if (endedAt != null)
-          _row(
-            local.translate("history_logs.events.details.ended"),
-            endedAt,
-            scheme,
-          ),
-        _row(
-          local.translate("history_logs.events.details.duration"),
-          TimerService.formatDuration(Duration(seconds: durationSeconds)),
-          scheme,
-        ),
+        _row(local.translate("history_logs.events.details.timer"), timerName, scheme),
+        _row(local.translate("history_logs.events.details.started"), startedAt, scheme),
+        if (endedAt != null) _row(local.translate("history_logs.events.details.ended"), endedAt, scheme),
+        _row(local.translate("history_logs.events.details.duration"), TimerService.formatDuration(Duration(seconds: durationSeconds)), scheme),
         _row(
           local.translate("history_logs.events.details.grace"),
-          (gracePeriodSeconds != null)
-              ? TimerService.formatDuration(
-                  Duration(seconds: gracePeriodSeconds!),
-                )
-              : 0,
+          (gracePeriodSeconds != null) ? TimerService.formatDuration(Duration(seconds: gracePeriodSeconds!)) : 0,
           scheme,
         ),
         _row(
           local.translate("history_logs.events.details.pin_protected"),
-          (passwordProtected)
-              ? local.translate("history_logs.events.boolean.0")
-              : local.translate("history_logs.events.boolean.1"),
+          (passwordProtected) ? local.translate("history_logs.events.boolean.0") : local.translate("history_logs.events.boolean.1"),
           scheme,
         ),
       ],
@@ -496,12 +436,7 @@ class TimerWarningEvent extends HistoryEvent {
 
   final int remainingSeconds;
 
-  TimerWarningEvent({
-    required super.timerName,
-    required super.startedAt,
-    required super.endedAt,
-    required this.remainingSeconds,
-  });
+  TimerWarningEvent({required super.timerName, required super.startedAt, required super.endedAt, required this.remainingSeconds});
 
   factory TimerWarningEvent.fromJson(Map<String, dynamic> json) {
     final details = json['details'] as Map<String, dynamic>;
@@ -520,12 +455,10 @@ class TimerWarningEvent extends HistoryEvent {
   }
 
   @override
-  String getTitle(AppLocalizations local) =>
-      local.translate("history_logs.events.warning");
+  String getTitle(AppLocalizations local) => local.translate("history_logs.events.warning");
 
   @override
-  String getSubtitle(bool is24HourFormat, AppLocalizations local) =>
-      '${_formatTime(startedAt, is24HourFormat)} • ${remainingSeconds}s';
+  String getSubtitle(bool is24HourFormat, AppLocalizations local) => '${_formatTime(startedAt, is24HourFormat)} • ${remainingSeconds}s';
 
   @override
   Widget toTable(BuildContext context) {
@@ -536,26 +469,10 @@ class TimerWarningEvent extends HistoryEvent {
       border: TableBorder.all(color: scheme.outline),
       children: [
         _row(local.translate("history_logs.events.details.type"), type, scheme),
-        _row(
-          local.translate("history_logs.events.details.timer"),
-          timerName,
-          scheme,
-        ),
-        _row(
-          local.translate("history_logs.events.details.started"),
-          startedAt,
-          scheme,
-        ),
-        _row(
-          local.translate("history_logs.events.details.ended"),
-          endedAt,
-          scheme,
-        ),
-        _row(
-          local.translate("history_logs.events.details.remaining"),
-          TimerService.formatDuration(Duration(seconds: remainingSeconds)),
-          scheme,
-        ),
+        _row(local.translate("history_logs.events.details.timer"), timerName, scheme),
+        _row(local.translate("history_logs.events.details.started"), startedAt, scheme),
+        _row(local.translate("history_logs.events.details.ended"), endedAt, scheme),
+        _row(local.translate("history_logs.events.details.remaining"), TimerService.formatDuration(Duration(seconds: remainingSeconds)), scheme),
       ],
     );
   }
@@ -602,19 +519,14 @@ class TimerPausedEvent extends HistoryEvent {
 
   @override
   Map<String, dynamic> detailsToJson() {
-    return {
-      'remaining_seconds': remainingSeconds,
-      'password_verified': passwordVerified,
-    };
+    return {'remaining_seconds': remainingSeconds, 'password_verified': passwordVerified};
   }
 
   @override
-  String getTitle(AppLocalizations local) =>
-      local.translate("history_logs.events.paused");
+  String getTitle(AppLocalizations local) => local.translate("history_logs.events.paused");
 
   @override
-  String getSubtitle(bool is24HourFormat, AppLocalizations local) =>
-      _formatTime(endedAt!, is24HourFormat);
+  String getSubtitle(bool is24HourFormat, AppLocalizations local) => _formatTime(endedAt!, is24HourFormat);
 
   @override
   Widget toTable(BuildContext context) {
@@ -625,31 +537,13 @@ class TimerPausedEvent extends HistoryEvent {
       border: TableBorder.all(color: scheme.outline),
       children: [
         _row(local.translate("history_logs.events.details.type"), type, scheme),
-        _row(
-          local.translate("history_logs.events.details.timer"),
-          timerName,
-          scheme,
-        ),
-        _row(
-          local.translate("history_logs.events.details.started"),
-          startedAt,
-          scheme,
-        ),
-        _row(
-          local.translate("history_logs.events.details.ended"),
-          endedAt,
-          scheme,
-        ),
-        _row(
-          local.translate("history_logs.events.details.remaining"),
-          TimerService.formatDuration(Duration(seconds: remainingSeconds)),
-          scheme,
-        ),
+        _row(local.translate("history_logs.events.details.timer"), timerName, scheme),
+        _row(local.translate("history_logs.events.details.started"), startedAt, scheme),
+        _row(local.translate("history_logs.events.details.ended"), endedAt, scheme),
+        _row(local.translate("history_logs.events.details.remaining"), TimerService.formatDuration(Duration(seconds: remainingSeconds)), scheme),
         _row(
           local.translate("history_logs.events.details.pin_verified"),
-          (passwordVerified)
-              ? local.translate("history_logs.events.boolean.0")
-              : local.translate("history_logs.events.boolean.1"),
+          (passwordVerified) ? local.translate("history_logs.events.boolean.0") : local.translate("history_logs.events.boolean.1"),
           scheme,
         ),
       ],
@@ -697,15 +591,11 @@ class TimerCancelledEvent extends HistoryEvent {
 
   @override
   Map<String, dynamic> detailsToJson() {
-    return {
-      'remaining_seconds': remainingSeconds,
-      'password_verified': passwordVerified,
-    };
+    return {'remaining_seconds': remainingSeconds, 'password_verified': passwordVerified};
   }
 
   @override
-  String getTitle(AppLocalizations local) =>
-      local.translate("history_logs.events.cancelled");
+  String getTitle(AppLocalizations local) => local.translate("history_logs.events.cancelled");
 
   @override
   String getSubtitle(bool is24HourFormat, AppLocalizations local) {
@@ -739,31 +629,13 @@ class TimerCancelledEvent extends HistoryEvent {
       border: TableBorder.all(color: scheme.outline),
       children: [
         _row(local.translate("history_logs.events.details.type"), type, scheme),
-        _row(
-          local.translate("history_logs.events.details.timer"),
-          timerName,
-          scheme,
-        ),
-        _row(
-          local.translate("history_logs.events.details.started"),
-          startedAt,
-          scheme,
-        ),
-        _row(
-          local.translate("history_logs.events.details.ended"),
-          endedAt,
-          scheme,
-        ),
-        _row(
-          local.translate("history_logs.events.details.remaining"),
-          TimerService.formatDuration(Duration(seconds: remainingSeconds)),
-          scheme,
-        ),
+        _row(local.translate("history_logs.events.details.timer"), timerName, scheme),
+        _row(local.translate("history_logs.events.details.started"), startedAt, scheme),
+        _row(local.translate("history_logs.events.details.ended"), endedAt, scheme),
+        _row(local.translate("history_logs.events.details.remaining"), TimerService.formatDuration(Duration(seconds: remainingSeconds)), scheme),
         _row(
           local.translate("history_logs.events.details.pin_verified"),
-          (passwordVerified)
-              ? local.translate("history_logs.events.boolean.0")
-              : local.translate("history_logs.events.boolean.1"),
+          (passwordVerified) ? local.translate("history_logs.events.boolean.0") : local.translate("history_logs.events.boolean.1"),
           scheme,
         ),
       ],
@@ -845,24 +717,15 @@ class TimerExpiredEvent extends HistoryEvent {
   }
 
   @override
-  String getTitle(AppLocalizations local) =>
-      local.translate("history_logs.events.expired");
+  String getTitle(AppLocalizations local) => local.translate("history_logs.events.expired");
 
   @override
   String getSubtitle(bool is24HourFormat, AppLocalizations local) {
-    final successfulAlerts = [
-      ...sms,
-      ...emails,
-      ...channels,
-    ].where((e) => e['status'] == 'sent').length;
+    final successfulAlerts = [...sms, ...emails, ...channels].where((e) => e['status'] == 'sent').length;
 
-    String alerts = successfulAlerts == 1
-        ? local.translate("history_logs.events.alert.0")
-        : local.translate("history_logs.events.alert.1");
+    String alerts = successfulAlerts == 1 ? local.translate("history_logs.events.alert.0") : local.translate("history_logs.events.alert.1");
 
-    String sent = successfulAlerts == 1
-        ? local.translate("history_logs.events.sent.0")
-        : local.translate("history_logs.events.sent.1");
+    String sent = successfulAlerts == 1 ? local.translate("history_logs.events.sent.0") : local.translate("history_logs.events.sent.1");
 
     return '${_formatTime(endedAt!, is24HourFormat)} • $successfulAlerts $alerts $sent';
   }
@@ -876,60 +739,31 @@ class TimerExpiredEvent extends HistoryEvent {
         columnWidths: const {0: IntrinsicColumnWidth(), 1: FlexColumnWidth()},
         border: TableBorder.all(color: scheme.outline),
         children: [
-          _row(
-            local.translate("history_logs.events.details.type"),
-            type,
-            scheme,
-          ),
-          _row(
-            local.translate("history_logs.events.details.timer"),
-            timerName,
-            scheme,
-          ),
-          _row(
-            local.translate("history_logs.events.details.started"),
-            startedAt,
-            scheme,
-          ),
-          _row(
-            local.translate("history_logs.events.details.ended"),
-            endedAt,
-            scheme,
-          ),
+          _row(local.translate("history_logs.events.details.type"), type, scheme),
+          _row(local.translate("history_logs.events.details.timer"), timerName, scheme),
+          _row(local.translate("history_logs.events.details.started"), startedAt, scheme),
+          _row(local.translate("history_logs.events.details.ended"), endedAt, scheme),
           _row(
             local.translate("history_logs.events.details.alarm"),
-            (alarmTriggered)
-                ? local.translate("history_logs.events.boolean.0")
-                : local.translate("history_logs.events.boolean.1"),
+            (alarmTriggered) ? local.translate("history_logs.events.boolean.0") : local.translate("history_logs.events.boolean.1"),
             scheme,
           ),
           _row(
             local.translate("history_logs.events.details.audio"),
-            (audioRecorded)
-                ? local.translate("history_logs.events.boolean.0")
-                : local.translate("history_logs.events.boolean.1"),
+            (audioRecorded) ? local.translate("history_logs.events.boolean.0") : local.translate("history_logs.events.boolean.1"),
             scheme,
           ),
 
           _row(
             local.translate("history_logs.events.details.location"),
-            (location == null)
-                ? "-"
-                : '${location!["latitude"]}, ${location!["longitude"]}',
+            (location == null) ? "-" : '${location!["latitude"]}, ${location!["longitude"]}',
             scheme,
             onTap: (location == null)
                 ? null
                 : () {
-                    Clipboard.setData(
-                      ClipboardData(
-                        text:
-                            '${location!["latitude"]}, ${location!["longitude"]}',
-                      ),
-                    );
+                    Clipboard.setData(ClipboardData(text: '${location!["latitude"]}, ${location!["longitude"]}'));
                     launchUrl(
-                      Uri.parse(
-                        'https://www.google.com/search?q=google+maps+${location!["latitude"]}+${location!["longitude"]}',
-                      ),
+                      Uri.parse('https://www.google.com/search?q=google+maps+${location!["latitude"]}+${location!["longitude"]}'),
                       mode: LaunchMode.externalApplication,
                     );
                   },
@@ -941,67 +775,27 @@ class TimerExpiredEvent extends HistoryEvent {
             onTap: (polyline == null)
                 ? null
                 : () {
-                    Clipboard.setData(
-                      ClipboardData(text: polyline!),
-                    ).whenComplete(() {
+                    Clipboard.setData(ClipboardData(text: polyline!)).whenComplete(() {
                       showToast(
                         scheme: scheme,
-                        toast: Text(
-                          local.translate("history_logs.events.polyline_copy"),
-                          style: AppText.bodySm(scheme),
-                          textAlign: TextAlign.center,
-                        ),
+                        toast: Text(local.translate("history_logs.events.polyline_copy"), style: AppText.bodySm(scheme), textAlign: TextAlign.center),
                         gravity: ToastGravity.BOTTOM,
                         position: (context, child, gravity) {
-                          return Positioned(
-                            bottom: 170,
-                            left: 30,
-                            right: 30,
-                            child: child,
-                          );
+                          return Positioned(bottom: 170, left: 30, right: 30, child: child);
                         },
                       );
-                      launchUrl(
-                        Uri.parse(
-                          'https://tools.nextbillion.ai/polyline-decoder',
-                        ),
-                        mode: LaunchMode.externalApplication,
-                      );
+                      launchUrl(Uri.parse('https://tools.nextbillion.ai/polyline-decoder'), mode: LaunchMode.externalApplication);
                     });
                   },
           ),
 
-          _row(
-            local.translate("history_logs.events.details.sms_length"),
-            sms.length,
-            scheme,
-          ),
-          _row(
-            local.translate("history_logs.events.details.emails_length"),
-            emails.length,
-            scheme,
-          ),
-          _row(
-            local.translate("history_logs.events.details.channels_length"),
-            channels.length,
-            scheme,
-          ),
+          _row(local.translate("history_logs.events.details.sms_length"), sms.length, scheme),
+          _row(local.translate("history_logs.events.details.emails_length"), emails.length, scheme),
+          _row(local.translate("history_logs.events.details.channels_length"), channels.length, scheme),
 
-          ...sms.asMap().entries.map(
-            (e) => _row(
-              "SMS ${e.key + 1}",
-              "${e.value['recipient']} (${e.value['status']})",
-              scheme,
-            ),
-          ),
+          ...sms.asMap().entries.map((e) => _row("SMS ${e.key + 1}", "${e.value['recipient']} (${e.value['status']})", scheme)),
 
-          ...emails.asMap().entries.map(
-            (e) => _row(
-              "Email ${e.key + 1}",
-              "${e.value['recipient']} (${e.value['status']})",
-              scheme,
-            ),
-          ),
+          ...emails.asMap().entries.map((e) => _row("Email ${e.key + 1}", "${e.value['recipient']} (${e.value['status']})", scheme)),
 
           ...channels.asMap().entries.map(
             (e) => _row(

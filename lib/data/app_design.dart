@@ -32,25 +32,18 @@ class AppDesign {
           backgroundColor: scheme.primary,
           foregroundColor: scheme.onPrimary,
           elevation: 0,
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.xl,
-            vertical: AppSpacing.lg,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl, vertical: AppSpacing.lg),
           textStyle: AppText.body(scheme),
           shape: const RoundedRectangleBorder(borderRadius: AppRadius.button),
         ),
       ),
 
-      textButtonTheme: TextButtonThemeData(
-        style: TextButton.styleFrom(foregroundColor: scheme.primary),
-      ),
+      textButtonTheme: TextButtonThemeData(style: TextButton.styleFrom(foregroundColor: scheme.primary)),
 
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStatePropertyAll(scheme.onSurface),
         trackColor: WidgetStateProperty.resolveWith(
-          (states) => states.contains(WidgetState.selected)
-              ? scheme.tertiary
-              : scheme.surfaceContainerHighest,
+          (states) => states.contains(WidgetState.selected) ? scheme.tertiary : scheme.surfaceContainerHighest,
         ),
         trackOutlineColor: WidgetStatePropertyAll(Colors.transparent),
       ),
@@ -58,10 +51,7 @@ class AppDesign {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: scheme.surfaceContainerHigh,
-        border: OutlineInputBorder(
-          borderRadius: AppRadius.card,
-          borderSide: BorderSide.none,
-        ),
+        border: OutlineInputBorder(borderRadius: AppRadius.card, borderSide: BorderSide.none),
         hintStyle: TextStyle(color: scheme.onSurfaceVariant, fontSize: 14),
         contentPadding: AppSpacing.searchBar,
       ),
@@ -77,11 +67,7 @@ class AppDesign {
         unselectedLabelStyle: TextStyle(fontSize: 10),
       ),
 
-      dividerTheme: DividerThemeData(
-        color: scheme.outlineVariant,
-        thickness: 1,
-        space: 1,
-      ),
+      dividerTheme: DividerThemeData(color: scheme.outlineVariant, thickness: 1, space: 1),
 
       textTheme: TextTheme(
         displayLarge: AppText.display(scheme),
@@ -113,84 +99,57 @@ class AppText {
   ///
   /// Intended for hero content, countdown timers, and other prominent
   /// numeric or headline elements.
-  static TextStyle display(ColorScheme scheme) => TextStyle(
-    fontSize: 56,
-    height: 1.0,
-    letterSpacing: -0.5,
-    color: scheme.onSurface,
-    fontFeatures: tabular,
-  );
+  static TextStyle display(ColorScheme scheme) =>
+      TextStyle(fontSize: 56, height: 1.0, letterSpacing: -0.5, color: scheme.onSurface, fontFeatures: tabular);
 
   /// Primary heading style.
   ///
   /// Typically used for page titles and major section headers.
-  static TextStyle h1(ColorScheme scheme) => TextStyle(
-    fontSize: 34,
-    height: 1.15,
-    letterSpacing: -0.4,
-    color: scheme.onSurface,
-  );
+  static TextStyle h1(ColorScheme scheme) => TextStyle(fontSize: 34, height: 1.15, letterSpacing: -0.4, color: scheme.onSurface);
 
   /// Secondary heading style.
   ///
   /// Suitable for subsection titles and supporting headings.
-  static TextStyle h2(ColorScheme scheme) => TextStyle(
-    fontSize: 24,
-    height: 1.2,
-    letterSpacing: -0.3,
-    color: scheme.onSurface,
-  );
+  static TextStyle h2(ColorScheme scheme) => TextStyle(fontSize: 24, height: 1.2, letterSpacing: -0.3, color: scheme.onSurface);
 
   /// Medium-emphasis title style.
   ///
   /// Commonly used for card titles and list section headings.
-  static TextStyle title(ColorScheme scheme) =>
-      TextStyle(fontSize: 17, letterSpacing: -0.2, color: scheme.onSurface);
+  static TextStyle title(ColorScheme scheme) => TextStyle(fontSize: 17, letterSpacing: -0.2, color: scheme.onSurface);
 
   /// Standard body text style.
   ///
   /// Intended for primary content and readable paragraph text.
-  static TextStyle body(ColorScheme scheme) =>
-      TextStyle(fontSize: 15, height: 1.4, color: scheme.onSurface);
+  static TextStyle body(ColorScheme scheme) => TextStyle(fontSize: 15, height: 1.4, color: scheme.onSurface);
 
   /// Compact body text style.
   ///
   /// Used when slightly reduced text size is required while maintaining
   /// readability.
-  static TextStyle bodySm(ColorScheme scheme) =>
-      TextStyle(fontSize: 14, height: 1.4, color: scheme.onSurface);
+  static TextStyle bodySm(ColorScheme scheme) => TextStyle(fontSize: 14, height: 1.4, color: scheme.onSurface);
 
   /// Caption text style.
   ///
   /// Intended for supporting information, hints, timestamps, and metadata.
-  static TextStyle caption(ColorScheme scheme) =>
-      TextStyle(fontSize: 12, height: 1.35, color: scheme.onSurfaceVariant);
+  static TextStyle caption(ColorScheme scheme) => TextStyle(fontSize: 12, height: 1.35, color: scheme.onSurfaceVariant);
 
   /// Smallest text style available in the design system.
   ///
   /// Suitable for microcopy and low-emphasis labels.
-  static TextStyle micro(ColorScheme scheme) =>
-      TextStyle(fontSize: 11, color: scheme.onSurfaceVariant);
+  static TextStyle micro(ColorScheme scheme) => TextStyle(fontSize: 11, color: scheme.onSurfaceVariant);
 
   /// Uppercase tracked label style.
   ///
   /// Commonly used for section dividers, category labels,
   /// and navigation group headings.
-  static TextStyle sectionLabel(ColorScheme scheme) => TextStyle(
-    fontSize: 11,
-    letterSpacing: 1.3,
-    color: scheme.onSurfaceVariant,
-  );
+  static TextStyle sectionLabel(ColorScheme scheme) => TextStyle(fontSize: 11, letterSpacing: 1.3, color: scheme.onSurfaceVariant);
 
   /// Compact pill label style.
   ///
   /// Color is intentionally omitted and should be supplied by the widget
   /// using the style.
   // Pill labels — uppercase tracked, color set per-instance
-  static const TextStyle pillLabel = TextStyle(
-    fontSize: 11,
-    letterSpacing: 1.0,
-  );
+  static const TextStyle pillLabel = TextStyle(fontSize: 11, letterSpacing: 1.0);
 }
 
 /// Design-system spacing tokens based on a 4-point grid.
@@ -235,22 +194,13 @@ class AppSpacing {
   static const EdgeInsets screen = EdgeInsets.symmetric(horizontal: xxxl);
 
   /// Default internal padding for cards and card-like surfaces.
-  static const EdgeInsets card = EdgeInsets.symmetric(
-    horizontal: lg,
-    vertical: ms,
-  );
+  static const EdgeInsets card = EdgeInsets.symmetric(horizontal: lg, vertical: ms);
 
   /// Default internal padding for primary buttons.
-  static const EdgeInsets primaryButton = EdgeInsets.symmetric(
-    horizontal: xl,
-    vertical: lg,
-  );
+  static const EdgeInsets primaryButton = EdgeInsets.symmetric(horizontal: xl, vertical: lg);
 
   /// Default internal padding for search bars.
-  static const EdgeInsets searchBar = EdgeInsets.symmetric(
-    horizontal: lg,
-    vertical: md,
-  );
+  static const EdgeInsets searchBar = EdgeInsets.symmetric(horizontal: lg, vertical: md);
 }
 
 /// Border radius tokens used throughout the application.
@@ -298,12 +248,7 @@ class AppShadows {
   /// The provided [color] is used as the shadow tint and adjusted
   /// for transparency.
   static List<BoxShadow> buttonShadow(Color color) => [
-    BoxShadow(
-      color: color.withAlpha(153),
-      blurRadius: 24,
-      spreadRadius: -8,
-      offset: Offset(0, 8),
-    ),
+    BoxShadow(color: color.withAlpha(153), blurRadius: 24, spreadRadius: -8, offset: Offset(0, 8)),
   ];
 
   /// Creates a large ambient shadow for elevated containers,
@@ -311,14 +256,7 @@ class AppShadows {
   ///
   /// The provided [color] is used as the shadow tint and adjusted
   /// for transparency.
-  static List<BoxShadow> boxShadow(Color color) => [
-    BoxShadow(
-      color: color.withAlpha(153),
-      blurRadius: 50,
-      spreadRadius: -20,
-      offset: Offset(0, 20),
-    ),
-  ];
+  static List<BoxShadow> boxShadow(Color color) => [BoxShadow(color: color.withAlpha(153), blurRadius: 50, spreadRadius: -20, offset: Offset(0, 20))];
 }
 
 /// Motion tokens used for animations and transitions.
@@ -421,10 +359,7 @@ class AppRoute<T> extends PageRouteBuilder<T> {
     : super(
         pageBuilder: (context, animation, secondaryAnimation) => page,
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          final curved = CurvedAnimation(
-            parent: animation,
-            curve: AppMotion.standard,
-          );
+          final curved = CurvedAnimation(parent: animation, curve: AppMotion.standard);
           switch (transition) {
             case AppRouteTransitionType.fade:
               return FadeTransition(opacity: curved, child: child);
@@ -433,10 +368,7 @@ class AppRoute<T> extends PageRouteBuilder<T> {
               return FadeTransition(
                 opacity: curved,
                 child: SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(1.0, 0.0),
-                    end: Offset.zero,
-                  ).animate(animation),
+                  position: Tween<Offset>(begin: const Offset(1.0, 0.0), end: Offset.zero).animate(animation),
                   child: child,
                 ),
               );
@@ -445,10 +377,7 @@ class AppRoute<T> extends PageRouteBuilder<T> {
               return FadeTransition(
                 opacity: curved,
                 child: SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(-1.0, 0.0),
-                    end: Offset.zero,
-                  ).animate(animation),
+                  position: Tween<Offset>(begin: const Offset(-1.0, 0.0), end: Offset.zero).animate(animation),
                   child: child,
                 ),
               );
@@ -457,10 +386,7 @@ class AppRoute<T> extends PageRouteBuilder<T> {
               return FadeTransition(
                 opacity: curved,
                 child: SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(0.0, 1.0),
-                    end: Offset.zero,
-                  ).animate(animation),
+                  position: Tween<Offset>(begin: const Offset(0.0, 1.0), end: Offset.zero).animate(animation),
                   child: child,
                 ),
               );
@@ -469,10 +395,7 @@ class AppRoute<T> extends PageRouteBuilder<T> {
               return FadeTransition(
                 opacity: curved,
                 child: SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(0.0, -1.0),
-                    end: Offset.zero,
-                  ).animate(animation),
+                  position: Tween<Offset>(begin: const Offset(0.0, -1.0), end: Offset.zero).animate(animation),
                   child: child,
                 ),
               );

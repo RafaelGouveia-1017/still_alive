@@ -32,28 +32,18 @@ class CustomizationSection extends StatefulWidget {
 class _CustomizationSectionState extends State<CustomizationSection> {
   @override
   Widget build(BuildContext context) {
-    final currentLanguage = AppLocalizationsDelegate.supportedLocales
-        .firstWhere(
-          (l) => l.locale == widget.localeProvider.locale,
-          orElse: () => AppLocalizationsDelegate.supportedLocales.first,
-        );
-
-    final chevron = Icon(
-      LucideIcons.chevronRight,
-      size: 18,
-      color: widget.scheme.onSurfaceVariant,
+    final currentLanguage = AppLocalizationsDelegate.supportedLocales.firstWhere(
+      (l) => l.locale == widget.localeProvider.locale,
+      orElse: () => AppLocalizationsDelegate.supportedLocales.first,
     );
+
+    final chevron = Icon(LucideIcons.chevronRight, size: 18, color: widget.scheme.onSurfaceVariant);
 
     return Column(
       children: [
-        SectionTitle(
-          widget.local.translate("settings.sections.customization.title"),
-        ),
+        SectionTitle(widget.local.translate("settings.sections.customization.title")),
         AppCard(
-          padding: EdgeInsets.symmetric(
-            horizontal: AppSpacing.lg,
-            vertical: AppSpacing.xxs,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.xxs),
           margin: EdgeInsets.only(bottom: AppSpacing.xl),
           child: Column(
             children: [
@@ -64,11 +54,8 @@ class _CustomizationSectionState extends State<CustomizationSection> {
                   builder: (context, snapshot) {
                     return AppRow(
                       icon: LucideIcons.palette,
-                      title: widget.local.translate(
-                        "settings.sections.customization.labels.0",
-                      ),
-                      subtitle:
-                          "${widget.local.translate("settings.sections.customization.labels.1")} ${snapshot.data}",
+                      title: widget.local.translate("settings.sections.customization.labels.0"),
+                      subtitle: "${widget.local.translate("settings.sections.customization.labels.1")} ${snapshot.data}",
                       trailing: chevron,
                     );
                   },
@@ -79,11 +66,8 @@ class _CustomizationSectionState extends State<CustomizationSection> {
                 onTap: widget.onLanguagePress,
                 child: AppRow(
                   icon: LucideIcons.languages,
-                  title: widget.local.translate(
-                    "settings.sections.customization.labels.2",
-                  ),
-                  subtitle:
-                      "${widget.local.translate("settings.sections.customization.labels.1")} ${currentLanguage.label}",
+                  title: widget.local.translate("settings.sections.customization.labels.2"),
+                  subtitle: "${widget.local.translate("settings.sections.customization.labels.1")} ${currentLanguage.label}",
                   trailing: chevron,
                 ),
               ),

@@ -15,13 +15,7 @@ class BackupSection extends StatefulWidget {
   final VoidCallback onExport;
   final VoidCallback onImport;
 
-  const BackupSection({
-    super.key,
-    required this.scheme,
-    required this.local,
-    required this.onExport,
-    required this.onImport,
-  });
+  const BackupSection({super.key, required this.scheme, required this.local, required this.onExport, required this.onImport});
 
   @override
   State<BackupSection> createState() => _BackupSectionState();
@@ -31,20 +25,13 @@ class BackupSection extends StatefulWidget {
 class _BackupSectionState extends State<BackupSection> {
   @override
   Widget build(BuildContext context) {
-    final chevron = Icon(
-      LucideIcons.chevronRight,
-      size: 18,
-      color: widget.scheme.onSurfaceVariant,
-    );
+    final chevron = Icon(LucideIcons.chevronRight, size: 18, color: widget.scheme.onSurfaceVariant);
 
     return Column(
       children: [
         SectionTitle(widget.local.translate("settings.sections.backup.title")),
         AppCard(
-          padding: EdgeInsets.symmetric(
-            horizontal: AppSpacing.lg,
-            vertical: AppSpacing.xxs,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.xxs),
           margin: EdgeInsets.only(bottom: AppSpacing.xl),
           child: Column(
             children: [
@@ -52,12 +39,8 @@ class _BackupSectionState extends State<BackupSection> {
                 onTap: widget.onExport,
                 child: AppRow(
                   icon: LucideIcons.download,
-                  title: widget.local.translate(
-                    "settings.sections.backup.export.0",
-                  ),
-                  subtitle: widget.local.translate(
-                    "settings.sections.backup.export.1",
-                  ),
+                  title: widget.local.translate("settings.sections.backup.export.0"),
+                  subtitle: widget.local.translate("settings.sections.backup.export.1"),
                   trailing: chevron,
                 ),
               ),
@@ -67,12 +50,8 @@ class _BackupSectionState extends State<BackupSection> {
                 child: AppRow(
                   icon: LucideIcons.import,
                   iconRotateAngle: math.pi / 2,
-                  title: widget.local.translate(
-                    "settings.sections.backup.import.0",
-                  ),
-                  subtitle: widget.local.translate(
-                    "settings.sections.backup.import.1",
-                  ),
+                  title: widget.local.translate("settings.sections.backup.import.0"),
+                  subtitle: widget.local.translate("settings.sections.backup.import.1"),
                   trailing: chevron,
                 ),
               ),

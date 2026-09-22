@@ -81,14 +81,7 @@ class ContactQuickController {
 /// Tapping the main contact area opens [ContactDetailScreen] while preserving
 /// the contact avatar through a Hero transition.
 class ContactRow extends StatefulWidget {
-  const ContactRow({
-    super.key,
-    required this.data,
-    required this.heroID,
-    this.compact = true,
-    this.timerContact,
-    this.onChanged,
-  });
+  const ContactRow({super.key, required this.data, required this.heroID, this.compact = true, this.timerContact, this.onChanged});
 
   final ContactData data;
   final String heroID;
@@ -135,9 +128,7 @@ class _ContactRowState extends State<ContactRow> {
 
     double size = compact ? 40.0 : 44.0;
 
-    String letter = (data.name == null || data.name == '')
-        ? '?'
-        : data.name![0];
+    String letter = (data.name == null || data.name == '') ? '?' : data.name![0];
     bool hasImage = data.image?.thumbnail != null;
 
     return Row(
@@ -159,29 +150,12 @@ class _ContactRowState extends State<ContactRow> {
             ),
             child: Stack(
               children: [
-                if (compact && data.favorite)
-                  Positioned(
-                    top: 0,
-                    left: 29,
-                    child: Icon(
-                      LucideIcons.star,
-                      size: 20,
-                      color: scheme.primary,
-                    ),
-                  ),
+                if (compact && data.favorite) Positioned(top: 0, left: 29, child: Icon(LucideIcons.star, size: 20, color: scheme.primary)),
                 Row(
                   children: [
                     Hero(
                       tag: widget.heroID,
-                      flightShuttleBuilder:
-                          (context, animation, direction, from, to) =>
-                              AppHeader.flight(
-                                context,
-                                animation,
-                                direction,
-                                from,
-                                to,
-                              ),
+                      flightShuttleBuilder: (context, animation, direction, from, to) => AppHeader.flight(context, animation, direction, from, to),
                       child: Material(
                         type: MaterialType.transparency,
                         child: Container(
@@ -189,27 +163,13 @@ class _ContactRowState extends State<ContactRow> {
                           height: size,
                           clipBehavior: Clip.antiAlias,
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: data.gradient,
-                            ),
-                            borderRadius: BorderRadius.circular(
-                              compact ? AppRadius.md : AppRadius.lg,
-                            ),
+                            gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: data.gradient),
+                            borderRadius: BorderRadius.circular(compact ? AppRadius.md : AppRadius.lg),
                           ),
                           alignment: Alignment.center,
                           child: (hasImage)
-                              ? Image.memory(
-                                  data.image!.thumbnail!,
-                                  filterQuality: FilterQuality.high,
-                                )
-                              : Text(
-                                  letter,
-                                  style: AppText.bodySm(
-                                    scheme,
-                                  ).copyWith(color: data.textColor),
-                                ),
+                              ? Image.memory(data.image!.thumbnail!, filterQuality: FilterQuality.high)
+                              : Text(letter, style: AppText.bodySm(scheme).copyWith(color: data.textColor)),
                         ),
                       ),
                     ),
@@ -260,10 +220,7 @@ class _ContactRowState extends State<ContactRow> {
                 context: context,
                 scheme: scheme,
                 marginHorizontal: 30,
-                child: ContactQuickSheet(
-                  controller: controller,
-                  contactID: widget.data.id,
-                ),
+                child: ContactQuickSheet(controller: controller, contactID: widget.data.id),
               );
             },
             child: Container(
@@ -276,33 +233,17 @@ class _ContactRowState extends State<ContactRow> {
                       return Column(
                         children: [
                           if (!data.favorite && !isQuick && !data.emergency)
-                            SizedBox(
-                              width: 12,
-                              height: 12,
-                              child: ColoredBox(color: scheme.surfaceContainer),
-                            ),
+                            SizedBox(width: 12, height: 12, child: ColoredBox(color: scheme.surfaceContainer)),
                           if (data.emergency) ...[
                             Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: AppSpacing.xxxs,
-                              ),
-                              child: Icon(
-                                LucideIcons.shieldAlert,
-                                size: 12,
-                                color: scheme.error,
-                              ),
+                              padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxxs),
+                              child: Icon(LucideIcons.shieldAlert, size: 12, color: scheme.error),
                             ),
                           ],
                           if (isQuick) ...[
                             Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: AppSpacing.xxxs,
-                              ),
-                              child: Icon(
-                                LucideIcons.zap,
-                                size: 12,
-                                color: scheme.tertiary,
-                              ),
+                              padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxxs),
+                              child: Icon(LucideIcons.zap, size: 12, color: scheme.tertiary),
                             ),
                           ],
                         ],
@@ -311,11 +252,7 @@ class _ContactRowState extends State<ContactRow> {
                   ),
 
                   const SizedBox(width: AppSpacing.xs),
-                  Icon(
-                    LucideIcons.ellipsisVertical,
-                    size: 16,
-                    color: scheme.onSurfaceVariant,
-                  ),
+                  Icon(LucideIcons.ellipsisVertical, size: 16, color: scheme.onSurfaceVariant),
                 ],
               ),
             ),
@@ -339,11 +276,7 @@ class _ContactRowState extends State<ContactRow> {
 /// Database failures are logged and presented using the application's
 /// standard error message UI.
 class ContactQuickSheet extends StatelessWidget {
-  const ContactQuickSheet({
-    super.key,
-    required this.controller,
-    required this.contactID,
-  });
+  const ContactQuickSheet({super.key, required this.controller, required this.contactID});
 
   final ContactQuickController controller;
   final String contactID;
@@ -365,9 +298,7 @@ class ContactQuickSheet extends StatelessWidget {
                 return SizedBox(
                   width: 56,
                   height: 56,
-                  child: Center(
-                    child: CircularProgressIndicator(color: scheme.tertiary),
-                  ),
+                  child: Center(child: CircularProgressIndicator(color: scheme.tertiary)),
                 );
               }
 
@@ -375,9 +306,7 @@ class ContactQuickSheet extends StatelessWidget {
                 height: 56,
                 child: PrimaryButton(
                   icon: isQuick ? LucideIcons.trash2 : LucideIcons.plus,
-                  label: isQuick
-                      ? local.translate("contacts_list.is_quick.true")
-                      : local.translate("contacts_list.is_quick.false"),
+                  label: isQuick ? local.translate("contacts_list.is_quick.true") : local.translate("contacts_list.is_quick.false"),
                   color: isQuick ? ButtonColor.warning : ButtonColor.primary,
                   onPressed: () async {
                     controller.isLoading.value = true;

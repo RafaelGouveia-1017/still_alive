@@ -50,12 +50,8 @@ class _EmergencyContactsState extends State<EmergencyContactsScreen> {
     List<_EmergencyContactData> contactList = [];
 
     try {
-      String emergencyContactsJsonString = await selectOne(
-        sql: "SELECT value FROM contacts WHERE key = 'emergency'",
-      );
-      Map<String, dynamic> emergencyContactsJson = jsonDecode(
-        emergencyContactsJsonString,
-      );
+      String emergencyContactsJsonString = await selectOne(sql: "SELECT value FROM contacts WHERE key = 'emergency'");
+      Map<String, dynamic> emergencyContactsJson = jsonDecode(emergencyContactsJsonString);
       if (emergencyContactsJson['count'] != 0) {
         for (String id in emergencyContactsJson['ids']) {
           try {
@@ -88,20 +84,12 @@ class _EmergencyContactsState extends State<EmergencyContactsScreen> {
       List<dynamic> listData = jsonDecode(contactsInTimersJsonString);
 
       for (var row in listData) {
-        Contact? contact = await FlutterContacts.get(
-          row["contact_id"],
-          properties: {ContactProperty.name, ContactProperty.photoThumbnail},
-        );
+        Contact? contact = await FlutterContacts.get(row["contact_id"], properties: {ContactProperty.name, ContactProperty.photoThumbnail});
 
-        List<(String timerName, List<String> smsNumbers, List<String> emails)>
-        timers = [];
+        List<(String timerName, List<String> smsNumbers, List<String> emails)> timers = [];
 
         for (Map<String, dynamic> timer in jsonDecode(row["timers"])) {
-          timers.add((
-            timer["timer_name"],
-            List<String>.from(timer["sms"]),
-            List<String>.from(timer["email"]),
-          ));
+          timers.add((timer["timer_name"], List<String>.from(timer["sms"]), List<String>.from(timer["email"])));
         }
 
         contactList.add(_EmergencyContactData(contact!, timers));
@@ -128,27 +116,20 @@ class _EmergencyContactsState extends State<EmergencyContactsScreen> {
     return ScreenBase(
       header: AppHeader(
         title: local.translate("contacts_emergency.title"),
-        left: CircleIconButton(
-          icon: LucideIcons.chevronLeft,
-          onTap: () => Navigator.pop(context),
-        ),
+        left: CircleIconButton(icon: LucideIcons.chevronLeft, onTap: () => Navigator.pop(context)),
       ),
       child: (_isLoading)
           ? SizedBox(
               width: double.infinity,
               height: double.infinity,
-              child: Center(
-                child: CircularProgressIndicator(color: scheme.tertiary),
-              ),
+              child: Center(child: CircularProgressIndicator(color: scheme.tertiary)),
             )
           : (emergencyContacts.isEmpty)
           ? Column(
               children: [
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.xxxxl,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxxxl),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -160,25 +141,14 @@ class _EmergencyContactsState extends State<EmergencyContactsScreen> {
                             borderRadius: BorderRadius.circular(AppRadius.xxl),
                             border: Border.all(color: const Color(0x0DFFFFFF)),
                           ),
-                          child: Icon(
-                            LucideIcons.shieldAlert,
-                            size: 36,
-                            color: scheme.error,
-                          ),
+                          child: Icon(LucideIcons.shieldAlert, size: 36, color: scheme.error),
                         ),
                         const SizedBox(height: AppSpacing.xl),
-                        Text(
-                          local.translate("contacts_emergency.message"),
-                          style: AppText.h2(scheme),
-                        ),
+                        Text(local.translate("contacts_emergency.message"), style: AppText.h2(scheme)),
                         const SizedBox(height: AppSpacing.sm),
                         ConstrainedBox(
                           constraints: const BoxConstraints(maxWidth: 260),
-                          child: Text(
-                            local.translate("contacts_emergency.description"),
-                            textAlign: TextAlign.center,
-                            style: AppText.caption(scheme),
-                          ),
+                          child: Text(local.translate("contacts_emergency.description"), textAlign: TextAlign.center, style: AppText.caption(scheme)),
                         ),
                       ],
                     ),
@@ -189,10 +159,7 @@ class _EmergencyContactsState extends State<EmergencyContactsScreen> {
           : Padding(
               padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
               child: AppExpandableGroup(
-                children: [
-                  for (int i = 0; i < emergencyContacts.length; i++)
-                    emergencyContacts[i].buildExpandableCardRow(context),
-                ],
+                children: [for (int i = 0; i < emergencyContacts.length; i++) emergencyContacts[i].buildExpandableCardRow(context)],
               ),
             ),
     );
@@ -218,8 +185,7 @@ class _EmergencyContactData {
   ///
   /// Each tuple contains the timer name, SMS numbers, and email addresses
   /// configured for that timer.
-  final List<(String timerName, List<String> smsNumbers, List<String> emails)>
-  timers;
+  final List<(String timerName, List<String> smsNumbers, List<String> emails)> timers;
 
   /// Builds the expandable card used to display this emergency contact.
   ///
@@ -233,49 +199,30 @@ class _EmergencyContactData {
     final colorOpts = ContactService.colorOptions(context);
     final colors = colorOpts[Random().nextInt(colorOpts.length)];
 
-    String letter = (contact.name == null || contact.displayName == '')
-        ? '?'
-        : contact.displayName![0];
+    String letter = (contact.name == null || contact.displayName == '') ? '?' : contact.displayName![0];
     bool hasImage = contact.photo?.thumbnail != null;
 
-    String timerPlural = (timers.length == 1)
-        ? local.translate("contacts_emergency.timers.0")
-        : local.translate("contacts_emergency.timers.1");
+    String timerPlural = (timers.length == 1) ? local.translate("contacts_emergency.timers.0") : local.translate("contacts_emergency.timers.1");
 
     return AppExpandableCard(
       title: contact.displayName ?? '?',
-      subtitle:
-          '${local.translate("contacts_emergency.in")} ${timers.length} $timerPlural',
+      subtitle: '${local.translate("contacts_emergency.in")} ${timers.length} $timerPlural',
       iconHeroID: 'contact-pic-${contact.id}',
       iconWidget: (hasImage)
-          ? Image.memory(
-              contact.photo!.thumbnail!,
-              filterQuality: FilterQuality.high,
-            )
-          : Text(
-              letter,
-              style: AppText.bodySm(scheme).copyWith(color: colors.text),
-            ),
+          ? Image.memory(contact.photo!.thumbnail!, filterQuality: FilterQuality.high)
+          : Text(letter, style: AppText.bodySm(scheme).copyWith(color: colors.text)),
       iconSize: 26,
       iconColor: colors.text,
       iconGradient: colors.gradient,
       child: Pressable(
         onTap: () => Navigator.of(context).push(
           AppRoute(
-            page: ContactDetailScreen(
-              contactID: contact.id!,
-              heroID: 'contact-pic-${contact.id}',
-              gradient: colors.gradient,
-              textColor: colors.text,
-            ),
+            page: ContactDetailScreen(contactID: contact.id!, heroID: 'contact-pic-${contact.id}', gradient: colors.gradient, textColor: colors.text),
             transition: AppRouteTransitionType.slideLeft,
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.xxxl,
-            vertical: AppSpacing.xxs,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxxl, vertical: AppSpacing.xxs),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -289,27 +236,21 @@ class _EmergencyContactData {
                       Text(
                         sms,
                         textAlign: TextAlign.right,
-                        style: AppText.bodySm(
-                          scheme,
-                        ).copyWith(color: scheme.onSurfaceVariant),
+                        style: AppText.bodySm(scheme).copyWith(color: scheme.onSurfaceVariant),
                       ),
                     ],
                     for (var email in timers[x].$3) ...[
                       Text(
                         email,
                         textAlign: TextAlign.right,
-                        style: AppText.bodySm(
-                          scheme,
-                        ).copyWith(color: scheme.onSurfaceVariant),
+                        style: AppText.bodySm(scheme).copyWith(color: scheme.onSurfaceVariant),
                       ),
                     ],
                   ],
                 ),
                 if (x != timers.length - 1)
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: AppSpacing.ms,
-                    ),
+                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.ms),
                     child: Divider(height: 1, color: scheme.outlineVariant),
                   ),
               ],

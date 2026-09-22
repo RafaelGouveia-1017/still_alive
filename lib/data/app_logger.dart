@@ -167,9 +167,7 @@ class AppLogger {
         }
       }
 
-      final message = location.isEmpty
-          ? '[Rust] ${record.message}'
-          : '[Rust][$location] ${record.message}';
+      final message = location.isEmpty ? '[Rust] ${record.message}' : '[Rust][$location] ${record.message}';
 
       AppLogger.log.log(level, message);
     });

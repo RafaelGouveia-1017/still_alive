@@ -55,9 +55,7 @@ class _PermBuilderState extends State<_PermBuilder> {
     super.initState();
     _currentPermissionStatus();
 
-    _lifecycleListener = AppLifecycleListener(
-      onResume: () => _currentPermissionStatus(),
-    );
+    _lifecycleListener = AppLifecycleListener(onResume: () => _currentPermissionStatus());
   }
 
   void _currentPermissionStatus() async {
@@ -75,9 +73,7 @@ class _PermBuilderState extends State<_PermBuilder> {
   }
 
   Future<void> _requestStatus() async {
-    final status = await PermissionManager.instance.requestPermission(
-      widget.item.permission,
-    );
+    final status = await PermissionManager.instance.requestPermission(widget.item.permission);
     if (!mounted) return;
     setState(() => _permissionStatus = status);
   }
@@ -96,9 +92,7 @@ class _PermBuilderState extends State<_PermBuilder> {
     return Stack(
       children: [
         AbsorbPointer(
-          absorbing: (widget.item.permission == Permission.locationAlways)
-              ? !_locationWhenInUsePermissionGranted
-              : false,
+          absorbing: (widget.item.permission == Permission.locationAlways) ? !_locationWhenInUsePermissionGranted : false,
           child: Pressable(
             onTap: () {
               if (!_permissionStatus.isGranted) _requestStatus();
@@ -109,10 +103,7 @@ class _PermBuilderState extends State<_PermBuilder> {
                   Container(
                     width: 44,
                     height: 44,
-                    decoration: BoxDecoration(
-                      color: scheme.surfaceContainerHigh,
-                      borderRadius: BorderRadius.circular(AppRadius.md),
-                    ),
+                    decoration: BoxDecoration(color: scheme.surfaceContainerHigh, borderRadius: BorderRadius.circular(AppRadius.md)),
                     child: Icon(
                       widget.item.icon,
                       size: 20,
@@ -128,10 +119,7 @@ class _PermBuilderState extends State<_PermBuilder> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(widget.item.title, style: AppText.body(scheme)),
-                        Text(
-                          widget.item.subtitle,
-                          style: AppText.caption(scheme),
-                        ),
+                        Text(widget.item.subtitle, style: AppText.caption(scheme)),
                       ],
                     ),
                   ),
@@ -140,51 +128,27 @@ class _PermBuilderState extends State<_PermBuilder> {
                       width: 32,
                       height: 32,
                       margin: const EdgeInsets.only(top: AppSpacing.xxxs),
-                      decoration: BoxDecoration(
-                        color: scheme.tertiary.withAlpha(38),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        LucideIcons.check,
-                        size: 16,
-                        color: scheme.tertiary,
-                      ),
+                      decoration: BoxDecoration(color: scheme.tertiary.withAlpha(38), shape: BoxShape.circle),
+                      child: Icon(LucideIcons.check, size: 16, color: scheme.tertiary),
                     )
                   else
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.md,
-                        vertical: AppSpacing.xs,
-                      ),
-                      decoration: BoxDecoration(
-                        color: scheme.primary,
-                        borderRadius: AppRadius.chip,
-                      ),
-                      child: Text(
-                        switch (_permissionStatus) {
-                          PermissionStatus.denied => local.translate(
-                            "permissions.allow",
-                          ),
-                          _ => local.translate("settings.title"),
-                        },
-                        style: AppText.caption(
-                          scheme,
-                        ).copyWith(color: scheme.onPrimary),
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
+                      decoration: BoxDecoration(color: scheme.primary, borderRadius: AppRadius.chip),
+                      child: Text(switch (_permissionStatus) {
+                        PermissionStatus.denied => local.translate("permissions.allow"),
+                        _ => local.translate("settings.title"),
+                      }, style: AppText.caption(scheme).copyWith(color: scheme.onPrimary)),
                     ),
                 ],
               ),
             ),
           ),
         ),
-        if (widget.item.permission == Permission.locationAlways &&
-            _locationWhenInUsePermissionGranted == false)
+        if (widget.item.permission == Permission.locationAlways && _locationWhenInUsePermissionGranted == false)
           Positioned.fill(
             child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: scheme.surfaceBright.withAlpha(155),
-                borderRadius: AppRadius.card,
-              ),
+              decoration: BoxDecoration(color: scheme.surfaceBright.withAlpha(155), borderRadius: AppRadius.card),
             ),
           ),
       ],
@@ -222,16 +186,13 @@ class _PermissionsPageState extends State<PermissionsPage> {
   }
 
   void _currentStatus() async {
-    final batteryStatus =
-        await BatteryOptimizationPermission.isIgnoringBatteryOptimizations();
+    final batteryStatus = await BatteryOptimizationPermission.isIgnoringBatteryOptimizations();
 
     if (!mounted) return;
     final notifStatus = await Permission.notification.isGranted;
 
     if (!mounted) return;
-    final fullScreenStatus = await AppMethodChannel.instance.invokeMethod<bool>(
-      'canUseFullScreenIntent',
-    );
+    final fullScreenStatus = await AppMethodChannel.instance.invokeMethod<bool>('canUseFullScreenIntent');
 
     if (!mounted) return;
     setState(() {
@@ -308,20 +269,11 @@ class _PermissionsPageState extends State<PermissionsPage> {
             children: [
               Icon(LucideIcons.keySquare, size: 16, color: scheme.tertiary),
               const SizedBox(width: AppSpacing.sm),
-              Text(
-                local.translate("permissions.title").toUpperCase(),
-                style: AppText.pillLabel.copyWith(
-                  color: scheme.tertiary,
-                  letterSpacing: 1.3,
-                ),
-              ),
+              Text(local.translate("permissions.title").toUpperCase(), style: AppText.pillLabel.copyWith(color: scheme.tertiary, letterSpacing: 1.3)),
             ],
           ),
           const SizedBox(height: AppSpacing.md),
-          Text(
-            local.translate("permissions.description"),
-            style: AppText.h2(scheme),
-          ),
+          Text(local.translate("permissions.description"), style: AppText.h2(scheme)),
           const SizedBox(height: AppSpacing.ms),
           Expanded(
             child: SingleChildScrollView(
@@ -334,10 +286,8 @@ class _PermissionsPageState extends State<PermissionsPage> {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: required.length,
-                    separatorBuilder: (_, _) =>
-                        const SizedBox(height: AppSpacing.ms),
-                    itemBuilder: (context, i) =>
-                        _PermBuilder(item: required[i]),
+                    separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.ms),
+                    itemBuilder: (context, i) => _PermBuilder(item: required[i]),
                   ),
 
                   const SizedBox(height: AppSpacing.ms),
@@ -348,9 +298,7 @@ class _PermissionsPageState extends State<PermissionsPage> {
                         child: Pressable(
                           onTap: () async {
                             if (_fullScreenIntentGranted == false) {
-                              await AppMethodChannel.instance.invokeMethod(
-                                'openFullScreenIntentSettings',
-                              );
+                              await AppMethodChannel.instance.invokeMethod('openFullScreenIntentSettings');
                               _currentStatus();
                             }
                           },
@@ -360,38 +308,20 @@ class _PermissionsPageState extends State<PermissionsPage> {
                                 Container(
                                   width: 44,
                                   height: 44,
-                                  decoration: BoxDecoration(
-                                    color: scheme.surfaceContainerHigh,
-                                    borderRadius: BorderRadius.circular(
-                                      AppRadius.md,
-                                    ),
-                                  ),
+                                  decoration: BoxDecoration(color: scheme.surfaceContainerHigh, borderRadius: BorderRadius.circular(AppRadius.md)),
                                   child: Icon(
                                     LucideIcons.fullscreen,
                                     size: 20,
-                                    color: (_fullScreenIntentGranted)
-                                        ? scheme.tertiary
-                                        : scheme.onSurface,
+                                    color: (_fullScreenIntentGranted) ? scheme.tertiary : scheme.onSurface,
                                   ),
                                 ),
                                 const SizedBox(width: AppSpacing.md),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        local.translate(
-                                          "permissions.required.items.5.name",
-                                        ),
-                                        style: AppText.body(scheme),
-                                      ),
-                                      Text(
-                                        local.translate(
-                                          "permissions.required.items.5.detail",
-                                        ),
-                                        style: AppText.caption(scheme),
-                                      ),
+                                      Text(local.translate("permissions.required.items.5.name"), style: AppText.body(scheme)),
+                                      Text(local.translate("permissions.required.items.5.detail"), style: AppText.caption(scheme)),
                                     ],
                                   ),
                                 ),
@@ -399,35 +329,15 @@ class _PermissionsPageState extends State<PermissionsPage> {
                                   Container(
                                     width: 32,
                                     height: 32,
-                                    margin: const EdgeInsets.only(
-                                      top: AppSpacing.xxxs,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: scheme.tertiary.withAlpha(38),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Icon(
-                                      LucideIcons.check,
-                                      size: 16,
-                                      color: scheme.tertiary,
-                                    ),
+                                    margin: const EdgeInsets.only(top: AppSpacing.xxxs),
+                                    decoration: BoxDecoration(color: scheme.tertiary.withAlpha(38), shape: BoxShape.circle),
+                                    child: Icon(LucideIcons.check, size: 16, color: scheme.tertiary),
                                   )
                                 else
                                   Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: AppSpacing.md,
-                                      vertical: AppSpacing.xs,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: scheme.primary,
-                                      borderRadius: AppRadius.chip,
-                                    ),
-                                    child: Text(
-                                      local.translate("settings.title"),
-                                      style: AppText.caption(
-                                        scheme,
-                                      ).copyWith(color: scheme.onPrimary),
-                                    ),
+                                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
+                                    decoration: BoxDecoration(color: scheme.primary, borderRadius: AppRadius.chip),
+                                    child: Text(local.translate("settings.title"), style: AppText.caption(scheme).copyWith(color: scheme.onPrimary)),
                                   ),
                               ],
                             ),
@@ -437,10 +347,7 @@ class _PermissionsPageState extends State<PermissionsPage> {
                       if (!_notificationsGranted && !_fullScreenIntentGranted)
                         Positioned.fill(
                           child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              color: scheme.surfaceBright.withAlpha(155),
-                              borderRadius: AppRadius.card,
-                            ),
+                            decoration: BoxDecoration(color: scheme.surfaceBright.withAlpha(155), borderRadius: AppRadius.card),
                           ),
                         ),
                     ],
@@ -450,10 +357,7 @@ class _PermissionsPageState extends State<PermissionsPage> {
                   Pressable(
                     onTap: () async {
                       if (_batteryOptimizationWhitelisted == false) {
-                        await BatteryOptimizationPermission.ensureBatteryWhitelist(
-                          tryOemScreens: true,
-                          openSettingsFallbacks: true,
-                        );
+                        await BatteryOptimizationPermission.ensureBatteryWhitelist(tryOemScreens: true, openSettingsFallbacks: true);
                         _currentStatus();
                       }
                     },
@@ -463,16 +367,11 @@ class _PermissionsPageState extends State<PermissionsPage> {
                           Container(
                             width: 44,
                             height: 44,
-                            decoration: BoxDecoration(
-                              color: scheme.surfaceContainerHigh,
-                              borderRadius: BorderRadius.circular(AppRadius.md),
-                            ),
+                            decoration: BoxDecoration(color: scheme.surfaceContainerHigh, borderRadius: BorderRadius.circular(AppRadius.md)),
                             child: Icon(
                               LucideIcons.batteryPlus,
                               size: 20,
-                              color: (_batteryOptimizationWhitelisted)
-                                  ? scheme.tertiary
-                                  : scheme.onSurface,
+                              color: (_batteryOptimizationWhitelisted) ? scheme.tertiary : scheme.onSurface,
                             ),
                           ),
                           const SizedBox(width: AppSpacing.md),
@@ -480,18 +379,8 @@ class _PermissionsPageState extends State<PermissionsPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  local.translate(
-                                    "permissions.required.items.4.name",
-                                  ),
-                                  style: AppText.body(scheme),
-                                ),
-                                Text(
-                                  local.translate(
-                                    "permissions.required.items.4.detail",
-                                  ),
-                                  style: AppText.caption(scheme),
-                                ),
+                                Text(local.translate("permissions.required.items.4.name"), style: AppText.body(scheme)),
+                                Text(local.translate("permissions.required.items.4.detail"), style: AppText.caption(scheme)),
                               ],
                             ),
                           ),
@@ -499,35 +388,15 @@ class _PermissionsPageState extends State<PermissionsPage> {
                             Container(
                               width: 32,
                               height: 32,
-                              margin: const EdgeInsets.only(
-                                top: AppSpacing.xxxs,
-                              ),
-                              decoration: BoxDecoration(
-                                color: scheme.tertiary.withAlpha(38),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                LucideIcons.check,
-                                size: 16,
-                                color: scheme.tertiary,
-                              ),
+                              margin: const EdgeInsets.only(top: AppSpacing.xxxs),
+                              decoration: BoxDecoration(color: scheme.tertiary.withAlpha(38), shape: BoxShape.circle),
+                              child: Icon(LucideIcons.check, size: 16, color: scheme.tertiary),
                             )
                           else
                             Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: AppSpacing.md,
-                                vertical: AppSpacing.xs,
-                              ),
-                              decoration: BoxDecoration(
-                                color: scheme.primary,
-                                borderRadius: AppRadius.chip,
-                              ),
-                              child: Text(
-                                local.translate("permissions.allow"),
-                                style: AppText.caption(
-                                  scheme,
-                                ).copyWith(color: scheme.onPrimary),
-                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
+                              decoration: BoxDecoration(color: scheme.primary, borderRadius: AppRadius.chip),
+                              child: Text(local.translate("permissions.allow"), style: AppText.caption(scheme).copyWith(color: scheme.onPrimary)),
                             ),
                         ],
                       ),
@@ -540,10 +409,8 @@ class _PermissionsPageState extends State<PermissionsPage> {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: optional.length,
-                    separatorBuilder: (_, _) =>
-                        const SizedBox(height: AppSpacing.ms),
-                    itemBuilder: (context, i) =>
-                        _PermBuilder(item: optional[i]),
+                    separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.ms),
+                    itemBuilder: (context, i) => _PermBuilder(item: optional[i]),
                   ),
                   const SizedBox(height: AppSpacing.ms),
                 ],

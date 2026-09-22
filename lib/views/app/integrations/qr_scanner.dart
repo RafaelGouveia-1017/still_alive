@@ -58,9 +58,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
   }
 
   void _requestCameraStatus() async {
-    final status = await PermissionManager.instance.requestPermission(
-      Permission.camera,
-    );
+    final status = await PermissionManager.instance.requestPermission(Permission.camera);
     if (!mounted) return;
     setState(() => _cameraStatus = status);
   }
@@ -120,18 +118,14 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
       // Decode as UTF-8.
       decoded = utf8.decode(base64Decode(normalized));
     } catch (e) {
-      throw Exception(
-        'QR value is not a valid base64 string.\noriginal:\t$value',
-      );
+      throw Exception('QR value is not a valid base64 string.\noriginal:\t$value');
     }
 
     try {
       jsonDecode(decoded);
       return decoded;
     } catch (e) {
-      throw Exception(
-        'QR value is a base64 string but not valid JSON.\noriginal:\t$value\ndecoded:\t$decoded',
-      );
+      throw Exception('QR value is a base64 string but not valid JSON.\noriginal:\t$value\ndecoded:\t$decoded');
     }
   }
 
@@ -147,10 +141,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
       header: AppHeader(
         title: local.translate("qr_pairing.title"),
         subtitle: local.translate("qr_pairing.description"),
-        left: CircleIconButton(
-          icon: LucideIcons.chevronLeft,
-          onTap: () => Navigator.pop(context),
-        ),
+        left: CircleIconButton(icon: LucideIcons.chevronLeft, onTap: () => Navigator.pop(context)),
         right: CircleIconButton(
           icon: switch (torchState) {
             TorchState.auto => Icons.flash_auto,
@@ -158,9 +149,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
             TorchState.off => LucideIcons.zapOff,
             _ => LucideIcons.zapOff,
           },
-          onTap: () => (torchState == TorchState.unavailable)
-              ? null
-              : controller.toggleTorch(),
+          onTap: () => (torchState == TorchState.unavailable) ? null : controller.toggleTorch(),
         ),
       ),
       child: Column(
@@ -179,20 +168,14 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
                             borderRadius: BorderRadius.circular(AppRadius.xxl),
                             border: Border.all(color: scheme.outlineVariant),
                           ),
-                          child: Icon(
-                            LucideIcons.cameraOff,
-                            size: 36,
-                            color: scheme.onSurfaceVariant,
-                          ),
+                          child: Icon(LucideIcons.cameraOff, size: 36, color: scheme.onSurfaceVariant),
                         ),
                       ),
                       const SizedBox(height: AppSpacing.lg),
                       Center(
                         child: Text(
                           local.translate("qr_pairing.no_camera"),
-                          style: AppText.bodySm(
-                            scheme,
-                          ).copyWith(color: scheme.onSurfaceVariant),
+                          style: AppText.bodySm(scheme).copyWith(color: scheme.onSurfaceVariant),
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -200,25 +183,12 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
                       Pressable(
                         onTap: () => _requestCameraStatus(),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: AppSpacing.xl,
-                            vertical: AppSpacing.ms,
-                          ),
-                          decoration: BoxDecoration(
-                            color: scheme.primary,
-                            borderRadius: AppRadius.chip,
-                          ),
-                          child: Text(
-                            switch (_cameraStatus) {
-                              PermissionStatus.denied => local.translate(
-                                "permissions.allow",
-                              ),
-                              _ => local.translate("settings.title"),
-                            },
-                            style: AppText.caption(
-                              scheme,
-                            ).copyWith(color: scheme.onPrimary),
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl, vertical: AppSpacing.ms),
+                          decoration: BoxDecoration(color: scheme.primary, borderRadius: AppRadius.chip),
+                          child: Text(switch (_cameraStatus) {
+                            PermissionStatus.denied => local.translate("permissions.allow"),
+                            _ => local.translate("settings.title"),
+                          }, style: AppText.caption(scheme).copyWith(color: scheme.onPrimary)),
                         ),
                       ),
                     ],
@@ -226,14 +196,9 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
                 : Stack(
                     fit: StackFit.expand,
                     children: [
-                      MobileScanner(
-                        controller: controller,
-                        onDetect: _onDetect,
-                      ),
+                      MobileScanner(controller: controller, onDetect: _onDetect),
 
-                      CustomPaint(
-                        painter: ScannerOverlayPainter(scanSize: 330),
-                      ),
+                      CustomPaint(painter: ScannerOverlayPainter(scanSize: 330)),
 
                       Positioned(
                         left: 24,
@@ -243,9 +208,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
                           children: [
                             Text(
                               local.translate("qr_pairing.valid_qr.0"),
-                              style: AppText.bodySm(
-                                scheme,
-                              ).copyWith(color: Colors.white70),
+                              style: AppText.bodySm(scheme).copyWith(color: Colors.white70),
                               textAlign: TextAlign.center,
                             ),
                             Row(
@@ -253,25 +216,16 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
                               children: [
                                 Text(
                                   local.translate("qr_pairing.valid_qr.1"),
-                                  style: AppText.bodySm(
-                                    scheme,
-                                  ).copyWith(color: Colors.white70),
+                                  style: AppText.bodySm(scheme).copyWith(color: Colors.white70),
                                   textAlign: TextAlign.center,
                                 ),
                                 const SizedBox(width: 8),
-                                Icon(
-                                  LucideIcons.shield,
-                                  color: Colors.white,
-                                  size: 20,
-                                ),
-                                if (local.translate("qr_pairing.valid_qr.0") !=
-                                    "") ...[
+                                Icon(LucideIcons.shield, color: Colors.white, size: 20),
+                                if (local.translate("qr_pairing.valid_qr.0") != "") ...[
                                   const SizedBox(width: 8),
                                   Text(
                                     local.translate("qr_pairing.valid_qr.2"),
-                                    style: AppText.bodySm(
-                                      scheme,
-                                    ).copyWith(color: Colors.white70),
+                                    style: AppText.bodySm(scheme).copyWith(color: Colors.white70),
                                     textAlign: TextAlign.center,
                                   ),
                                 ],
@@ -287,10 +241,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
                           height: 330,
                           child: DecoratedBox(
                             decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.white70,
-                                width: 2,
-                              ),
+                              border: Border.all(color: Colors.white70, width: 2),
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
@@ -326,11 +277,7 @@ class ScannerOverlayPainter extends CustomPainter {
     final clearPaint = Paint()..blendMode = BlendMode.clear;
 
     final scanRect = RRect.fromRectAndRadius(
-      Rect.fromCenter(
-        center: size.center(Offset.zero),
-        width: scanSize,
-        height: scanSize,
-      ),
+      Rect.fromCenter(center: size.center(Offset.zero), width: scanSize, height: scanSize),
       const Radius.circular(16),
     );
 

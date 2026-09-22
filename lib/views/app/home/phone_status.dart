@@ -47,19 +47,13 @@ class _PhoneStatusState extends State<PhoneStatus> {
 
     _battery.batteryLevel.then(_updateBatteryLevel);
     _battery.batteryState.then(_updateBatteryState);
-    _batteryStateSubscription = _battery.onBatteryStateChanged.listen(
-      _updateBatteryState,
-    );
+    _batteryStateSubscription = _battery.onBatteryStateChanged.listen(_updateBatteryState);
 
     _initializeConnectivity();
 
-    _connectivitySubscription = _connectivity.onConnectivityChanged.listen(
-      _updateConnectivity,
-    );
+    _connectivitySubscription = _connectivity.onConnectivityChanged.listen(_updateConnectivity);
 
-    _internetSubscription = InternetConnection().onStatusChange.listen((
-      status,
-    ) {
+    _internetSubscription = InternetConnection().onStatusChange.listen((status) {
       final connected = status == InternetStatus.connected;
 
       if (_hasInternet != connected) {
@@ -171,50 +165,29 @@ class _PhoneStatusState extends State<PhoneStatus> {
         Expanded(
           child: _StatCard(
             icon: _connectionIcon,
-            label: (!_hasInternet)
-                ? local.translate('home.offline')
-                : local.translate('home.online'),
+            label: (!_hasInternet) ? local.translate('home.offline') : local.translate('home.online'),
             color: scheme.tertiary,
           ),
         ),
         const SizedBox(width: AppSpacing.sm),
         Expanded(
-          child: _StatCard(
-            icon: _batteryIcon,
-            label: '$_batteryLevel%',
-            color: scheme.tertiary,
+          child: _StatCard(icon: _batteryIcon, label: '$_batteryLevel%', color: scheme.tertiary),
+        ),
+        const SizedBox(width: AppSpacing.sm),
+        Expanded(
+          child: Pressable(
+            onTap: () => Navigator.of(context).push(AppRoute(page: EmergencyContactsScreen(), transition: AppRouteTransitionType.slideLeft)),
+            child: _StatCard(icon: LucideIcons.userStar, label: '${widget.contacts} ${local.translate('home.contacts')}', color: scheme.secondary),
           ),
         ),
         const SizedBox(width: AppSpacing.sm),
         Expanded(
           child: Pressable(
-            onTap: () => Navigator.of(context).push(
-              AppRoute(
-                page: EmergencyContactsScreen(),
-                transition: AppRouteTransitionType.slideLeft,
-              ),
-            ),
-            child: _StatCard(
-              icon: LucideIcons.userStar,
-              label: '${widget.contacts} ${local.translate('home.contacts')}',
-              color: scheme.secondary,
-            ),
-          ),
-        ),
-        const SizedBox(width: AppSpacing.sm),
-        Expanded(
-          child: Pressable(
-            onTap: () => Navigator.of(context).push(
-              AppRoute(
-                page: IntegrationsScreen(),
-                transition: AppRouteTransitionType.slideRight,
-              ),
-            ),
+            onTap: () => Navigator.of(context).push(AppRoute(page: IntegrationsScreen(), transition: AppRouteTransitionType.slideRight)),
             child: _StatCard(
               icon: LucideIcons.plug,
               rotateAngle: math.pi / 4,
-              label:
-                  '${widget.integrations} ${local.translate('home.plugins')}',
+              label: '${widget.integrations} ${local.translate('home.plugins')}',
               color: scheme.secondary,
             ),
           ),
@@ -230,12 +203,7 @@ class _PhoneStatusState extends State<PhoneStatus> {
 /// used by [PhoneStatus] to present battery, connectivity, contacts,
 /// and integrations information.
 class _StatCard extends StatelessWidget {
-  const _StatCard({
-    required this.icon,
-    this.rotateAngle = 0,
-    required this.label,
-    required this.color,
-  });
+  const _StatCard({required this.icon, this.rotateAngle = 0, required this.label, required this.color});
   final IconData icon;
   final double rotateAngle;
   final String label;

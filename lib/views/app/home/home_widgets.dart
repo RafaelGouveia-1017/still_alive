@@ -41,8 +41,7 @@ class TimerCountdownRing extends StatefulWidget {
 /// The state also monitors the active timer's expiration time and schedules
 /// [TimerService.timerHasExpired] after the current frame when the timer
 /// reaches its expiration.
-class _TimerCountdownRingState extends State<TimerCountdownRing>
-    with RouteAware {
+class _TimerCountdownRingState extends State<TimerCountdownRing> with RouteAware {
   Timer? _uiTimer;
 
   @override
@@ -147,51 +146,28 @@ class _TimerCountdownRingState extends State<TimerCountdownRing>
       final now = DateTime.now().toUtc().millisecondsSinceEpoch;
       remaining = timer.remaining();
 
-      progress =
-          ((now - timer.run.startedAtMs) /
-                  (timer.run.expiresAtMs - timer.run.startedAtMs))
-              .clamp(0.0, 1.0);
+      progress = ((now - timer.run.startedAtMs) / (timer.run.expiresAtMs - timer.run.startedAtMs)).clamp(0.0, 1.0);
     } else if (timerIsPaused) {
-      progress =
-          ((timer.run.pausedAtMs! - timer.run.startedAtMs) /
-                  (timer.run.expiresAtMs - timer.run.startedAtMs))
-              .clamp(0.0, 1.0);
+      progress = ((timer.run.pausedAtMs! - timer.run.startedAtMs) / (timer.run.expiresAtMs - timer.run.startedAtMs)).clamp(0.0, 1.0);
 
-      final pausedAt = DateTime.fromMillisecondsSinceEpoch(
-        timer.run.pausedAtMs!,
-        isUtc: true,
-      );
-      final expiresAt = DateTime.fromMillisecondsSinceEpoch(
-        timer.run.expiresAtMs,
-        isUtc: true,
-      ).add(Duration(seconds: 1));
+      final pausedAt = DateTime.fromMillisecondsSinceEpoch(timer.run.pausedAtMs!, isUtc: true);
+      final expiresAt = DateTime.fromMillisecondsSinceEpoch(timer.run.expiresAtMs, isUtc: true).add(Duration(seconds: 1));
       remaining = expiresAt.difference(pausedAt);
     }
 
     _checkTimerExpiration(timerIsRunning);
 
-    final canConfigure =
-        !timerIsRunning &&
-        !timerIsPaused &&
-        !_expirationScheduled &&
-        remaining.inSeconds > 10;
+    final canConfigure = !timerIsRunning && !timerIsPaused && !_expirationScheduled && remaining.inSeconds > 10;
 
     return Hero(
       tag: 'timer-countdown',
-      flightShuttleBuilder: (context, animation, direction, from, to) =>
-          AppHeader.flight(context, animation, direction, from, to),
+      flightShuttleBuilder: (context, animation, direction, from, to) => AppHeader.flight(context, animation, direction, from, to),
       child: Column(
         children: [
           Center(
             child: (timerIsRunning || timerIsPaused)
-                ? Pill(
-                    label: local.translate("home.active"),
-                    backColor: scheme.tertiary,
-                  )
-                : Pill(
-                    label: local.translate("home.inactive"),
-                    backColor: scheme.onSurfaceVariant,
-                  ),
+                ? Pill(label: local.translate("home.active"), backColor: scheme.tertiary)
+                : Pill(label: local.translate("home.inactive"), backColor: scheme.onSurfaceVariant),
           ),
           const SizedBox(height: AppSpacing.lg),
           CountdownRing(
@@ -212,23 +188,12 @@ class _TimerCountdownRingState extends State<TimerCountdownRing>
                   AppRoute(
                     page: (timer.key == "timer0")
                         ? TimerConfigScreen.newTimer()
-                        : TimerConfigScreen.existingTimer(
-                            timerKey: timer.key,
-                            timerData: timer.config,
-                          ),
+                        : TimerConfigScreen.existingTimer(timerKey: timer.key, timerData: timer.config),
                     transition: AppRouteTransitionType.slideLeft,
                   ),
                 );
-              } else if (timer.key != "timer0" &&
-                  !_expirationScheduled &&
-                  remaining.inSeconds > 10 &&
-                  !timerIsPaused) {
-                Navigator.of(context).push(
-                  AppRoute(
-                    page: ActiveMonitoringScreen(),
-                    transition: AppRouteTransitionType.slideLeft,
-                  ),
-                );
+              } else if (timer.key != "timer0" && !_expirationScheduled && remaining.inSeconds > 10 && !timerIsPaused) {
+                Navigator.of(context).push(AppRoute(page: ActiveMonitoringScreen(), transition: AppRouteTransitionType.slideLeft));
               }
             },
           ),
@@ -308,19 +273,14 @@ class _TimerControlsState extends State<TimerControls> {
           return FadeTransition(
             opacity: animation,
             child: ScaleTransition(
-              scale: Tween<double>(begin: 0.95, end: 1.0).animate(
-                CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
-              ),
+              scale: Tween<double>(begin: 0.95, end: 1.0).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
               child: child,
             ),
           );
         },
         child: KeyedSubtree(
           key: key,
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width,
-            child: child,
-          ),
+          child: SizedBox(width: MediaQuery.of(context).size.width, child: child),
         ),
       ),
     );
@@ -340,9 +300,7 @@ class _TimerControlsState extends State<TimerControls> {
         child: SizedBox(
           width: 40,
           height: 40,
-          child: Center(
-            child: CircularProgressIndicator(color: scheme.tertiary),
-          ),
+          child: Center(child: CircularProgressIndicator(color: scheme.tertiary)),
         ),
       );
     }
@@ -364,14 +322,11 @@ class _TimerControlsState extends State<TimerControls> {
                     bool? passwordVerified = false;
 
                     if (timer.config.passwordProtected) {
-                      passwordVerified = await TimerService.instance
-                          .showPasswordPrompt(context);
+                      passwordVerified = await TimerService.instance.showPasswordPrompt(context);
                     }
 
                     if (passwordVerified != null) {
-                      await TimerService.instance.pauseTimer(
-                        passwordVerified: passwordVerified,
-                      );
+                      await TimerService.instance.pauseTimer(passwordVerified: passwordVerified);
                     }
 
                     setLoading(false);
@@ -389,14 +344,11 @@ class _TimerControlsState extends State<TimerControls> {
                     bool? passwordVerified = false;
 
                     if (timer.config.passwordProtected) {
-                      passwordVerified = await TimerService.instance
-                          .showPasswordPrompt(context);
+                      passwordVerified = await TimerService.instance.showPasswordPrompt(context);
                     }
 
                     if (passwordVerified != null) {
-                      await TimerService.instance.cancelTimer(
-                        passwordVerified: passwordVerified,
-                      );
+                      await TimerService.instance.cancelTimer(passwordVerified: passwordVerified);
                     }
 
                     setLoading(false);
@@ -423,14 +375,11 @@ class _TimerControlsState extends State<TimerControls> {
                     bool? passwordVerified = false;
 
                     if (timer.config.passwordProtected) {
-                      passwordVerified = await TimerService.instance
-                          .showPasswordPrompt(context);
+                      passwordVerified = await TimerService.instance.showPasswordPrompt(context);
                     }
 
                     if (passwordVerified != null) {
-                      await TimerService.instance.cancelTimer(
-                        passwordVerified: passwordVerified,
-                      );
+                      await TimerService.instance.cancelTimer(passwordVerified: passwordVerified);
                     }
 
                     setLoading(false);

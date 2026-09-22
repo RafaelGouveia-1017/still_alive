@@ -25,11 +25,7 @@ class DurationInput extends StatefulWidget {
   ///
   /// The [onChanged] callback is invoked whenever the user changes the
   /// duration or selects a preset.
-  const DurationInput({
-    super.key,
-    required this.durationTimer,
-    required this.onChanged,
-  });
+  const DurationInput({super.key, required this.durationTimer, required this.onChanged});
 
   /// The initial duration displayed by the widget.
   ///
@@ -59,13 +55,7 @@ class _DurationInputState extends State<DurationInput> {
   late final FocusNode _minutesFocus;
   late final FocusNode _secondsFocus;
 
-  final _presets = [
-    Duration(minutes: 5),
-    Duration(minutes: 15),
-    Duration(minutes: 30),
-    Duration(hours: 1),
-    Duration(hours: 2),
-  ];
+  final _presets = [Duration(minutes: 5), Duration(minutes: 15), Duration(minutes: 30), Duration(hours: 1), Duration(hours: 2)];
 
   int? _selectedPresetIndex;
 
@@ -177,10 +167,7 @@ class _DurationInputState extends State<DurationInput> {
     AppLocalizations local = AppLocalizations.of(context)!;
 
     return AppCard(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.sm,
-        vertical: AppSpacing.ms,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.ms),
       child: Column(
         children: [
           FormField(
@@ -199,13 +186,8 @@ class _DurationInputState extends State<DurationInput> {
                       ),
 
                       Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.xs,
-                        ),
-                        child: Text(
-                          ':',
-                          style: AppText.display(scheme).copyWith(fontSize: 44),
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+                        child: Text(':', style: AppText.display(scheme).copyWith(fontSize: 44)),
                       ),
 
                       _TimeField(
@@ -218,13 +200,8 @@ class _DurationInputState extends State<DurationInput> {
                       ),
 
                       Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.xs,
-                        ),
-                        child: Text(
-                          ':',
-                          style: AppText.display(scheme).copyWith(fontSize: 44),
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+                        child: Text(':', style: AppText.display(scheme).copyWith(fontSize: 44)),
                       ),
 
                       _TimeField(
@@ -239,9 +216,7 @@ class _DurationInputState extends State<DurationInput> {
                   const SizedBox(height: AppSpacing.xxs),
                   Text(
                     local.translate("timer_configuration.duration.time_format"),
-                    style: AppText.micro(
-                      scheme,
-                    ).copyWith(letterSpacing: 2, color: scheme.onSurface),
+                    style: AppText.micro(scheme).copyWith(letterSpacing: 2, color: scheme.onSurface),
                   ),
                   if (field.hasError)
                     Padding(
@@ -249,10 +224,7 @@ class _DurationInputState extends State<DurationInput> {
                       child: Text(
                         field.errorText!,
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.error,
-                          fontSize: 12,
-                        ),
+                        style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 12),
                       ),
                     ),
                 ],
@@ -261,9 +233,7 @@ class _DurationInputState extends State<DurationInput> {
             validator: (_) {
               Duration value = _currentDuration();
               if (value.inSeconds < 10) {
-                return local.translate(
-                  "timer_configuration.duration.validation",
-                );
+                return local.translate("timer_configuration.duration.validation");
               }
               return null;
             },
@@ -286,18 +256,12 @@ class _DurationInputState extends State<DurationInput> {
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color: isSelected
-                              ? scheme.primary
-                              : scheme.surfaceContainerHigh,
+                          color: isSelected ? scheme.primary : scheme.surfaceContainerHigh,
                           borderRadius: BorderRadius.circular(AppRadius.md),
                         ),
                         child: Text(
                           TimerService.formatDuration(_presets[i]),
-                          style: AppText.bodySm(scheme).copyWith(
-                            color: isSelected
-                                ? scheme.onPrimary
-                                : scheme.onSurfaceVariant,
-                          ),
+                          style: AppText.bodySm(scheme).copyWith(color: isSelected ? scheme.onPrimary : scheme.onSurfaceVariant),
                         ),
                       ),
                     );
@@ -361,30 +325,19 @@ class _TimeField extends StatelessWidget {
           style: AppText.display(scheme).copyWith(fontSize: 44),
           cursorColor: scheme.primary,
           scrollPadding: const EdgeInsets.all(0),
-          inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-            _MaxValueFormatter(maxValue),
-          ],
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly, _MaxValueFormatter(maxValue)],
           decoration: InputDecoration(
             hintText: "00",
-            hintStyle: AppText.display(
-              scheme,
-            ).copyWith(fontSize: 44, color: scheme.onSurfaceVariant),
+            hintStyle: AppText.display(scheme).copyWith(fontSize: 44, color: scheme.onSurfaceVariant),
             counterText: '',
             border: InputBorder.none,
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: AppSpacing.xxxs,
-              vertical: AppSpacing.xxxs,
-            ),
+            contentPadding: EdgeInsets.symmetric(horizontal: AppSpacing.xxxs, vertical: AppSpacing.xxxs),
             filled: false,
             fillColor: Colors.transparent,
           ),
           onChanged: onChanged,
           onTap: () {
-            controller.selection = TextSelection(
-              baseOffset: 0,
-              extentOffset: controller.text.length,
-            );
+            controller.selection = TextSelection(baseOffset: 0, extentOffset: controller.text.length);
           },
           onTapOutside: (event) {
             String value = controller.text;
@@ -423,10 +376,7 @@ class _MaxValueFormatter extends TextInputFormatter {
   final int maxValue;
 
   @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
     if (newValue.text.isEmpty) {
       return newValue;
     }

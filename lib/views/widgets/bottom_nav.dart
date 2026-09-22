@@ -43,36 +43,11 @@ class BottomNav extends StatelessWidget {
     AppLocalizations local = AppLocalizations.of(context)!;
 
     List<NavDestination> navDestinations = [
-      NavDestination(
-        'home',
-        local.translate("navigation.0"),
-        LucideIcons.timer,
-        HomeScreen(),
-      ),
-      NavDestination(
-        'history',
-        local.translate("navigation.1"),
-        LucideIcons.history,
-        HistoryScreen(),
-      ),
-      NavDestination(
-        'contacts',
-        local.translate("navigation.2"),
-        LucideIcons.users,
-        ContactsScreen.showAllContacts(),
-      ),
-      NavDestination(
-        'integrations',
-        local.translate("navigation.3"),
-        LucideIcons.blocks,
-        IntegrationsScreen(),
-      ),
-      NavDestination(
-        'settings',
-        local.translate("navigation.4"),
-        LucideIcons.slidersHorizontal,
-        SettingsScreen(),
-      ),
+      NavDestination('home', local.translate("navigation.0"), LucideIcons.timer, HomeScreen()),
+      NavDestination('history', local.translate("navigation.1"), LucideIcons.history, HistoryScreen()),
+      NavDestination('contacts', local.translate("navigation.2"), LucideIcons.users, ContactsScreen.showAllContacts()),
+      NavDestination('integrations', local.translate("navigation.3"), LucideIcons.blocks, IntegrationsScreen()),
+      NavDestination('settings', local.translate("navigation.4"), LucideIcons.slidersHorizontal, SettingsScreen()),
     ];
 
     return Container(
@@ -91,12 +66,8 @@ class BottomNav extends StatelessWidget {
               onTap: () => isActive
                   ? null
                   : Navigator.of(context).pushAndRemoveUntil(
-                      AppRoute(
-                        page: d.screen,
-                        transition: AppRouteTransitionType.slideRight,
-                      ),
-                      (route) =>
-                          (d.screen is HomeScreen) ? false : route.isFirst,
+                      AppRoute(page: d.screen, transition: AppRouteTransitionType.slideRight),
+                      (route) => (d.screen is HomeScreen) ? false : route.isFirst,
                     ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxs),
@@ -105,20 +76,12 @@ class BottomNav extends StatelessWidget {
                   children: [
                     Icon(d.icon, size: 20, color: color),
                     const SizedBox(height: AppSpacing.xxs),
-                    Text(
-                      d.label,
-                      style: const TextStyle(
-                        fontSize: 10,
-                      ).copyWith(color: color),
-                    ),
+                    Text(d.label, style: const TextStyle(fontSize: 10).copyWith(color: color)),
                     const SizedBox(height: AppSpacing.xxs),
                     Container(
                       width: 4,
                       height: 4,
-                      decoration: BoxDecoration(
-                        color: isActive ? scheme.primary : Colors.transparent,
-                        shape: BoxShape.circle,
-                      ),
+                      decoration: BoxDecoration(color: isActive ? scheme.primary : Colors.transparent, shape: BoxShape.circle),
                     ),
                   ],
                 ),

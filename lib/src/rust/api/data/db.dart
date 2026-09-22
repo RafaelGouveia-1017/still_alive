@@ -9,18 +9,15 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 // These functions are ignored (category: IgnoreBecauseExplicitAttribute): `database_path`, `db`
 
 /// Returns the database name (with extension).
-Future<String> getDatabaseName() =>
-    RustLib.instance.api.crateApiDataDbGetDatabaseName();
+Future<String> getDatabaseName() => RustLib.instance.api.crateApiDataDbGetDatabaseName();
 
 /// Initialize the application database.
 ///
 /// Must be called exactly once during app startup.
-Future<void> initDatabase({required String path}) =>
-    RustLib.instance.api.crateApiDataDbInitDatabase(path: path);
+Future<void> initDatabase({required String path}) => RustLib.instance.api.crateApiDataDbInitDatabase(path: path);
 
 /// Return the database path as a string.
-Future<void> databasePathStr() =>
-    RustLib.instance.api.crateApiDataDbDatabasePathStr();
+Future<void> databasePathStr() => RustLib.instance.api.crateApiDataDbDatabasePathStr();
 
 /// Open connection to application database.
 ///
@@ -33,8 +30,7 @@ Future<void> databasePathStr() =>
 ///
 /// - the database file cannot be opened
 /// - SQLite initialization fails
-Future<void> openDatabase() =>
-    RustLib.instance.api.crateApiDataDbOpenDatabase();
+Future<void> openDatabase() => RustLib.instance.api.crateApiDataDbOpenDatabase();
 
 /// Close connection to application database.
 ///
@@ -49,8 +45,7 @@ Future<void> openDatabase() =>
 /// # Errors
 ///
 /// Returns an error if SQLite fails to close the connection.
-Future<void> closeDatabase() =>
-    RustLib.instance.api.crateApiDataDbCloseDatabase();
+Future<void> closeDatabase() => RustLib.instance.api.crateApiDataDbCloseDatabase();
 
 /// Export the application database.
 ///
@@ -75,8 +70,7 @@ Future<void> closeDatabase() =>
 ///
 /// Metadata generation and ZIP creation should be handled by
 /// higher-level backup functions.
-Future<void> exportDatabase({required String path}) =>
-    RustLib.instance.api.crateApiDataDbExportDatabase(path: path);
+Future<void> exportDatabase({required String path}) => RustLib.instance.api.crateApiDataDbExportDatabase(path: path);
 
 /// Import a SQLite database.
 ///
@@ -105,18 +99,15 @@ Future<void> exportDatabase({required String path}) =>
 /// The imported database completely replaces the existing one.
 ///
 /// Existing data cannot be recovered unless a backup exists.
-Future<void> importDatabase({required String path}) =>
-    RustLib.instance.api.crateApiDataDbImportDatabase(path: path);
+Future<void> importDatabase({required String path}) => RustLib.instance.api.crateApiDataDbImportDatabase(path: path);
 
 /// Delete the existing SQLite database.
-Future<void> purgeDatabase() =>
-    RustLib.instance.api.crateApiDataDbPurgeDatabase();
+Future<void> purgeDatabase() => RustLib.instance.api.crateApiDataDbPurgeDatabase();
 
 /// Returns a single row & column.
 ///
 /// Returns `None` if no matching row exists.
-Future<String> selectOne({required String sql}) =>
-    RustLib.instance.api.crateApiDataDbSelectOne(sql: sql);
+Future<String> selectOne({required String sql}) => RustLib.instance.api.crateApiDataDbSelectOne(sql: sql);
 
 /// Returns JSON with data of multiple rows.
 ///
@@ -146,12 +137,10 @@ Future<String> selectOne({required String sql}) =>
 /// List<dynamic> data = jsonDecode(jsonStr);
 /// String name = data[0]['name'];
 /// ```
-Future<String> select({required String sql}) =>
-    RustLib.instance.api.crateApiDataDbSelect(sql: sql);
+Future<String> select({required String sql}) => RustLib.instance.api.crateApiDataDbSelect(sql: sql);
 
 /// Execute a SQL statement.
-Future<BigInt> executeSql({required String sql}) =>
-    RustLib.instance.api.crateApiDataDbExecuteSql(sql: sql);
+Future<BigInt> executeSql({required String sql}) => RustLib.instance.api.crateApiDataDbExecuteSql(sql: sql);
 
 /// Execute multiple SQL statements.
 ///
@@ -170,9 +159,7 @@ Future<BigInt> executeSql({required String sql}) =>
 ///     "
 /// )?;
 /// ```
-Future<void> executeBatchSql({required String sql}) =>
-    RustLib.instance.api.crateApiDataDbExecuteBatchSql(sql: sql);
+Future<void> executeBatchSql({required String sql}) => RustLib.instance.api.crateApiDataDbExecuteBatchSql(sql: sql);
 
 /// Custom execute_sql function to prevent SQL injection from user.
-Future<BigInt> updateMessage({required String message}) =>
-    RustLib.instance.api.crateApiDataDbUpdateMessage(message: message);
+Future<BigInt> updateMessage({required String message}) => RustLib.instance.api.crateApiDataDbUpdateMessage(message: message);

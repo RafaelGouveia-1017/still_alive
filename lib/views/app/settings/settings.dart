@@ -64,9 +64,7 @@ class _SettingsScreenState extends State<SettingsScreen> with RouteAware {
     _permissionsStatuses();
     _featureStatuses();
 
-    _lifecycleListener = AppLifecycleListener(
-      onResume: () => _permissionsStatuses(),
-    );
+    _lifecycleListener = AppLifecycleListener(onResume: () => _permissionsStatuses());
   }
 
   void _permissionsStatuses() async {
@@ -84,8 +82,7 @@ class _SettingsScreenState extends State<SettingsScreen> with RouteAware {
 
   void _featureStatuses() async {
     final jsonStr = await select(
-      sql:
-          "SELECT value FROM settings WHERE key IN ('location', 'route', 'microphone', 'lock', 'volume', 'message') ORDER BY key",
+      sql: "SELECT value FROM settings WHERE key IN ('location', 'route', 'microphone', 'lock', 'volume', 'message') ORDER BY key",
     );
     final List data = jsonDecode(jsonStr);
 
@@ -151,24 +148,14 @@ class _SettingsScreenState extends State<SettingsScreen> with RouteAware {
         children: [
           Expanded(
             child: ListView(
-              padding: const EdgeInsets.fromLTRB(
-                0,
-                AppSpacing.lg,
-                0,
-                AppSpacing.lg,
-              ),
+              padding: const EdgeInsets.fromLTRB(0, AppSpacing.lg, 0, AppSpacing.lg),
               children: [
                 // Customization Section
                 CustomizationSection(
                   scheme: scheme,
                   local: local,
                   localeProvider: localeProvider,
-                  onThemePress: () => Navigator.of(context).push(
-                    AppRoute(
-                      page: ThemesScreen(),
-                      transition: AppRouteTransitionType.slideLeft,
-                    ),
-                  ),
+                  onThemePress: () => Navigator.of(context).push(AppRoute(page: ThemesScreen(), transition: AppRouteTransitionType.slideLeft)),
                   onLanguagePress: () {
                     showBlurredBottomSheet(
                       scheme: scheme,
@@ -177,13 +164,10 @@ class _SettingsScreenState extends State<SettingsScreen> with RouteAware {
                       child: ListView.separated(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        itemCount:
-                            AppLocalizationsDelegate.supportedLocales.length,
-                        separatorBuilder: (context, index) =>
-                            Divider(height: 1, color: scheme.outlineVariant),
+                        itemCount: AppLocalizationsDelegate.supportedLocales.length,
+                        separatorBuilder: (context, index) => Divider(height: 1, color: scheme.outlineVariant),
                         itemBuilder: (context, index) {
-                          final lang =
-                              AppLocalizationsDelegate.supportedLocales[index];
+                          final lang = AppLocalizationsDelegate.supportedLocales[index];
 
                           return Pressable(
                             factory: InkSparkle.splashFactory,
@@ -193,10 +177,7 @@ class _SettingsScreenState extends State<SettingsScreen> with RouteAware {
                             },
                             child: Padding(
                               padding: const EdgeInsets.all(AppSpacing.lg),
-                              child: Text(
-                                lang.label,
-                                style: AppText.body(scheme),
-                              ),
+                              child: Text(lang.label, style: AppText.body(scheme)),
                             ),
                           );
                         },
@@ -236,10 +217,8 @@ class _SettingsScreenState extends State<SettingsScreen> with RouteAware {
                   locationFeature: _locationFeature,
                   routeFeature: _routeFeature,
                   microphoneFeature: _microphoneFeature,
-                  locationWhenInUsePermissionStatus:
-                      _locationWhenInUsePermissionStatus,
-                  locationAlwaysPermissionStatus:
-                      _locationAlwaysPermissionStatus,
+                  locationWhenInUsePermissionStatus: _locationWhenInUsePermissionStatus,
+                  locationAlwaysPermissionStatus: _locationAlwaysPermissionStatus,
                   microphonePermissionStatus: _microphonePermissionStatus,
                   onRequestPermission: _requestPermissionStatus,
                   onLocationUpdate: (bool value) {
@@ -268,9 +247,7 @@ class _SettingsScreenState extends State<SettingsScreen> with RouteAware {
 
                     Uint8List bytes;
                     try {
-                      bytes = await exportBackup(
-                        appVersion: packageInfo.version,
-                      );
+                      bytes = await exportBackup(appVersion: packageInfo.version);
                     } catch (e, st) {
                       AppLogger.log.warning('Export Error', e, st);
                       if (context.mounted) {
@@ -280,11 +257,8 @@ class _SettingsScreenState extends State<SettingsScreen> with RouteAware {
                     }
 
                     final destination = await FilePicker.saveFile(
-                      dialogTitle: local.translate(
-                        "settings.sections.backup.export.2",
-                      ),
-                      fileName:
-                          'StillAlive_Backup_${DateTime.now().toIso8601String()}.zip',
+                      dialogTitle: local.translate("settings.sections.backup.export.2"),
+                      fileName: 'StillAlive_Backup_${DateTime.now().toIso8601String()}.zip',
                       type: FileType.custom,
                       allowedExtensions: ['zip'],
                       bytes: bytes,
@@ -294,28 +268,17 @@ class _SettingsScreenState extends State<SettingsScreen> with RouteAware {
 
                     showToast(
                       scheme: scheme,
-                      toast: Text(
-                        local.translate("settings.sections.backup.export.3"),
-                        style: AppText.bodySm(scheme),
-                        textAlign: TextAlign.center,
-                      ),
+                      toast: Text(local.translate("settings.sections.backup.export.3"), style: AppText.bodySm(scheme), textAlign: TextAlign.center),
                       gravity: ToastGravity.BOTTOM,
                       position: (context, child, gravity) {
-                        return Positioned(
-                          bottom: 170,
-                          left: 60,
-                          right: 60,
-                          child: child,
-                        );
+                        return Positioned(bottom: 170, left: 60, right: 60, child: child);
                       },
                       secs: 5,
                     );
                   },
                   onImport: () async {
                     final result = await FilePicker.pickFiles(
-                      dialogTitle: local.translate(
-                        "settings.sections.backup.import.2",
-                      ),
+                      dialogTitle: local.translate("settings.sections.backup.import.2"),
                       type: FileType.custom,
                       allowedExtensions: ['zip'],
                     );
@@ -325,10 +288,7 @@ class _SettingsScreenState extends State<SettingsScreen> with RouteAware {
                     final packageInfo = await PackageInfo.fromPlatform();
 
                     try {
-                      await importBackup(
-                        zipPath: result.files.single.path!,
-                        appVersion: packageInfo.version,
-                      );
+                      await importBackup(zipPath: result.files.single.path!, appVersion: packageInfo.version);
                     } catch (e, st) {
                       AppLogger.log.warning('Import Error', e, st);
                       if (context.mounted) {
@@ -339,19 +299,10 @@ class _SettingsScreenState extends State<SettingsScreen> with RouteAware {
 
                     showToast(
                       scheme: scheme,
-                      toast: Text(
-                        local.translate("settings.sections.backup.import.3"),
-                        style: AppText.bodySm(scheme),
-                        textAlign: TextAlign.center,
-                      ),
+                      toast: Text(local.translate("settings.sections.backup.import.3"), style: AppText.bodySm(scheme), textAlign: TextAlign.center),
                       gravity: ToastGravity.BOTTOM,
                       position: (context, child, gravity) {
-                        return Positioned(
-                          bottom: 170,
-                          left: 60,
-                          right: 60,
-                          child: child,
-                        );
+                        return Positioned(bottom: 170, left: 60, right: 60, child: child);
                       },
                       secs: 5,
                     );
@@ -388,19 +339,10 @@ class _SettingsScreenState extends State<SettingsScreen> with RouteAware {
 
                     showToast(
                       scheme: scheme,
-                      toast: Text(
-                        local.translate("settings.sections.danger.labels.3"),
-                        style: AppText.bodySm(scheme),
-                        textAlign: TextAlign.center,
-                      ),
+                      toast: Text(local.translate("settings.sections.danger.labels.3"), style: AppText.bodySm(scheme), textAlign: TextAlign.center),
                       gravity: ToastGravity.BOTTOM,
                       position: (context, child, gravity) {
-                        return Positioned(
-                          bottom: 210,
-                          left: 60,
-                          right: 60,
-                          child: child,
-                        );
+                        return Positioned(bottom: 210, left: 60, right: 60, child: child);
                       },
                       secs: 5,
                     );
@@ -415,12 +357,7 @@ class _SettingsScreenState extends State<SettingsScreen> with RouteAware {
                   children: [
                     CircleIconButton(
                       icon: FontAwesomeIcons.github.data,
-                      onTap: () => launchUrl(
-                        Uri.parse(
-                          "https://github.com/RafaelGouveia-1017/still_alive",
-                        ),
-                        mode: LaunchMode.externalApplication,
-                      ),
+                      onTap: () => launchUrl(Uri.parse("https://github.com/RafaelGouveia-1017/still_alive"), mode: LaunchMode.externalApplication),
                     ),
                     Center(
                       child: Column(
@@ -433,10 +370,7 @@ class _SettingsScreenState extends State<SettingsScreen> with RouteAware {
                                 future: PackageInfo.fromPlatform(),
                                 builder: (context, snapshot) {
                                   if (snapshot.data == null) {
-                                    return Text(
-                                      local.translate('app_name'),
-                                      style: AppText.micro(scheme),
-                                    );
+                                    return Text(local.translate('app_name'), style: AppText.micro(scheme));
                                   } else {
                                     return Text(
                                       '${local.translate('app_name')} '
@@ -453,16 +387,9 @@ class _SettingsScreenState extends State<SettingsScreen> with RouteAware {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(
-                                local.translate("settings.footer"),
-                                style: AppText.micro(scheme),
-                              ),
+                              Text(local.translate("settings.footer"), style: AppText.micro(scheme)),
                               const SizedBox(width: AppSpacing.xxs),
-                              Image.asset(
-                                "lib/assets/bmc-logo.png",
-                                height: 20,
-                                filterQuality: FilterQuality.high,
-                              ),
+                              Image.asset("lib/assets/bmc-logo.png", height: 20, filterQuality: FilterQuality.high),
                             ],
                           ),
                         ],
@@ -470,10 +397,7 @@ class _SettingsScreenState extends State<SettingsScreen> with RouteAware {
                     ),
                     CircleIconButton(
                       icon: FontAwesomeIcons.koFi.data,
-                      onTap: () => launchUrl(
-                        Uri.parse("https://ko-fi.com/rafaelgouveia1017"),
-                        mode: LaunchMode.externalApplication,
-                      ),
+                      onTap: () => launchUrl(Uri.parse("https://ko-fi.com/rafaelgouveia1017"), mode: LaunchMode.externalApplication),
                     ),
                   ],
                 ),

@@ -31,13 +31,10 @@ class PasswordInput extends StatefulWidget {
   ///
   /// [onHashChanged] is called whenever the password hash changes. A `null`
   /// value indicates that no password is currently configured.
-  const PasswordInput.newTimer({
-    super.key,
-    required this.onProtectedChanged,
-    required this.onHashChanged,
-  }) : isNew = true,
-       protected = null,
-       hasHash = false;
+  const PasswordInput.newTimer({super.key, required this.onProtectedChanged, required this.onHashChanged})
+    : isNew = true,
+      protected = null,
+      hasHash = false;
 
   /// Creates a password input for an existing timer.
   ///
@@ -125,9 +122,7 @@ class _PasswordInputState extends State<PasswordInput> {
   }
 
   void loadPref() async {
-    String value = await selectOne(
-      sql: "SELECT value FROM settings WHERE key = 'lock'",
-    );
+    String value = await selectOne(sql: "SELECT value FROM settings WHERE key = 'lock'");
 
     bool pref = (value == "true");
 
@@ -193,17 +188,12 @@ class _PasswordInputState extends State<PasswordInput> {
     AppLocalizations local = AppLocalizations.of(context)!;
 
     return AppCard(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.sm,
-        vertical: AppSpacing.sm,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.sm),
       child: (_isLoading)
           ? SizedBox(
               width: 40,
               height: 40,
-              child: Center(
-                child: CircularProgressIndicator(color: scheme.tertiary),
-              ),
+              child: Center(child: CircularProgressIndicator(color: scheme.tertiary)),
             )
           : Column(
               children: [
@@ -215,23 +205,12 @@ class _PasswordInputState extends State<PasswordInput> {
                           _setProtected(!_protected);
                         },
                   child: AppRow(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: AppSpacing.xxxs,
-                      horizontal: AppSpacing.sm,
-                    ),
-                    title: local.translate(
-                      "timer_configuration.security.password.cancel_password",
-                    ),
+                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxxs, horizontal: AppSpacing.sm),
+                    title: local.translate("timer_configuration.security.password.cancel_password"),
                     subtitle: (_protected)
-                        ? local.translate(
-                            "timer_configuration.security.password.pin_requirement.on",
-                          )
-                        : local.translate(
-                            "timer_configuration.security.password.pin_requirement.off",
-                          ),
-                    icon: (_protected)
-                        ? LucideIcons.lock
-                        : LucideIcons.lockOpen,
+                        ? local.translate("timer_configuration.security.password.pin_requirement.on")
+                        : local.translate("timer_configuration.security.password.pin_requirement.off"),
+                    icon: (_protected) ? LucideIcons.lock : LucideIcons.lockOpen,
                     iconColor: scheme.secondary,
                     trailing: AppToggle(on: _protected),
                   ),
@@ -241,9 +220,7 @@ class _PasswordInputState extends State<PasswordInput> {
                     duration: AppMotion.fasterer,
                     curve: AppMotion.easeInOut,
                     alignment: Alignment.topCenter,
-                    child: _protected
-                        ? _buildPasswordSection(context, local, scheme)
-                        : const SizedBox.shrink(),
+                    child: _protected ? _buildPasswordSection(context, local, scheme) : const SizedBox.shrink(),
                   ),
                 ),
               ],
@@ -251,25 +228,15 @@ class _PasswordInputState extends State<PasswordInput> {
     );
   }
 
-  Widget _buildPasswordSection(
-    BuildContext context,
-    AppLocalizations local,
-    ColorScheme scheme,
-  ) {
+  Widget _buildPasswordSection(BuildContext context, AppLocalizations local, ColorScheme scheme) {
     // Existing timer with an already configured password.
     if (!widget.isNew && _hasHash) {
       return SizedBox(
         width: double.infinity,
         child: Padding(
-          padding: const EdgeInsets.only(
-            top: AppSpacing.lg,
-            bottom: AppSpacing.sm,
-          ),
+          padding: const EdgeInsets.only(top: AppSpacing.lg, bottom: AppSpacing.sm),
           child: Center(
-            child: Text(
-              local.translate("timer_configuration.security.password.exists"),
-              style: AppText.bodySm(scheme).copyWith(color: scheme.error),
-            ),
+            child: Text(local.translate("timer_configuration.security.password.exists"), style: AppText.bodySm(scheme).copyWith(color: scheme.error)),
           ),
         ),
       );
@@ -291,14 +258,9 @@ class _PasswordInputState extends State<PasswordInput> {
             scrollPadding: const EdgeInsets.all(0),
             inputFormatters: [FilteringTextInputFormatter.singleLineFormatter],
             decoration: InputDecoration(
-              hintText: local.translate(
-                "timer_configuration.security.password.password_hint",
-              ),
+              hintText: local.translate("timer_configuration.security.password.password_hint"),
               counterText: '',
-              contentPadding: const EdgeInsets.only(
-                top: AppSpacing.lg,
-                bottom: AppSpacing.sm,
-              ),
+              contentPadding: const EdgeInsets.only(top: AppSpacing.lg, bottom: AppSpacing.sm),
               border: InputBorder.none,
               prefixIcon: Padding(
                 padding: const EdgeInsets.only(top: AppSpacing.ms),
@@ -310,10 +272,7 @@ class _PasswordInputState extends State<PasswordInput> {
               fillColor: Colors.transparent,
             ),
             onTap: () {
-              _passController.selection = TextSelection(
-                baseOffset: 0,
-                extentOffset: _passController.text.length,
-              );
+              _passController.selection = TextSelection(baseOffset: 0, extentOffset: _passController.text.length);
             },
             onChanged: _onPasswordChanged,
             errorBuilder: (context, errorText) => Align(
@@ -321,17 +280,12 @@ class _PasswordInputState extends State<PasswordInput> {
               child: Text(
                 errorText,
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.error,
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 12),
               ),
             ),
             validator: (value) {
               if (value == null || value.trim().isEmpty) {
-                return local.translate(
-                  "timer_configuration.security.password.validation",
-                );
+                return local.translate("timer_configuration.security.password.validation");
               }
               return null;
             },
@@ -342,37 +296,20 @@ class _PasswordInputState extends State<PasswordInput> {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                scheme.primary.withAlpha(38),
-                scheme.secondary.withAlpha(26),
-              ],
+              colors: [scheme.primary.withAlpha(38), scheme.secondary.withAlpha(26)],
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
-                  LucideIcons.triangleAlert,
-                  size: 20,
-                  color: scheme.secondary,
-                ),
+                Icon(LucideIcons.triangleAlert, size: 20, color: scheme.secondary),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        local.translate(
-                          "timer_configuration.security.password.note.title",
-                        ),
-                        style: AppText.bodySm(scheme),
-                      ),
+                      Text(local.translate("timer_configuration.security.password.note.title"), style: AppText.bodySm(scheme)),
                       const SizedBox(height: 4),
-                      Text(
-                        local.translate(
-                          "timer_configuration.security.password.note.description",
-                        ),
-                        style: AppText.caption(scheme),
-                      ),
+                      Text(local.translate("timer_configuration.security.password.note.description"), style: AppText.caption(scheme)),
                     ],
                   ),
                 ),

@@ -16,11 +16,7 @@ import '../../../../widgets/primitives.dart';
 /// Displays the number of selected integration accounts and destinations and
 /// opens [IntegrationSelectionScreen] when tapped.
 class IntegrationSelection extends StatefulWidget {
-  const IntegrationSelection({
-    super.key,
-    required this.integrations,
-    required this.onChanged,
-  });
+  const IntegrationSelection({super.key, required this.integrations, required this.onChanged});
 
   final TimerIntegrations integrations;
   final ValueChanged<TimerIntegrations> onChanged;
@@ -66,12 +62,10 @@ class _IntegrationSelectionState extends State<IntegrationSelection> {
           subtitle = null;
           break;
         case 1:
-          subtitle =
-              '1 ${local.translate("timer_configuration.integrations.destination.0")}';
+          subtitle = '1 ${local.translate("timer_configuration.integrations.destination.0")}';
           break;
         default:
-          subtitle =
-              '$destinations ${local.translate("timer_configuration.integrations.destination.1")}';
+          subtitle = '$destinations ${local.translate("timer_configuration.integrations.destination.1")}';
           break;
       }
     }
@@ -126,11 +120,7 @@ class _IntegrationSelectionState extends State<IntegrationSelection> {
           icon: (plugins != 0) ? LucideIcons.blocks : LucideIcons.grid2X2X,
           iconRotateAngle: (plugins != 0) ? 0 : -math.pi / 2,
           iconColor: scheme.secondary,
-          trailing: Icon(
-            LucideIcons.chevronRight,
-            size: 18,
-            color: scheme.onSurfaceVariant,
-          ),
+          trailing: Icon(LucideIcons.chevronRight, size: 18, color: scheme.onSurfaceVariant),
         ),
       ),
     );
@@ -144,18 +134,13 @@ class _IntegrationSelectionState extends State<IntegrationSelection> {
 /// destinations. Users can select or deselect individual destinations, and
 /// changes are reported through [onChanged].
 class IntegrationSelectionScreen extends StatefulWidget {
-  const IntegrationSelectionScreen({
-    super.key,
-    required this.integrations,
-    required this.onChanged,
-  });
+  const IntegrationSelectionScreen({super.key, required this.integrations, required this.onChanged});
 
   final TimerIntegrations integrations;
   final ValueChanged<TimerIntegrations> onChanged;
 
   @override
-  State<IntegrationSelectionScreen> createState() =>
-      _IntegrationSelectionScreenState();
+  State<IntegrationSelectionScreen> createState() => _IntegrationSelectionScreenState();
 }
 
 /// State implementation for [IntegrationSelectionScreen].
@@ -164,8 +149,7 @@ class IntegrationSelectionScreen extends StatefulWidget {
 /// selection. It provides the logic required to select and deselect
 /// individual destinations while keeping the timer configuration immutable
 /// between updates.
-class _IntegrationSelectionScreenState
-    extends State<IntegrationSelectionScreen> {
+class _IntegrationSelectionScreenState extends State<IntegrationSelectionScreen> {
   late TimerIntegrations _integrations;
   late List<IntegrationInfo> _integrationItems;
 
@@ -233,8 +217,7 @@ class _IntegrationSelectionScreenState
 
       switch (plugins) {
         case 1:
-          part1 =
-              '1 ${local.translate("timer_configuration.integrations.account.0")}';
+          part1 = '1 ${local.translate("timer_configuration.integrations.account.0")}';
           break;
         default:
           part1 =
@@ -248,8 +231,7 @@ class _IntegrationSelectionScreenState
           part2 = '';
           break;
         case 1:
-          part2 =
-              ' • 1 ${local.translate("timer_configuration.integrations.destination.0")}';
+          part2 = ' • 1 ${local.translate("timer_configuration.integrations.destination.0")}';
           break;
         default:
           part2 =
@@ -264,9 +246,7 @@ class _IntegrationSelectionScreenState
     return subtitle;
   }
 
-  TimerIntegration _getTimerIntegrationByProvider(
-    IntegrationProvider provider,
-  ) {
+  TimerIntegration _getTimerIntegrationByProvider(IntegrationProvider provider) {
     switch (provider) {
       case IntegrationProvider.discord:
         return _integrations.discord;
@@ -275,107 +255,58 @@ class _IntegrationSelectionScreenState
     }
   }
 
-  TimerIntegrationAccount? _getIntegrationAccountInTimer(
-    TimerIntegration integration,
-    String accountID,
-  ) {
-    return integration.accounts.firstWhereOrNull(
-      (account) => account.id == accountID,
-    );
+  TimerIntegrationAccount? _getIntegrationAccountInTimer(TimerIntegration integration, String accountID) {
+    return integration.accounts.firstWhereOrNull((account) => account.id == accountID);
   }
 
-  bool _isAccountDestinationInTimer(
-    TimerIntegrationAccount account,
-    String destinationID,
-  ) {
+  bool _isAccountDestinationInTimer(TimerIntegrationAccount account, String destinationID) {
     return account.destinations.any((dest) => dest == destinationID);
   }
 
-  void _selectAccountDestination({
-    required IntegrationProvider provider,
-    required String accountID,
-    required String destinationID,
-  }) {
+  void _selectAccountDestination({required IntegrationProvider provider, required String accountID, required String destinationID}) {
     final integration = _getTimerIntegrationByProvider(provider);
-    final existingAccount = _getIntegrationAccountInTimer(
-      integration,
-      accountID,
-    );
+    final existingAccount = _getIntegrationAccountInTimer(integration, accountID);
 
     final updatedAccount = (existingAccount == null)
         ? TimerIntegrationAccount(id: accountID, destinations: [destinationID])
         : TimerIntegrationAccount(
             id: existingAccount.id,
-            destinations: [
-              ...existingAccount.destinations,
-              if (!_isAccountDestinationInTimer(existingAccount, destinationID))
-                destinationID,
-            ],
+            destinations: [...existingAccount.destinations, if (!_isAccountDestinationInTimer(existingAccount, destinationID)) destinationID],
           );
 
-    if (existingAccount != null &&
-        _isAccountDestinationInTimer(existingAccount, destinationID)) {
+    if (existingAccount != null && _isAccountDestinationInTimer(existingAccount, destinationID)) {
       return;
     }
 
-    final updatedIntegration = TimerIntegration(
-      accounts: [
-        ...integration.accounts.where((account) => account.id != accountID),
-        updatedAccount,
-      ],
-    );
+    final updatedIntegration = TimerIntegration(accounts: [...integration.accounts.where((account) => account.id != accountID), updatedAccount]);
 
     _setTimerIntegration(provider, updatedIntegration);
   }
 
-  void _deselectAccountDestination({
-    required IntegrationProvider provider,
-    required String accountID,
-    required String destinationID,
-  }) {
+  void _deselectAccountDestination({required IntegrationProvider provider, required String accountID, required String destinationID}) {
     final integration = _getTimerIntegrationByProvider(provider);
 
-    final existingAccount = _getIntegrationAccountInTimer(
-      integration,
-      accountID,
-    );
+    final existingAccount = _getIntegrationAccountInTimer(integration, accountID);
 
-    if (existingAccount == null ||
-        !_isAccountDestinationInTimer(existingAccount, destinationID)) {
+    if (existingAccount == null || !_isAccountDestinationInTimer(existingAccount, destinationID)) {
       return;
     }
 
-    final destinations = existingAccount.destinations
-        .where((id) => id != destinationID)
-        .toList();
+    final destinations = existingAccount.destinations.where((id) => id != destinationID).toList();
 
-    final accounts = integration.accounts
-        .where((account) => account.id != accountID)
-        .toList();
+    final accounts = integration.accounts.where((account) => account.id != accountID).toList();
 
     if (destinations.isNotEmpty) {
-      accounts.add(
-        TimerIntegrationAccount(
-          id: existingAccount.id,
-          destinations: destinations,
-        ),
-      );
+      accounts.add(TimerIntegrationAccount(id: existingAccount.id, destinations: destinations));
     }
 
     _setTimerIntegration(provider, TimerIntegration(accounts: accounts));
   }
 
-  void _setTimerIntegration(
-    IntegrationProvider provider,
-    TimerIntegration integration,
-  ) {
+  void _setTimerIntegration(IntegrationProvider provider, TimerIntegration integration) {
     _integrations = TimerIntegrations(
-      discord: provider == IntegrationProvider.discord
-          ? integration
-          : _integrations.discord,
-      telegram: provider == IntegrationProvider.telegram
-          ? integration
-          : _integrations.telegram,
+      discord: provider == IntegrationProvider.discord ? integration : _integrations.discord,
+      telegram: provider == IntegrationProvider.telegram ? integration : _integrations.telegram,
     );
 
     _updateTimerIntegrations();
@@ -393,29 +324,21 @@ class _IntegrationSelectionScreenState
 
     List<IntegrationInfo> connectedIntegrations = [];
     if (!_isLoading) {
-      connectedIntegrations = _integrationItems
-          .where((integration) => integration.accounts.isNotEmpty)
-          .toList();
+      connectedIntegrations = _integrationItems.where((integration) => integration.accounts.isNotEmpty).toList();
     }
 
     return ScreenBase(
       header: AppHeader(
         title: local.translate("timer_configuration.integrations.title"),
         subtitle: _getSubtitle(),
-        left: CircleIconButton(
-          icon: LucideIcons.chevronLeft,
-          onTap: () => Navigator.pop(context),
-        ),
+        left: CircleIconButton(icon: LucideIcons.chevronLeft, onTap: () => Navigator.pop(context)),
       ),
       child: Column(
         children: [
           Expanded(
             child: ListView(
               physics: const ClampingScrollPhysics(),
-              padding: const EdgeInsets.only(
-                top: AppSpacing.xl,
-                bottom: AppSpacing.lg,
-              ),
+              padding: const EdgeInsets.only(top: AppSpacing.xl, bottom: AppSpacing.lg),
               children: [
                 if (_isLoading) ...[
                   Padding(
@@ -423,11 +346,7 @@ class _IntegrationSelectionScreenState
                     child: SizedBox(
                       width: 44,
                       height: 44,
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          color: scheme.tertiary,
-                        ),
-                      ),
+                      child: Center(child: CircularProgressIndicator(color: scheme.tertiary)),
                     ),
                   ),
                 ] else if (connectedIntegrations.isEmpty) ...[
@@ -441,22 +360,14 @@ class _IntegrationSelectionScreenState
                         borderRadius: BorderRadius.circular(AppRadius.xxl),
                         border: Border.all(color: scheme.outlineVariant),
                       ),
-                      child: Icon(
-                        LucideIcons.webhookOff,
-                        size: 36,
-                        color: scheme.onSurfaceVariant,
-                      ),
+                      child: Icon(LucideIcons.webhookOff, size: 36, color: scheme.onSurfaceVariant),
                     ),
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   Center(
                     child: Text(
-                      local.translate(
-                        "timer_configuration.integrations.no_integrations",
-                      ),
-                      style: AppText.bodySm(
-                        scheme,
-                      ).copyWith(color: scheme.onSurfaceVariant),
+                      local.translate("timer_configuration.integrations.no_integrations"),
+                      style: AppText.bodySm(scheme).copyWith(color: scheme.onSurfaceVariant),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -465,15 +376,8 @@ class _IntegrationSelectionScreenState
                   AppExpandableGroup(
                     children: [
                       for (final it in connectedIntegrations)
-                        for (final entry
-                            in it.groupDestinationsByAccount.entries)
-                          _buildAccountCard(
-                            scheme: scheme,
-                            local: local,
-                            integration: it,
-                            account: entry.key,
-                            destinationGroups: entry.value,
-                          ),
+                        for (final entry in it.groupDestinationsByAccount.entries)
+                          _buildAccountCard(scheme: scheme, local: local, integration: it, account: entry.key, destinationGroups: entry.value),
                     ],
                   ),
                 ],
@@ -492,27 +396,15 @@ class _IntegrationSelectionScreenState
     required IntegrationAccount account,
     required Map<String, List<MessageDestination>> destinationGroups,
   }) {
-    final timerIntegration = _getTimerIntegrationByProvider(
-      integration.provider,
-    );
+    final timerIntegration = _getTimerIntegrationByProvider(integration.provider);
 
-    final timerAccount = _getIntegrationAccountInTimer(
-      timerIntegration,
-      account.id,
-    );
+    final timerAccount = _getIntegrationAccountInTimer(timerIntegration, account.id);
 
-    int totalDestinations = destinationGroups.values.fold<int>(
-      0,
-      (total, destinations) => total + destinations.length,
-    );
+    int totalDestinations = destinationGroups.values.fold<int>(0, (total, destinations) => total + destinations.length);
 
     int selectedDestinations = destinationGroups.values
         .expand((destinations) => destinations)
-        .where(
-          (destination) =>
-              timerAccount != null &&
-              _isAccountDestinationInTimer(timerAccount, destination.id),
-        )
+        .where((destination) => timerAccount != null && _isAccountDestinationInTimer(timerAccount, destination.id))
         .length;
 
     return AppExpandableCard(
@@ -530,22 +422,12 @@ class _IntegrationSelectionScreenState
         child: Column(
           children: [
             if (totalDestinations == 0)
-              Text(
-                local.translate(
-                  "timer_configuration.integrations.no_destinations",
-                ),
-                style: AppText.bodySm(scheme),
-                textAlign: TextAlign.center,
-              )
+              Text(local.translate("timer_configuration.integrations.no_destinations"), style: AppText.bodySm(scheme), textAlign: TextAlign.center)
             else
               for (final entry in destinationGroups.entries) ...[
                 if (entry.key.isNotEmpty)
                   Padding(
-                    padding: const EdgeInsets.only(
-                      left: AppSpacing.md,
-                      right: AppSpacing.md,
-                      bottom: AppSpacing.xs,
-                    ),
+                    padding: const EdgeInsets.only(left: AppSpacing.md, right: AppSpacing.md, bottom: AppSpacing.xs),
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text(entry.key, style: AppText.caption(scheme)),
@@ -574,37 +456,20 @@ class _IntegrationSelectionScreenState
     required MessageDestination destination,
     required TimerIntegrationAccount? timerAccount,
   }) {
-    final selected =
-        timerAccount != null &&
-        _isAccountDestinationInTimer(timerAccount, destination.id);
+    final selected = timerAccount != null && _isAccountDestinationInTimer(timerAccount, destination.id);
 
     return Pressable(
       onTap: () {
         if (selected) {
-          _deselectAccountDestination(
-            provider: provider,
-            accountID: accountID,
-            destinationID: destination.id,
-          );
+          _deselectAccountDestination(provider: provider, accountID: accountID, destinationID: destination.id);
         } else {
-          _selectAccountDestination(
-            provider: provider,
-            accountID: accountID,
-            destinationID: destination.id,
-          );
+          _selectAccountDestination(provider: provider, accountID: accountID, destinationID: destination.id);
         }
       },
       child: AppRow(
         title: destination.name,
-        padding: const EdgeInsets.symmetric(
-          vertical: AppSpacing.md,
-          horizontal: AppRadius.lg,
-        ),
-        trailing: Icon(
-          selected ? LucideIcons.squareCheck : LucideIcons.square,
-          size: 20,
-          color: scheme.onSurfaceVariant,
-        ),
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.md, horizontal: AppRadius.lg),
+        trailing: Icon(selected ? LucideIcons.squareCheck : LucideIcons.square, size: 20, color: scheme.onSurfaceVariant),
       ),
     );
   }

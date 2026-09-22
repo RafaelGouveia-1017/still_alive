@@ -91,8 +91,7 @@ class PermissionManager {
   /// Returns `true` if all required permissions are granted,
   /// otherwise returns `false`.
   Future<bool> hasAllNeededPermissions() async {
-    final fullScreenIntentGranted = await AppMethodChannel.instance
-        .invokeMethod<bool>('canUseFullScreenIntent');
+    final fullScreenIntentGranted = await AppMethodChannel.instance.invokeMethod<bool>('canUseFullScreenIntent');
     return (fullScreenIntentGranted ?? true) &&
         await Permission.contacts.isGranted &&
         await Permission.sms.isGranted &&
@@ -119,10 +118,7 @@ class PermissionManager {
     if (PermissionRouteTracker.instance.isPermissionScreenActive) return;
 
     navigatorKey.currentState?.pushAndRemoveUntil(
-      AppRoute(
-        page: OnboardingScreen(startPage: 2),
-        transition: AppRouteTransitionType.fade,
-      ),
+      AppRoute(page: OnboardingScreen(startPage: 2), transition: AppRouteTransitionType.fade),
       (route) => false,
     );
   }

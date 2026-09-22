@@ -11,12 +11,7 @@ import '../../widgets/primitives.dart';
 /// [IntegrationRow]. The screen also displays the integration title and
 /// channel name associated with the QR code.
 class QrCodeScreen extends StatefulWidget {
-  const QrCodeScreen({
-    super.key,
-    required this.integrationTitle,
-    required this.accountName,
-    required this.qrData,
-  });
+  const QrCodeScreen({super.key, required this.integrationTitle, required this.accountName, required this.qrData});
 
   final String integrationTitle;
   final String accountName;
@@ -36,10 +31,7 @@ class _QrCodeScreenState extends State<QrCodeScreen> {
     return ScreenBase(
       header: AppHeader(
         title: local.translate("qr_display.title"),
-        left: CircleIconButton(
-          icon: LucideIcons.chevronLeft,
-          onTap: () => Navigator.of(context).pop(),
-        ),
+        left: CircleIconButton(icon: LucideIcons.chevronLeft, onTap: () => Navigator.of(context).pop()),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -50,36 +42,20 @@ class _QrCodeScreenState extends State<QrCodeScreen> {
               DecoratedBox(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(AppRadius.xxl),
-                  boxShadow: [
-                    BoxShadow(
-                      color: scheme.secondary.withAlpha(128),
-                      blurRadius: 60,
-                      spreadRadius: -20,
-                      offset: Offset(0, 20),
-                    ),
-                  ],
+                  boxShadow: [BoxShadow(color: scheme.secondary.withAlpha(128), blurRadius: 60, spreadRadius: -20, offset: Offset(0, 20))],
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(AppRadius.xxl),
                   child: QrImageView(
                     data: widget.qrData,
                     size: 300,
-                    backgroundColor: (scheme.brightness == Brightness.dark)
-                        ? Colors.black
-                        : Colors.white,
+                    backgroundColor: (scheme.brightness == Brightness.dark) ? Colors.black : Colors.white,
                     padding: const EdgeInsets.all(AppSpacing.xxl),
                     errorCorrectionLevel: QrErrorCorrectLevel.H,
-                    eyeStyle: QrEyeStyle(
-                      eyeShape: QrEyeShape.square,
-                      color: (scheme.brightness == Brightness.light)
-                          ? Colors.black
-                          : Colors.white,
-                    ),
+                    eyeStyle: QrEyeStyle(eyeShape: QrEyeShape.square, color: (scheme.brightness == Brightness.light) ? Colors.black : Colors.white),
                     dataModuleStyle: QrDataModuleStyle(
                       dataModuleShape: QrDataModuleShape.square,
-                      color: (scheme.brightness == Brightness.light)
-                          ? Colors.black
-                          : Colors.white,
+                      color: (scheme.brightness == Brightness.light) ? Colors.black : Colors.white,
                     ),
                   ),
                 ),
@@ -90,17 +66,9 @@ class _QrCodeScreenState extends State<QrCodeScreen> {
                 height: 60,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(AppRadius.pill),
-                  color: (scheme.brightness == Brightness.dark)
-                      ? Colors.black
-                      : Colors.white,
+                  color: (scheme.brightness == Brightness.dark) ? Colors.black : Colors.white,
                 ),
-                child: Icon(
-                  LucideIcons.shield,
-                  size: 32,
-                  color: (scheme.brightness == Brightness.light)
-                      ? Colors.black
-                      : Colors.white,
-                ),
+                child: Icon(LucideIcons.shield, size: 32, color: (scheme.brightness == Brightness.light) ? Colors.black : Colors.white),
               ),
             ],
           ),
@@ -108,17 +76,9 @@ class _QrCodeScreenState extends State<QrCodeScreen> {
           const SizedBox(height: AppSpacing.xl),
           Column(
             children: [
-              Text(
-                widget.accountName,
-                style: AppText.sectionLabel(scheme).copyWith(letterSpacing: 2),
-              ),
+              Text(widget.accountName, style: AppText.sectionLabel(scheme).copyWith(letterSpacing: 2)),
               const SizedBox(height: AppSpacing.xxs),
-              Text(
-                widget.integrationTitle,
-                style: AppText.h2(
-                  scheme,
-                ).copyWith(fontSize: AppSpacing.xl, letterSpacing: 4),
-              ),
+              Text(widget.integrationTitle, style: AppText.h2(scheme).copyWith(fontSize: AppSpacing.xl, letterSpacing: 4)),
             ],
           ),
         ],

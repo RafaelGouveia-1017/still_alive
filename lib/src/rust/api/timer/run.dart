@@ -57,25 +57,17 @@ class TimerRun {
   /// # Returns
   ///
   /// The state the timer should currently have at `now_ms`.
-  Future<TimerState> evaluateState({required PlatformInt64 nowMs}) => RustLib
-      .instance
-      .api
-      .crateApiTimerRunTimerRunEvaluateState(that: this, nowMs: nowMs);
+  Future<TimerState> evaluateState({required PlatformInt64 nowMs}) =>
+      RustLib.instance.api.crateApiTimerRunTimerRunEvaluateState(that: this, nowMs: nowMs);
 
   /// Returns whether the timer is currently active.
   ///
   /// A timer is considered active while it is [`TimerState::Running`].
-  Future<bool> isActive() =>
-      RustLib.instance.api.crateApiTimerRunTimerRunIsActive(that: this);
+  Future<bool> isActive() => RustLib.instance.api.crateApiTimerRunTimerRunIsActive(that: this);
 
   @override
   int get hashCode =>
-      timerId.hashCode ^
-      state.hashCode ^
-      startedAtMs.hashCode ^
-      expiresAtMs.hashCode ^
-      warningDurationMs.hashCode ^
-      pausedAtMs.hashCode;
+      timerId.hashCode ^ state.hashCode ^ startedAtMs.hashCode ^ expiresAtMs.hashCode ^ warningDurationMs.hashCode ^ pausedAtMs.hashCode;
 
   @override
   bool operator ==(Object other) =>

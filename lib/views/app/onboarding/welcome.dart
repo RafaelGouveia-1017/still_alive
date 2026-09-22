@@ -22,11 +22,10 @@ class WelcomePage extends StatelessWidget {
     AppLocalizations local = AppLocalizations.of(context)!;
     LocaleProvider localeProvider = Provider.of<LocaleProvider>(context);
 
-    AppLanguage currentLanguage = AppLocalizationsDelegate.supportedLocales
-        .firstWhere(
-          (l) => l.locale == localeProvider.locale,
-          orElse: () => AppLocalizationsDelegate.supportedLocales.first,
-        );
+    AppLanguage currentLanguage = AppLocalizationsDelegate.supportedLocales.firstWhere(
+      (l) => l.locale == localeProvider.locale,
+      orElse: () => AppLocalizationsDelegate.supportedLocales.first,
+    );
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl),
@@ -37,11 +36,7 @@ class WelcomePage extends StatelessWidget {
             width: 96,
             height: 96,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [scheme.primary, scheme.secondary],
-              ),
+              gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [scheme.primary, scheme.secondary]),
               borderRadius: BorderRadius.circular(AppRadius.xxl),
               boxShadow: AppShadows.boxShadow(scheme.primary),
             ),
@@ -55,46 +50,28 @@ class WelcomePage extends StatelessWidget {
             child: Text(
               local.translate("welcome.tagline"),
               textAlign: TextAlign.center,
-              style: AppText.body(
-                scheme.copyWith(onSurface: scheme.onSurfaceVariant),
-              ),
+              style: AppText.body(scheme.copyWith(onSurface: scheme.onSurfaceVariant)),
             ),
           ),
           const SizedBox(height: 40),
           SizedBox(
             child: Column(
               children: [
-                SectionTitle(
-                  local.translate("settings.sections.customization.title"),
-                ),
+                SectionTitle(local.translate("settings.sections.customization.title")),
                 AppCard(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: AppSpacing.lg,
-                    vertical: AppSpacing.xxs,
-                  ),
+                  padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.xxs),
                   child: Column(
                     children: [
                       Pressable(
-                        onTap: () => Navigator.of(context).push(
-                          AppRoute(
-                            page: ThemesScreen(),
-                            transition: AppRouteTransitionType.slideLeft,
-                          ),
-                        ),
+                        onTap: () => Navigator.of(context).push(AppRoute(page: ThemesScreen(), transition: AppRouteTransitionType.slideLeft)),
                         child: FutureBuilder<String>(
                           future: CustomTheme.load(),
                           builder: (context, snapshot) {
                             return AppRow(
                               icon: LucideIcons.palette,
-                              title: local.translate(
-                                "settings.sections.customization.labels.0",
-                              ),
-                              subtitle:
-                                  "${local.translate("settings.sections.customization.labels.1")} ${snapshot.data}",
-                              trailing: Icon(
-                                LucideIcons.chevronRight,
-                                size: 18,
-                              ),
+                              title: local.translate("settings.sections.customization.labels.0"),
+                              subtitle: "${local.translate("settings.sections.customization.labels.1")} ${snapshot.data}",
+                              trailing: Icon(LucideIcons.chevronRight, size: 18),
                             );
                           },
                         ),
@@ -109,16 +86,10 @@ class WelcomePage extends StatelessWidget {
                             child: ListView.separated(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
-                              itemCount: AppLocalizationsDelegate
-                                  .supportedLocales
-                                  .length,
-                              separatorBuilder: (context, index) => Divider(
-                                height: 1,
-                                color: scheme.outlineVariant,
-                              ),
+                              itemCount: AppLocalizationsDelegate.supportedLocales.length,
+                              separatorBuilder: (context, index) => Divider(height: 1, color: scheme.outlineVariant),
                               itemBuilder: (context, index) {
-                                final lang = AppLocalizationsDelegate
-                                    .supportedLocales[index];
+                                final lang = AppLocalizationsDelegate.supportedLocales[index];
 
                                 return Pressable(
                                   factory: InkSparkle.splashFactory,
@@ -127,13 +98,8 @@ class WelcomePage extends StatelessWidget {
                                     Navigator.pop(context);
                                   },
                                   child: Padding(
-                                    padding: const EdgeInsets.all(
-                                      AppSpacing.lg,
-                                    ),
-                                    child: Text(
-                                      lang.label,
-                                      style: AppText.body(scheme),
-                                    ),
+                                    padding: const EdgeInsets.all(AppSpacing.lg),
+                                    child: Text(lang.label, style: AppText.body(scheme)),
                                   ),
                                 );
                               },
@@ -142,11 +108,8 @@ class WelcomePage extends StatelessWidget {
                         },
                         child: AppRow(
                           icon: LucideIcons.languages,
-                          title: local.translate(
-                            "settings.sections.customization.labels.2",
-                          ),
-                          subtitle:
-                              "${local.translate("settings.sections.customization.labels.1")} ${currentLanguage.label}",
+                          title: local.translate("settings.sections.customization.labels.2"),
+                          subtitle: "${local.translate("settings.sections.customization.labels.1")} ${currentLanguage.label}",
                           trailing: Icon(LucideIcons.chevronRight, size: 18),
                         ),
                       ),

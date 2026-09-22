@@ -47,10 +47,7 @@ class AppThemes {
   static ColorScheme _scheme(CustomTheme theme) {
     switch (theme) {
       case CustomTheme.smartBell:
-        return ColorScheme.fromSeed(
-          seedColor: const Color(0xFF3D6FFF),
-          brightness: Brightness.dark,
-        ).copyWith(
+        return ColorScheme.fromSeed(seedColor: const Color(0xFF3D6FFF), brightness: Brightness.dark).copyWith(
           // Brand
           primary: const Color(0xFF3D6FFF),
           onPrimary: const Color(0xFFE8EAF0),
@@ -93,10 +90,7 @@ class AppThemes {
         );
 
       case CustomTheme.dracula:
-        return ColorScheme.fromSeed(
-          seedColor: const Color(0xFF6272A4),
-          brightness: Brightness.dark,
-        ).copyWith(
+        return ColorScheme.fromSeed(seedColor: const Color(0xFF6272A4), brightness: Brightness.dark).copyWith(
           primary: const Color(0xFF6272A4),
           secondary: const Color(0xFFBD93F9),
 
@@ -116,10 +110,7 @@ class AppThemes {
         );
 
       case CustomTheme.alucard:
-        return ColorScheme.fromSeed(
-          seedColor: const Color(0xFF6272A4),
-          brightness: Brightness.light,
-        ).copyWith(
+        return ColorScheme.fromSeed(seedColor: const Color(0xFF6272A4), brightness: Brightness.light).copyWith(
           primary: const Color(0xFF6272A4),
           secondary: const Color(0xFFBD93F9),
 
@@ -140,10 +131,7 @@ class AppThemes {
         );
 
       case CustomTheme.colbalt2:
-        return ColorScheme.fromSeed(
-          seedColor: const Color(0xFFFFC600),
-          brightness: Brightness.dark,
-        ).copyWith(
+        return ColorScheme.fromSeed(seedColor: const Color(0xFFFFC600), brightness: Brightness.dark).copyWith(
           primary: const Color(0xFFFFC600),
           onPrimary: const Color(0xFF122738),
           primaryContainer: const Color(0xFF0088FF),
@@ -181,10 +169,7 @@ class AppThemes {
         );
 
       case CustomTheme.solarizedDark:
-        return ColorScheme.fromSeed(
-          seedColor: const Color(0xFFB58900),
-          brightness: Brightness.dark,
-        ).copyWith(
+        return ColorScheme.fromSeed(seedColor: const Color(0xFFB58900), brightness: Brightness.dark).copyWith(
           primary: const Color(0xFFB58900),
           onPrimary: const Color(0xFF002B36),
           primaryContainer: const Color(0xFF268BD2),
@@ -222,10 +207,7 @@ class AppThemes {
         );
 
       case CustomTheme.solarizedLight:
-        return ColorScheme.fromSeed(
-          seedColor: const Color(0xFF2AA198),
-          brightness: Brightness.light,
-        ).copyWith(
+        return ColorScheme.fromSeed(seedColor: const Color(0xFF2AA198), brightness: Brightness.light).copyWith(
           primary: const Color(0xFF2AA198),
           onPrimary: const Color(0xFFFDF6E3),
           primaryContainer: const Color(0xFF268BD2),
@@ -263,10 +245,7 @@ class AppThemes {
         );
 
       case CustomTheme.nord:
-        return ColorScheme.fromSeed(
-          seedColor: const Color(0xFF88C0D0),
-          brightness: Brightness.dark,
-        ).copyWith(
+        return ColorScheme.fromSeed(seedColor: const Color(0xFF88C0D0), brightness: Brightness.dark).copyWith(
           primary: const Color(0xFF88C0D0),
           onPrimary: const Color(0xFF2E3440),
           primaryContainer: const Color(0xFF81A1C1),
@@ -304,10 +283,7 @@ class AppThemes {
         );
 
       case CustomTheme.monokai:
-        return ColorScheme.fromSeed(
-          seedColor: const Color(0xFF66D9EF),
-          brightness: Brightness.dark,
-        ).copyWith(
+        return ColorScheme.fromSeed(seedColor: const Color(0xFF66D9EF), brightness: Brightness.dark).copyWith(
           // Primary
           primary: const Color(0xFF66D9EF),
           onPrimary: const Color(0xFF272822),
@@ -352,10 +328,7 @@ class AppThemes {
         );
 
       case CustomTheme.gruvboxDark:
-        return ColorScheme.fromSeed(
-          seedColor: const Color(0xFFD65D0E),
-          brightness: Brightness.dark,
-        ).copyWith(
+        return ColorScheme.fromSeed(seedColor: const Color(0xFFD65D0E), brightness: Brightness.dark).copyWith(
           primary: const Color(0xFFD65D0E),
           onPrimary: const Color(0xFF282828),
           primaryContainer: const Color(0xFF458588),
@@ -393,10 +366,7 @@ class AppThemes {
         );
 
       case CustomTheme.gruvboxLight:
-        return ColorScheme.fromSeed(
-          seedColor: const Color(0xFFD65D0E),
-          brightness: Brightness.light,
-        ).copyWith(
+        return ColorScheme.fromSeed(seedColor: const Color(0xFFD65D0E), brightness: Brightness.light).copyWith(
           primary: const Color(0xFFD65D0E),
           onPrimary: const Color(0xFFFBF1C7),
           primaryContainer: const Color(0xFF7C6F64),
@@ -434,10 +404,7 @@ class AppThemes {
         );
 
       case CustomTheme.catppuccinLatte:
-        return ColorScheme.fromSeed(
-          seedColor: const Color(0xFF7287FD),
-          brightness: Brightness.light,
-        ).copyWith(
+        return ColorScheme.fromSeed(seedColor: const Color(0xFF7287FD), brightness: Brightness.light).copyWith(
           // Brand
           primary: const Color(0xFF7287FD),
           onPrimary: const Color(0xFFEFF1F5),
@@ -480,10 +447,7 @@ class AppThemes {
         );
 
       case CustomTheme.catppuccinFrappe:
-        return ColorScheme.fromSeed(
-          seedColor: const Color(0xFFBABBF1),
-          brightness: Brightness.dark,
-        ).copyWith(
+        return ColorScheme.fromSeed(seedColor: const Color(0xFFBABBF1), brightness: Brightness.dark).copyWith(
           // Brand
           primary: const Color(0xFFBABBF1),
           onPrimary: const Color(0xFF303446),
@@ -526,10 +490,7 @@ class AppThemes {
         );
 
       case CustomTheme.catppuccinMacchiato:
-        return ColorScheme.fromSeed(
-          seedColor: const Color(0xFFB7BDF8),
-          brightness: Brightness.dark,
-        ).copyWith(
+        return ColorScheme.fromSeed(seedColor: const Color(0xFFB7BDF8), brightness: Brightness.dark).copyWith(
           // Brand
           primary: const Color(0xFFB7BDF8),
           onPrimary: const Color(0xFF24273A),
@@ -572,10 +533,7 @@ class AppThemes {
         );
 
       case CustomTheme.catppuccinMocha:
-        return ColorScheme.fromSeed(
-          seedColor: const Color(0xFFB4BEFE),
-          brightness: Brightness.dark,
-        ).copyWith(
+        return ColorScheme.fromSeed(seedColor: const Color(0xFFB4BEFE), brightness: Brightness.dark).copyWith(
           // Brand
           primary: const Color(0xFFB4BEFE),
           onPrimary: const Color(0xFF1E1E2E),

@@ -59,9 +59,7 @@ class AppLocalizations {
   ///
   /// Returns `true` when loading is complete.
   Future<bool> load() async {
-    final jsonString = await rootBundle.loadString(
-      'lib/assets/lang/${locale.languageCode}.json',
-    );
+    final jsonString = await rootBundle.loadString('lib/assets/lang/${locale.languageCode}.json');
 
     final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
     _strings = {};
@@ -129,10 +127,7 @@ class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const AppLocalizationsDelegate();
 
   /// List of supported locales in the application.
-  static const List<AppLanguage> supportedLocales = [
-    AppLanguage(Locale('en'), "English"),
-    AppLanguage(Locale('pt'), "Português"),
-  ];
+  static const List<AppLanguage> supportedLocales = [AppLanguage(Locale('en'), "English"), AppLanguage(Locale('pt'), "Português")];
 
   @override
   bool isSupported(Locale locale) {
@@ -173,13 +168,9 @@ class LocaleProvider extends ChangeNotifier {
 
   /// Loads the previously saved language from persistent storage.
   Future<void> loadSavedLocale() async {
-    final code = await selectOne(
-      sql: "SELECT value FROM settings WHERE key = 'lang'",
-    );
+    final code = await selectOne(sql: "SELECT value FROM settings WHERE key = 'lang'");
 
-    if (AppLocalizationsDelegate.supportedLocales.any(
-      (l) => l.locale.languageCode == code,
-    )) {
+    if (AppLocalizationsDelegate.supportedLocales.any((l) => l.locale.languageCode == code)) {
       _locale = Locale(code);
     }
 
@@ -194,10 +185,7 @@ class LocaleProvider extends ChangeNotifier {
     if (!AppLocalizationsDelegate().isSupported(locale)) return;
 
     _locale = locale;
-    await executeSql(
-      sql:
-          "UPDATE settings SET value = '${locale.languageCode}' WHERE key = 'lang'",
-    );
+    await executeSql(sql: "UPDATE settings SET value = '${locale.languageCode}' WHERE key = 'lang'");
 
     notifyListeners();
   }

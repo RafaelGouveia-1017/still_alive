@@ -52,8 +52,7 @@ class CountdownRing extends StatefulWidget {
 /// modes:
 /// * Progressive reveal (0 → [CountdownRing.progress]) for normal usage
 /// * Linear depletion (1 → 0) when [CountdownRing.depleteOver] is set
-class _CountdownRingState extends State<CountdownRing>
-    with SingleTickerProviderStateMixin {
+class _CountdownRingState extends State<CountdownRing> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Tween<double> _tween;
   late final Animation<double> _sweep;
@@ -62,21 +61,14 @@ class _CountdownRingState extends State<CountdownRing>
   void initState() {
     super.initState();
     if (widget.depleteOver != null) {
-      _controller = AnimationController(
-        vsync: this,
-        duration: widget.depleteOver,
-      );
+      _controller = AnimationController(vsync: this, duration: widget.depleteOver);
       _tween = Tween<double>(begin: 1.0, end: 0.0);
-      _sweep = _tween.animate(
-        CurvedAnimation(parent: _controller, curve: AppMotion.linear),
-      );
+      _sweep = _tween.animate(CurvedAnimation(parent: _controller, curve: AppMotion.linear));
     } else {
       // Reveal to target progress
       _controller = AnimationController(vsync: this, duration: AppMotion.ring);
       _tween = Tween<double>(begin: 0.0, end: widget.progress);
-      _sweep = _tween.animate(
-        CurvedAnimation(parent: _controller, curve: AppMotion.emphasized),
-      );
+      _sweep = _tween.animate(CurvedAnimation(parent: _controller, curve: AppMotion.emphasized));
     }
     _controller.forward();
   }
@@ -137,23 +129,15 @@ class _CountdownRingState extends State<CountdownRing>
                   width: MediaQuery.of(context).size.width - 150,
                   child: Text(
                     widget.label.toUpperCase(),
-                    style: AppText.sectionLabel(
-                      scheme,
-                    ).copyWith(letterSpacing: 2),
+                    style: AppText.sectionLabel(scheme).copyWith(letterSpacing: 2),
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
                   ),
                 ),
                 const SizedBox(height: AppSpacing.sm),
-                Text(
-                  widget.time,
-                  style: widget.timeStyle ?? AppText.display(scheme),
-                ),
-                if (widget.caption != null) ...[
-                  const SizedBox(height: AppSpacing.sm),
-                  Text(widget.caption!, style: AppText.caption(scheme)),
-                ],
+                Text(widget.time, style: widget.timeStyle ?? AppText.display(scheme)),
+                if (widget.caption != null) ...[const SizedBox(height: AppSpacing.sm), Text(widget.caption!, style: AppText.caption(scheme))],
               ],
             ),
           ),
@@ -175,12 +159,7 @@ class _CountdownRingState extends State<CountdownRing>
 /// The arc is rendered with rounded caps and a subtle blur to create a glow
 /// effect, enhancing visual emphasis during animation.
 class _RingPainter extends CustomPainter {
-  _RingPainter({
-    required this.progress,
-    required this.color,
-    required this.trackColor,
-    required this.strokeWidth,
-  });
+  _RingPainter({required this.progress, required this.color, required this.trackColor, required this.strokeWidth});
 
   final double progress;
   final Color trackColor;
@@ -205,26 +184,14 @@ class _RingPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round
-      ..maskFilter = const MaskFilter.blur(
-        BlurStyle.solid,
-        4,
-      ); // glow approximation
+      ..maskFilter = const MaskFilter.blur(BlurStyle.solid, 4); // glow approximation
 
     const start = -math.pi / 2; // 12 o'clock
     final sweep = 2 * math.pi * progress.clamp(0.0, 1.0);
-    canvas.drawArc(
-      Rect.fromCircle(center: center, radius: radius),
-      start,
-      sweep,
-      false,
-      arc,
-    );
+    canvas.drawArc(Rect.fromCircle(center: center, radius: radius), start, sweep, false, arc);
   }
 
   @override
   bool shouldRepaint(_RingPainter old) =>
-      old.progress != progress ||
-      old.color != color ||
-      old.trackColor != trackColor ||
-      old.strokeWidth != strokeWidth;
+      old.progress != progress || old.color != color || old.trackColor != trackColor || old.strokeWidth != strokeWidth;
 }

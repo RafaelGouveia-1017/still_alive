@@ -32,20 +32,11 @@ class PrivacyPage extends StatelessWidget {
             children: [
               Icon(LucideIcons.lock, size: 16, color: scheme.tertiary),
               const SizedBox(width: AppSpacing.sm),
-              Text(
-                local.translate("privacy.subtitle").toUpperCase(),
-                style: AppText.pillLabel.copyWith(
-                  color: scheme.tertiary,
-                  letterSpacing: 1.3,
-                ),
-              ),
+              Text(local.translate("privacy.subtitle").toUpperCase(), style: AppText.pillLabel.copyWith(color: scheme.tertiary, letterSpacing: 1.3)),
             ],
           ),
           const SizedBox(height: AppSpacing.md),
-          Text(
-            local.translate("privacy.description"),
-            style: AppText.h2(scheme),
-          ),
+          Text(local.translate("privacy.description"), style: AppText.h2(scheme)),
           const SizedBox(height: AppSpacing.xxxxl),
           for (final p in points) ...[
             AppCard(
@@ -56,15 +47,8 @@ class PrivacyPage extends StatelessWidget {
                     width: 32,
                     height: 32,
                     margin: const EdgeInsets.only(top: AppSpacing.xxxs),
-                    decoration: BoxDecoration(
-                      color: scheme.tertiary.withAlpha(38),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      LucideIcons.check,
-                      size: 16,
-                      color: scheme.tertiary,
-                    ),
+                    decoration: BoxDecoration(color: scheme.tertiary.withAlpha(38), shape: BoxShape.circle),
+                    child: Icon(LucideIcons.check, size: 16, color: scheme.tertiary),
                   ),
                   const SizedBox(width: AppSpacing.md),
                   Expanded(

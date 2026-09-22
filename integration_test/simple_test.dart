@@ -25,16 +25,8 @@ void main() {
   });
 
   test('DB manipulation', () async {
-    expect(
-      'true',
-      await selectOne(sql: "SELECT value FROM settings WHERE key = 'tutorial'"),
-    );
-    await executeSql(
-      sql: "UPDATE settings SET value = 'false' WHERE key = 'tutorial'",
-    );
-    expect(
-      'false',
-      await selectOne(sql: "SELECT value FROM settings WHERE key = 'tutorial'"),
-    );
+    expect('true', await selectOne(sql: "SELECT value FROM settings WHERE key = 'tutorial'"));
+    await executeSql(sql: "UPDATE settings SET value = 'false' WHERE key = 'tutorial'");
+    expect('false', await selectOne(sql: "SELECT value FROM settings WHERE key = 'tutorial'"));
   });
 }

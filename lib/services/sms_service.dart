@@ -35,10 +35,7 @@ class SmsService {
   /// - [SmsResult.sent] when the SMS is successfully sent.
   /// - [SmsResult.permissionDenied] if SMS permission is denied.
   /// - [SmsResult.failed] when sending fails.
-  Future<SmsResult> send({
-    required List<String> phoneNumbers,
-    required String message,
-  }) async {
+  Future<SmsResult> send({required List<String> phoneNumbers, required String message}) async {
     final permission = await Permission.sms.status;
     if (!permission.isGranted) {
       return SmsResult.permissionDenied;

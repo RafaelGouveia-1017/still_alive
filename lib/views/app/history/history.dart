@@ -60,12 +60,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
       setState(() {
         _filters = List.generate(
           filterLabels.length,
-          (i) => AppFilterBarOption(
-            id: filterLabels[i][0],
-            label: filterLabels[i][1],
-            active: i == index,
-            onPressed: () => loadFilters(i),
-          ),
+          (i) => AppFilterBarOption(id: filterLabels[i][0], label: filterLabels[i][1], active: i == index, onPressed: () => loadFilters(i)),
         );
       });
       return;
@@ -90,9 +85,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
         );
       }).toList();
 
-      bool allActive = updated.every(
-        (filter) => (filter.id == "all") ? true : filter.active,
-      );
+      bool allActive = updated.every((filter) => (filter.id == "all") ? true : filter.active);
       if (allActive) {
         for (int i = 0; i < updated.length; i++) {
           updated[i] = updated[i].copyWith(active: false);
@@ -114,10 +107,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
       _isLoading = true;
     });
 
-    String jsonStr = await select(
-      sql:
-          "SELECT * FROM history WHERE created_at >= date('now', '-6 months') ORDER BY created_at DESC",
-    );
+    String jsonStr = await select(sql: "SELECT * FROM history WHERE created_at >= date('now', '-6 months') ORDER BY created_at DESC");
     List<dynamic> results = jsonDecode(jsonStr);
 
     List<_Group> groups = results.map<_Group>((row) {
@@ -141,10 +131,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
     List<_Group> groupsFiltered = [];
 
     if (!_isLoading) {
-      final activeFilters = _filters
-          .where((f) => f.active)
-          .map((f) => f.id)
-          .toSet();
+      final activeFilters = _filters.where((f) => f.active).map((f) => f.id).toSet();
 
       groupsFiltered = _groups
           .map((group) {
@@ -154,15 +141,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   searchQuery.isEmpty ||
                   event.timerName.toLowerCase().contains(searchQuery) ||
                   event.getTitle(local).toLowerCase().contains(searchQuery) ||
-                  event
-                      .getSubtitle(is24HourFormat, local)
-                      .toLowerCase()
-                      .contains(searchQuery);
+                  event.getSubtitle(is24HourFormat, local).toLowerCase().contains(searchQuery);
 
               // Active filters
-              bool matchesFilter =
-                  activeFilters.contains('all') ||
-                  activeFilters.contains(event.type.toLowerCase());
+              bool matchesFilter = activeFilters.contains('all') || activeFilters.contains(event.type.toLowerCase());
 
               return matchesSearch && matchesFilter;
             }).toList();
@@ -191,9 +173,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
           ? SizedBox(
               width: double.infinity,
               height: double.infinity,
-              child: Center(
-                child: CircularProgressIndicator(color: scheme.tertiary),
-              ),
+              child: Center(child: CircularProgressIndicator(color: scheme.tertiary)),
             )
           : Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -208,18 +188,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       borderRadius: BorderRadius.circular(AppRadius.xxl),
                       border: Border.all(color: scheme.outlineVariant),
                     ),
-                    child: Icon(
-                      LucideIcons.archiveX,
-                      size: 36,
-                      color: scheme.onSurfaceVariant,
-                    ),
+                    child: Icon(LucideIcons.archiveX, size: 36, color: scheme.onSurfaceVariant),
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   Text(
                     local.translate("history_logs.not_found"),
-                    style: AppText.bodySm(
-                      scheme,
-                    ).copyWith(color: scheme.onSurfaceVariant),
+                    style: AppText.bodySm(scheme).copyWith(color: scheme.onSurfaceVariant),
                     textAlign: TextAlign.center,
                   ),
                 ] else ...[
@@ -233,16 +207,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           Builder(
                             builder: (context) {
                               DateTime date = DateTime.parse(g.day);
-                              return SectionTitle(
-                                '${local.translate("history_logs.sections.months.${date.month - 1}")} ${date.day}',
-                              );
+                              return SectionTitle('${local.translate("history_logs.sections.months.${date.month - 1}")} ${date.day}');
                             },
                           ),
                           AppCard(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: AppSpacing.lg,
-                              vertical: AppSpacing.xxs,
-                            ),
+                            padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.xxs),
                             child: Column(
                               children: [
                                 for (int i = 0; i < g.items.length; i++) ...[
@@ -251,35 +220,19 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                       showBlurredBottomSheet(
                                         context: context,
                                         scheme: scheme,
-                                        child: SingleChildScrollView(
-                                          child: g.items[i].toTable(context),
-                                        ),
+                                        child: SingleChildScrollView(child: g.items[i].toTable(context)),
                                       );
                                     },
                                     child: AppRow(
                                       title: g.items[i].getTitle(local),
-                                      subtitle: g.items[i].getSubtitle(
-                                        is24HourFormat,
-                                        local,
-                                      ),
+                                      subtitle: g.items[i].getSubtitle(is24HourFormat, local),
                                       icon: g.items[i].icon,
-                                      iconColor: g.items[i].tone.foreground(
-                                        context,
-                                      ),
-                                      iconBackground: g.items[i].tone
-                                          .background(context),
-                                      trailing: Icon(
-                                        LucideIcons.chevronRight,
-                                        size: 18,
-                                        color: scheme.onSurfaceVariant,
-                                      ),
+                                      iconColor: g.items[i].tone.foreground(context),
+                                      iconBackground: g.items[i].tone.background(context),
+                                      trailing: Icon(LucideIcons.chevronRight, size: 18, color: scheme.onSurfaceVariant),
                                     ),
                                   ),
-                                  if (i < g.items.length - 1)
-                                    Divider(
-                                      height: 1,
-                                      color: scheme.outlineVariant,
-                                    ),
+                                  if (i < g.items.length - 1) Divider(height: 1, color: scheme.outlineVariant),
                                 ],
                               ],
                             ),

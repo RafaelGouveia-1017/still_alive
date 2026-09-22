@@ -55,20 +55,13 @@ class _AlertsSectionState extends State<AlertsSection> {
 
   @override
   Widget build(BuildContext context) {
-    final chevron = Icon(
-      LucideIcons.chevronRight,
-      size: 18,
-      color: widget.scheme.onSurfaceVariant,
-    );
+    final chevron = Icon(LucideIcons.chevronRight, size: 18, color: widget.scheme.onSurfaceVariant);
 
     return Column(
       children: [
         SectionTitle(widget.local.translate("settings.sections.alerts.title")),
         AppCard(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.lg,
-            vertical: AppSpacing.xxs,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.xxs),
           margin: EdgeInsets.only(bottom: AppSpacing.xl),
           child: Column(
             children: [
@@ -83,37 +76,26 @@ class _AlertsSectionState extends State<AlertsSection> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          widget.local.translate(
-                            "settings.sections.alerts.labels.2",
-                          ),
-                          style: AppText.micro(
-                            widget.scheme,
-                          ).copyWith(color: widget.scheme.onSurface),
+                          widget.local.translate("settings.sections.alerts.labels.2"),
+                          style: AppText.micro(widget.scheme).copyWith(color: widget.scheme.onSurface),
                           textAlign: TextAlign.center,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: AppSpacing.xs),
                           child: TextFormField(
                             controller: _messageController,
-                            style: AppText.caption(
-                              widget.scheme,
-                            ).copyWith(color: widget.scheme.onSurface),
+                            style: AppText.caption(widget.scheme).copyWith(color: widget.scheme.onSurface),
                             cursorColor: widget.scheme.primary,
                             scrollPadding: const EdgeInsets.all(0),
                             maxLines: 12,
                             maxLength: 800,
                             maxLengthEnforcement: MaxLengthEnforcement.enforced,
                             decoration: InputDecoration(
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: AppSpacing.xxxs,
-                                vertical: AppSpacing.xxxs,
-                              ),
+                              contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxxs, vertical: AppSpacing.xxxs),
                               border: OutlineInputBorder(),
                               filled: false,
                               fillColor: Colors.transparent,
-                              hintText: widget.local.translate(
-                                "settings.sections.alerts.labels.3",
-                              ),
+                              hintText: widget.local.translate("settings.sections.alerts.labels.3"),
                             ),
                           ),
                         ),
@@ -130,20 +112,13 @@ class _AlertsSectionState extends State<AlertsSection> {
                     showToast(
                       scheme: widget.scheme,
                       toast: Text(
-                        widget.local.translate(
-                          "settings.sections.alerts.labels.4",
-                        ),
+                        widget.local.translate("settings.sections.alerts.labels.4"),
                         style: AppText.bodySm(widget.scheme),
                         textAlign: TextAlign.center,
                       ),
                       gravity: ToastGravity.BOTTOM,
                       position: (context, child, gravity) {
-                        return Positioned(
-                          bottom: 170,
-                          left: 60,
-                          right: 60,
-                          child: child,
-                        );
+                        return Positioned(bottom: 170, left: 60, right: 60, child: child);
                       },
                       secs: 5,
                     );
@@ -151,12 +126,8 @@ class _AlertsSectionState extends State<AlertsSection> {
                 },
                 child: AppRow(
                   icon: LucideIcons.messageSquare,
-                  title: widget.local.translate(
-                    "settings.sections.alerts.labels.0",
-                  ),
-                  subtitle: widget.local.translate(
-                    "settings.sections.alerts.labels.1",
-                  ),
+                  title: widget.local.translate("settings.sections.alerts.labels.0"),
+                  subtitle: widget.local.translate("settings.sections.alerts.labels.1"),
                   trailing: chevron,
                 ),
               ),
@@ -179,21 +150,15 @@ class _AlertsSectionState extends State<AlertsSection> {
                               year2023: true,
                               activeColor: widget.scheme.primary,
                               inactiveColor: widget.scheme.surfaceContainerLow,
-                              secondaryActiveColor: widget.scheme.primary
-                                  .withAlpha(155),
+                              secondaryActiveColor: widget.scheme.primary.withAlpha(155),
                               thumbColor: widget.scheme.onSurface,
                               value: tempVolume.toDouble(),
-                              secondaryTrackValue: widget.volumeFeature
-                                  .toDouble(),
+                              secondaryTrackValue: widget.volumeFeature.toDouble(),
                               max: 100,
                               divisions: 10,
                               label: switch (tempVolume) {
-                                100 => widget.local.translate(
-                                  "settings.sections.alerts.labels.6",
-                                ),
-                                0 => widget.local.translate(
-                                  "settings.sections.alerts.labels.7",
-                                ),
+                                100 => widget.local.translate("settings.sections.alerts.labels.6"),
+                                0 => widget.local.translate("settings.sections.alerts.labels.7"),
                                 _ => "$tempVolume%",
                               },
                               onChanged: (double value) {
@@ -201,8 +166,7 @@ class _AlertsSectionState extends State<AlertsSection> {
                                   tempVolume = value.round();
                                 });
                               },
-                              showValueIndicator:
-                                  ShowValueIndicator.alwaysVisible,
+                              showValueIndicator: ShowValueIndicator.alwaysVisible,
                             ),
                             SizedBox(height: AppSpacing.xxl),
                           ],
@@ -210,10 +174,7 @@ class _AlertsSectionState extends State<AlertsSection> {
                       },
                     ),
                   ).then((res) async {
-                    await executeSql(
-                      sql:
-                          "UPDATE settings SET value = '$tempVolume' WHERE key = 'volume'",
-                    );
+                    await executeSql(sql: "UPDATE settings SET value = '$tempVolume' WHERE key = 'volume'");
                     widget.onVolumeUpdate(tempVolume);
                   });
                 },
@@ -223,16 +184,10 @@ class _AlertsSectionState extends State<AlertsSection> {
                             ? LucideIcons.volume2
                             : LucideIcons.volume1
                       : LucideIcons.volumeX,
-                  title: widget.local.translate(
-                    "settings.sections.alerts.labels.5",
-                  ),
+                  title: widget.local.translate("settings.sections.alerts.labels.5"),
                   subtitle: switch (widget.volumeFeature) {
-                    100 => widget.local.translate(
-                      "settings.sections.alerts.labels.6",
-                    ),
-                    0 => widget.local.translate(
-                      "settings.sections.alerts.labels.7",
-                    ),
+                    100 => widget.local.translate("settings.sections.alerts.labels.6"),
+                    0 => widget.local.translate("settings.sections.alerts.labels.7"),
                     _ => "${widget.volumeFeature}%",
                   },
                   trailing: chevron,
@@ -242,22 +197,13 @@ class _AlertsSectionState extends State<AlertsSection> {
               GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTap: () async {
-                  await executeSql(
-                    sql:
-                        "UPDATE settings SET value = '${!widget.lockFeature}' WHERE key = 'lock'",
-                  );
+                  await executeSql(sql: "UPDATE settings SET value = '${!widget.lockFeature}' WHERE key = 'lock'");
                   widget.onLockUpdate(!widget.lockFeature);
                 },
                 child: AppRow(
-                  icon: widget.lockFeature
-                      ? LucideIcons.lock
-                      : LucideIcons.lockOpen,
-                  title: widget.local.translate(
-                    "settings.sections.alerts.labels.8",
-                  ),
-                  subtitle: widget.local.translate(
-                    "settings.sections.alerts.labels.9",
-                  ),
+                  icon: widget.lockFeature ? LucideIcons.lock : LucideIcons.lockOpen,
+                  title: widget.local.translate("settings.sections.alerts.labels.8"),
+                  subtitle: widget.local.translate("settings.sections.alerts.labels.9"),
                   trailing: AppToggle(on: widget.lockFeature),
                 ),
               ),

@@ -18,12 +18,7 @@ class CustomSplash {
   Widget splash(ColorScheme scheme) {
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(
-          50,
-          AppSpacing.xxxxl,
-          50,
-          AppSpacing.xxxxl,
-        ),
+        padding: const EdgeInsets.fromLTRB(50, AppSpacing.xxxxl, 50, AppSpacing.xxxxl),
         child: Column(
           children: [
             Expanded(
@@ -35,30 +30,17 @@ class CustomSplash {
                     width: 96,
                     height: 96,
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [scheme.primary, scheme.secondary],
-                      ),
+                      gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [scheme.primary, scheme.secondary]),
                       borderRadius: BorderRadius.circular(AppRadius.xxl),
                     ),
-                    child: Icon(
-                      LucideIcons.shield,
-                      size: 48,
-                      color: scheme.onPrimary,
-                    ),
+                    child: Icon(LucideIcons.shield, size: 48, color: scheme.onPrimary),
                   ),
                   const SizedBox(height: AppSpacing.xxxxl),
                   Text('StillAlive', style: AppText.h1(scheme)),
                 ],
               ),
             ),
-            AnimatedOpacity(
-              opacity: 1.0,
-              duration: AppMotion.medium,
-              curve: AppMotion.easeIn,
-              child: const LinearProgressIndicator(minHeight: 3),
-            ),
+            AnimatedOpacity(opacity: 1.0, duration: AppMotion.medium, curve: AppMotion.easeIn, child: const LinearProgressIndicator(minHeight: 3)),
             const SizedBox(height: AppSpacing.xxxxl),
           ],
         ),

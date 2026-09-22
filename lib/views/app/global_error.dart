@@ -108,63 +108,36 @@ class GlobalErrorDialog {
                 children: [
                   Icon(LucideIcons.bug, size: 24, color: scheme.onSurface),
                   SizedBox(width: AppSpacing.md),
-                  Text(
-                    local.translate("unexpected_error.title"),
-                    style: AppText.h2(scheme),
-                  ),
+                  Text(local.translate("unexpected_error.title"), style: AppText.h2(scheme)),
                 ],
               ),
 
               content: switch (state) {
-                GlobalErrorDialogState.initial => Text(
-                  local.translate("unexpected_error.description"),
-                  style: AppText.body(scheme),
-                ),
+                GlobalErrorDialogState.initial => Text(local.translate("unexpected_error.description"), style: AppText.body(scheme)),
 
                 GlobalErrorDialogState.saving => SizedBox(
                   width: 48,
                   height: 48,
-                  child: Center(
-                    child: CircularProgressIndicator(color: scheme.tertiary),
-                  ),
+                  child: Center(child: CircularProgressIndicator(color: scheme.tertiary)),
                 ),
 
                 GlobalErrorDialogState.saved => Row(
                   children: [
-                    Expanded(
-                      child: Text(
-                        local.translate("unexpected_error.saved"),
-                        style: AppText.body(scheme),
-                      ),
-                    ),
+                    Expanded(child: Text(local.translate("unexpected_error.saved"), style: AppText.body(scheme))),
                     Pressable(
-                      onTap: () => launchUrl(
-                        Uri.parse(
-                          "https://github.com/RafaelGouveia-1017/still_alive/issues",
-                        ),
-                        mode: LaunchMode.externalApplication,
-                      ),
+                      onTap: () =>
+                          launchUrl(Uri.parse("https://github.com/RafaelGouveia-1017/still_alive/issues"), mode: LaunchMode.externalApplication),
                       child: Container(
                         width: 48,
                         height: 48,
-                        decoration: BoxDecoration(
-                          color: scheme.surfaceContainer,
-                          borderRadius: AppRadius.button,
-                        ),
-                        child: Icon(
-                          FontAwesomeIcons.github.data,
-                          size: 24,
-                          color: scheme.onSurface,
-                        ),
+                        decoration: BoxDecoration(color: scheme.surfaceContainer, borderRadius: AppRadius.button),
+                        child: Icon(FontAwesomeIcons.github.data, size: 24, color: scheme.onSurface),
                       ),
                     ),
                   ],
                 ),
               },
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: AppSpacing.xxl,
-                vertical: AppSpacing.lg,
-              ),
+              contentPadding: EdgeInsets.symmetric(horizontal: AppSpacing.xxl, vertical: AppSpacing.lg),
 
               actions: switch (state) {
                 GlobalErrorDialogState.initial => [
@@ -173,13 +146,8 @@ class GlobalErrorDialog {
                     children: [
                       TextButton(
                         onPressed: () => SystemNavigator.pop(),
-                        style: TextButton.styleFrom(
-                          backgroundColor: scheme.surfaceContainer,
-                        ),
-                        child: Text(
-                          local.translate("unexpected_error.exit"),
-                          style: AppText.bodySm(scheme),
-                        ),
+                        style: TextButton.styleFrom(backgroundColor: scheme.surfaceContainer),
+                        child: Text(local.translate("unexpected_error.exit"), style: AppText.bodySm(scheme)),
                       ),
                       FilledButton(
                         onPressed: () async {
@@ -202,15 +170,9 @@ class GlobalErrorDialog {
                         child: Text(local.translate("unexpected_error.save")),
                       ),
                       TextButton(
-                        onPressed: () =>
-                            Restart.restartApp(mode: RestartMode.process),
-                        style: TextButton.styleFrom(
-                          backgroundColor: scheme.surfaceContainer,
-                        ),
-                        child: Text(
-                          local.translate("unexpected_error.restart"),
-                          style: AppText.bodySm(scheme),
-                        ),
+                        onPressed: () => Restart.restartApp(mode: RestartMode.process),
+                        style: TextButton.styleFrom(backgroundColor: scheme.surfaceContainer),
+                        child: Text(local.translate("unexpected_error.restart"), style: AppText.bodySm(scheme)),
                       ),
                     ],
                   ),
@@ -224,21 +186,12 @@ class GlobalErrorDialog {
                     children: [
                       TextButton(
                         onPressed: () => SystemNavigator.pop(),
-                        style: TextButton.styleFrom(
-                          backgroundColor: scheme.surfaceContainer,
-                        ),
-                        child: Text(
-                          local.translate("unexpected_error.exit"),
-                          style: AppText.bodySm(scheme),
-                        ),
+                        style: TextButton.styleFrom(backgroundColor: scheme.surfaceContainer),
+                        child: Text(local.translate("unexpected_error.exit"), style: AppText.bodySm(scheme)),
                       ),
                       FilledButton(
-                        onPressed: () =>
-                            Restart.restartApp(mode: RestartMode.process),
-                        child: Text(
-                          local.translate("unexpected_error.restart"),
-                          style: AppText.bodySm(scheme),
-                        ),
+                        onPressed: () => Restart.restartApp(mode: RestartMode.process),
+                        child: Text(local.translate("unexpected_error.restart"), style: AppText.bodySm(scheme)),
                       ),
                     ],
                   ),
