@@ -87,7 +87,7 @@ class _AlertsSectionState extends State<AlertsSection> {
                             style: AppText.caption(widget.scheme).copyWith(color: widget.scheme.onSurface),
                             cursorColor: widget.scheme.primary,
                             scrollPadding: const EdgeInsets.all(0),
-                            maxLines: 12,
+                            maxLines: 15,
                             maxLength: 800,
                             maxLengthEnforcement: MaxLengthEnforcement.enforced,
                             decoration: InputDecoration(

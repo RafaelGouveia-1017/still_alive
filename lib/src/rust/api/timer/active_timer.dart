@@ -26,7 +26,9 @@ import 'state.dart';
 /// Returns the active timer if it can be loaded and reconciled successfully.
 /// Returns `None` if loading or updating the timer fails.
 Future<ActiveTimer?> reconcileActiveTimer({required PlatformInt64 nowMs}) =>
-    RustLib.instance.api.crateApiTimerActiveTimerReconcileActiveTimer(nowMs: nowMs);
+    RustLib.instance.api.crateApiTimerActiveTimerReconcileActiveTimer(
+      nowMs: nowMs,
+    );
 
 /// Generates a unique identifier for a new timer.
 ///
@@ -35,7 +37,8 @@ Future<ActiveTimer?> reconcileActiveTimer({required PlatformInt64 nowMs}) =>
 /// Returns a timer identifier based on the the first unused timer
 /// identifier.
 /// Returns `None` if the number of timers cannot be retrieved.
-Future<String?> getUniqueTimerId() => RustLib.instance.api.crateApiTimerActiveTimerGetUniqueTimerId();
+Future<String?> getUniqueTimerId() =>
+    RustLib.instance.api.crateApiTimerActiveTimerGetUniqueTimerId();
 
 /// Persists a timer from the given key & configuration.
 ///
@@ -48,8 +51,10 @@ Future<String?> getUniqueTimerId() => RustLib.instance.api.crateApiTimerActiveTi
 ///
 /// Returns an error if the new timer configuration cannot be
 /// persisted to the database.
-Future<void> persistTimer({String? key, required TimerConfig config}) =>
-    RustLib.instance.api.crateApiTimerActiveTimerPersistTimer(key: key, config: config);
+Future<void> persistTimer({String? key, required TimerConfig config}) => RustLib
+    .instance
+    .api
+    .crateApiTimerActiveTimerPersistTimer(key: key, config: config);
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ActiveTimer>>
 abstract class ActiveTimer implements RustOpaqueInterface {
@@ -85,7 +90,10 @@ abstract class ActiveTimer implements RustOpaqueInterface {
   ///
   /// Returns an error if password verification is required but has not been
   /// completed, or if the resulting timer state cannot be persisted.
-  Future<void> cancelTimerRun({required PlatformInt64 nowMs, required bool passwordVerified});
+  Future<void> cancelTimerRun({
+    required PlatformInt64 nowMs,
+    required bool passwordVerified,
+  });
 
   /// Deletes a timer.
   ///
@@ -130,7 +138,10 @@ abstract class ActiveTimer implements RustOpaqueInterface {
   /// Returns an error if password verification is required but has not been
   /// completed, if the timer cannot be paused in its current state, or if
   /// the updated timer state cannot be persisted.
-  Future<void> pauseTimerRun({required PlatformInt64 nowMs, required bool passwordVerified});
+  Future<void> pauseTimerRun({
+    required PlatformInt64 nowMs,
+    required bool passwordVerified,
+  });
 
   /// Replaces the currently active timer with a new timer.
   ///
@@ -152,7 +163,11 @@ abstract class ActiveTimer implements RustOpaqueInterface {
   ///
   /// Returns an error if the new timer run or timer configuration cannot be
   /// persisted to the database.
-  Future<void> replaceActiveTimer({required String key, required TimerConfig config, required PlatformInt64 nowMs});
+  Future<void> replaceActiveTimer({
+    required String key,
+    required TimerConfig config,
+    required PlatformInt64 nowMs,
+  });
 
   /// Resumes a paused timer.
   ///

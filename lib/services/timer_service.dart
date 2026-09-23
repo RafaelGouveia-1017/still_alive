@@ -712,6 +712,11 @@ class TimerService extends ChangeNotifier {
     //
     // TODO:
     //
+    // Send custom message through the configured
+    // emergency channels.
+    //
+    // TODO:
+    //
     // Send the current location or encoded route through the configured
     // emergency channels.
     //

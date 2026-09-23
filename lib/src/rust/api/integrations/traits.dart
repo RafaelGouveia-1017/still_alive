@@ -32,7 +32,10 @@ class DestinationTestResult {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is DestinationTestResult && runtimeType == other.runtimeType && canSend == other.canSend && message == other.message;
+      other is DestinationTestResult &&
+          runtimeType == other.runtimeType &&
+          canSend == other.canSend &&
+          message == other.message;
 }
 
 /// A connected account belonging to a messaging provider.
@@ -44,10 +47,16 @@ class IntegrationAccount {
   final List<MessageDestination> destinations;
   final String? appId;
 
-  const IntegrationAccount({required this.id, required this.name, required this.destinations, this.appId});
+  const IntegrationAccount({
+    required this.id,
+    required this.name,
+    required this.destinations,
+    this.appId,
+  });
 
   @override
-  int get hashCode => id.hashCode ^ name.hashCode ^ destinations.hashCode ^ appId.hashCode;
+  int get hashCode =>
+      id.hashCode ^ name.hashCode ^ destinations.hashCode ^ appId.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -74,7 +83,11 @@ class IntegrationGradient {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is IntegrationGradient && runtimeType == other.runtimeType && start == other.start && end == other.end;
+      identical(this, other) ||
+      other is IntegrationGradient &&
+          runtimeType == other.runtimeType &&
+          start == other.start &&
+          end == other.end;
 }
 
 /// Public integration metadata exposed to Flutter.
@@ -96,7 +109,13 @@ class IntegrationInfo {
   });
 
   @override
-  int get hashCode => key.hashCode ^ title.hashCode ^ gradient.hashCode ^ provider.hashCode ^ connected.hashCode ^ accounts.hashCode;
+  int get hashCode =>
+      key.hashCode ^
+      title.hashCode ^
+      gradient.hashCode ^
+      provider.hashCode ^
+      connected.hashCode ^
+      accounts.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -125,10 +144,21 @@ class MessageDestination {
   final String? parentId;
   final String? parentName;
 
-  const MessageDestination({required this.id, required this.name, required this.kind, this.parentId, this.parentName});
+  const MessageDestination({
+    required this.id,
+    required this.name,
+    required this.kind,
+    this.parentId,
+    this.parentName,
+  });
 
   @override
-  int get hashCode => id.hashCode ^ name.hashCode ^ kind.hashCode ^ parentId.hashCode ^ parentName.hashCode;
+  int get hashCode =>
+      id.hashCode ^
+      name.hashCode ^
+      kind.hashCode ^
+      parentId.hashCode ^
+      parentName.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -148,10 +178,15 @@ class SentMessage {
   final String destinationId;
   final String? messageId;
 
-  const SentMessage({required this.provider, required this.destinationId, this.messageId});
+  const SentMessage({
+    required this.provider,
+    required this.destinationId,
+    this.messageId,
+  });
 
   @override
-  int get hashCode => provider.hashCode ^ destinationId.hashCode ^ messageId.hashCode;
+  int get hashCode =>
+      provider.hashCode ^ destinationId.hashCode ^ messageId.hashCode;
 
   @override
   bool operator ==(Object other) =>

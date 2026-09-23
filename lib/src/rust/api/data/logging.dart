@@ -47,7 +47,8 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 /// log::debug!("Received response");
 /// log::trace!("Detailed diagnostic information");
 /// ```
-Future<void> initRustLogging() => RustLib.instance.api.crateApiDataLoggingInitRustLogging();
+Future<void> initRustLogging() =>
+    RustLib.instance.api.crateApiDataLoggingInitRustLogging();
 
 /// Establishes the Rust-to-Dart logging stream.
 ///
@@ -64,7 +65,8 @@ Future<void> initRustLogging() => RustLib.instance.api.crateApiDataLoggingInitRu
 ///
 /// Rust logs emitted before the Dart stream is established use the fallback
 /// behavior in [`RustLogger::log`] and are not replayed after Dart connects.
-Stream<RustLogRecord> createRustLogStream() => RustLib.instance.api.crateApiDataLoggingCreateRustLogStream();
+Stream<RustLogRecord> createRustLogStream() =>
+    RustLib.instance.api.crateApiDataLoggingCreateRustLogStream();
 
 /// Disconnects the active Rust-to-Dart logging stream.
 ///
@@ -77,7 +79,8 @@ Stream<RustLogRecord> createRustLogStream() => RustLib.instance.api.crateApiData
 /// A failed stream send automatically performs the equivalent cleanup, so
 /// callers generally only need to invoke this function when they want to
 /// proactively disconnect the logging bridge.
-Future<void> disposeRustLogStream() => RustLib.instance.api.crateApiDataLoggingDisposeRustLogStream();
+Future<void> disposeRustLogStream() =>
+    RustLib.instance.api.crateApiDataLoggingDisposeRustLogStream();
 
 /// A log record emitted by Rust and transported to Dart through
 /// [`flutter_rust_bridge`]'s [`StreamSink`].
@@ -157,7 +160,14 @@ class RustLogRecord {
   });
 
   @override
-  int get hashCode => timeMillis.hashCode ^ level.hashCode ^ target.hashCode ^ modulePath.hashCode ^ file.hashCode ^ line.hashCode ^ message.hashCode;
+  int get hashCode =>
+      timeMillis.hashCode ^
+      level.hashCode ^
+      target.hashCode ^
+      modulePath.hashCode ^
+      file.hashCode ^
+      line.hashCode ^
+      message.hashCode;
 
   @override
   bool operator ==(Object other) =>

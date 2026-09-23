@@ -93,6 +93,8 @@ class _TimerSelectionScreenState extends State<TimerSelectionScreen> with RouteA
           customEmail: List<String>.from(timerData["custom_email"] ?? []),
           integrations: integrations,
 
+          message: timerData["message"],
+
           createdAt: timerData["created_at"],
           updatedAt: timerData["updated_at"],
         );
@@ -428,6 +430,12 @@ class _TimerConfigData {
             buildDetailRow(local.translate("timer_selection.details.custom_email"), timerData.customEmail.length.toString(), scheme),
             paddingWithDivider(scheme),
             buildDetailRow(local.translate("timer_selection.details.integrations"), integrations.toString(), scheme),
+            paddingWithDivider(scheme),
+            buildDetailRow(
+              local.translate("timer_selection.details.message"),
+              (timerData.message != null) ? local.translate("timer_selection.bool.true") : local.translate("timer_selection.bool.false"),
+              scheme,
+            ),
             paddingWithDivider(scheme),
             buildDetailRow(
               local.translate("timer_selection.details.created_at"),

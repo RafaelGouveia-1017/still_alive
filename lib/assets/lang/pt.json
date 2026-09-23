@@ -143,6 +143,7 @@
       "custom_sms": "SMS Personalizado",
       "custom_email": "Email Personalizado",
       "integrations": "Plugins",
+      "message": "Mensagem Personalizada?",
       "created_at": "Criado",
       "updated_at": "Atualizado"
     }
@@ -244,6 +245,15 @@
       "destination": ["destino", "destinos"],
       "no_integrations": "Nenhuma integração disponível.\nConsulte a página de integrações.",
       "no_destinations": "Nenhum destino disponível.\nConsulte a página de integrações."
+    },
+    "message": {
+      "title": "Mensagem Personalizada",
+      "requirement": {
+        "on": "Enviar uma mensagem",
+        "off": "Não enviar uma mensagem"
+      },
+      "hint": "Escreve a mensagem que queres enviar...",
+      "validation": "Mensagem não pode ser vazia."
     },
     "create": "Criar temporizador de segurança",
     "edit": "Guardar temporizador\nde segurança",
@@ -523,7 +533,7 @@
           "Mensagem de emergência personalizada",
           "Editar o texto enviado aos contactos",
           "Mensagem de emergência:",
-          "Escreve uma nova mensagem",
+          "Escreve a tua mensagem personalizada",
           "Mesagem salva com sucesso!",
           "Volume da sirene offline",
           "Máximo",

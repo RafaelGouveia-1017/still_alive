@@ -143,6 +143,7 @@
       "custom_sms": "Custom SMS",
       "custom_email": "Custom Email",
       "integrations": "Integrations",
+      "message": "Custom Message?",
       "created_at": "Created",
       "updated_at": "Updated"
     }
@@ -244,6 +245,15 @@
       "destination": ["destination", "destinations"],
       "no_integrations": "No integrations available.\nCheck the integrations page.",
       "no_destinations": "No destinations available.\nCheck the integrations page."
+    },
+    "message": {
+      "title": "Custom Message",
+      "requirement": {
+        "on": "Send a message",
+        "off": "Don't send a message"
+      },
+      "hint": "Write the message you want to send...",
+      "validation": "Message cannot be empty."
     },
     "create": "Create safety timer",
     "edit": "Save safety timer",
@@ -515,7 +525,7 @@
           "Custom emergency message",
           "Edit the text contacts receive",
           "Emergency message:",
-          "Enter a new message",
+          "Enter your custom message",
           "Message saved successfully!",
           "Offline siren volume",
           "Maximum",

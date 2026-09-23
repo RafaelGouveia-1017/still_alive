@@ -113,6 +113,16 @@ class _PasswordInputState extends State<PasswordInput> {
 
     _hasHash = widget.hasHash ?? false;
 
+    _passFocus.addListener(() {
+      if (_passFocus.hasFocus) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_passFocus.context != null) {
+            Scrollable.ensureVisible(_passFocus.context!, duration: AppMotion.fasterer, alignment: 0.3);
+          }
+        });
+      }
+    });
+
     if (widget.isNew) {
       loadPref();
     } else {
@@ -197,22 +207,21 @@ class _PasswordInputState extends State<PasswordInput> {
             )
           : Column(
               children: [
-                GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: (_hasHash)
-                      ? null
-                      : () {
-                          _setProtected(!_protected);
-                        },
-                  child: AppRow(
-                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxxs, horizontal: AppSpacing.sm),
-                    title: local.translate("timer_configuration.security.password.cancel_password"),
-                    subtitle: (_protected)
-                        ? local.translate("timer_configuration.security.password.pin_requirement.on")
-                        : local.translate("timer_configuration.security.password.pin_requirement.off"),
-                    icon: (_protected) ? LucideIcons.lock : LucideIcons.lockOpen,
-                    iconColor: scheme.secondary,
-                    trailing: AppToggle(on: _protected),
+                IgnorePointer(
+                  ignoring: (!widget.isNew && !_hasHash),
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: (!widget.isNew && _hasHash) ? null : () => _setProtected(!_protected),
+                    child: AppRow(
+                      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxxs, horizontal: AppSpacing.sm),
+                      title: local.translate("timer_configuration.security.password.cancel_password"),
+                      subtitle: (_protected)
+                          ? local.translate("timer_configuration.security.password.pin_requirement.on")
+                          : local.translate("timer_configuration.security.password.pin_requirement.off"),
+                      icon: (_protected) ? LucideIcons.lock : LucideIcons.lockOpen,
+                      iconColor: scheme.secondary,
+                      trailing: AppToggle(on: _protected),
+                    ),
                   ),
                 ),
                 ClipRect(

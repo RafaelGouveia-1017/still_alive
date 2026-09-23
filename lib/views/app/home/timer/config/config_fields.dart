@@ -16,3 +16,4 @@ export 'integration_selection.dart';
 export 'location_inputs.dart';
 export 'name_input.dart';
 export 'password_input.dart';
+export 'message_input.dart';

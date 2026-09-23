@@ -119,8 +119,9 @@ class _TimerConfigScreenState extends State<TimerConfigScreen> {
               customSms: widget.timerData!.customSms,
               customEmail: widget.timerData!.customEmail,
               integrations: widget.timerData!.integrations,
-              createdAt: widget.timerData!.name,
-              updatedAt: widget.timerData!.name,
+              message: widget.timerData!.message,
+              createdAt: widget.timerData!.createdAt,
+              updatedAt: widget.timerData!.updatedAt,
             )
           : TimerConfig(
               name: "",
@@ -139,11 +140,10 @@ class _TimerConfigScreenState extends State<TimerConfigScreen> {
                 discord: TimerIntegration(accounts: []),
                 telegram: TimerIntegration(accounts: []),
               ),
+              message: null,
               createdAt: "",
               updatedAt: "",
             );
-
-      //TODO add message field, input, etc to TimerConfig
 
       setState(() {
         _timerKey = key;
@@ -218,7 +218,8 @@ class _TimerConfigScreenState extends State<TimerConfigScreen> {
         !_contactsEqual(_timerData.contacts, widget.timerData!.contacts) ||
         !listEquals(_timerData.customSms, widget.timerData!.customSms) ||
         !listEquals(_timerData.customEmail, widget.timerData!.customEmail) ||
-        !timerIntegrationsEqual(_timerData.integrations, widget.timerData!.integrations)) {
+        !timerIntegrationsEqual(_timerData.integrations, widget.timerData!.integrations) ||
+        _timerData.message != widget.timerData!.message) {
       hasUnsavedChanges = true;
     }
 
@@ -265,6 +266,8 @@ class _TimerConfigScreenState extends State<TimerConfigScreen> {
     String key = activeTimer.key;
 
     bool shouldReplace = key == 'timer0' || (!hasActiveTimer && (widget.isNew || _timerKey == activeTimer.key));
+
+    bool keyboardClosed = MediaQuery.of(context).viewInsets.bottom == 0;
 
     return PopScope(
       canPop: false,
@@ -415,7 +418,11 @@ class _TimerConfigScreenState extends State<TimerConfigScreen> {
                                 return null;
                               },
                             ),
-                            const SizedBox(height: 72),
+                            const SizedBox(height: AppSpacing.lg),
+
+                            SectionTitle(local.translate("timer_configuration.message.title")),
+                            MessageInput(isNew: widget.isNew, message: _timerData.message, onChanged: (String? value) => _timerData.message = value),
+                            SizedBox(height: (keyboardClosed) ? 72 : 0),
                           ],
                         ],
                       ),
@@ -424,159 +431,160 @@ class _TimerConfigScreenState extends State<TimerConfigScreen> {
                 ),
               ],
             ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [scheme.surface, scheme.surface.withAlpha(64), scheme.surface.withAlpha(0)],
-                    stops: const [0.3, 0.75, 1],
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter,
+            if (keyboardClosed)
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [scheme.surface, scheme.surface.withAlpha(64), scheme.surface.withAlpha(0)],
+                      stops: const [0.3, 0.75, 1],
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                    ),
                   ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.xl),
-                  child: (_isLoading)
-                      ? Center(
-                          child: Padding(
-                            padding: EdgeInsets.only(top: AppSpacing.lg),
-                            child: SizedBox(
-                              width: 44,
-                              height: 44,
-                              child: Center(child: CircularProgressIndicator(color: scheme.tertiary)),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.xl),
+                    child: (_isLoading)
+                        ? Center(
+                            child: Padding(
+                              padding: EdgeInsets.only(top: AppSpacing.lg),
+                              child: SizedBox(
+                                width: 44,
+                                height: 44,
+                                child: Center(child: CircularProgressIndicator(color: scheme.tertiary)),
+                              ),
                             ),
-                          ),
-                        )
-                      : Row(
-                          children: [
-                            if (!widget.isNew) ...[
-                              SizedBox(
-                                width: 64,
-                                child: BlurActionTile(
-                                  icon: LucideIcons.trash,
-                                  label: null,
-                                  background: scheme.error,
-                                  border: scheme.errorContainer.withAlpha(77),
-                                  foreground: scheme.onError,
-                                  onTap: () async {
-                                    bool? deleted = await showBlurredBottomSheet<bool>(
-                                      context: context,
-                                      scheme: scheme,
-                                      marginHorizontal: 50,
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            local.translate("timer_configuration.delete.0"),
-                                            style: AppText.body(scheme),
+                          )
+                        : Row(
+                            children: [
+                              if (!widget.isNew) ...[
+                                SizedBox(
+                                  width: 64,
+                                  child: BlurActionTile(
+                                    icon: LucideIcons.trash,
+                                    label: null,
+                                    background: scheme.error,
+                                    border: scheme.errorContainer.withAlpha(77),
+                                    foreground: scheme.onError,
+                                    onTap: () async {
+                                      bool? deleted = await showBlurredBottomSheet<bool>(
+                                        context: context,
+                                        scheme: scheme,
+                                        marginHorizontal: 50,
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                              local.translate("timer_configuration.delete.0"),
+                                              style: AppText.body(scheme),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(top: AppSpacing.xl, bottom: AppSpacing.lg),
+                                              child: PrimaryButton(
+                                                label: local.translate("timer_configuration.delete.1"),
+                                                color: ButtonColor.warning,
+                                                onPressed: () async {
+                                                  setState(() => _isLoading = true);
+
+                                                  bool result = await TimerService.instance.removeTimerFromDatabase(_timerKey);
+
+                                                  if (!context.mounted) {
+                                                    return;
+                                                  }
+                                                  Navigator.pop(context, result);
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+
+                                      deleted ??= false;
+                                      setState(() => _isLoading = false);
+
+                                      if (deleted) {
+                                        showToast(
+                                          scheme: scheme,
+                                          toast: Text(
+                                            '"${_timerData.name}" ${local.translate("timer_configuration.delete.2")}',
+                                            style: AppText.bodySm(scheme),
                                             textAlign: TextAlign.center,
                                           ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(top: AppSpacing.xl, bottom: AppSpacing.lg),
-                                            child: PrimaryButton(
-                                              label: local.translate("timer_configuration.delete.1"),
-                                              color: ButtonColor.warning,
-                                              onPressed: () async {
-                                                setState(() => _isLoading = true);
+                                          gravity: ToastGravity.BOTTOM,
+                                          position: (context, child, gravity) {
+                                            return Positioned(bottom: 140, left: 40, right: 40, child: child);
+                                          },
+                                        );
+                                        if (!context.mounted) return;
+                                        Navigator.pop(context);
+                                      }
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(width: AppSpacing.lg),
+                              ],
 
-                                                bool result = await TimerService.instance.removeTimerFromDatabase(_timerKey);
-
-                                                if (!context.mounted) {
-                                                  return;
-                                                }
-                                                Navigator.pop(context, result);
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-
-                                    deleted ??= false;
-                                    setState(() => _isLoading = false);
-
-                                    if (deleted) {
+                              Expanded(
+                                child: BlurActionTile(
+                                  icon: (shouldReplace) ? LucideIcons.shieldCheck : LucideIcons.shield,
+                                  label: (widget.isNew) ? local.translate("timer_configuration.create") : local.translate("timer_configuration.edit"),
+                                  background: scheme.tertiary,
+                                  border: scheme.tertiary.withAlpha(77),
+                                  foreground: scheme.onTertiary,
+                                  onTap: () async {
+                                    if (!_formKey.currentState!.validate()) {
                                       showToast(
                                         scheme: scheme,
                                         toast: Text(
-                                          '"${_timerData.name}" ${local.translate("timer_configuration.delete.2")}',
+                                          local.translate("timer_configuration.validation_error"),
                                           style: AppText.bodySm(scheme),
                                           textAlign: TextAlign.center,
                                         ),
                                         gravity: ToastGravity.BOTTOM,
                                         position: (context, child, gravity) {
-                                          return Positioned(bottom: 140, left: 40, right: 40, child: child);
+                                          return Positioned(bottom: 140, left: 60, right: 60, child: child);
                                         },
                                       );
-                                      if (!context.mounted) return;
-                                      Navigator.pop(context);
+                                      return;
+                                    }
+
+                                    String now = DateTime.now().toIso8601String();
+                                    if (widget.isNew) {
+                                      _timerData.createdAt = now;
+                                    }
+                                    _timerData.updatedAt = now;
+
+                                    try {
+                                      setState(() {
+                                        _isLoading = true;
+                                      });
+
+                                      if (shouldReplace) {
+                                        await activeTimer.replaceActiveTimer(
+                                          key: _timerKey,
+                                          config: _timerData,
+                                          nowMs: DateTime.now().toUtc().millisecondsSinceEpoch,
+                                        );
+                                      } else {
+                                        await persistTimer(key: widget.timerKey, config: _timerData);
+                                      }
+                                    } finally {
+                                      if (context.mounted) {
+                                        Navigator.pop(context);
+                                      }
                                     }
                                   },
                                 ),
                               ),
-                              const SizedBox(width: AppSpacing.lg),
                             ],
-
-                            Expanded(
-                              child: BlurActionTile(
-                                icon: (shouldReplace) ? LucideIcons.shieldCheck : LucideIcons.shield,
-                                label: (widget.isNew) ? local.translate("timer_configuration.create") : local.translate("timer_configuration.edit"),
-                                background: scheme.tertiary,
-                                border: scheme.tertiary.withAlpha(77),
-                                foreground: scheme.onTertiary,
-                                onTap: () async {
-                                  if (!_formKey.currentState!.validate()) {
-                                    showToast(
-                                      scheme: scheme,
-                                      toast: Text(
-                                        local.translate("timer_configuration.validation_error"),
-                                        style: AppText.bodySm(scheme),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                      gravity: ToastGravity.BOTTOM,
-                                      position: (context, child, gravity) {
-                                        return Positioned(bottom: 140, left: 60, right: 60, child: child);
-                                      },
-                                    );
-                                    return;
-                                  }
-
-                                  String now = DateTime.now().toIso8601String();
-                                  if (widget.isNew) {
-                                    _timerData.createdAt = now;
-                                  }
-                                  _timerData.updatedAt = now;
-
-                                  try {
-                                    setState(() {
-                                      _isLoading = true;
-                                    });
-
-                                    if (shouldReplace) {
-                                      await activeTimer.replaceActiveTimer(
-                                        key: _timerKey,
-                                        config: _timerData,
-                                        nowMs: DateTime.now().toUtc().millisecondsSinceEpoch,
-                                      );
-                                    } else {
-                                      await persistTimer(key: widget.timerKey, config: _timerData);
-                                    }
-                                  } finally {
-                                    if (context.mounted) {
-                                      Navigator.pop(context);
-                                    }
-                                  }
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                  ),
                 ),
               ),
-            ),
           ],
         ),
       ),

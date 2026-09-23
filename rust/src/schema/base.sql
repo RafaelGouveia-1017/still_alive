@@ -268,6 +268,7 @@ CREATE TABLE
 ]
 }
 },
+"message": "Example message",
 "created_at": "2023-05-12T11:00:00.000",
 "updated_at": "2023-05-12T11:00:00.000"
 }
@@ -298,6 +299,7 @@ VALUES
                     "accounts": []
                 }
             },
+            "message": "Example message",
             "created_at": "2023-05-12T11:00:00.000",
             "updated_at": "2023-05-12T11:00:00.000"
         }'

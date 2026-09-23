@@ -8,13 +8,20 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'traits.dart';
 
 /// Returns information about every supported integration.
-Future<List<IntegrationInfo>> loadAllIntegrations() => RustLib.instance.api.crateApiIntegrationsPublicTraitsLoadAllIntegrations();
+Future<List<IntegrationInfo>> loadAllIntegrations() =>
+    RustLib.instance.api.crateApiIntegrationsPublicTraitsLoadAllIntegrations();
 
 /// Discovers destinations currently available to an account.
 ///
 /// Discovery does NOT persist anything.
-Future<List<MessageDestination>> discoverIntegrationDestinations({required String key, required String accountId}) =>
-    RustLib.instance.api.crateApiIntegrationsPublicTraitsDiscoverIntegrationDestinations(key: key, accountId: accountId);
+Future<List<MessageDestination>> discoverIntegrationDestinations({
+  required String key,
+  required String accountId,
+}) => RustLib.instance.api
+    .crateApiIntegrationsPublicTraitsDiscoverIntegrationDestinations(
+      key: key,
+      accountId: accountId,
+    );
 
 /// Authenticates an account with the external integration API, adds the
 /// account to the integration configuration, and returns the newly created
@@ -42,8 +49,14 @@ Future<List<MessageDestination>> discoverIntegrationDestinations({required Strin
 /// * Authentication with the external API fails.
 /// * The authenticated account cannot be added to the integration
 ///   configuration.
-Future<IntegrationAccount> connectIntegrationAccount({required String key, required Map<String, String> credentials}) =>
-    RustLib.instance.api.crateApiIntegrationsPublicTraitsConnectIntegrationAccount(key: key, credentials: credentials);
+Future<IntegrationAccount> connectIntegrationAccount({
+  required String key,
+  required Map<String, String> credentials,
+}) => RustLib.instance.api
+    .crateApiIntegrationsPublicTraitsConnectIntegrationAccount(
+      key: key,
+      credentials: credentials,
+    );
 
 /// Deletes a connected integration account.
 ///
@@ -63,8 +76,14 @@ Future<IntegrationAccount> connectIntegrationAccount({required String key, requi
 /// * The integration key is unknown.
 /// * The integration configuration cannot be loaded.
 /// * The updated configuration cannot be saved.
-Future<void> deleteIntegrationAccount({required String key, required String accountId}) =>
-    RustLib.instance.api.crateApiIntegrationsPublicTraitsDeleteIntegrationAccount(key: key, accountId: accountId);
+Future<void> deleteIntegrationAccount({
+  required String key,
+  required String accountId,
+}) => RustLib.instance.api
+    .crateApiIntegrationsPublicTraitsDeleteIntegrationAccount(
+      key: key,
+      accountId: accountId,
+    );
 
 /// Tests whether a selected destination can receive a message.
 ///
@@ -92,8 +111,16 @@ Future<void> deleteIntegrationAccount({required String key, required String acco
 /// * The integration key is unknown.
 /// * The integration configuration cannot be loaded.
 /// * The integration test fails.
-Future<DestinationTestResult> testIntegrationDestination({required String key, required String accountId, required String destinationId}) =>
-    RustLib.instance.api.crateApiIntegrationsPublicTraitsTestIntegrationDestination(key: key, accountId: accountId, destinationId: destinationId);
+Future<DestinationTestResult> testIntegrationDestination({
+  required String key,
+  required String accountId,
+  required String destinationId,
+}) => RustLib.instance.api
+    .crateApiIntegrationsPublicTraitsTestIntegrationDestination(
+      key: key,
+      accountId: accountId,
+      destinationId: destinationId,
+    );
 
 /// Tests whether a selected account is accessible.
 ///
@@ -117,8 +144,14 @@ Future<DestinationTestResult> testIntegrationDestination({required String key, r
 /// * The integration key is unknown.
 /// * The integration configuration cannot be loaded.
 /// * The integration test fails.
-Future<DestinationTestResult> testIntegrationAccount({required String key, required String accountId}) =>
-    RustLib.instance.api.crateApiIntegrationsPublicTraitsTestIntegrationAccount(key: key, accountId: accountId);
+Future<DestinationTestResult> testIntegrationAccount({
+  required String key,
+  required String accountId,
+}) =>
+    RustLib.instance.api.crateApiIntegrationsPublicTraitsTestIntegrationAccount(
+      key: key,
+      accountId: accountId,
+    );
 
 /// Sends a message to an explicitly selected destination.
 ///
@@ -146,9 +179,10 @@ Future<SentMessage> sendIntegrationMessage({
   required String accountId,
   required String destinationId,
   required String message,
-}) => RustLib.instance.api.crateApiIntegrationsPublicTraitsSendIntegrationMessage(
-  key: key,
-  accountId: accountId,
-  destinationId: destinationId,
-  message: message,
-);
+}) =>
+    RustLib.instance.api.crateApiIntegrationsPublicTraitsSendIntegrationMessage(
+      key: key,
+      accountId: accountId,
+      destinationId: destinationId,
+      message: message,
+    );

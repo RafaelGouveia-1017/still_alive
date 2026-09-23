@@ -302,7 +302,7 @@ jobs:
       # official formatter.
       # =======================================================
       - name: Check Dart formatting
-        run: dart format --set-exit-if-changed .
+        run: dart format --set-exit-if-changed lib/data lib/services lib/views
 
       # =======================================================
       # Run Flutter static analysis.

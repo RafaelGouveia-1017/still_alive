@@ -30,6 +30,8 @@ abstract class TimerConfig implements RustOpaqueInterface {
 
   bool get locationSharingEnabled;
 
+  String? get message;
+
   String get name;
 
   String? get passwordHash;
@@ -56,9 +58,13 @@ abstract class TimerConfig implements RustOpaqueInterface {
 
   set integrations(TimerIntegrations integrations);
 
-  set locationCollectionIntervalSecs(PlatformInt64? locationCollectionIntervalSecs);
+  set locationCollectionIntervalSecs(
+    PlatformInt64? locationCollectionIntervalSecs,
+  );
 
   set locationSharingEnabled(bool locationSharingEnabled);
+
+  set message(String? message);
 
   set name(String name);
 
@@ -85,6 +91,7 @@ abstract class TimerConfig implements RustOpaqueInterface {
     required List<String> customSms,
     required List<String> customEmail,
     required TimerIntegrations integrations,
+    String? message,
     required String createdAt,
     required String updatedAt,
   }) => RustLib.instance.api.crateApiTimerConfigTimerConfigNew(
@@ -101,6 +108,7 @@ abstract class TimerConfig implements RustOpaqueInterface {
     customSms: customSms,
     customEmail: customEmail,
     integrations: integrations,
+    message: message,
     createdAt: createdAt,
     updatedAt: updatedAt,
   );
@@ -124,7 +132,12 @@ class Contact {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is Contact && runtimeType == other.runtimeType && id == other.id && sms == other.sms && email == other.email;
+      identical(this, other) ||
+      other is Contact &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          sms == other.sms &&
+          email == other.email;
 }
 
 /// Configuration for a specific external integration.
@@ -139,7 +152,10 @@ class TimerIntegration {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is TimerIntegration && runtimeType == other.runtimeType && accounts == other.accounts;
+      identical(this, other) ||
+      other is TimerIntegration &&
+          runtimeType == other.runtimeType &&
+          accounts == other.accounts;
 }
 
 /// Represents an account configured for an external integration.
@@ -161,7 +177,10 @@ class TimerIntegrationAccount {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is TimerIntegrationAccount && runtimeType == other.runtimeType && id == other.id && destinations == other.destinations;
+      other is TimerIntegrationAccount &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          destinations == other.destinations;
 }
 
 /// Contains the external integrations configured for a timer.
@@ -180,5 +199,8 @@ class TimerIntegrations {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is TimerIntegrations && runtimeType == other.runtimeType && discord == other.discord && telegram == other.telegram;
+      other is TimerIntegrations &&
+          runtimeType == other.runtimeType &&
+          discord == other.discord &&
+          telegram == other.telegram;
 }

@@ -69,6 +69,9 @@ pub struct TimerConfig {
     /// External service integrations configured for the timer.
     pub integrations: TimerIntegrations,
 
+    /// Custom text to send to the destinations.
+    pub message: Option<String>,
+
     /// Timestamp or serialized date representing when the timer configuration was created.
     pub created_at: String,
 
@@ -94,6 +97,7 @@ impl TimerConfig {
         custom_sms: Vec<String>,
         custom_email: Vec<String>,
         integrations: TimerIntegrations,
+        message: Option<String>,
         created_at: String,
         updated_at: String,
     ) -> Self {
@@ -111,6 +115,7 @@ impl TimerConfig {
             custom_sms,
             custom_email,
             integrations,
+            message,
             created_at,
             updated_at,
         }

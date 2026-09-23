@@ -47,7 +47,8 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 ///
 /// - No files are written to storage.
 /// - Entire ZIP is held in memory.
-Future<Uint8List> exportBackup({required String appVersion}) => RustLib.instance.api.crateApiBackupExportBackup(appVersion: appVersion);
+Future<Uint8List> exportBackup({required String appVersion}) =>
+    RustLib.instance.api.crateApiBackupExportBackup(appVersion: appVersion);
 
 /// Import an application backup from a ZIP archive.
 ///
@@ -74,5 +75,10 @@ Future<Uint8List> exportBackup({required String appVersion}) => RustLib.instance
 /// - required files are missing
 /// - metadata validation fails
 /// - the database cannot be replaced
-Future<void> importBackup({required String zipPath, required String appVersion}) =>
-    RustLib.instance.api.crateApiBackupImportBackup(zipPath: zipPath, appVersion: appVersion);
+Future<void> importBackup({
+  required String zipPath,
+  required String appVersion,
+}) => RustLib.instance.api.crateApiBackupImportBackup(
+  zipPath: zipPath,
+  appVersion: appVersion,
+);
