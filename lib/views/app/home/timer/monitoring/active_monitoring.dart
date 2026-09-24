@@ -567,7 +567,7 @@ class _ActiveMonitoringScreenState extends State<ActiveMonitoringScreen> {
                                                                 borderRadius: BorderRadius.circular(AppRadius.lg),
                                                               ),
                                                               alignment: Alignment.center,
-                                                              child: Icon(FontAwesomeIcons.discord.data, size: 16, color: scheme.onSurface),
+                                                              child: Icon(Icons.discord, size: 22, color: Colors.white),
                                                             ),
                                                           ),
                                                           const SizedBox(width: AppSpacing.md),
@@ -630,7 +630,7 @@ class _ActiveMonitoringScreenState extends State<ActiveMonitoringScreen> {
                                                                 borderRadius: BorderRadius.circular(AppRadius.lg),
                                                               ),
                                                               alignment: Alignment.center,
-                                                              child: Icon(FontAwesomeIcons.telegram.data, size: 16, color: scheme.onSurface),
+                                                              child: Icon(FontAwesomeIcons.telegram.data, size: 20, color: Colors.white),
                                                             ),
                                                           ),
                                                           const SizedBox(width: AppSpacing.md),
@@ -673,27 +673,31 @@ class _ActiveMonitoringScreenState extends State<ActiveMonitoringScreen> {
                             ],
                           ),
                         ),
-                        const SizedBox(height: AppSpacing.md),
 
-                        AppCard(
-                          child: Column(
-                            children: [
-                              AppRow(
-                                padding: EdgeInsets.zero,
-                                title: local.translate("active_monitoring.message"),
-                                icon: LucideIcons.messageSquare,
-                                iconSize: 20,
-                                iconColor: scheme.secondary,
-                              ),
-                              const SizedBox(height: AppSpacing.md),
-                              Text(
-                                "message will appear here", //TODO show timer custom message
-                                style: AppText.caption(scheme).copyWith(color: scheme.onSurface),
-                                textAlign: TextAlign.justify,
-                              ),
-                            ],
+                        if (timer.config.message != null) ...[
+                          const SizedBox(height: AppSpacing.md),
+                          AppCard(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                AppRow(
+                                  padding: EdgeInsets.zero,
+                                  title: local.translate("active_monitoring.message"),
+                                  icon: LucideIcons.messageSquare,
+                                  iconSize: 20,
+                                  iconColor: scheme.secondary,
+                                ),
+                                const SizedBox(height: AppSpacing.md),
+                                Text(
+                                  timer.config.message!,
+                                  style: AppText.caption(scheme).copyWith(color: scheme.onSurface),
+                                  textAlign: TextAlign.justify,
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
+                        ],
+
                         SizedBox(height: 110),
                       ],
                     ],

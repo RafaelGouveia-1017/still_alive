@@ -31,7 +31,7 @@ extension IntegrationInfoExtension on IntegrationInfo {
   IconData get iconData {
     switch (key) {
       case 'discord':
-        return FontAwesomeIcons.discord.data;
+        return Icons.discord;
       case 'telegram':
         return FontAwesomeIcons.telegram.data;
       default:

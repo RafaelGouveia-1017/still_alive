@@ -62,6 +62,7 @@ impl TimerRun {
                 Some(duration) if now_ms > self.expires_at_ms + duration => TimerState::Expired,
                 Some(_) if now_ms > self.expires_at_ms => TimerState::Warning,
                 None if now_ms > self.expires_at_ms => TimerState::Expired,
+                None if self.state == TimerState::Warning => TimerState::Warning,
                 _ => TimerState::Running,
             },
         }

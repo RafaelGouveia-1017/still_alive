@@ -16,7 +16,7 @@ import 'package:still_alive/src/rust/api/data/db.dart';
 import 'package:still_alive/src/rust/api/timer/active_timer.dart';
 import 'package:still_alive/src/rust/api/timer/state.dart';
 import 'package:still_alive/views/app/home/timer/emergency_active.dart';
-import 'package:still_alive/views/app/home/timer/pre_alert_warning.dart';
+import 'package:still_alive/views/app/home/timer/pre-alert/pre_alert_warning.dart';
 import 'package:still_alive/views/widgets/primitives.dart';
 
 /// Provides convenience methods for working with an [ActiveTimer].
@@ -53,8 +53,10 @@ class TimerService extends ChangeNotifier {
   /// The singleton instance of [TimerService].
   static final TimerService instance = TimerService._();
 
+  /// Object containing the currently active timer.
   late ActiveTimer _activeTimer;
 
+  /// Indicates whether [TimerService] has initialized or not.
   bool _initialized = false;
 
   /// The currently configured active timer.
@@ -128,7 +130,9 @@ class TimerService extends ChangeNotifier {
 
     await _activeTimer.startTimerRun(nowMs: now);
 
-    await _scheduleAlarm(alarmId: _activeTimer.key, triggerAt: _activeTimer.run.expiresAtMs);
+    if (_activeTimer.key != "timer0") {
+      await _scheduleAlarm(alarmId: _activeTimer.key, triggerAt: _activeTimer.run.expiresAtMs);
+    }
 
     launchTimerNotification();
     notifyListeners();
@@ -241,21 +245,25 @@ class TimerService extends ChangeNotifier {
 
   /// Handles method calls received from the native platform.
   ///
-  /// When the native platform reports that the alarm has fired through the
-  /// alarmFired method, this method updates the active timer's run state by
-  /// calling [timerHasExpired].
+  /// When the native platform reports that a scheduled timer alarm has fired
+  /// through the `alarmFired` method, this method delegates timer expiration
+  /// handling to [timerHasExpired].
   ///
-  /// This method does nothing if [TimerService] has not been initialized yet.
+  /// If the timer service has not been initialized, the native call is ignored
+  /// because there is no active timer available to process the alarm.
   ///
   /// The [call] contains the method name and arguments supplied by the native
-  /// platform. For an alarmFired call, the arguments are expected to contain
-  /// an integer alarmId.
+  /// platform through the method channel. For an `alarmFired` call, the
+  /// arguments are expected to contain an integer `alarmId` identifying the
+  /// native alarm that fired.
   ///
-  /// Requires [initialize] to have been called successfully so that the active
-  /// timer is available.
+  /// The alarm ID is currently logged for diagnostic purposes. Timer expiration
+  /// is handled by the active timer rather than by matching the received alarm
+  /// ID against the timer key.
   ///
-  /// This method is intended to be used as the callback for native platform
-  /// method-channel calls.
+  /// This method is intended to be registered as the callback for native
+  /// platform method-channel calls and requires [initialize] to have completed
+  /// successfully before timer alarms can be processed.
   Future<void> handleNativeCall(MethodCall call) async {
     AppLogger.log.info("TimerService.handleNativeCall() called...");
 
@@ -273,57 +281,69 @@ class TimerService extends ChangeNotifier {
     }
   }
 
-  /// Updates the active timer's run state after its native alarm has fired and
-  /// navigates to the appropriate timer screen.
+  /// Handles expiration of the active timer after its native alarm fires.
   ///
-  /// If the active timer is already in [TimerState.warning] or
-  /// [TimerState.expired], no further action is taken.
+  /// The method first ignores the request when the active timer has already
+  /// reached [TimerState.expired], preventing the expiration flow from being
+  /// processed more than once.
   ///
-  /// The timer's run state is recalculated using the current UTC timestamp.
-  /// Once the state has been updated, a timer notification is launched and the
-  /// appropriate screen is displayed:
+  /// The application's navigator must be available because the expiration flow
+  /// may replace the current navigation stack with either the pre-alert warning
+  /// screen or the emergency screen. If no navigator is currently available,
+  /// expiration handling is aborted and an error is logged.
   ///
-  /// * [TimerState.warning] navigates to [PreAlertWarningScreen], continuous
-  /// route recording remains active when route sharing is enabled (because the
-  /// route may be needed by the eventual emergency response) and records a
-  /// [TimerWarningEvent] in the timer history.
-  /// * [TimerState.expired] navigates to [EmergencyActiveScreen] and
-  /// [triggerEmergency] is invoked, where the complete recorded route or a
-  /// single current location is obtained depending on the timer configuration.
-  /// * Any other state results in no navigation.
+  /// The timer identified by the special `timer0` key is handled separately by
+  /// [_handleExampleTimer]. This timer is an example/demo timer and does not
+  /// enter the normal warning or emergency flow.
   ///
-  /// This method requires a mounted application navigator. If
-  /// [PermissionManager.instance.navigatorKey.currentState] is not yet
-  /// available, this method waits until a navigator becomes available before
-  /// continuing.
+  /// For normal timers, the current UTC timestamp is used to recalculate the
+  /// active run state. A notification reflecting the resulting state is then
+  /// launched.
   ///
-  /// The navigation stack is cleared before displaying the warning or emergency
-  /// screen, ensuring that the timer state is presented as the active screen.
+  /// When the resulting state is [TimerState.warning], the warning run is
+  /// started, a [TimerWarningEvent] is recorded in history, a new native alarm
+  /// is scheduled for the end of the warning period, and
+  /// [PreAlertWarningScreen] replaces the current navigation stack.
   ///
-  /// This method should be called after the native platform reports that the
-  /// timer alarm has fired.
+  /// When the resulting state is [TimerState.expired],
+  /// [EmergencyActiveScreen] replaces the current navigation stack. The
+  /// emergency screen is responsible for continuing the emergency flow.
   ///
+  /// Any other resulting timer state does not trigger navigation.
+  ///
+  /// This method is normally called after the native platform reports that the
+  /// scheduled timer alarm has fired, but it may also be called by other parts
+  /// of the application that need to process the active timer's current
+  /// expiration state.
   Future<void> timerHasExpired() async {
-    if (_activeTimer.run.state == TimerState.expired || _activeTimer.run.state == TimerState.warning) {
-      AppLogger.log.info('timerHasExpired() called, but timer is already expired or warning.');
+    if (_activeTimer.run.state == TimerState.expired) {
+      AppLogger.log.info('timerHasExpired() called, but timer is already expired.');
+      return;
+    }
+
+    NavigatorState? navigator = PermissionManager.instance.navigatorKey.currentState;
+    if (navigator == null) {
+      AppLogger.log.severe("Could not handle timer expiration because navigator was not ready.\nLiterally unplayable...");
+      return;
+    }
+
+    if (_activeTimer.key == "timer0") {
+      await _handleExampleTimer();
       return;
     }
 
     final now = DateTime.now().toUtc().millisecondsSinceEpoch;
     _activeTimer.updateRunState(nowMs: now);
 
-    NavigatorState? navigator = PermissionManager.instance.navigatorKey.currentState;
-
-    while (navigator == null) {
-      AppLogger.log.warning("Navigator not ready to handle timer expiration.");
-      await Future.delayed(const Duration(seconds: 2));
-      navigator = PermissionManager.instance.navigatorKey.currentState;
-    }
-
     launchTimerNotification();
 
     switch (_activeTimer.run.state) {
       case TimerState.warning:
+        AppLogger.log.info("\n\ntimer state change: running -> warning\n");
+
+        final now = DateTime.now().toUtc().millisecondsSinceEpoch;
+        await _activeTimer.startWarningRun(nowMs: now);
+
         await HistoryService.insertHistoryRecord(
           TimerWarningEvent(
             timerName: _activeTimer.config.name,
@@ -333,13 +353,14 @@ class TimerService extends ChangeNotifier {
           ),
         );
 
-        AppLogger.log.info("\n\ntimer state change: running -> warning\n\n");
+        await _scheduleAlarm(alarmId: _activeTimer.key, triggerAt: _activeTimer.run.expiresAtMs);
 
         navigator.pushAndRemoveUntil(AppRoute(page: PreAlertWarningScreen(), transition: AppRouteTransitionType.slideLeft), (route) => false);
+
         break;
 
       case TimerState.expired:
-        AppLogger.log.info("\n\ntimer state change: running -> expired\n\n");
+        AppLogger.log.info("\n\ntimer state change: running (or warning) -> expired\n");
 
         navigator.pushAndRemoveUntil(AppRoute(page: EmergencyActiveScreen(), transition: AppRouteTransitionType.slideLeft), (route) => false);
         break;
@@ -348,6 +369,46 @@ class TimerService extends ChangeNotifier {
         // Nothing to do.
         break;
     }
+  }
+
+  /// Handles expiration of the application's example/demo timer.
+  ///
+  /// The example timer does not enter the normal emergency flow. Instead, its
+  /// active run is cancelled without password verification and the user is
+  /// shown a localized informational toast explaining that the example timer
+  /// has expired.
+  ///
+  /// The cancellation is performed through [cancelTimer] so that the native
+  /// alarm and any timer-related state are cleaned up consistently with a
+  /// normal timer cancellation.
+  ///
+  /// The current navigator context is required to resolve the application's
+  /// theme and localized strings and to display the toast. If the context is
+  /// unavailable, the timer is still cancelled but the informational message
+  /// cannot be displayed.
+  ///
+  /// This method is intended only for the special timer identified by the
+  /// `timer0` key and should not be used for normal emergency timers.
+  Future<void> _handleExampleTimer() async {
+    AppLogger.log.info('timer0 expired, displaying info to user.');
+
+    cancelTimer(passwordVerified: false);
+
+    BuildContext? context = PermissionManager.instance.navigatorKey.currentContext;
+    if (context == null) {
+      AppLogger.log.severe("Could not handle timer expiration because context was not ready.\nLiterally unplayable...");
+      return;
+    }
+    ColorScheme scheme = Theme.of(context).colorScheme;
+    AppLocalizations local = AppLocalizations.of(context)!;
+
+    showToast(
+      scheme: scheme,
+      toast: Text(local.translate("home.example_timer_message"), style: AppText.bodySm(scheme), textAlign: TextAlign.center),
+      gravity: ToastGravity.BOTTOM,
+      position: (context, child, gravity) => Positioned(top: 250, left: 50, right: 50, child: child),
+      secs: 10,
+    );
   }
 
   /// Schedules a native alarm for the specified Unix timestamp.
@@ -367,6 +428,30 @@ class TimerService extends ChangeNotifier {
   /// The [alarmId] identifies the alarm associated with the timer.
   Future<void> _cancelAlarm({required String alarmId}) async {
     await AppMethodChannel.instance.invokeMethod('cancelAlarm', {'alarmId': alarmId.hashCode});
+  }
+
+  /// Manually trigger a timer's expiration.
+  ///
+  /// Cancels the scheduled native alarm and sends the user straight to
+  /// [EmergencyActiveScreen].
+  Future<void> triggerTimerExpire() async {
+    AppLogger.log.info("Triggering manual expiration of timer with key: ${_activeTimer.key}");
+
+    final navigator = PermissionManager.instance.navigatorKey.currentState;
+    if (navigator == null) {
+      AppLogger.log.warning('Could not navigate to EmergencyActiveScreen because navigator was not ready.');
+      return;
+    }
+
+    final now = DateTime.now().toUtc().millisecondsSinceEpoch;
+    await _cancelAlarm(alarmId: _activeTimer.key);
+
+    _activeTimer.triggerManualExpire(nowMs: now);
+
+    launchTimerNotification();
+    notifyListeners();
+
+    navigator.pushAndRemoveUntil(AppRoute(page: EmergencyActiveScreen(), transition: AppRouteTransitionType.slideLeft), (route) => false);
   }
 
   /// Starts continuous GPS route recording when the active timer is configured

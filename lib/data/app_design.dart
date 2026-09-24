@@ -289,10 +289,7 @@ class AppMotion {
   static const Duration ring = Duration(milliseconds: 1100);
 
   /// Pulse animation cycle duration (1400ms).
-  static const Duration pulse = Duration(milliseconds: 1400);
-
-  /// Duration used for pre-alert countdown depletion (30s).
-  static const Duration preAlert = Duration(seconds: 30);
+  static const Duration pulse = Duration(milliseconds: 1300);
 
   /// Emphasized easing curve.
   ///

@@ -861,14 +861,17 @@ Future<T?> showBlurredBottomSheet<T>({
 
 /// shown toast using the fluttertoast package
 void showToast({
-  required ColorScheme scheme,
   required Widget toast,
+  ColorScheme? scheme,
   ToastGravity gravity = ToastGravity.TOP,
   Widget Function(BuildContext, Widget, ToastGravity?)? position,
   int secs = 3,
 }) {
+  final context = PermissionManager.instance.navigatorKey.currentContext!;
+  final colorScheme = scheme ?? Theme.of(context).colorScheme;
+
   FToast fToast = FToast();
-  fToast.init(PermissionManager.instance.navigatorKey.currentContext!);
+  fToast.init(context);
 
   fToast.removeCustomToast();
   fToast.removeQueuedCustomToasts();
@@ -877,7 +880,7 @@ void showToast({
     child: Container(
       width: double.infinity,
       padding: EdgeInsets.all(AppSpacing.lg),
-      decoration: BoxDecoration(color: scheme.surfaceContainerHighest, borderRadius: AppRadius.card),
+      decoration: BoxDecoration(color: colorScheme.surfaceContainerHighest, borderRadius: AppRadius.card),
       child: toast,
     ),
     toastDuration: Duration(seconds: secs),

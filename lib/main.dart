@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:still_alive/services/timer_service.dart';
+import 'package:still_alive/src/rust/api/timer/state.dart';
 
 import 'package:still_alive/src/rust/frb_generated.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -19,6 +20,8 @@ import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:still_alive/src/rust/api/data/db.dart';
 import 'package:still_alive/data/all.dart';
 import 'package:still_alive/services/native/method_channel.dart';
+import 'package:still_alive/views/app/home/timer/emergency_active.dart';
+import 'package:still_alive/views/app/home/timer/pre-alert/pre_alert_warning.dart';
 import 'package:still_alive/views/app/screens.dart';
 import 'package:still_alive/views/widgets/custom_splash.dart';
 
@@ -211,7 +214,14 @@ class MyAppState extends State<MyApp> {
     } else if (!await PermissionManager.instance.hasAllNeededPermissions()) {
       return OnboardingScreen(startPage: 2);
     } else {
-      return HomeScreen();
+      switch (TimerService.instance.activeTimer.run.state) {
+        case TimerState.warning:
+          return PreAlertWarningScreen();
+        case TimerState.expired:
+          return EmergencyActiveScreen();
+        default:
+          return HomeScreen();
+      }
     }
   }
 

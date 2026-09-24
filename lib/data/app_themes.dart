@@ -92,18 +92,36 @@ class AppThemes {
       case CustomTheme.dracula:
         return ColorScheme.fromSeed(seedColor: const Color(0xFF6272A4), brightness: Brightness.dark).copyWith(
           primary: const Color(0xFF6272A4),
-          secondary: const Color(0xFFBD93F9),
+          onPrimary: const Color(0xFFF8F8F2),
+          primaryContainer: const Color(0xFF44475A),
+          onPrimaryContainer: const Color(0xFFF8F8F2),
 
+          secondary: const Color(0xFFBD93F9),
+          onSecondary: const Color(0xFF282A36),
+          secondaryContainer: const Color(0xFF5B3A82),
+          onSecondaryContainer: const Color(0xFFF8F8F2),
+
+          tertiary: const Color(0xFFE2BBDC),
+          onTertiary: const Color(0xFF282A36),
+          tertiaryContainer: const Color(0xFF5A4057),
+          onTertiaryContainer: const Color(0xFFFFD7F7),
+
+          error: const Color(0xFFFF5555),
+          onError: const Color(0xFF2A1111),
+          errorContainer: const Color(0xFF7A2929),
+          onErrorContainer: const Color(0xFFFFDAD6),
+
+          surfaceDim: const Color(0xFF20212B),
           surface: const Color(0xFF282A36),
-          surfaceContainerLowest: const Color(0xFF282A36),
+          surfaceBright: const Color(0xFF323543),
+          onSurface: const Color(0xFFF8F8F2),
+          onSurfaceVariant: const Color(0xFFBFC3D1),
+
+          surfaceContainerLowest: const Color(0xFF2D2F3C),
           surfaceContainerLow: const Color(0xFF323543),
           surfaceContainer: const Color(0xFF3A3D4D),
           surfaceContainerHigh: const Color(0xFF44475A),
           surfaceContainerHighest: const Color(0xFF4D5064),
-
-          onPrimary: const Color(0xFFF8F8F2),
-          onSecondary: const Color(0xFFF8F8F2),
-          onSurface: const Color(0xFFF8F8F2),
 
           outline: const Color(0xFF6272A4),
           outlineVariant: const Color(0xFF44475A),
@@ -112,19 +130,36 @@ class AppThemes {
       case CustomTheme.alucard:
         return ColorScheme.fromSeed(seedColor: const Color(0xFF6272A4), brightness: Brightness.light).copyWith(
           primary: const Color(0xFF6272A4),
+          onPrimary: const Color(0xFFF8F8F2),
+          primaryContainer: const Color(0xFFD8DCE8),
+          onPrimaryContainer: const Color(0xFF282A36),
+
           secondary: const Color(0xFFBD93F9),
+          onSecondary: const Color(0xFF282A36),
+          secondaryContainer: const Color(0xFFE8D8FF),
+          onSecondaryContainer: const Color(0xFF392052),
 
+          tertiary: const Color(0xFFE2BBDC),
+          onTertiary: const Color(0xFF282A36),
+          tertiaryContainer: const Color(0xFFF3DDEA),
+          onTertiaryContainer: const Color(0xFF392536),
+
+          error: const Color(0xFFFF5555),
+          onError: const Color(0xFFF8F8F2),
+          errorContainer: const Color(0xFFFFDAD6),
+          onErrorContainer: const Color(0xFF410002),
+
+          surfaceDim: const Color(0xFFD2D2CC),
           surface: const Color(0xFFF8F8F2),
+          surfaceBright: const Color(0xFFFFFFFF),
+          onSurface: const Color(0xFF282A36),
+          onSurfaceVariant: const Color(0xFF555867),
 
-          surfaceContainerLowest: const Color(0xFFF8F8F2),
+          surfaceContainerLowest: const Color(0xFFFFFFFF),
           surfaceContainerLow: const Color(0xFFF2F2EC),
           surfaceContainer: const Color(0xFFECECE7),
-          surfaceContainerHigh: const Color(0xFFE6E6E6),
+          surfaceContainerHigh: const Color(0xFFE6E6E0),
           surfaceContainerHighest: const Color(0xFFD2D2D2),
-
-          onPrimary: const Color(0xFFF8F8F2),
-          onSecondary: const Color(0xFFF8F8F2),
-          onSurface: const Color(0xFF282A36),
 
           outline: const Color(0xFF6272A4),
           outlineVariant: const Color(0xFF44475A),

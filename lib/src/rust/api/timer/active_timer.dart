@@ -203,6 +203,37 @@ abstract class ActiveTimer implements RustOpaqueInterface {
   /// Returns an error if the timer run cannot be persisted to the database.
   Future<void> startTimerRun({required PlatformInt64 nowMs});
 
+  /// Starts a new warning run.
+  ///
+  /// The warning's expiration time is calculated from the configured grace
+  /// period.
+  ///
+  /// The updated warning run is also persisted to the database.
+  ///
+  /// # Arguments
+  ///
+  /// * `now_ms` - Current timestamp in milliseconds since the Unix epoch.
+  ///
+  /// # Errors
+  ///
+  /// Returns an error if the warning run cannot be persisted to the database.
+  Future<void> startWarningRun({required PlatformInt64 nowMs});
+
+  /// Manually trigger a timer's expiration.
+  ///
+  /// The timer run state is manually changed to the `Expired` state.
+  ///
+  /// The updated timer run is also persisted to the database.
+  ///
+  /// # Arguments
+  ///
+  /// * `now_ms` - Current timestamp in milliseconds since the Unix epoch.
+  ///
+  /// # Errors
+  ///
+  /// Returns an error if the timer run cannot be persisted to the database.
+  Future<void> triggerManualExpire({required PlatformInt64 nowMs});
+
   /// Updates the current timer run's state based on the current time.
   ///
   /// The timer's state is evaluated using its current timestamps and the

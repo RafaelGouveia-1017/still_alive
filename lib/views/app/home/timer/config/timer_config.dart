@@ -265,7 +265,7 @@ class _TimerConfigScreenState extends State<TimerConfigScreen> {
     ActiveTimer activeTimer = TimerService.instance.activeTimer;
     String key = activeTimer.key;
 
-    bool shouldReplace = key == 'timer0' || (!hasActiveTimer && (widget.isNew || _timerKey == activeTimer.key));
+    bool shouldReplace = (key == 'timer0' && !hasActiveTimer) || (!hasActiveTimer && (widget.isNew || _timerKey == activeTimer.key));
 
     bool keyboardClosed = MediaQuery.of(context).viewInsets.bottom == 0;
 
@@ -486,6 +486,7 @@ class _TimerConfigScreenState extends State<TimerConfigScreen> {
                                               padding: const EdgeInsets.only(top: AppSpacing.xl, bottom: AppSpacing.lg),
                                               child: PrimaryButton(
                                                 label: local.translate("timer_configuration.delete.1"),
+                                                icon: LucideIcons.trash,
                                                 color: ButtonColor.warning,
                                                 onPressed: () async {
                                                   setState(() => _isLoading = true);

@@ -2,6 +2,8 @@ package com.appsbyrafa.stillalive
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -19,6 +21,8 @@ import io.flutter.plugin.common.MethodChannel
  * - [NotificationSender] handles Android notification creation and delivery.
  * - [FullScreenIntentHandler] handles alarm launch intents and communication
  *   of alarm events back to Flutter.
+ * - [LocaleHelper] provides access to the persisted application language
+ *   and creates localized Android contexts for background components.
  *
  * The activity itself intentionally contains minimal Android-specific logic
  * so that each native responsibility remains isolated and independently
@@ -39,6 +43,7 @@ import io.flutter.plugin.common.MethodChannel
  * - `scheduleAlarm`
  * - `cancelAlarm`
  * - `launchNotification`
+ * - `setLocale`
  */
 class MainActivity : FlutterActivity() {
 
@@ -60,6 +65,10 @@ class MainActivity : FlutterActivity() {
      *
      * The launch Intent may contain an alarm identifier when the activity
      * was opened through a full-screen alarm notification.
+     *
+     * The native helper instances are initialized before the superclass
+     * implementation is invoked so that they are available during the
+     * remainder of the activity lifecycle.
      *
      * @param savedInstanceState Previously saved activity state, or `null`
      * if the activity is being created for the first time.
@@ -115,6 +124,9 @@ class MainActivity : FlutterActivity() {
      * The method channel acts as the entry point for Flutter requests
      * involving Android alarms, notifications, and full-screen intent
      * functionality.
+     *
+     * The method handler validates incoming arguments before delegating
+     * each operation to the appropriate native helper.
      *
      * @param flutterEngine Flutter engine being configured.
      */
@@ -209,6 +221,8 @@ class MainActivity : FlutterActivity() {
                         alarmId
                     )
 
+                    notificationSender.clearAllNotifications()
+
                     result.success(null)
                 }
 
@@ -227,6 +241,33 @@ class MainActivity : FlutterActivity() {
                             null
                         )
                     }
+                }
+
+                "setLocale" -> {
+                    val languageCode =
+                        call.argument<String>("languageCode")
+
+                    if (languageCode == null) {
+                        result.error(
+                            "INVALID_ARGUMENTS",
+                            "languageCode is required",
+                            null
+                        )
+                        return@setMethodCallHandler
+                    }
+
+                    LocaleHelper.saveLanguage(
+                        this,
+                        languageCode
+                    )
+
+                    AppCompatDelegate.setApplicationLocales(
+                        LocaleListCompat.forLanguageTags(
+                            languageCode
+                        )
+                    )
+
+                    result.success(null)
                 }
 
                 else -> {

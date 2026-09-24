@@ -16,6 +16,7 @@ class CountdownRing extends StatefulWidget {
     super.key,
     required this.time,
     required this.label,
+    this.labelBottom = false,
     this.color,
     this.progress = 1.0,
     this.caption,
@@ -31,6 +32,7 @@ class CountdownRing extends StatefulWidget {
 
   final String time;
   final String label;
+  final bool labelBottom;
   final Color? color;
   final double progress;
   final String? caption;
@@ -96,6 +98,18 @@ class _CountdownRingState extends State<CountdownRing> with SingleTickerProvider
   @override
   Widget build(BuildContext context) {
     ColorScheme scheme = widget.colorScheme ?? Theme.of(context).colorScheme;
+
+    Widget labelWidget = SizedBox(
+      width: widget.diameter - 50,
+      child: Text(
+        widget.label.toUpperCase(),
+        style: AppText.sectionLabel(scheme).copyWith(letterSpacing: 2),
+        maxLines: 3,
+        overflow: TextOverflow.ellipsis,
+        textAlign: TextAlign.center,
+      ),
+    );
+
     final content = SizedBox(
       width: widget.diameter,
       height: widget.diameter,
@@ -125,18 +139,9 @@ class _CountdownRingState extends State<CountdownRing> with SingleTickerProvider
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width - 150,
-                  child: Text(
-                    widget.label.toUpperCase(),
-                    style: AppText.sectionLabel(scheme).copyWith(letterSpacing: 2),
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.sm),
+                if (!widget.labelBottom) ...[labelWidget, const SizedBox(height: AppSpacing.sm)],
                 Text(widget.time, style: widget.timeStyle ?? AppText.display(scheme)),
+                if (widget.labelBottom) ...[const SizedBox(height: AppSpacing.sm), labelWidget],
                 if (widget.caption != null) ...[const SizedBox(height: AppSpacing.sm), Text(widget.caption!, style: AppText.caption(scheme))],
               ],
             ),

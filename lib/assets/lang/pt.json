@@ -120,7 +120,8 @@
     },
     "password_hint": "Insire a palavra-passe",
     "password_invalid": "Palavra-chave está incorreta!!!",
-    "quick_contacts": "Contactos rápidos"
+    "quick_contacts": "Contactos rápidos",
+    "example_timer_message": "Obrigado pela instalação!!!\nAgora tenta criar o teu próprio temporizador!"
   },
   "timer_selection": {
     "title": "Selecionar Temporizador",
@@ -301,7 +302,21 @@
     "question": "Estás em segurança?",
     "message": "O teu temporizador expirou. Confirma agora ou o protocolo de emergência será ativado.",
     "labels": {
+      "time_left": "tempo restante",
+      "second_left": "segundo restante",
       "seconds_left": "segundos restantes"
+    },
+    "location": {
+      "true": "O protocolo vai partilhar a tua localização.",
+      "false": "O protocolo NÃO vai partilhar a tua localização.",
+      "route": "O protocolo vai partilhar o teu trajeto."
+    },
+    "audio": {
+      "true": "O protocolo vai gravar o teu áudio.",
+      "false": "O protocolo NÃO vai gravar o teu áudio."
+    },
+    "destinations": {
+      "title": "O protocolo vai (tentar) enviar mensagens para:"
     },
     "alert_info": "SMS, email e localização em tempo real serão enviados a 4 contactos.",
     "actions": {

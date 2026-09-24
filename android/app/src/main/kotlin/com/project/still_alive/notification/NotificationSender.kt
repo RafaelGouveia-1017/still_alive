@@ -178,7 +178,7 @@ class NotificationSender(
      * previously displayed StillAlive notifications do not remain visible
      * alongside the active alarm notification.
      */
-    private fun clearAllNotifications() {
+    fun clearAllNotifications() {
         val manager =
             context.getSystemService(
                 NotificationManager::class.java

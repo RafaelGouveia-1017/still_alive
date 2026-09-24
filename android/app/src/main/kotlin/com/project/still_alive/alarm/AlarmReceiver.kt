@@ -69,8 +69,15 @@ class AlarmReceiver : BroadcastReceiver() {
             return
         }
 
+        val localizedContext =
+            LocaleHelper.localizedContext(
+                context
+            )
+
         val notificationSender =
-            NotificationSender(context)
+            NotificationSender(
+                localizedContext
+            )
 
         notificationSender.sendAlarm(
             alarmId

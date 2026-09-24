@@ -120,7 +120,8 @@
     },
     "password_hint": "Input password",
     "password_invalid": "Password is incorrect!!!",
-    "quick_contacts": "Quick contacts"
+    "quick_contacts": "Quick contacts",
+    "example_timer_message": "Thank you for installing StillAlive!!!\nNow try to create your own timer!"
   },
   "timer_selection": {
     "title": "Select Timer",
@@ -292,8 +293,8 @@
       "cancel": "Cancel"
     },
     "pin_requirement": {
-      "on": "Requires your PIN",
-      "off": "Will NOT require your PIN"
+      "on": "Requires PIN",
+      "off": "Will NOT require PIN"
     }
   },
   "pre_alert_warning": {
@@ -301,9 +302,22 @@
     "question": "Are you still safe?",
     "message": "Your timer expired. Confirm now or emergency protocol will activate.",
     "labels": {
+      "time_left": "time left",
+      "second_left": "second left",
       "seconds_left": "seconds left"
     },
-    "alert_info": "SMS, email & live location will be sent to 4 contacts.",
+    "location": {
+      "true": "Protocol will share your location.",
+      "false": "Protocol will NOT share your location.",
+      "route": "Protocol will share your route."
+    },
+    "audio": {
+      "true": "Protocol will record your audio.",
+      "false": "Protocol will NOT record your audio."
+    },
+    "destinations": {
+      "title": "Protocol will (try to) send messages to:"
+    },
     "actions": {
       "safe_cancel": "I'm safe — Cancel",
       "trigger_emergency": "Trigger emergency now"

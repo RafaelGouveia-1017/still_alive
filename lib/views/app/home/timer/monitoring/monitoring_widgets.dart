@@ -82,10 +82,9 @@ class _MonitoringCountdownRingState extends State<MonitoringCountdownRing> {
     ActiveTimer timer = TimerService.instance.activeTimer;
 
     double progress = 1.0;
-    Duration remaining = Duration(seconds: timer.config.durationSecs);
 
     final now = DateTime.now().toUtc().millisecondsSinceEpoch;
-    remaining = timer.remaining();
+    Duration remaining = timer.remaining();
 
     progress = ((now - timer.run.startedAtMs) / (timer.run.expiresAtMs - timer.run.startedAtMs)).clamp(0.0, 1.0);
 
@@ -295,7 +294,7 @@ class MonitoringControls extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height: AppSpacing.lg),
+        const SizedBox(height: AppSpacing.lg),
 
         Center(
           child: Text(

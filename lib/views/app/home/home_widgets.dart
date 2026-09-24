@@ -127,6 +127,7 @@ class _TimerCountdownRingState extends State<TimerCountdownRing> with RouteAware
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       TimerService.instance.timerHasExpired();
+      _expirationScheduled = false;
     });
   }
 
@@ -157,7 +158,7 @@ class _TimerCountdownRingState extends State<TimerCountdownRing> with RouteAware
 
     _checkTimerExpiration(timerIsRunning);
 
-    final canConfigure = !timerIsRunning && !timerIsPaused && !_expirationScheduled && remaining.inSeconds > 10;
+    final canConfigure = !timerIsRunning && !timerIsPaused && !_expirationScheduled && remaining.inSeconds >= 10;
 
     return Hero(
       tag: 'timer-countdown',

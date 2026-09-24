@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:still_alive/services/native/method_channel.dart';
 import 'package:still_alive/src/rust/api/data/db.dart';
 
 /// Handles loading and retrieving localized strings for the application.
@@ -179,13 +180,14 @@ class LocaleProvider extends ChangeNotifier {
 
   /// Updates the application's locale and persists the selection.
   ///
-  /// ⚠️ Important:
   /// The locale must be supported by [AppLocalizationsDelegate].
   Future<void> setLocale(Locale locale) async {
     if (!AppLocalizationsDelegate().isSupported(locale)) return;
 
     _locale = locale;
     await executeSql(sql: "UPDATE settings SET value = '${locale.languageCode}' WHERE key = 'lang'");
+
+    await AppMethodChannel.instance.invokeMethod('setLocale', {'languageCode': locale.languageCode});
 
     notifyListeners();
   }

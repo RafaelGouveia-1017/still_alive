@@ -354,6 +354,83 @@ impl ActiveTimer {
 
         Ok(())
     }
+
+    /// Starts a new warning run.
+    ///
+    /// The warning's expiration time is calculated from the configured grace
+    /// period.
+    ///
+    /// The updated warning run is also persisted to the database.
+    ///
+    /// # Arguments
+    ///
+    /// * `now_ms` - Current timestamp in milliseconds since the Unix epoch.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the warning run cannot be persisted to the database.
+    pub fn start_warning_run(&mut self, now_ms: i64) -> Result<()> {
+        log::info!("Starting warning run for timer with key: '{}'", self.key);
+
+        let warning_ms = match self.config.grace_period_secs {
+            Some(secs) => secs * 1000,
+            None => panic!(
+                "grace_period_secs is null for timer with key: '{}'",
+                self.key
+            ),
+        };
+        let expires_at_ms = now_ms + warning_ms;
+
+        let new_run = TimerRun {
+            timer_id: self.key.clone(),
+            state: TimerState::Warning,
+            started_at_ms: now_ms,
+            expires_at_ms,
+            warning_duration_ms: None,
+            paused_at_ms: None,
+        };
+
+        create_timer_run(&new_run, now_ms).context("Failed to create warning run")?;
+
+        self.run = new_run;
+
+        Ok(())
+    }
+
+    /// Manually trigger a timer's expiration.
+    ///
+    /// The timer run state is manually changed to the `Expired` state.
+    ///
+    /// The updated timer run is also persisted to the database.
+    ///
+    /// # Arguments
+    ///
+    /// * `now_ms` - Current timestamp in milliseconds since the Unix epoch.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the timer run cannot be persisted to the database.
+    pub fn trigger_manual_expire(&mut self, now_ms: i64) -> Result<()> {
+        log::info!(
+            "Starting manual expire trigger for timer with key: '{}'",
+            self.key
+        );
+
+        let new_run = TimerRun {
+            timer_id: self.key.clone(),
+            state: TimerState::Expired,
+            started_at_ms: now_ms,
+            expires_at_ms: now_ms,
+            warning_duration_ms: None,
+            paused_at_ms: None,
+        };
+
+        create_timer_run(&new_run, now_ms).context("Failed to create warning run")?;
+
+        self.run = new_run;
+
+        Ok(())
+    }
 }
 
 /// Reconciles the persisted timer state with the current timestamp.
