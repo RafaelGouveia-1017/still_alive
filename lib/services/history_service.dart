@@ -799,8 +799,8 @@ class TimerExpiredEvent extends HistoryEvent {
 
           ...channels.asMap().entries.map(
             (e) => _row(
-              "${local.translate("history_logs.events.details.channel")} ${e.key + 1}",
-              "${e.value['platform']} (${e.value['status']})",
+              "${e.value['platform'].toString().split("|")[0]} ${e.key + 1}",
+              "${e.value['platform'].toString().split("|")[1]} (${e.value['status']})",
               scheme,
             ),
           ),

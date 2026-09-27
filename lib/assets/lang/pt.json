@@ -257,7 +257,7 @@
       "validation": "Mensagem não pode ser vazia."
     },
     "create": "Criar temporizador de segurança",
-    "edit": "Guardar temporizador\nde segurança",
+    "edit": "Guardar temporizador de segurança",
     "delete": [
       "Tens acerteza? O teu temporizador será PERMANENTEMENTE apagado.",
       "Apagar Temporizador",
@@ -326,19 +326,24 @@
   },
   "emergency_active": {
     "title": "EMERGÊNCIA ATIVA",
-    "status": "Direto",
     "alert": "Alerta enviado",
-    "timer": "02:14 decorrido · gravação de áudio automática",
-    "location": "Localização partilhada",
-    "open": "Abrir",
-    "dispatch_status": {
-      "sms": "4 de 4 entregues",
-      "email": "4 de 4 enviados",
-      "telegram": "Publicado no grupo de segurança",
-      "discord": "A enviar..."
+    "network": "Rede indisponível",
+    "mode": "Modo de emergência está ativo",
+    "unsent": "Mensagens não enviadas estão pendentes",
+    "audio": {
+      "title": "Gravação de áudio",
+      "running": "A gravar áudio através do microfone",
+      "stopped": "Gravação interrompida",
+      "permission": "Permissão microfone não disponível; áudio não está a ser gravado."
+    },
+    "dispatch": {
+      "title": "Estado dos envios",
+      "pending": "Pendente — rede indisponível",
+      "none": "Não estão configurados destinos de emergência."
     },
     "actions": {
-      "cancel": "Cancelar emergência (Manter pressionado)"
+      "location": "Enviar novos dados de localização",
+      "stop": "Parar emergência (Manter premido)"
     }
   },
   "offline_emergency": {
@@ -520,8 +525,7 @@
         "route": "Rota",
         "sms_length": "SMS Enviados",
         "emails_length": "Emails Enviados",
-        "channels_length": "Canais Notificados",
-        "channel": "Canal"
+        "channels_length": "Canais Notificados"
       },
       "polyline_copy": "Polyline copiada!",
       "filters": [

@@ -20,8 +20,6 @@ import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:still_alive/src/rust/api/data/db.dart';
 import 'package:still_alive/data/all.dart';
 import 'package:still_alive/services/native/method_channel.dart';
-import 'package:still_alive/views/app/home/timer/emergency_active.dart';
-import 'package:still_alive/views/app/home/timer/pre-alert/pre_alert_warning.dart';
 import 'package:still_alive/views/app/screens.dart';
 import 'package:still_alive/views/widgets/custom_splash.dart';
 

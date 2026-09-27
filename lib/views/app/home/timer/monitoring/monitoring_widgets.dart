@@ -211,7 +211,7 @@ class _MonitoringTileMapState extends State<MonitoringTileMap> with SingleTicker
           const SizedBox(height: AppSpacing.md),
           AppCard(
             padding: EdgeInsets.zero,
-            child: TileMapViewer(route: _route, height: 300, showEndMarker: true),
+            child: TileMapViewer(route: _route, height: 300, showEndMarker: false),
           ),
         ],
       ),

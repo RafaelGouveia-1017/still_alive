@@ -23,7 +23,9 @@ class GraceInput extends StatefulWidget {
   /// 10 seconds.
   ///
   /// [onChanged] is called whenever the selected grace period changes.
-  const GraceInput({super.key, required this.gracePeriod, required this.onChanged});
+  const GraceInput({super.key, required this.isNew, required this.gracePeriod, required this.onChanged});
+
+  final bool isNew;
 
   /// The initial grace period.
   ///
@@ -49,7 +51,7 @@ class _GraceInputState extends State<GraceInput> {
   void initState() {
     super.initState();
 
-    Duration seconds = widget.gracePeriod ?? const Duration(seconds: 10);
+    Duration seconds = widget.gracePeriod ?? Duration(seconds: (widget.isNew) ? 10 : 0);
     _seconds = seconds.inSeconds.clamp(0, maxSeconds).toDouble();
 
     widget.onChanged(seconds);

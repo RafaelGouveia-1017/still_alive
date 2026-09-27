@@ -258,7 +258,7 @@ class _SettingsScreenState extends State<SettingsScreen> with RouteAware {
 
                     final destination = await FilePicker.saveFile(
                       dialogTitle: local.translate("settings.sections.backup.export.2"),
-                      fileName: 'StillAlive_Backup_${DateTime.now().toIso8601String()}.zip',
+                      fileName: 'StillAlive_Backup_${DateTime.now().toIso8601String().replaceAll(':', '-')}.zip',
                       type: FileType.custom,
                       allowedExtensions: ['zip'],
                       bytes: bytes,
@@ -389,7 +389,7 @@ class _SettingsScreenState extends State<SettingsScreen> with RouteAware {
                             children: [
                               Text(local.translate("settings.footer"), style: AppText.micro(scheme)),
                               const SizedBox(width: AppSpacing.xxs),
-                              Image.asset("lib/assets/bmc-logo.png", height: 20, filterQuality: FilterQuality.high),
+                              Image.asset("lib/assets/images/bmc_logo.png", height: 20, filterQuality: FilterQuality.high),
                             ],
                           ),
                         ],

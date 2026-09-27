@@ -15,8 +15,7 @@ import 'package:still_alive/services/notification_service_android.dart';
 import 'package:still_alive/src/rust/api/data/db.dart';
 import 'package:still_alive/src/rust/api/timer/active_timer.dart';
 import 'package:still_alive/src/rust/api/timer/state.dart';
-import 'package:still_alive/views/app/home/timer/emergency_active.dart';
-import 'package:still_alive/views/app/home/timer/pre-alert/pre_alert_warning.dart';
+import 'package:still_alive/views/app/screens.dart';
 import 'package:still_alive/views/widgets/primitives.dart';
 
 /// Provides convenience methods for working with an [ActiveTimer].
@@ -218,7 +217,10 @@ class TimerService extends ChangeNotifier {
   ///
   /// The [passwordVerified] value indicates whether any required password
   /// verification was successfully completed before cancelling the timer.
-  Future<void> cancelTimer({required bool passwordVerified}) async {
+  ///
+  /// The [recordHistory] value indicates whether a [TimerCancelledEvent]
+  /// should be recorded or not.
+  Future<void> cancelTimer({required bool passwordVerified, bool recordHistory = true}) async {
     final now = DateTime.now().toUtc().millisecondsSinceEpoch;
 
     await _activeTimer.cancelTimerRun(nowMs: now, passwordVerified: passwordVerified);
@@ -232,15 +234,17 @@ class TimerService extends ChangeNotifier {
     launchTimerNotification();
     notifyListeners();
 
-    await HistoryService.insertHistoryRecord(
-      TimerCancelledEvent(
-        timerName: _activeTimer.config.name,
-        startedAt: DateTime.fromMillisecondsSinceEpoch(_activeTimer.run.startedAtMs),
-        endedAt: DateTime.fromMillisecondsSinceEpoch(now),
-        remainingSeconds: _activeTimer.remaining().inSeconds,
-        passwordVerified: passwordVerified,
-      ),
-    );
+    if (recordHistory) {
+      await HistoryService.insertHistoryRecord(
+        TimerCancelledEvent(
+          timerName: _activeTimer.config.name,
+          startedAt: DateTime.fromMillisecondsSinceEpoch(_activeTimer.run.startedAtMs),
+          endedAt: DateTime.fromMillisecondsSinceEpoch(now),
+          remainingSeconds: _activeTimer.remaining().inSeconds,
+          passwordVerified: passwordVerified,
+        ),
+      );
+    }
   }
 
   /// Handles method calls received from the native platform.
@@ -754,7 +758,44 @@ class TimerService extends ChangeNotifier {
     return BCrypt.checkpw(password, passwordHash);
   }
 
-  Future<void> triggerEmergency() async {
+  Future<({LatLng? currentLocation, String polyline})> getLocationData() async {
+    final config = _activeTimer.config;
+
+    LatLng? currentLocation;
+    String polyline = '';
+
+    if (config.routeSharingEnabled) {
+      try {
+        final route = LocationService.instance.currentRoute;
+        if (route.isNotEmpty) {
+          currentLocation = route.last;
+        }
+      } catch (e, st) {
+        AppLogger.log.warning('Could not read current emergency route.', e, st);
+      }
+
+      try {
+        polyline = await LocationService.instance.loadEncodedRoute();
+      } catch (e, st) {
+        AppLogger.log.severe('Failed to load recorded route for emergency.', e, st);
+      }
+    } else if (config.locationSharingEnabled) {
+      try {
+        LocationService.instance.clearRoute();
+        currentLocation = await LocationService.instance.getCurrentLocation();
+
+        AppLogger.log.info('Obtained current location for emergency sharing.');
+      } on LocationServiceException catch (e, st) {
+        AppLogger.log.warning('Unable to obtain current location for emergency sharing: $e', e, st);
+      } catch (e, st) {
+        AppLogger.log.severe('Unexpected error while obtaining current location.', e, st);
+      }
+    }
+
+    return (currentLocation: currentLocation, polyline: polyline);
+  }
+
+  Future<void> triggerEmergencyOld() async {
     final config = _activeTimer.config;
 
     LatLng? currentLocation;

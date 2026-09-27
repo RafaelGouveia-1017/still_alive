@@ -1,7 +1,7 @@
 <div align="center">
   <picture>
     <img alt="StillAlive"
-         src="./lib/assets/logo.png"
+         src="./lib/assets/images/logo.png"
          width="15%">
   </picture>
 </div>

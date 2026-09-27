@@ -236,6 +236,8 @@ class _PreAlertWarningScreenState extends State<PreAlertWarningScreen> {
                       label: local.translate("pre_alert_warning.actions.safe_cancel"),
                       color: ButtonColor.tertiary,
                       onPressed: () async {
+                        setState(() => _ignore = true);
+
                         bool? passwordVerified = false;
 
                         if (passwordProtected) {
@@ -248,7 +250,7 @@ class _PreAlertWarningScreenState extends State<PreAlertWarningScreen> {
                           if (!context.mounted) return;
                           Navigator.of(
                             context,
-                          ).pushAndRemoveUntil(AppRoute(page: HomeScreen(), transition: AppRouteTransitionType.slideLeft), (route) => false);
+                          ).pushAndRemoveUntil(AppRoute(page: HomeScreen(), transition: AppRouteTransitionType.slideRight), (route) => false);
                         }
                       },
                     ),

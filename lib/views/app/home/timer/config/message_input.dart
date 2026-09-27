@@ -55,6 +55,8 @@ class _MessageInputState extends State<MessageInput> {
   void loadPref() async {
     String value = await selectOne(sql: "SELECT value FROM settings WHERE key = 'message'");
 
+    widget.onChanged(value);
+
     setState(() {
       _messageController.text = value;
       _isLoading = false;

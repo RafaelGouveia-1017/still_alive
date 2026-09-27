@@ -325,19 +325,24 @@
   },
   "emergency_active": {
     "title": "EMERGENCY ACTIVE",
-    "status": "Live",
     "alert": "Alert dispatched",
-    "timer": "02:14 elapsed · Auto-recording audio",
-    "location": "Shared location",
-    "open": "Open",
-    "dispatch_status": {
-      "sms": "4 of 4 delivered",
-      "email": "4 of 4 sent",
-      "telegram": "Posted to safety group",
-      "discord": "Sending..."
+    "network": "Network unavailable",
+    "mode": "Emergency mode is active",
+    "unsent": "Unsent messages are pending",
+    "audio": {
+      "title": "Audio recording",
+      "running": "Recording microphone audio",
+      "stopped": "Recording stopped",
+      "permission": "Microphone permission not available; audio not recording."
+    },
+    "dispatch": {
+      "title": "Dispatch Status",
+      "pending": "Pending - network unavailable",
+      "none": "No emergency destinations are configured."
     },
     "actions": {
-      "cancel": "Cancel emergency (Hold)"
+      "location": "Send new location data",
+      "stop": "Stop emergency (Hold)"
     }
   },
   "offline_emergency": {
@@ -511,8 +516,7 @@
         "route": "Route",
         "sms_length": "SMS Sent",
         "emails_length": "Emails Sent",
-        "channels_length": "Channels Notified",
-        "channel": "Channel"
+        "channels_length": "Channels Notified"
       },
       "polyline_copy": "Polyline copied!",
       "filters": [

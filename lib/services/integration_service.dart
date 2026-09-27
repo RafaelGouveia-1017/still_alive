@@ -378,7 +378,7 @@ class IntegrationService {
     required String integrationKey,
     required String accountId,
     required String destinationId,
-    required String message, //TODO will this just be string?
+    required String message,
   }) async {
     try {
       return await sendIntegrationMessage(key: integrationKey, accountId: accountId, destinationId: destinationId, message: message);

@@ -88,7 +88,7 @@ class AppLogger {
 
     return await FilePicker.saveFile(
       dialogTitle: "Save log file",
-      fileName: 'StillAlive_Log_${DateTime.now().toIso8601String()}.log',
+      fileName: 'StillAlive_Log_${DateTime.now().toIso8601String().replaceAll(':', '-')}.log',
       type: FileType.custom,
       allowedExtensions: ['log'],
       bytes: await getLogFile().readAsBytes(),
