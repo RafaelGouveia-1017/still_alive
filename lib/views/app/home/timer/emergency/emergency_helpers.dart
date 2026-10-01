@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:latlong2/latlong.dart';
@@ -186,6 +187,8 @@ class EmergencyDispatchTarget {
 
   final bool allowLocation;
   final bool allowAudio;
+
+  bool get requiresInternet => kind == EmergencyDestinationKind.email || kind == EmergencyDestinationKind.integration;
 }
 
 /// Represents the current delivery state of an emergency message.
@@ -262,9 +265,10 @@ class EmergencyLocationPayload {
 /// recipient does not prevent another configured recipient from being
 /// attempted or retried.
 class EmergencyDispatchService {
-  EmergencyDispatchService(this.adapters);
+  EmergencyDispatchService(this.adapters, this.local);
 
   final EmergencyAdapters adapters;
+  final AppLocalizations local;
 
   final SmsService _sms = const SmsService();
 
@@ -370,10 +374,18 @@ class EmergencyDispatchService {
     required EmergencyLocationPayload payload,
     required bool audioRecorded,
   }) {
-    final buffer = StringBuffer();
+    final buffer = StringBuffer(local.translate("emergency_active.dispatch.message.title"));
     final text = baseMessage?.trim();
     if (text != null && text.isNotEmpty) {
-      buffer.writeln(text);
+      buffer
+        ..writeln()
+        ..writeln()
+        ..writeln(text);
+    } else {
+      buffer
+        ..writeln()
+        ..writeln()
+        ..write(local.translate("emergency_active.dispatch.message.default"));
     }
 
     if (target.allowLocation) {
@@ -381,19 +393,21 @@ class EmergencyDispatchService {
     }
 
     if (audioRecorded && target.allowAudio) {
-      buffer.writeln('Audio recording was captured during the emergency.');
+      buffer
+        ..writeln()
+        ..writeln(local.translate("emergency_active.dispatch.message.audio"));
     }
 
-    final result = buffer.toString().trim();
-    return result.isEmpty ? 'Emergency alert.' : result;
+    return buffer.toString().trim();
   }
 
-  String buildLocationUpdate({required EmergencyDispatchTarget target, required EmergencyLocationPayload payload}) {
-    final buffer = StringBuffer('Emergency location update.');
+  String? buildLocationUpdate({required EmergencyDispatchTarget target, required EmergencyLocationPayload payload}) {
     if (target.allowLocation) {
+      final buffer = StringBuffer(local.translate("emergency_active.dispatch.location.update"));
       _appendLocation(buffer, payload);
+      return buffer.toString().trim();
     }
-    return buffer.toString().trim();
+    return null;
   }
 
   void _appendLocation(StringBuffer buffer, EmergencyLocationPayload payload) {
@@ -402,15 +416,18 @@ class EmergencyDispatchService {
       buffer
         ..writeln()
         ..writeln(
-          'Current location: ${point.latitude.toStringAsFixed(6)}, '
+          '${local.translate("emergency_active.dispatch.location.position")} '
+          '${point.latitude.toStringAsFixed(6)}, '
           '${point.longitude.toStringAsFixed(6)}',
-        );
+        )
+        ..writeln('https://www.google.com/maps/search/${point.latitude}+${point.longitude}');
     }
 
     if (payload.polyline.isNotEmpty) {
       buffer
         ..writeln()
-        ..writeln('Encoded route:')
+        ..writeln('${local.translate("emergency_active.dispatch.location.decode")} https://tools.nextbillion.ai/polyline-decoder')
+        ..writeln(local.translate("emergency_active.dispatch.location.encode"))
         ..writeln(payload.polyline);
     }
   }
@@ -426,7 +443,11 @@ class EmergencyDispatchService {
           );
 
         case EmergencyDestinationKind.email:
-          final ok = await adapters.emailSender(recipient: target.destination, subject: 'Emergency alert', body: message);
+          final ok = await adapters.emailSender(
+            recipient: target.destination,
+            subject: local.translate("emergency_active.dispatch.subject"),
+            body: message,
+          );
           return EmergencyDispatchResult(state: ok ? EmergencyDispatchState.sent : EmergencyDispatchState.failed);
 
         case EmergencyDestinationKind.integration:
@@ -446,7 +467,7 @@ class EmergencyDispatchService {
   Map<String, dynamic> toHistoryEntry(EmergencyDispatchTarget target, EmergencyDispatchState state, {Object? error}) {
     switch (target.kind) {
       case EmergencyDestinationKind.integration:
-        return <String, dynamic>{'platform': target.destination, 'status': state.name};
+        return <String, dynamic>{'platform': '${target.title}|${target.destination}', 'status': state.name};
       default:
         return <String, dynamic>{'recipient': target.destination, 'status': state.name};
     }
@@ -480,9 +501,28 @@ class EmergencyAudioService {
     }
 
     final temp = await getTemporaryDirectory();
-    final filePath = p.join(temp.path, 'emergency_audio_${DateTime.now().millisecondsSinceEpoch}.m4a');
+    final filePath = p.join(temp.path, 'emergency_audio_${DateTime.now().millisecondsSinceEpoch}.flac');
 
-    await _recorder.start(const RecordConfig(), path: filePath);
+    await _recorder.start(
+      const RecordConfig(
+        encoder: AudioEncoder.flac,
+        androidConfig: AndroidRecordConfig(
+          muteAudio: false,
+          audioSource: AndroidAudioSource.mic,
+          speakerphone: true,
+          audioManagerMode: AudioManagerMode.modeNormal,
+        ),
+        iosConfig: IosRecordConfig(
+          categoryOptions: [
+            IosAudioCategoryOption.defaultToSpeaker,
+            IosAudioCategoryOption.overrideMutedMicrophoneInterruption,
+            IosAudioCategoryOption.duckOthers,
+          ],
+          allowHapticsAndSystemSoundsDuringRecording: false,
+        ),
+      ),
+      path: filePath,
+    );
 
     _path = filePath;
     _recording = true;
@@ -505,13 +545,22 @@ class EmergencyAudioService {
     final file = File(path);
     if (!await file.exists()) return null;
 
+    await stop();
     final bytes = await file.readAsBytes();
+    await start();
+
+    String title = "Export emergency recording";
+    BuildContext? context = PermissionManager.instance.navigatorKey.currentContext;
+    if (context != null && context.mounted) {
+      AppLocalizations local = AppLocalizations.of(context)!;
+      title = local.translate("emergency_active.audio.save");
+    }
 
     return (await FilePicker.saveFile(
-      dialogTitle: 'Export emergency recording',
-      fileName: 'StillAlive_Audio_${DateTime.now().toIso8601String().replaceAll(':', '-')}.m4a',
+      dialogTitle: title,
+      fileName: 'StillAlive_Audio_${DateTime.now().toIso8601String().replaceAll(':', '-')}.flac',
       bytes: bytes,
-      allowedExtensions: ['m4a'],
+      allowedExtensions: ['flac'],
       type: FileType.audio,
     ))?.toString();
   }

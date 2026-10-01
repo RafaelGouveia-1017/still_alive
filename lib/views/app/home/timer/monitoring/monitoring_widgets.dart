@@ -165,6 +165,7 @@ class _MonitoringTileMapState extends State<MonitoringTileMap> with SingleTicker
 
   @override
   void dispose() {
+    _counter.dispose();
     _pulseController.dispose();
     _routeSubscription?.cancel();
     _counterTimer?.cancel();

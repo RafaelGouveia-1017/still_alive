@@ -66,221 +66,224 @@ class _PreAlertWarningScreenState extends State<PreAlertWarningScreen> {
 
     Color warning = scheme.error.withGreen(((scheme.error.g * 255.0).round().clamp(0, 255) + 80));
 
-    return ScreenBase(
-      child: Stack(
-        children: [
-          Positioned.fill(
-            child: IgnorePointer(
+    return PopScope(
+      canPop: false,
+      child: ScreenBase(
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: IgnorePointer(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: EllipticalGradient(
+                      colors: [warning.withAlpha(38), Colors.transparent],
+                      stops: const [0.0, 1],
+                      ellipseRelativeCenter: const Offset(0.5, 0),
+                      ellipseScale: const Scale(widthFactor: 0.45, heightFactor: 1.5),
+                      backgroundColor: scheme.surface,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: const ClampingScrollPhysics(),
+                    padding: const EdgeInsets.fromLTRB(0, 40, 0, AppSpacing.xl),
+                    child: Column(
+                      children: [
+                        PulsingBadge(),
+                        const SizedBox(height: AppSpacing.xl),
+
+                        Pill(label: local.translate("pre_alert_warning.title"), backColor: warning),
+                        const SizedBox(height: AppSpacing.md),
+
+                        Text(local.translate("pre_alert_warning.question"), style: AppText.h2(scheme), textAlign: TextAlign.center),
+                        const SizedBox(height: AppSpacing.sm),
+
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 300),
+                          child: Text(
+                            local.translate("pre_alert_warning.message"),
+                            textAlign: TextAlign.center,
+                            style: AppText.bodySm(scheme).copyWith(color: scheme.onSurfaceVariant),
+                          ),
+                        ),
+                        const SizedBox(height: AppSpacing.xl),
+
+                        WarningCountdownRing(),
+                        const SizedBox(height: AppSpacing.xl),
+
+                        Builder(
+                          builder: (context) {
+                            String location = (timer.config.locationSharingEnabled)
+                                ? (timer.config.routeSharingEnabled)
+                                      ? local.translate("pre_alert_warning.location.route")
+                                      : local.translate("pre_alert_warning.location.true")
+                                : local.translate("pre_alert_warning.location.false");
+
+                            String audio = (timer.config.audioRecordingEnabled)
+                                ? local.translate("pre_alert_warning.audio.true")
+                                : local.translate("pre_alert_warning.audio.false");
+
+                            return AppCard(
+                              color: warning.withAlpha(15),
+                              borderColor: warning.withAlpha(51),
+                              child: Row(
+                                children: [
+                                  Icon(LucideIcons.triangleAlert, size: 16, color: warning),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text("$location\n$audio", style: AppText.caption(scheme).copyWith(color: scheme.onSurface)),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: AppSpacing.lg),
+
+                        Builder(
+                          builder: (context) {
+                            List<String> destinations = [];
+
+                            int contacts = timer.config.contacts.length;
+                            int custom = timer.config.customSms.length + timer.config.customEmail.length;
+                            int integrations = timer.config.integrations.discord.accounts.length + timer.config.integrations.telegram.accounts.length;
+
+                            if (contacts > 0) {
+                              destinations.add(
+                                "• $contacts ${local.translate((contacts == 1) ? "active_monitoring.destinations.contact.0" : "active_monitoring.destinations.contact.1")}",
+                              );
+                            }
+
+                            if (custom > 0) {
+                              destinations.add(
+                                "• $custom ${local.translate((custom == 1) ? "active_monitoring.destinations.custom.0" : "active_monitoring.destinations.custom.1")}",
+                              );
+                            }
+
+                            if (integrations > 0) {
+                              destinations.add(
+                                "• $integrations ${local.translate((integrations == 1) ? "active_monitoring.destinations.integrations.0" : "active_monitoring.destinations.integrations.1")}",
+                              );
+                            }
+
+                            return AppCard(
+                              color: warning.withAlpha(15),
+                              borderColor: warning.withAlpha(51),
+                              child: Row(
+                                children: [
+                                  Icon(LucideIcons.triangleAlert, size: 16, color: warning),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(bottom: AppSpacing.xxs),
+                                          child: Text(
+                                            local.translate("pre_alert_warning.destinations.title"),
+                                            style: AppText.caption(scheme).copyWith(color: scheme.onSurface),
+                                          ),
+                                        ),
+                                        Text(destinations.join('\n'), style: AppText.caption(scheme).copyWith(color: scheme.onSurface)),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+
+                        const SizedBox(height: 150),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
               child: DecoratedBox(
                 decoration: BoxDecoration(
-                  gradient: EllipticalGradient(
-                    colors: [warning.withAlpha(38), Colors.transparent],
-                    stops: const [0.0, 1],
-                    ellipseRelativeCenter: const Offset(0.5, 0),
-                    ellipseScale: const Scale(widthFactor: 0.45, heightFactor: 1.5),
-                    backgroundColor: scheme.surface,
+                  gradient: LinearGradient(
+                    colors: [scheme.surface, scheme.surface.withAlpha(64), scheme.surface.withAlpha(0)],
+                    stops: const [0.3, 0.75, 1],
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
                   ),
                 ),
-              ),
-            ),
-          ),
-          Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  physics: const ClampingScrollPhysics(),
-                  padding: const EdgeInsets.fromLTRB(0, 40, 0, AppSpacing.xl),
-                  child: Column(
-                    children: [
-                      PulsingBadge(),
-                      const SizedBox(height: AppSpacing.xl),
-
-                      Pill(label: local.translate("pre_alert_warning.title"), backColor: warning),
-                      const SizedBox(height: AppSpacing.md),
-
-                      Text(local.translate("pre_alert_warning.question"), style: AppText.h2(scheme), textAlign: TextAlign.center),
-                      const SizedBox(height: AppSpacing.sm),
-
-                      ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 300),
-                        child: Text(
-                          local.translate("pre_alert_warning.message"),
-                          textAlign: TextAlign.center,
-                          style: AppText.bodySm(scheme).copyWith(color: scheme.onSurfaceVariant),
-                        ),
+                child: Column(
+                  children: [
+                    Center(
+                      child: Text(
+                        (passwordProtected)
+                            ? local.translate("active_monitoring.pin_requirement.on")
+                            : local.translate("active_monitoring.pin_requirement.off"),
+                        style: AppText.micro(scheme),
                       ),
-                      const SizedBox(height: AppSpacing.xl),
-
-                      WarningCountdownRing(),
-                      const SizedBox(height: AppSpacing.xl),
-
-                      Builder(
-                        builder: (context) {
-                          String location = (timer.config.locationSharingEnabled)
-                              ? (timer.config.routeSharingEnabled)
-                                    ? local.translate("pre_alert_warning.location.route")
-                                    : local.translate("pre_alert_warning.location.true")
-                              : local.translate("pre_alert_warning.location.false");
-
-                          String audio = (timer.config.audioRecordingEnabled)
-                              ? local.translate("pre_alert_warning.audio.true")
-                              : local.translate("pre_alert_warning.audio.false");
-
-                          return AppCard(
-                            color: warning.withAlpha(15),
-                            borderColor: warning.withAlpha(51),
-                            child: Row(
-                              children: [
-                                Icon(LucideIcons.triangleAlert, size: 16, color: warning),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Text("$location\n$audio", style: AppText.caption(scheme).copyWith(color: scheme.onSurface)),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                      const SizedBox(height: AppSpacing.lg),
-
-                      Builder(
-                        builder: (context) {
-                          List<String> destinations = [];
-
-                          int contacts = timer.config.contacts.length;
-                          int custom = timer.config.customSms.length + timer.config.customEmail.length;
-                          int integrations = timer.config.integrations.discord.accounts.length + timer.config.integrations.telegram.accounts.length;
-
-                          if (contacts > 0) {
-                            destinations.add(
-                              "• $contacts ${local.translate((contacts == 1) ? "active_monitoring.destinations.contact.0" : "active_monitoring.destinations.contact.1")}",
-                            );
-                          }
-
-                          if (custom > 0) {
-                            destinations.add(
-                              "• $custom ${local.translate((custom == 1) ? "active_monitoring.destinations.custom.0" : "active_monitoring.destinations.custom.1")}",
-                            );
-                          }
-
-                          if (integrations > 0) {
-                            destinations.add(
-                              "• $integrations ${local.translate((integrations == 1) ? "active_monitoring.destinations.integrations.0" : "active_monitoring.destinations.integrations.1")}",
-                            );
-                          }
-
-                          return AppCard(
-                            color: warning.withAlpha(15),
-                            borderColor: warning.withAlpha(51),
-                            child: Row(
-                              children: [
-                                Icon(LucideIcons.triangleAlert, size: 16, color: warning),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.only(bottom: AppSpacing.xxs),
-                                        child: Text(
-                                          local.translate("pre_alert_warning.destinations.title"),
-                                          style: AppText.caption(scheme).copyWith(color: scheme.onSurface),
-                                        ),
-                                      ),
-                                      Text(destinations.join('\n'), style: AppText.caption(scheme).copyWith(color: scheme.onSurface)),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-
-                      const SizedBox(height: 150),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [scheme.surface, scheme.surface.withAlpha(64), scheme.surface.withAlpha(0)],
-                  stops: const [0.3, 0.75, 1],
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                ),
-              ),
-              child: Column(
-                children: [
-                  Center(
-                    child: Text(
-                      (passwordProtected)
-                          ? local.translate("active_monitoring.pin_requirement.on")
-                          : local.translate("active_monitoring.pin_requirement.off"),
-                      style: AppText.micro(scheme),
                     ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
+                    const SizedBox(height: AppSpacing.md),
 
-                  IgnorePointer(
-                    ignoring: _ignore,
-                    child: PrimaryButton(
-                      icon: LucideIcons.shieldCheck,
-                      label: local.translate("pre_alert_warning.actions.safe_cancel"),
-                      color: ButtonColor.tertiary,
-                      onPressed: () async {
-                        setState(() => _ignore = true);
+                    IgnorePointer(
+                      ignoring: _ignore,
+                      child: PrimaryButton(
+                        icon: LucideIcons.shieldCheck,
+                        label: local.translate("pre_alert_warning.actions.safe_cancel"),
+                        color: ButtonColor.tertiary,
+                        onPressed: () async {
+                          setState(() => _ignore = true);
 
-                        bool? passwordVerified = false;
+                          bool? passwordVerified = false;
 
-                        if (passwordProtected) {
-                          passwordVerified = await TimerService.instance.showPasswordPrompt(context);
-                        }
+                          if (passwordProtected) {
+                            passwordVerified = await TimerService.instance.showPasswordPrompt(context);
+                          }
 
-                        if (passwordVerified != null) {
-                          await TimerService.instance.cancelTimer(passwordVerified: passwordVerified);
+                          if (passwordVerified != null) {
+                            await TimerService.instance.cancelTimer(passwordVerified: passwordVerified);
 
-                          if (!context.mounted) return;
-                          Navigator.of(
-                            context,
-                          ).pushAndRemoveUntil(AppRoute(page: HomeScreen(), transition: AppRouteTransitionType.slideRight), (route) => false);
-                        }
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-
-                  IgnorePointer(
-                    ignoring: _ignore,
-                    child: SizedBox(
-                      width: 250,
-                      child: TextButton(
-                        onPressed: () {
-                          setState(() {
-                            TimerService.instance.triggerTimerExpire();
-                            _ignore = true;
-                          });
+                            if (!context.mounted) return;
+                            Navigator.of(
+                              context,
+                            ).pushAndRemoveUntil(AppRoute(page: HomeScreen(), transition: AppRouteTransitionType.slideRight), (route) => false);
+                          }
                         },
-                        child: Text(
-                          local.translate("pre_alert_warning.actions.trigger_emergency"),
-                          style: AppText.bodySm(scheme).copyWith(color: scheme.error),
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+
+                    IgnorePointer(
+                      ignoring: _ignore,
+                      child: SizedBox(
+                        width: 250,
+                        child: TextButton(
+                          onPressed: () {
+                            setState(() {
+                              TimerService.instance.triggerTimerExpire();
+                              _ignore = true;
+                            });
+                          },
+                          child: Text(
+                            local.translate("pre_alert_warning.actions.trigger_emergency"),
+                            style: AppText.bodySm(scheme).copyWith(color: scheme.error),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-                ],
+                    const SizedBox(height: AppSpacing.lg),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -38,7 +38,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-  lucide_icons_flutter: ^3.1.20
+  lucide_icons_flutter: ^3.1.21
   font_awesome_flutter: ^11.0.0
 
   path_provider: ^2.1.6
@@ -83,7 +83,7 @@ dependencies:
   audioplayers: ^6.8.1
 
   flutter_contacts: ^2.5.0
-  flutter_sms: ^3.0.1
+  send_message: ^1.0.2
 
 dev_dependencies:
   flutter_test:

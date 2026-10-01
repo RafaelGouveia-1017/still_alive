@@ -76,57 +76,60 @@ class _HomeScreenState extends State<HomeScreen> {
       integrations += telegram.accounts.length;
     }
 
-    return ScreenBase(
-      bottomNavDestination: 'home',
-      header: AppHeader(
-        title: local.translate('app_name'),
-        left: ListenableBuilder(
-          listenable: TimerService.instance,
-          builder: (context, child) {
-            final state = TimerService.instance.timerRunCurrentState;
+    return PopScope(
+      canPop: false,
+      child: ScreenBase(
+        bottomNavDestination: 'home',
+        header: AppHeader(
+          title: local.translate('app_name'),
+          left: ListenableBuilder(
+            listenable: TimerService.instance,
+            builder: (context, child) {
+              final state = TimerService.instance.timerRunCurrentState;
 
-            return CircleIconButton(
-              icon: switch (state) {
-                TimerState.running || TimerState.paused => LucideIcons.shield,
-                TimerState.warning => LucideIcons.shieldAlert,
-                TimerState.expired => LucideIcons.shieldX,
-                _ => LucideIcons.shieldOff,
-              },
-              foreground: switch (state) {
-                TimerState.warning || TimerState.expired => scheme.error,
-                _ => scheme.tertiary,
-              },
-              background: scheme.surface,
-            );
-          },
+              return CircleIconButton(
+                icon: switch (state) {
+                  TimerState.running || TimerState.paused => LucideIcons.shield,
+                  TimerState.warning => LucideIcons.shieldAlert,
+                  TimerState.expired => LucideIcons.shieldX,
+                  _ => LucideIcons.shieldOff,
+                },
+                foreground: switch (state) {
+                  TimerState.warning || TimerState.expired => scheme.error,
+                  _ => scheme.tertiary,
+                },
+                background: scheme.surface,
+              );
+            },
+          ),
+          right: CircleIconButton(
+            icon: LucideIcons.clockPlus,
+            onTap: () => Navigator.of(context).push(AppRoute(page: TimerSelectionScreen(), transition: AppRouteTransitionType.slideLeft)),
+          ),
         ),
-        right: CircleIconButton(
-          icon: LucideIcons.clockPlus,
-          onTap: () => Navigator.of(context).push(AppRoute(page: TimerSelectionScreen(), transition: AppRouteTransitionType.slideLeft)),
-        ),
-      ),
-      child: Column(
-        children: [
-          Expanded(
-            child: Center(
-              child: ListView(
-                shrinkWrap: true,
-                physics: const ClampingScrollPhysics(),
-                children: [
-                  const SizedBox(height: AppSpacing.lg),
-                  TimerCountdownRing(),
-                  const SizedBox(height: AppSpacing.xxl),
-                  PhoneStatus(contacts: contacts, integrations: integrations),
-                  const SizedBox(height: AppSpacing.xl),
-                  TimerControls(),
-                  const SizedBox(height: AppSpacing.xl),
-                  QuickContacts(),
-                  const SizedBox(height: AppSpacing.lg),
-                ],
+        child: Column(
+          children: [
+            Expanded(
+              child: Center(
+                child: ListView(
+                  shrinkWrap: true,
+                  physics: const ClampingScrollPhysics(),
+                  children: [
+                    const SizedBox(height: AppSpacing.lg),
+                    TimerCountdownRing(),
+                    const SizedBox(height: AppSpacing.xxl),
+                    PhoneStatus(contacts: contacts, integrations: integrations),
+                    const SizedBox(height: AppSpacing.xl),
+                    TimerControls(),
+                    const SizedBox(height: AppSpacing.xl),
+                    QuickContacts(),
+                    const SizedBox(height: AppSpacing.lg),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

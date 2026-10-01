@@ -28,7 +28,7 @@ class QuickContacts extends StatefulWidget {
 
 /// State implementation for [QuickContacts].
 class _QuickContactsState extends State<QuickContacts> with RouteAware {
-  late List<_QuickContactData> quickContacts = [];
+  late List<_QuickContactData> _quickContacts = [];
   bool _isLoading = true;
 
   late final AppLifecycleListener _lifecycleListener;
@@ -42,10 +42,9 @@ class _QuickContactsState extends State<QuickContacts> with RouteAware {
   }
 
   void loadQuickContacts() async {
-    setState(() {
-      quickContacts = [];
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
+
+    List<_QuickContactData> quickContacts = [];
 
     final String jsonString = await selectOne(sql: "SELECT value FROM contacts WHERE key = 'quick'");
 
@@ -79,6 +78,7 @@ class _QuickContactsState extends State<QuickContacts> with RouteAware {
 
     if (!mounted) return;
     setState(() {
+      _quickContacts = quickContacts;
       _isLoading = false;
     });
   }
@@ -115,8 +115,8 @@ class _QuickContactsState extends State<QuickContacts> with RouteAware {
       return Center(child: CircularProgressIndicator(color: scheme.tertiary));
     }
 
-    final movableContacts = quickContacts.sublist(0, quickContacts.length - 1);
-    final addContact = quickContacts[quickContacts.length - 1];
+    final movableContacts = _quickContacts.sublist(0, _quickContacts.length - 1);
+    final addContact = _quickContacts[_quickContacts.length - 1];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -141,7 +141,7 @@ class _QuickContactsState extends State<QuickContacts> with RouteAware {
 
                 executeSql(sql: "UPDATE contacts SET value = '${jsonEncode(json).replaceAll("'", "''")}' WHERE key = 'quick'");
 
-                quickContacts = [...reordered, addContact];
+                _quickContacts = [...reordered, addContact];
               });
             },
             builder: (children) {

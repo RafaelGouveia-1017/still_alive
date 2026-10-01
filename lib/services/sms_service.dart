@@ -1,4 +1,4 @@
-import 'package:flutter_sms/flutter_sms.dart';
+import 'package:send_message/send_message.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 /// A service responsible for sending SMS messages.
@@ -42,7 +42,7 @@ class SmsService {
     }
 
     try {
-      await sendSMS(message: message, recipients: phoneNumbers);
+      await sendSMS(message: message, recipients: phoneNumbers, sendDirect: true);
 
       return SmsResult.sent;
     } catch (e) {

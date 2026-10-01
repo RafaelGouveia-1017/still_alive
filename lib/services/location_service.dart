@@ -200,7 +200,9 @@ class LocationService {
   Future<LatLng> getCurrentLocation() async {
     await _ensureLocationAvailable();
 
-    final position = await Geolocator.getCurrentPosition(locationSettings: const LocationSettings(accuracy: LocationAccuracy.best));
+    final position = await Geolocator.getCurrentPosition(
+      locationSettings: const LocationSettings(accuracy: LocationAccuracy.best, distanceFilter: 5),
+    );
 
     _validatePosition(position);
 
@@ -531,7 +533,7 @@ class LocationService {
   Future<String> loadEncodedRoute() async {
     final recordingTimerId = TimerService.instance.activeTimer.key;
 
-    final result = await selectOne(
+    final polyline = await selectOne(
       sql:
           '''
           SELECT polyline
@@ -540,11 +542,11 @@ class LocationService {
           ''',
     );
 
-    if (_isNone(result)) {
+    if (_isNone(polyline)) {
       return '';
     }
 
-    return _readString(result, 'polyline');
+    return polyline;
   }
 
   // ---------------------------------------------------------------------------
@@ -706,9 +708,9 @@ class LocationService {
 
     final previous = _lastPersistedPoint;
 
-    final encodedLatitude = encodePoint(point.latitude, previous: previous?.latitude ?? 0);
+    final encodedLatitude = encodePoint(point.latitude, previous: previous?.latitude ?? 0, accuracyExponent: 5);
 
-    final encodedLongitude = encodePoint(point.longitude, previous: previous?.longitude ?? 0);
+    final encodedLongitude = encodePoint(point.longitude, previous: previous?.longitude ?? 0, accuracyExponent: 5);
 
     final encodedPoint = '$encodedLatitude$encodedLongitude';
 

@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:still_alive/data/app_localization.dart';
+import 'package:still_alive/data/app_permissions.dart';
 import 'package:still_alive/src/rust/api/data/logging.dart';
 
 /// Provides centralized application logging.
@@ -86,8 +88,15 @@ class AppLogger {
     // Make sure everything currently buffered by the IOSink is on disk.
     await _logSink?.flush();
 
+    String title = "Save log file";
+    BuildContext? context = PermissionManager.instance.navigatorKey.currentContext;
+    if (context != null && context.mounted) {
+      AppLocalizations local = AppLocalizations.of(context)!;
+      title = local.translate("unexpected_error.save_log");
+    }
+
     return await FilePicker.saveFile(
-      dialogTitle: "Save log file",
+      dialogTitle: title,
       fileName: 'StillAlive_Log_${DateTime.now().toIso8601String().replaceAll(':', '-')}.log',
       type: FileType.custom,
       allowedExtensions: ['log'],

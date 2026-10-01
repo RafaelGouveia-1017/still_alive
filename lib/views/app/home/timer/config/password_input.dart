@@ -220,7 +220,7 @@ class _PasswordInputState extends State<PasswordInput> {
                           : local.translate("timer_configuration.security.password.pin_requirement.off"),
                       icon: (_protected) ? LucideIcons.lock : LucideIcons.lockOpen,
                       iconColor: scheme.secondary,
-                      trailing: AppToggle(on: _protected),
+                      trailing: (!widget.isNew) ? null : AppToggle(on: _protected),
                     ),
                   ),
                 ),
@@ -268,6 +268,7 @@ class _PasswordInputState extends State<PasswordInput> {
             inputFormatters: [FilteringTextInputFormatter.singleLineFormatter],
             decoration: InputDecoration(
               hintText: local.translate("timer_configuration.security.password.password_hint"),
+              hintStyle: AppText.caption(scheme).copyWith(fontSize: 13),
               counterText: '',
               contentPadding: const EdgeInsets.only(top: AppSpacing.lg, bottom: AppSpacing.sm),
               border: InputBorder.none,

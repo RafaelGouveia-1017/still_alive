@@ -163,6 +163,7 @@ class _TimerConfigScreenState extends State<TimerConfigScreen> {
   @override
   void dispose() {
     _timerDuration.dispose();
+    _timerContacts.dispose();
     super.dispose();
   }
 
@@ -424,7 +425,7 @@ class _TimerConfigScreenState extends State<TimerConfigScreen> {
                             SectionTitle(local.translate("timer_configuration.message.title")),
                             MessageInput(isNew: widget.isNew, message: _timerData.message, onChanged: (String? value) => _timerData.message = value),
 
-                            SizedBox(height: (keyboardClosed) ? 72 : 0),
+                            SizedBox(height: (keyboardClosed) ? 80 : 0),
                           ],
                         ],
                       ),

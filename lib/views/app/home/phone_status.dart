@@ -177,7 +177,11 @@ class _PhoneStatusState extends State<PhoneStatus> {
         Expanded(
           child: Pressable(
             onTap: () => Navigator.of(context).push(AppRoute(page: EmergencyContactsScreen(), transition: AppRouteTransitionType.slideLeft)),
-            child: _StatCard(icon: LucideIcons.userStar, label: '${widget.contacts} ${local.translate('home.contacts')}', color: scheme.secondary),
+            child: _StatCard(
+              icon: LucideIcons.userStar,
+              label: '${widget.contacts} ${(widget.contacts == 1) ? local.translate('home.contacts.0') : local.translate('home.contacts.1')}',
+              color: scheme.secondary,
+            ),
           ),
         ),
         const SizedBox(width: AppSpacing.sm),
@@ -187,7 +191,7 @@ class _PhoneStatusState extends State<PhoneStatus> {
             child: _StatCard(
               icon: LucideIcons.plug,
               rotateAngle: math.pi / 4,
-              label: '${widget.integrations} ${local.translate('home.plugins')}',
+              label: '${widget.integrations} ${(widget.integrations == 1) ? local.translate('home.plugins.0') : local.translate('home.plugins.1')}',
               color: scheme.secondary,
             ),
           ),

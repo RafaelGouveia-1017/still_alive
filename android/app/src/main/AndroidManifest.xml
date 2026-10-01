@@ -45,7 +45,6 @@
     <uses-feature android:name="android.hardware.camera.flash" android:required="false" />
     <uses-feature android:name="android.hardware.microphone" android:required="false" />
     <uses-feature android:name="android.hardware.screen.portrait" android:required="true" />
-    <uses-feature android:name="android.software.app_widgets" android:required="false" />
 
     <!-- API <= 29 -->
 

@@ -75,6 +75,8 @@ class _CustomDestinationInputState extends State<CustomDestinationInput> {
   void dispose() {
     _sms.removeListener(_onCustomListChanged);
     _email.removeListener(_onCustomListChanged);
+    _sms.dispose();
+    _email.dispose();
     super.dispose();
   }
 

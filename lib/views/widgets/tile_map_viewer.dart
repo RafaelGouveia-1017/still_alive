@@ -382,7 +382,7 @@ class _TileMapViewerState extends State<TileMapViewer> {
                         options: MapOptions(
                           initialCenter: (widget.route.length == 1) ? point : widget.route.last,
 
-                          initialZoom: (widget.maxZoom < 14) ? widget.maxZoom : 14,
+                          initialZoom: (widget.maxZoom < 16) ? widget.maxZoom : 16,
 
                           initialRotation: 0,
 

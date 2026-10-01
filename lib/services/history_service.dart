@@ -756,23 +756,23 @@ class TimerExpiredEvent extends HistoryEvent {
 
           _row(
             local.translate("history_logs.events.details.location"),
-            (location == null) ? "-" : '${location!["latitude"]}, ${location!["longitude"]}',
+            (location == null || location!.isEmpty) ? "-" : '${location!["latitude"]}, ${location!["longitude"]}',
             scheme,
-            onTap: (location == null)
+            onTap: (location == null || location!.isEmpty)
                 ? null
                 : () {
                     Clipboard.setData(ClipboardData(text: '${location!["latitude"]}, ${location!["longitude"]}'));
                     launchUrl(
-                      Uri.parse('https://www.google.com/search?q=google+maps+${location!["latitude"]}+${location!["longitude"]}'),
+                      Uri.parse('https://www.google.com/maps/search/${location!["latitude"]}+${location!["longitude"]}'),
                       mode: LaunchMode.externalApplication,
                     );
                   },
           ),
           _row(
             "${local.translate("history_logs.events.details.route")} (Polyline)",
-            (polyline == null) ? "-" : polyline!,
+            (polyline == null || polyline!.isEmpty) ? "-" : polyline!,
             scheme,
-            onTap: (polyline == null)
+            onTap: (polyline == null || polyline!.isEmpty)
                 ? null
                 : () {
                     Clipboard.setData(ClipboardData(text: polyline!)).whenComplete(() {
@@ -793,14 +793,41 @@ class TimerExpiredEvent extends HistoryEvent {
           _row(local.translate("history_logs.events.details.emails_length"), emails.length, scheme),
           _row(local.translate("history_logs.events.details.channels_length"), channels.length, scheme),
 
-          ...sms.asMap().entries.map((e) => _row("SMS ${e.key + 1}", "${e.value['recipient']} (${e.value['status']})", scheme)),
+          ...sms.asMap().entries.map(
+            (e) => _row(
+              "SMS ${e.key + 1}",
+              "${e.value['recipient']} (${switch (e.value['status']) {
+                "sending" => local.translate("history_logs.events.states.sending"),
+                "sent" => local.translate("history_logs.events.states.sent"),
+                "failed" => local.translate("history_logs.events.states.failed"),
+                _ => local.translate("history_logs.events.states.pending"),
+              }})",
+              scheme,
+            ),
+          ),
 
-          ...emails.asMap().entries.map((e) => _row("Email ${e.key + 1}", "${e.value['recipient']} (${e.value['status']})", scheme)),
+          ...emails.asMap().entries.map(
+            (e) => _row(
+              "Email ${e.key + 1}",
+              "${e.value['recipient']} (${switch (e.value['status']) {
+                "sending" => local.translate("history_logs.events.states.sending"),
+                "sent" => local.translate("history_logs.events.states.sent"),
+                "failed" => local.translate("history_logs.events.states.failed"),
+                _ => local.translate("history_logs.events.states.pending"),
+              }})",
+              scheme,
+            ),
+          ),
 
           ...channels.asMap().entries.map(
             (e) => _row(
               "${e.value['platform'].toString().split("|")[0]} ${e.key + 1}",
-              "${e.value['platform'].toString().split("|")[1]} (${e.value['status']})",
+              "${e.value['platform'].toString().split("|")[1]} (${switch (e.value['status']) {
+                "sending" => local.translate("history_logs.events.states.sending"),
+                "sent" => local.translate("history_logs.events.states.sent"),
+                "failed" => local.translate("history_logs.events.states.failed"),
+                _ => local.translate("history_logs.events.states.pending"),
+              }})",
               scheme,
             ),
           ),
@@ -809,3 +836,18 @@ class TimerExpiredEvent extends HistoryEvent {
     );
   }
 }
+
+/*
+
+enum EmergencyDispatchState {
+
+  pending,
+
+  sending,
+
+  sent,
+
+  failed,
+}
+
+ */

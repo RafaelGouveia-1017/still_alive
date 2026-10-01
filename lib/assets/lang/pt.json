@@ -9,7 +9,8 @@
     "saved": "O registo de diagnóstico foi salvo.\nPodes abrir um \"issue\" no GitHub com essas informações.",
     "save": "Criar",
     "exit": "Sair",
-    "restart": "Reiniciar"
+    "restart": "Reiniciar",
+    "save_log": "Guardar ficheiro de logs"
   },
   "notifications": {
     "timer": {
@@ -111,8 +112,8 @@
     "tap_for_details": "Tocar para detalhes",
     "online": "Online",
     "offline": "Offline",
-    "contacts": "contactos",
-    "plugins": "plugins",
+    "contacts": ["contacto", "contactos"],
+    "plugins": ["plugin", "plugins"],
     "buttons": {
       "start": "Iniciar temporizador",
       "cancel": "Cancelar temporizador",
@@ -334,29 +335,35 @@
       "title": "Gravação de áudio",
       "running": "A gravar áudio através do microfone",
       "stopped": "Gravação interrompida",
-      "permission": "Permissão microfone não disponível; áudio não está a ser gravado."
+      "permission": "Permissão microfone não disponível.\nÁudio não está a ser gravado.",
+      "save": "Exportar gravação de emergência"
+    },
+    "location": {
+      "update": "Atualização de localização enviada!"
     },
     "dispatch": {
       "title": "Estado dos envios",
-      "pending": "Pendente — rede indisponível",
-      "none": "Não estão configurados destinos de emergência."
+      "pending": "Pendente - rede indisponível",
+      "none": "Não estão configurados destinos de emergência.",
+      "subject": "StillAlive - Alerta de emergência",
+      "message": {
+        "title": "Alerta de emergência gerado pela aplicação StillAlive:",
+        "default": "Se recebeu esta mensagem, então é o contacto de emergência de alguém.",
+        "audio": "Foi efetuada uma gravação de áudio durante a emergência"
+      },
+      "location": {
+        "position": "Localização atual:",
+        "update": "StillAlive - Atualização de localização:",
+        "decode": "Descodificador:",
+        "encode": "Rota codificada (Polyline) [copiar para o descodificador]:"
+      }
     },
     "actions": {
       "location": "Enviar novos dados de localização",
-      "stop": "Parar emergência (Manter premido)"
-    }
-  },
-  "offline_emergency": {
-    "title": "Offline",
-    "message": "Sem internet / Alarme local ativado",
-    "warning": "Não é possível contactar os contactos. Uma sirene está a tocar para chamar atenção.",
-    "queue": {
-      "sms": "SMS para 4 contactos",
-      "location": "Captura de localização"
+      "retry": "Tentar novamente",
+      "stop": "Terminar emergência (Manter premido)"
     },
-    "status": "Pendente",
-    "action": "Parar alarme",
-    "retry": "Vou tentar reenviar quando estiver online"
+    "warning": "Como o temporizador ainda está expirado, alguns destinos (ou todos) poderão voltar a receber uma mensagem.\nTenta não fechar a aplicação neste ecrã ou simplesmente termina a emergência!!!"
   },
   "contacts_list": {
     "title": "Contactos",
@@ -535,7 +542,13 @@
         "Interrompido",
         "Completo",
         "Emergências"
-      ]
+      ],
+      "states": {
+        "sending": "enviando",
+        "sent": "enviado",
+        "failed": "falhou",
+        "pending": "pendente"
+      }
     }
   },
   "settings": {
@@ -558,7 +571,7 @@
           "Máximo",
           "Silêncio",
           "Bloqueio do temporizador",
-          "Requer PIN para parar"
+          "Requer PIN para terminar"
         ]
       },
       "privacy": {

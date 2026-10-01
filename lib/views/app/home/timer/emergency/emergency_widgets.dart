@@ -83,12 +83,23 @@ class _EmergencyRouteTileState extends State<EmergencyRouteTile> with SingleTick
 
     _subscription = LocationService.instance.routeStream.listen((route) {
       if (!mounted) return;
+
+      _counter.value = 0;
       widget.onRouteChanged(route);
     });
   }
 
   @override
+  void didUpdateWidget(covariant EmergencyRouteTile oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.route.length < 2) {
+      _counter.value = 0;
+    }
+  }
+
+  @override
   void dispose() {
+    _counter.dispose();
     _pulseController.dispose();
     _subscription?.cancel();
     _counterTimer?.cancel();
@@ -103,6 +114,7 @@ class _EmergencyRouteTileState extends State<EmergencyRouteTile> with SingleTick
     ActiveTimer timer = TimerService.instance.activeTimer;
 
     return AppCard(
+      color: scheme.surfaceContainer.withAlpha(150),
       child: Column(
         children: [
           ValueListenableBuilder<int>(

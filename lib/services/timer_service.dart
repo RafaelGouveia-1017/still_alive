@@ -227,9 +227,8 @@ class TimerService extends ChangeNotifier {
 
     if (_activeTimer.run.state == TimerState.cancelled) {
       await _cancelAlarm(alarmId: _activeTimer.key);
-
-      await _stopLocationRecording();
     }
+    await _stopLocationRecording();
 
     launchTimerNotification();
     notifyListeners();
@@ -332,7 +331,7 @@ class TimerService extends ChangeNotifier {
     }
 
     if (_activeTimer.key == "timer0") {
-      await _handleExampleTimer();
+      _handleExampleTimer();
       return;
     }
 
@@ -393,7 +392,7 @@ class TimerService extends ChangeNotifier {
   ///
   /// This method is intended only for the special timer identified by the
   /// `timer0` key and should not be used for normal emergency timers.
-  Future<void> _handleExampleTimer() async {
+  void _handleExampleTimer() {
     AppLogger.log.info('timer0 expired, displaying info to user.');
 
     cancelTimer(passwordVerified: false);
@@ -409,7 +408,7 @@ class TimerService extends ChangeNotifier {
     showToast(
       scheme: scheme,
       toast: Text(local.translate("home.example_timer_message"), style: AppText.bodySm(scheme), textAlign: TextAlign.center),
-      gravity: ToastGravity.BOTTOM,
+      gravity: ToastGravity.TOP,
       position: (context, child, gravity) => Positioned(top: 250, left: 50, right: 50, child: child),
       secs: 10,
     );
@@ -758,6 +757,39 @@ class TimerService extends ChangeNotifier {
     return BCrypt.checkpw(password, passwordHash);
   }
 
+  /// Retrieves the location data that should be shared as part of the
+  /// emergency flow.
+  ///
+  /// The returned record contains:
+  /// - [currentLocation], which represents the most recent location available
+  ///   for the emergency.
+  /// - [polyline], which contains the encoded route recorded during the timer
+  ///   run, or an empty string when no route is available or route sharing is
+  ///   disabled.
+  ///
+  /// When [TimerConfig.routeSharingEnabled] is enabled, the method uses the
+  /// currently recorded route to determine the latest location and loads the
+  /// persisted encoded route from [LocationService]. The last point in the
+  /// current route is used as [currentLocation]. This avoids requesting a new
+  /// GPS location because continuous route recording is already providing the
+  /// location data.
+  ///
+  /// When route sharing is disabled but [TimerConfig.locationSharingEnabled]
+  /// is enabled, any existing route is cleared and a single current location
+  /// is requested from [LocationService]. No encoded route is returned in
+  /// this configuration.
+  ///
+  /// Location retrieval and route loading failures are handled internally and
+  /// logged. A failure to retrieve the location does not prevent the method
+  /// from returning any other location data that is available.
+  ///
+  /// When location sharing is disabled entirely, no location service is
+  /// accessed and the method returns `null` for [currentLocation] and an empty
+  /// string for [polyline].
+  ///
+  /// Returns a record containing the current emergency location and, when
+  /// route sharing is enabled, the encoded route associated with the active
+  /// timer.
   Future<({LatLng? currentLocation, String polyline})> getLocationData() async {
     final config = _activeTimer.config;
 
@@ -795,83 +827,34 @@ class TimerService extends ChangeNotifier {
     return (currentLocation: currentLocation, polyline: polyline);
   }
 
-  Future<void> triggerEmergencyOld() async {
-    final config = _activeTimer.config;
+  /// Displays an informational warning when an already-expired timer attempts
+  /// to trigger the expiration flow again.
+  ///
+  /// The application's navigator context is used to obtain the current
+  /// [ColorScheme] and [AppLocalizations] instances. If no navigator context
+  /// is available, the warning cannot be displayed and an error is logged.
+  ///
+  /// This method does not modify the active timer, change its state, or
+  /// navigate to another screen. It only provides user feedback about the
+  /// repeated expiration event.
+  static void showRepeatedExpiredWarning() {
+    AppLogger.log.info('Displaying repeated timer expiration info to user.');
 
-    LatLng? currentLocation;
-    String polyline = '';
-
-    // Continuous route recording is no longer required.
-    List<LatLng>? route = await _stopLocationRecording();
-    if (route != null) currentLocation = route.last;
-
-    if (config.routeSharingEnabled) {
-      try {
-        polyline = await LocationService.instance.loadEncodedRoute();
-        AppLogger.log.info('Loaded recorded route for emergency sharing.');
-      } catch (e, st) {
-        AppLogger.log.severe('Failed to load recorded route for emergency.', e, st);
-      }
-    } else if (config.locationSharingEnabled) {
-      try {
-        currentLocation = await LocationService.instance.getCurrentLocation();
-
-        AppLogger.log.info('Obtained current location for emergency sharing.');
-      } on LocationServiceException catch (e, st) {
-        AppLogger.log.warning('Unable to obtain current location for emergency sharing: $e', e, st);
-      } catch (e, st) {
-        AppLogger.log.severe('Unexpected error while obtaining current location.', e, st);
-      }
+    BuildContext? context = PermissionManager.instance.navigatorKey.currentContext;
+    if (context == null) {
+      AppLogger.log.severe("Could not display info because context was not ready.\nLiterally unplayable...");
+      return;
     }
+    ColorScheme scheme = Theme.of(context).colorScheme;
+    AppLocalizations local = AppLocalizations.of(context)!;
 
-    // TODO:
-    //
-    // Combine and deduplicate:
-    //
-    //   _activeTimer.config.contacts[*].email
-    //   _activeTimer.config.customEmail
-    //
-    // and:
-    //
-    //   _activeTimer.config.contacts[*].sms
-    //   _activeTimer.config.customSms
-    //
-    // TODO:
-    //
-    // Send custom message through the configured
-    // emergency channels.
-    //
-    // TODO:
-    //
-    // Send the current location or encoded route through the configured
-    // emergency channels.
-    //
-    // TODO:
-    //
-    // Trigger Discord/Telegram integrations.
-
-    final location = (currentLocation == null)
-        ? null
-        : <String, dynamic>{'latitude': currentLocation.latitude, 'longitude': currentLocation.longitude};
-
-    await HistoryService.insertHistoryRecord(
-      TimerExpiredEvent(
-        timerName: config.name,
-        startedAt: DateTime.fromMillisecondsSinceEpoch(_activeTimer.run.startedAtMs),
-        endedAt: DateTime.now(),
-        location: location,
-        polyline: polyline,
-        sms: [],
-        emails: [],
-        channels: [],
-        alarmTriggered: false,
-        audioRecorded: false,
-      ),
+    showToast(
+      scheme: scheme,
+      toast: Text(local.translate("emergency_active.warning"), style: AppText.bodySm(scheme), textAlign: TextAlign.center),
+      gravity: ToastGravity.BOTTOM,
+      position: (context, child, gravity) => Positioned(bottom: 250, left: 30, right: 30, child: child),
+      secs: 12,
     );
-
-    // The emergency flow has consumed the route/current location.
-    // Continuous route recording is no longer required.
-    await _stopLocationRecording();
   }
 
   /// Formats a [Duration] into a compact human-readable string.

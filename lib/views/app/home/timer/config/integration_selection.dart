@@ -47,6 +47,7 @@ class _IntegrationSelectionState extends State<IntegrationSelection> {
   @override
   void dispose() {
     _integrations.removeListener(_onValueChanged);
+    _integrations.dispose();
     super.dispose();
   }
 
