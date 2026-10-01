@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the TimerService class from the timer_service library, for the Dart programming language.">
+  <title>TimerService class - timer_service library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">still_alive</a></li>
+    <li><a href="../services_timer_service/">services\timer_service.dart</a></li>
+    <li class="self-crumb">TimerService class</li>
+  </ol>
+  <div class="self-name">TimerService</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="services_timer_service&#47;services_timer_service-library-sidebar.html"
+    data-below-sidebar="services_timer_service&#47;TimerService-class-sidebar.html">
+    <div>
+<h1><span class="kind-class">TimerService</span> class 
+ 
+</h1></div>
+
+    
+<section class="desc markdown">
+  <p>Manages the application's active timer and coordinates timer state,
+native alarms, notifications, and timer history.</p>
+<p><a href="../services_timer_service/TimerService-class.html">TimerService</a> is implemented as a singleton and should be accessed through
+<a href="../services_timer_service/TimerService/instance.html">TimerService.instance</a>.</p>
+</section>
+
+
+    <section>
+      <dl class="dl-horizontal">
+        
+  <dt>Inheritance</dt>
+  <dd>
+    <ul class="gt-separated dark clazz-relationships">
+      <li><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></li>
+        <li><a href="https://api.flutter.dev/flutter/foundation/ChangeNotifier-class.html">ChangeNotifier</a></li>
+      <li>TimerService</li>
+    </ul>
+  </dd>
+
+        
+        
+
+
+        
+        
+
+
+      </dl>
+    </section>
+
+    
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-properties">
+    <h2>Properties</h2>
+    <dl class="properties">
+        <dt id="activeTimer" class="property">
+  <span class="name"><a href="../services_timer_service/TimerService/activeTimer.html">activeTimer</a></span>
+  <span class="signature">&#8594; ActiveTimer</span>
+  
+
+</dt>
+<dd>
+  The currently configured active timer.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="hashCode" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  The hash code for this object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="hasListeners" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/foundation/ChangeNotifier/hasListeners.html">hasListeners</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  Whether any listeners are currently registered.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="runtimeType" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Type-class.html">Type</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  A representation of the runtime type of the object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="timerRunCurrentState" class="property">
+  <span class="name"><a href="../services_timer_service/TimerService/timerRunCurrentState.html">timerRunCurrentState</a></span>
+  <span class="signature">&#8594; TimerState</span>
+  
+
+</dt>
+<dd>
+  Gets the current state in the timer run.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-methods">
+    <h2>Methods</h2>
+    <dl class="callables">
+        <dt id="addListener" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/foundation/ChangeNotifier/addListener.html">addListener</a></span><span class="signature">(<wbr><span class="parameter" id="addListener-param-listener"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-ui/VoidCallback.html">VoidCallback</a></span> <span class="parameter-name">listener</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Register a closure to be called when the object changes.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="cancelTimer" class="callable">
+  <span class="name"><a href="../services_timer_service/TimerService/cancelTimer.html">cancelTimer</a></span><span class="signature">(<wbr>{<span class="parameter" id="cancelTimer-param-passwordVerified"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">passwordVerified</span>, </span><span class="parameter" id="cancelTimer-param-recordHistory"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">recordHistory</span> = <span class="default-value">true</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Cancels the currently active timer run.
+  
+
+</dd>
+
+        <dt id="dispose" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/foundation/ChangeNotifier/dispose.html">dispose</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Discards any resources used by the object.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="getLocationData" class="callable">
+  <span class="name"><a href="../services_timer_service/TimerService/getLocationData.html">getLocationData</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">(<span class="field">{<span class="type-annotation"><a href="https://pub.dev/documentation/latlong2/0.10.1/latlong2/LatLng-class.html">LatLng</a>?</span> <span class="field-name">currentLocation</span>, </span><span class="field"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="field-name">polyline</span>}</span>)</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Retrieves the location data that should be shared as part of the
+emergency flow.
+  
+
+</dd>
+
+        <dt id="handleNativeCall" class="callable">
+  <span class="name"><a href="../services_timer_service/TimerService/handleNativeCall.html">handleNativeCall</a></span><span class="signature">(<wbr><span class="parameter" id="handleNativeCall-param-call"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/services/MethodCall-class.html">MethodCall</a></span> <span class="parameter-name">call</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Handles method calls received from the native platform.
+  
+
+</dd>
+
+        <dt id="launchTimerNotification" class="callable">
+  <span class="name"><a href="../services_timer_service/TimerService/launchTimerNotification.html">launchTimerNotification</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Launches a notification reflecting the current state of the active timer.
+  
+
+</dd>
+
+        <dt id="noSuchMethod" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
+    <span class="returntype parameter">&#8594; dynamic</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Invoked when a nonexistent method or property is accessed.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="notifyListeners" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/foundation/ChangeNotifier/notifyListeners.html">notifyListeners</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Call all the registered listeners.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="pauseTimer" class="callable">
+  <span class="name"><a href="../services_timer_service/TimerService/pauseTimer.html">pauseTimer</a></span><span class="signature">(<wbr>{<span class="parameter" id="pauseTimer-param-passwordVerified"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">passwordVerified</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Pauses the currently active timer run.
+  
+
+</dd>
+
+        <dt id="reconcile" class="callable">
+  <span class="name"><a href="../services_timer_service/TimerService/reconcile.html">reconcile</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Reconciles the persisted active timer state with the current time.
+  
+
+</dd>
+
+        <dt id="removeDeletedAccountDestinationFromActiveTimer" class="callable">
+  <span class="name"><a href="../services_timer_service/TimerService/removeDeletedAccountDestinationFromActiveTimer.html">removeDeletedAccountDestinationFromActiveTimer</a></span><span class="signature">(<wbr><span class="parameter" id="removeDeletedAccountDestinationFromActiveTimer-param-integrationKey"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">integrationKey</span>, </span><span class="parameter" id="removeDeletedAccountDestinationFromActiveTimer-param-accountID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">accountID</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Removes deleted destinations from an account in the active timer's
+integration configuration.
+  
+
+</dd>
+
+        <dt id="removeDeletedContactFromActiveTimer" class="callable">
+  <span class="name"><a href="../services_timer_service/TimerService/removeDeletedContactFromActiveTimer.html">removeDeletedContactFromActiveTimer</a></span><span class="signature">(<wbr><span class="parameter" id="removeDeletedContactFromActiveTimer-param-contactID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">contactID</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Removes <code>contactID</code> from the active timer's contacts list.
+  
+
+</dd>
+
+        <dt id="removeDeletedIntegrationAccountFromActiveTimer" class="callable">
+  <span class="name"><a href="../services_timer_service/TimerService/removeDeletedIntegrationAccountFromActiveTimer.html">removeDeletedIntegrationAccountFromActiveTimer</a></span><span class="signature">(<wbr><span class="parameter" id="removeDeletedIntegrationAccountFromActiveTimer-param-integrationKey"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">integrationKey</span>, </span><span class="parameter" id="removeDeletedIntegrationAccountFromActiveTimer-param-accountID"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">accountID</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Removes an account from the active timer's integration configuration.
+  
+
+</dd>
+
+        <dt id="removeListener" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/foundation/ChangeNotifier/removeListener.html">removeListener</a></span><span class="signature">(<wbr><span class="parameter" id="removeListener-param-listener"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-ui/VoidCallback.html">VoidCallback</a></span> <span class="parameter-name">listener</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Remove a previously registered closure from the list of closures that are
+notified when the object changes.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="removeTimerFromDatabase" class="callable">
+  <span class="name"><a href="../services_timer_service/TimerService/removeTimerFromDatabase.html">removeTimerFromDatabase</a></span><span class="signature">(<wbr><span class="parameter" id="removeTimerFromDatabase-param-timerKey"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">timerKey</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Removes a timer from the database.
+  
+
+</dd>
+
+        <dt id="resumeTimer" class="callable">
+  <span class="name"><a href="../services_timer_service/TimerService/resumeTimer.html">resumeTimer</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Resumes the currently paused timer run.
+  
+
+</dd>
+
+        <dt id="showPasswordPrompt" class="callable">
+  <span class="name"><a href="../services_timer_service/TimerService/showPasswordPrompt.html">showPasswordPrompt</a></span><span class="signature">(<wbr><span class="parameter" id="showPasswordPrompt-param-context"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/widgets/BuildContext-class.html">BuildContext</a></span> <span class="parameter-name">context</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a>?</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Displays a password prompt for the currently active timer.
+  
+
+</dd>
+
+        <dt id="startTimer" class="callable">
+  <span class="name"><a href="../services_timer_service/TimerService/startTimer.html">startTimer</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Starts a new timer run for the active timer.
+  
+
+</dd>
+
+        <dt id="timerHasExpired" class="callable">
+  <span class="name"><a href="../services_timer_service/TimerService/timerHasExpired.html">timerHasExpired</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Handles expiration of the active timer after its native alarm fires.
+  
+
+</dd>
+
+        <dt id="toString" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  A string representation of this object.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="triggerTimerExpire" class="callable">
+  <span class="name"><a href="../services_timer_service/TimerService/triggerTimerExpire.html">triggerTimerExpire</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Manually trigger a timer's expiration.
+  
+
+</dd>
+
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor inherited"
+      id="operators">
+    <h2>Operators</h2>
+    <dl class="callables">
+        <dt id="operator ==" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The equality operator.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+  <section class="summary offset-anchor" id="static-properties">
+    <h2>Static Properties</h2>
+    <dl class="properties">
+        <dt id="instance" class="property">
+  <span class="name"><a href="../services_timer_service/TimerService/instance.html">instance</a></span>
+  <span class="signature">&#8594; <a href="../services_timer_service/TimerService-class.html">TimerService</a></span>
+  
+
+</dt>
+<dd>
+  The singleton instance of <a href="../services_timer_service/TimerService-class.html">TimerService</a>.
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+  <section class="summary offset-anchor" id="static-methods">
+    <h2>Static Methods</h2>
+    <dl class="callables">
+        <dt id="formatDuration" class="callable">
+  <span class="name"><a href="../services_timer_service/TimerService/formatDuration.html">formatDuration</a></span><span class="signature">(<wbr><span class="parameter" id="formatDuration-param-duration"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Duration-class.html">Duration</a></span> <span class="parameter-name">duration</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Formats a <a href="https://api.flutter.dev/flutter/dart-core/Duration-class.html">Duration</a> into a compact human-readable string.
+  
+
+</dd>
+
+        <dt id="generatePasswordHash" class="callable">
+  <span class="name"><a href="../services_timer_service/TimerService/generatePasswordHash.html">generatePasswordHash</a></span><span class="signature">(<wbr><span class="parameter" id="generatePasswordHash-param-password"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">password</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Generates a BCrypt hash for the supplied <code>password</code>.
+  
+
+</dd>
+
+        <dt id="initialize" class="callable">
+  <span class="name"><a href="../services_timer_service/TimerService/initialize.html">initialize</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Initializes the singleton timer service and reconciles the persisted
+active timer state.
+  
+
+</dd>
+
+        <dt id="showRepeatedExpiredWarning" class="callable">
+  <span class="name"><a href="../services_timer_service/TimerService/showRepeatedExpiredWarning.html">showRepeatedExpiredWarning</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Displays an informational warning when an already-expired timer attempts
+to trigger the expiration flow again.
+  
+
+</dd>
+
+        <dt id="verifyPassword" class="callable">
+  <span class="name"><a href="../services_timer_service/TimerService/verifyPassword.html">verifyPassword</a></span><span class="signature">(<wbr><span class="parameter" id="verifyPassword-param-password"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">password</span>, </span><span class="parameter" id="verifyPassword-param-passwordHash"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">passwordHash</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Verifies a plaintext <code>password</code> against a stored BCrypt <code>passwordHash</code>.
+  
+
+</dd>
+
+    </dl>
+  </section>
+    
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../index.html">still_alive</a></li>
+    <li><a href="../services_timer_service/">timer_service</a></li>
+    <li class="self-crumb">TimerService class</li>
+</ol>
+
+    <h5>timer_service library</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div>
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    still_alive
+      1.0.44+5
+  </span>
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

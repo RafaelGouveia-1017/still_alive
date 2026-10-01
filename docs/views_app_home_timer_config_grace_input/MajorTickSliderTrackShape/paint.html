@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the paint method from the MajorTickSliderTrackShape class, for the Dart programming language.">
+  <title>paint method - MajorTickSliderTrackShape class - grace_input library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">still_alive</a></li>
+    <li><a href="../../views_app_home_timer_config_grace_input/">views\app\home\timer\config\grace_input.dart</a></li>
+    <li><a href="../../views_app_home_timer_config_grace_input/MajorTickSliderTrackShape-class.html">MajorTickSliderTrackShape</a></li>
+    <li class="self-crumb">paint method</li>
+  </ol>
+  <div class="self-name">paint</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="views_app_home_timer_config_grace_input&#47;MajorTickSliderTrackShape-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">paint</span> method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+  <div>
+    <ol class="annotation-list">
+        <li>@<a href="https://api.flutter.dev/flutter/dart-core/override-constant.html">override</a></li>
+    </ol>
+  </div>
+<span class="returntype">void</span>
+<span class="name ">paint</span>(<wbr><ol class="parameter-list"> <li><span class="parameter" id="paint-param-context"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/rendering/PaintingContext-class.html">PaintingContext</a></span> <span class="parameter-name">context</span>, </span></li>
+<li><span class="parameter" id="paint-param-offset"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-ui/Offset-class.html">Offset</a></span> <span class="parameter-name">offset</span>, {</span></li>
+<li><span class="parameter" id="paint-param-parentBox"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/rendering/RenderBox-class.html">RenderBox</a></span> <span class="parameter-name">parentBox</span>, </span></li>
+<li><span class="parameter" id="paint-param-sliderTheme"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/material/SliderThemeData-class.html">SliderThemeData</a></span> <span class="parameter-name">sliderTheme</span>, </span></li>
+<li><span class="parameter" id="paint-param-enableAnimation"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/animation/Animation-class.html">Animation</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>&gt;</span></span> <span class="parameter-name">enableAnimation</span>, </span></li>
+<li><span class="parameter" id="paint-param-textDirection"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-ui/TextDirection.html">TextDirection</a></span> <span class="parameter-name">textDirection</span>, </span></li>
+<li><span class="parameter" id="paint-param-thumbCenter"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-ui/Offset-class.html">Offset</a></span> <span class="parameter-name">thumbCenter</span>, </span></li>
+<li><span class="parameter" id="paint-param-secondaryOffset"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-ui/Offset-class.html">Offset</a>?</span> <span class="parameter-name">secondaryOffset</span>, </span></li>
+<li><span class="parameter" id="paint-param-isEnabled"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">isEnabled</span> = <span class="default-value">false</span>, </span></li>
+<li><span class="parameter" id="paint-param-isDiscrete"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">isDiscrete</span> = <span class="default-value">false</span>, </span></li>
+</ol>})
+
+      <div class="features"><span class="feature">override</span></div>
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Paints the track shape based on the state passed to it.</p>
+<p>The <code>context</code> argument is the same as the one that includes the <a href="https://api.flutter.dev/flutter/material/Slider-class.html">Slider</a>'s
+render box.</p>
+<p>The <code>offset</code> argument the offset of the origin of the <code>parentBox</code> to the
+origin of its <code>context</code> canvas. This shape must be painted relative to
+this offset. See <a href="https://api.flutter.dev/flutter/rendering/PaintingContextCallback.html">PaintingContextCallback</a>.</p>
+<p>The <code>parentBox</code> argument is the <a href="https://api.flutter.dev/flutter/rendering/RenderBox-class.html">RenderBox</a> of the <a href="https://api.flutter.dev/flutter/material/Slider-class.html">Slider</a>. Its attributes,
+such as size, can be used to assist in painting this shape.</p>
+<p>the <code>sliderTheme</code> argument is the theme assigned to the <a href="https://api.flutter.dev/flutter/material/Slider-class.html">Slider</a> that this
+shape belongs to.</p>
+<p>The <code>enableAnimation</code> argument is an animation triggered when the <a href="https://api.flutter.dev/flutter/material/Slider-class.html">Slider</a>
+is enabled, and it reverses when the slider is disabled. The <a href="https://api.flutter.dev/flutter/material/Slider-class.html">Slider</a> is
+enabled when <a href="https://api.flutter.dev/flutter/material/Slider/onChanged.html">Slider.onChanged</a> is not null. Use this to paint
+intermediate frames for this shape when the slider changes enabled state.</p>
+<p>The <code>thumbCenter</code> argument is the offset of the center of the thumb
+relative to the origin of the <a href="https://api.flutter.dev/flutter/rendering/PaintingContext/canvas.html">PaintingContext.canvas</a>. It can be used as
+the point that divides the track into 2 segments.</p>
+<p>The <code>secondaryOffset</code> argument is the offset of the secondary value
+relative to the origin of the <a href="https://api.flutter.dev/flutter/rendering/PaintingContext/canvas.html">PaintingContext.canvas</a>.</p>
+<p>If not null, the track is divided into 3 segments.</p>
+<p>The <code>isEnabled</code> argument is false when <a href="https://api.flutter.dev/flutter/material/Slider/onChanged.html">Slider.onChanged</a> is null and true
+otherwise. When true, the slider will respond to input.</p>
+<p>The <code>isDiscrete</code> argument is true if <a href="https://api.flutter.dev/flutter/material/Slider/divisions.html">Slider.divisions</a> is non-null. When
+true, the slider will render tick marks on top of the track.</p>
+<p>The <code>textDirection</code> argument can be used to determine how the track
+segments are painted depending on whether they are active or not.</p>
+<p>The track segment between the start of the slider and the thumb is the
+active track segment. The track segment between the thumb and the end of the
+slider is the inactive track segment. In <a href="https://api.flutter.dev/flutter/dart-ui/TextDirection.html">TextDirection.ltr</a>, the start of
+the slider is on the left, and in <a href="https://api.flutter.dev/flutter/dart-ui/TextDirection.html">TextDirection.rtl</a>, the start of the
+slider is on the right.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">@override
+void paint(
+  PaintingContext context,
+  Offset offset, {
+  required RenderBox parentBox,
+  required SliderThemeData sliderTheme,
+  required Animation&lt;double&gt; enableAnimation,
+  required TextDirection textDirection,
+  required Offset thumbCenter,
+  Offset? secondaryOffset,
+  bool isEnabled = false,
+  bool isDiscrete = false,
+}) {
+  final canvas = context.canvas;
+
+  final trackRect = getPreferredRect(parentBox: parentBox, offset: offset, sliderTheme: sliderTheme, isEnabled: isEnabled, isDiscrete: isDiscrete);
+
+  final activePaint = Paint()..color = sliderTheme.activeTrackColor ?? Colors.blue;
+
+  final inactivePaint = Paint()..color = sliderTheme.inactiveTrackColor ?? Colors.grey;
+
+  &#47;&#47; Draw inactive track.
+  canvas.drawRRect(RRect.fromRectAndRadius(trackRect, const Radius.circular(2)), inactivePaint);
+
+  &#47;&#47; Draw active track.
+  final activeRect = Rect.fromLTRB(trackRect.left, trackRect.top, thumbCenter.dx.clamp(trackRect.left, trackRect.right), trackRect.bottom);
+
+  canvas.drawRRect(RRect.fromRectAndRadius(activeRect, const Radius.circular(2)), activePaint);
+
+  &#47;&#47; Draw major points.
+  final tickPaint = Paint()
+    ..color = sliderTheme.activeTrackColor ?? Colors.blue
+    ..style = PaintingStyle.fill;
+
+  for (final seconds in majorPoints) {
+    final position = trackRect.left + (seconds &#47; 300) * trackRect.width;
+
+    canvas.drawCircle(Offset(position, trackRect.center.dy), 6, tickPaint);
+  }
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">still_alive</a></li>
+    <li><a href="../../views_app_home_timer_config_grace_input/">grace_input</a></li>
+    <li><a href="../../views_app_home_timer_config_grace_input/MajorTickSliderTrackShape-class.html">MajorTickSliderTrackShape</a></li>
+    <li class="self-crumb">paint method</li>
+</ol>
+
+    <h5>MajorTickSliderTrackShape class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    still_alive
+      1.0.44+5
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

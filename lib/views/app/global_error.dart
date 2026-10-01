@@ -68,7 +68,7 @@ class GlobalErrorDialog {
   /// application state.
   ///
   /// The dialog cannot be dismissed by tapping outside of it. Depending on
-  /// the current [state], it allows the user to:
+  /// the current [GlobalErrorDialogState], it allows the user to:
   ///
   /// - Save a diagnostic log.
   /// - Restart the application.

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the launchTimerNotification method from the TimerService class, for the Dart programming language.">
+  <title>launchTimerNotification method - TimerService class - timer_service library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">still_alive</a></li>
+    <li><a href="../../services_timer_service/">services\timer_service.dart</a></li>
+    <li><a href="../../services_timer_service/TimerService-class.html">TimerService</a></li>
+    <li class="self-crumb">launchTimerNotification method</li>
+  </ol>
+  <div class="self-name">launchTimerNotification</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="services_timer_service&#47;TimerService-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">launchTimerNotification</span> method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype">void</span>
+<span class="name ">launchTimerNotification</span>(<wbr>)
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Launches a notification reflecting the current state of the active timer.</p>
+<p>Builds and displays a localized notification based on the
+current <code>TimerState</code>. The notification's description, type, priority,
+sound, and vibration behavior are adjusted according to the timer state.</p>
+<p>This method requires a mounted application <a href="https://api.flutter.dev/flutter/widgets/BuildContext-class.html">BuildContext</a> to resolve
+<a href="../../data_app_localization/AppLocalizations-class.html">AppLocalizations</a>. If the navigator context is not yet available or
+mounted, this method waits until a valid context becomes available.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">void launchTimerNotification() {
+  final context = PermissionManager.instance.navigatorKey.currentContext;
+
+  if (context == null || !context.mounted) {
+    AppLogger.log.warning(&quot;Cannot launch timer notification: navigator context unavailable.&quot;);
+    return;
+  }
+
+  AppLocalizations local = AppLocalizations.of(context)!;
+
+  if (Platform.isAndroid) {
+    String title = local.translate(&quot;notifications.timer.title&quot;);
+    String description = &#39;&#39;;
+    NotificationType type = NotificationType.silent;
+    NotificationPriority priority = NotificationPriority.defaultPriority;
+    bool playSound = false;
+    bool vibrate = false;
+
+    String timerName = _activeTimer.config.name;
+
+    switch (_activeTimer.run.state) {
+      case TimerState.cancelled:
+        description =
+            &#39;&quot;$timerName&quot; &#39;
+            &#39;${local.translate(&quot;notifications.timer.cancelled&quot;)}&#39;;
+        priority = NotificationPriority.high;
+        vibrate = true;
+        break;
+      case TimerState.completed:
+        description =
+            &#39;${local.translate(&quot;notifications.timer.completed.0&quot;)}&#39;
+            &#39; &quot;$timerName&quot; &#39;
+            &#39;${local.translate(&quot;notifications.timer.completed.1&quot;)}&#39;;
+        break;
+      case TimerState.paused:
+        description =
+            &#39;&quot;$timerName&quot; &#39;
+            &#39;${local.translate(&quot;notifications.timer.paused&quot;)}&#39;;
+        vibrate = true;
+        break;
+      case TimerState.warning:
+        description =
+            &#39;${local.translate(&quot;notifications.timer.warning.0&quot;)}&#39;
+            &#39; &quot;$timerName&quot; &#39;
+            &#39;${local.translate(&quot;notifications.timer.warning.1&quot;)}&#39;;
+        priority = NotificationPriority.high;
+        break;
+      case TimerState.expired:
+        description =
+            &#39;${local.translate(&quot;notifications.timer.expired.0&quot;)}&#39;
+            &#39; &quot;$timerName&quot; &#39;
+            &#39;${local.translate(&quot;notifications.timer.expired.1&quot;)}&#39;;
+        priority = NotificationPriority.max;
+        vibrate = true;
+        break;
+      case TimerState.running:
+        description =
+            &#39;${local.translate(&quot;notifications.timer.running.0&quot;)}&#39;
+            &#39; &quot;$timerName&quot; &#39;
+            &#39;${local.translate(&quot;notifications.timer.running.1&quot;)}&#39;;
+        break;
+    }
+
+    AndroidNotificationService.launchNotification(
+      title: title,
+      description: description,
+      type: type,
+      priority: priority,
+      category: &#39;timer&#39;,
+      playSound: playSound,
+      vibrate: vibrate,
+    );
+  }
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">still_alive</a></li>
+    <li><a href="../../services_timer_service/">timer_service</a></li>
+    <li><a href="../../services_timer_service/TimerService-class.html">TimerService</a></li>
+    <li class="self-crumb">launchTimerNotification method</li>
+</ol>
+
+    <h5>TimerService class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    still_alive
+      1.0.44+5
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

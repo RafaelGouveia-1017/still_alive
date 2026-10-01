@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the buildTargets method from the EmergencyDispatchService class, for the Dart programming language.">
+  <title>buildTargets method - EmergencyDispatchService class - emergency_helpers library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">still_alive</a></li>
+    <li><a href="../../views_app_home_timer_emergency_emergency_helpers/">views\app\home\timer\emergency\emergency_helpers.dart</a></li>
+    <li><a href="../../views_app_home_timer_emergency_emergency_helpers/EmergencyDispatchService-class.html">EmergencyDispatchService</a></li>
+    <li class="self-crumb">buildTargets method</li>
+  </ol>
+  <div class="self-name">buildTargets</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="views_app_home_timer_emergency_emergency_helpers&#47;EmergencyDispatchService-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">buildTargets</span> method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../views_app_home_timer_emergency_emergency_helpers/EmergencyDispatchTarget-class.html">EmergencyDispatchTarget</a></span>&gt;</span></span>&gt;</span></span>
+<span class="name ">buildTargets</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="buildTargets-param-timer"><span class="type-annotation">ActiveTimer</span> <span class="parameter-name">timer</span></span></li>
+</ol>)
+
+      
+
+    </section>
+    
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">Future&lt;List&lt;EmergencyDispatchTarget&gt;&gt; buildTargets(ActiveTimer timer) async {
+  final targets = &lt;EmergencyDispatchTarget&gt;[];
+
+  for (final contact in timer.config.contacts) {
+    final prefs = await adapters.contactPreferencesReader(contact.id);
+
+    for (final phone in contact.sms) {
+      targets.add(
+        EmergencyDispatchTarget(
+          id: &#39;sms:${contact.id}:$phone&#39;,
+          kind: EmergencyDestinationKind.sms,
+          title: &#39;SMS&#39;,
+          destination: phone,
+          contactId: contact.id,
+          allowLocation: prefs.sendLocation,
+          allowAudio: prefs.sendAudio,
+        ),
+      );
+    }
+
+    for (final email in contact.email) {
+      targets.add(
+        EmergencyDispatchTarget(
+          id: &#39;email:${contact.id}:$email&#39;,
+          kind: EmergencyDestinationKind.email,
+          title: &#39;Email&#39;,
+          destination: email,
+          contactId: contact.id,
+          allowLocation: prefs.sendLocation,
+          allowAudio: prefs.sendAudio,
+        ),
+      );
+    }
+  }
+
+  for (final phone in timer.config.customSms) {
+    targets.add(EmergencyDispatchTarget(id: &#39;sms:custom:$phone&#39;, kind: EmergencyDestinationKind.sms, title: &#39;SMS&#39;, destination: phone));
+  }
+
+  for (final email in timer.config.customEmail) {
+    targets.add(EmergencyDispatchTarget(id: &#39;email:custom:$email&#39;, kind: EmergencyDestinationKind.email, title: &#39;Email&#39;, destination: email));
+  }
+
+  final integrations = await loadAllIntegrations();
+
+  Future&lt;void&gt; addIntegrationTargets({required String integrationKey, required List&lt;dynamic&gt; timerAccounts}) async {
+    final info = integrations.firstWhere(
+      (item) =&gt; item.key == integrationKey,
+      orElse: () =&gt; throw StateError(&#39;Integration &quot;$integrationKey&quot; is not configured.&#39;),
+    );
+
+    for (final timerAccount in timerAccounts) {
+      IntegrationAccount? account;
+      for (final candidate in info.accounts) {
+        if (candidate.id == timerAccount.id) {
+          account = candidate;
+          break;
+        }
+      }
+      if (account == null) continue;
+
+      for (final selectedDestinationId in timerAccount.destinations.cast&lt;String&gt;()) {
+        final destination = account.destinations.firstWhere(
+          (d) =&gt; d.id == selectedDestinationId,
+          orElse: () =&gt; throw StateError(
+            &#39;Configured $integrationKey destination &quot;$selectedDestinationId&quot; &#39;
+            &#39;is not present in the integration account.&#39;,
+          ),
+        );
+
+        final parent = destination.parentName;
+        final label = parent == null || parent.isEmpty
+            ? &#39;${account.name} • ${destination.name}&#39;
+            : &#39;${account.name} • $parent &#47; ${destination.name}&#39;;
+
+        targets.add(
+          EmergencyDispatchTarget(
+            id: &#39;integration:$integrationKey:${account.id}:${destination.id}&#39;,
+            kind: EmergencyDestinationKind.integration,
+            title: info.key[0].toUpperCase() + info.key.substring(1),
+            destination: label,
+            integrationKey: integrationKey,
+            accountId: account.id,
+            destinationId: destination.id,
+          ),
+        );
+      }
+    }
+  }
+
+  await addIntegrationTargets(integrationKey: &#39;discord&#39;, timerAccounts: timer.config.integrations.discord.accounts);
+  await addIntegrationTargets(integrationKey: &#39;telegram&#39;, timerAccounts: timer.config.integrations.telegram.accounts);
+
+  return targets;
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">still_alive</a></li>
+    <li><a href="../../views_app_home_timer_emergency_emergency_helpers/">emergency_helpers</a></li>
+    <li><a href="../../views_app_home_timer_emergency_emergency_helpers/EmergencyDispatchService-class.html">EmergencyDispatchService</a></li>
+    <li class="self-crumb">buildTargets method</li>
+</ol>
+
+    <h5>EmergencyDispatchService class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    still_alive
+      1.0.44+5
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

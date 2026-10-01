@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the main function from the main library, for the Dart programming language.">
+  <title>main function - main library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">still_alive</a></li>
+    <li><a href="../main/">main.dart</a></li>
+    <li class="self-crumb">main function</li>
+  </ol>
+  <div class="self-name">main</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+  <div
+      id="dartdoc-main-content"
+      class="main-content"
+      data-above-sidebar="main&#47;main-library-sidebar.html"
+      data-below-sidebar="">
+      <div>
+<h1><span class="kind-function">main</span> function 
+ 
+</h1></div>
+
+    <section class="multi-line-signature">
+        
+<span class="returntype">void</span>
+<span class="name ">main</span>(<wbr>)
+
+        
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Application entry point.</p>
+<p>Performs all startup initialization including but limited to:</p>
+<ul>
+<li>Flutter framework initialization.</li>
+<li>Native splash screen preservation.</li>
+<li>Permission observation initialization.</li>
+<li>Rust library initialization.</li>
+<li>System UI fullscreen setup.</li>
+<li>Database initialization.</li>
+<li>Theme loading and restoration.</li>
+<li>Localization provider setup.</li>
+</ul>
+<p>After initialization completes, the root <a href="../main/MyApp-class.html">MyApp</a> widget is launched.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">void main() async {
+  runZonedGuarded(
+    () async {
+      WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+      FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
+      await AppLogger.init();
+      AppLogger.log.info(&quot;AppLogger loaded.&quot;);
+
+      await RustLib.init();
+      AppLogger.log.info(&quot;RustLib loaded.&quot;);
+
+      AppLogger.connectRustLogging();
+      AppLogger.log.info(&quot;Connected Rust logger to AppLogger.&quot;);
+
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+      await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+      AppLogger.log.info(&quot;SystemChrome setup finish.&quot;);
+
+      FlutterError.onError = (FlutterErrorDetails details) {
+        AppLogger.log.severe(&quot;Flutter Error&quot;, details.exception, details.stack);
+        GlobalErrorDialog.show();
+      };
+      PlatformDispatcher.instance.onError = (error, stack) {
+        AppLogger.log.severe(&quot;Platform Error&quot;, error, stack);
+        GlobalErrorDialog.show();
+        return true;
+      };
+      AppLogger.log.info(&quot;GlobalError setup finish.&quot;);
+
+      Directory documentDirectory = await getApplicationDocumentsDirectory();
+      try {
+        await initDatabase(path: p.join(documentDirectory.path, await getDatabaseName()));
+      } catch (e, st) {
+        AppLogger.log.severe(&#39;Database Error&#39;, e, st);
+        return;
+      }
+      AppLogger.log.info(&quot;Database loaded.&quot;);
+
+      await TimerService.initialize();
+      AppLogger.log.info(&quot;TimerService initialized.&quot;);
+
+      AppMethodChannel.instance.setMethodCallHandler(TimerService.instance.handleNativeCall);
+      AppLogger.log.info(&quot;Native handler registered.&quot;);
+
+      String label = await CustomTheme.load();
+      CustomTheme theme = CustomTheme.fromLabel(label);
+      ThemeData appTheme = AppThemes.getTheme(theme);
+      ThemeData appDesign = AppDesign.getDesign(appTheme);
+      AppLogger.log.info(&quot;App design loaded.&quot;);
+
+      AppLogger.log.info(&quot;Starting app...&quot;);
+      runApp(
+        ChangeNotifierProvider(
+          create: (_) {
+            final provider = LocaleProvider();
+            provider.loadSavedLocale();
+            return provider;
+          },
+          child: MyApp(theme: appDesign, currentTheme: theme),
+        ),
+      );
+
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        FlutterNativeSplash.remove();
+
+        if (GlobalErrorDialog.hasPendingError) {
+          GlobalErrorDialog.show();
+          return;
+        }
+
+        &#47;&#47; Tells native platform that Flutter is now
+        &#47;&#47; ready to receive a pending alarm.
+        await AppMethodChannel.instance.invokeMethod(&#39;flutterReady&#39;);
+      });
+    },
+    (error, stack) {
+      AppLogger.log.severe(&quot;Zone Error&quot;, error, stack);
+      GlobalErrorDialog.show();
+    },
+  );
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../index.html">still_alive</a></li>
+    <li><a href="../main/">main</a></li>
+    <li class="self-crumb">main function</li>
+</ol>
+
+    <h5>main library</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-left-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    still_alive
+      1.0.44+5
+  </span>
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

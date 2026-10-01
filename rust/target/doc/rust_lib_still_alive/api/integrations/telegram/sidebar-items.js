@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["telegram_url"],"struct":["TelegramAccount","TelegramChat","TelegramChatMemberUpdate","TelegramConfig","TelegramGetChatRequest","TelegramIntegration","TelegramMessage","TelegramResponse","TelegramSendMessageRequest","TelegramSentMessage","TelegramUpdate","TelegramUser"]};

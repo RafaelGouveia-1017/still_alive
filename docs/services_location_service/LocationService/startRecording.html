@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the startRecording method from the LocationService class, for the Dart programming language.">
+  <title>startRecording method - LocationService class - location_service library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">still_alive</a></li>
+    <li><a href="../../services_location_service/">services\location_service.dart</a></li>
+    <li><a href="../../services_location_service/LocationService-class.html">LocationService</a></li>
+    <li class="self-crumb">startRecording method</li>
+  </ol>
+  <div class="self-name">startRecording</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="services_location_service&#47;LocationService-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">startRecording</span> method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+<span class="name ">startRecording</span>(<wbr>{<ol class="parameter-list"> <li><span class="parameter" id="startRecording-param-secondsInterval"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">secondsInterval</span>, </span></li>
+<li><span class="parameter" id="startRecording-param-resetRoute"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">resetRoute</span> = <span class="default-value">true</span>, </span></li>
+</ol>})
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Starts a new GPS route recording.</p>
+<p><code>secondsInterval</code> specifies the minimum number of seconds between
+persisted GPS snapshots. Values of two seconds or less are rejected to
+prevent unnecessarily frequent GPS and database operations.</p>
+<p>When <code>resetRoute</code> is <code>true</code>, the existing in-memory route and incremental
+polyline encoder state are cleared before recording starts. This should be
+used when beginning a completely new timer run.</p>
+<p>When <code>resetRoute</code> is <code>false</code>, the persisted route associated with the
+currently active timer is restored and recording continues from its final
+point. This is used when a timer is resumed after being paused or when
+timer state is restored after application process recreation.</p>
+<p>The interval is stored in <code>_recordingInterval</code> and is used both as the
+requested platform location interval and as an additional application-level
+throttle when GPS positions are delivered.</p>
+<p>Before recording starts, this method verifies that location services are
+enabled and that the required permissions are available.</p>
+<p>Once recording has started, temporary loss of device location services
+does not terminate the recording. The location subscription is stopped
+while services are unavailable and recreated automatically when services
+become available again.</p>
+<p>On Android, the location stream is configured to use a foreground location
+service so that recording can continue while the application is
+backgrounded.</p>
+<p>On iOS, background location updates are enabled through the platform's
+Core Location integration.</p>
+<p>Throws <a href="https://api.flutter.dev/flutter/dart-core/ArgumentError-class.html">ArgumentError</a> if <code>secondsInterval</code> is two seconds or less.</p>
+<p>Throws <a href="https://api.flutter.dev/flutter/dart-core/StateError-class.html">StateError</a> if a recording is already active.</p>
+<p>Throws a location-related exception if the device's location service or
+permissions are unavailable.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">Future&lt;void&gt; startRecording({required int secondsInterval, bool resetRoute = true}) async {
+  if (secondsInterval &lt;= 2) {
+    throw ArgumentError.value(secondsInterval, &#39;secondsInterval&#39;, &#39;Must be greater than two.&#39;);
+  }
+
+  if (_isRecording) {
+    throw StateError(&#39;A route is already being recorded.&#39;);
+  }
+
+  await _ensureLocationAvailable();
+
+  final recordingTimerId = TimerService.instance.activeTimer.key;
+
+  if (resetRoute) {
+    _route.clear();
+
+    _lastPersistedPoint = null;
+    _encodedPolyline = &#39;&#39;;
+    _pointCount = 0;
+  } else {
+    await _restorePersistedRouteState();
+  }
+
+  _recordingInterval = Duration(seconds: secondsInterval);
+  _lastRecordedAt = null;
+
+  final startedAt = DateTime.now().toUtc().millisecondsSinceEpoch;
+
+  await executeSql(
+    sql:
+        &#39;&#39;&#39;
+        UPDATE route_recording
+        SET started_at_ms = $startedAt,
+            stopped_at_ms = NULL
+        WHERE timer_id = &quot;$recordingTimerId&quot;
+        &#39;&#39;&#39;,
+  );
+
+  _isRecording = true;
+
+  await _startLocationStream();
+  _startLocationMonitor();
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">still_alive</a></li>
+    <li><a href="../../services_location_service/">location_service</a></li>
+    <li><a href="../../services_location_service/LocationService-class.html">LocationService</a></li>
+    <li class="self-crumb">startRecording method</li>
+</ol>
+
+    <h5>LocationService class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    still_alive
+      1.0.44+5
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

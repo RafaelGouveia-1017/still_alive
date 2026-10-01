@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["api","frb_generated"]};

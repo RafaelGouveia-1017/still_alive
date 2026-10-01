@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["DestinationKind","IntegrationProvider"],"fn":["load_config","save_config"],"struct":["DestinationTestResult","IntegrationAccount","IntegrationGradient","IntegrationInfo","MessageDestination","SentMessage"],"trait":["Integration"]};

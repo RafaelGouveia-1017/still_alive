@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the connectRustLogging method from the AppLogger class, for the Dart programming language.">
+  <title>connectRustLogging method - AppLogger class - app_logger library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">still_alive</a></li>
+    <li><a href="../../data_app_logger/">data\app_logger.dart</a></li>
+    <li><a href="../../data_app_logger/AppLogger-class.html">AppLogger</a></li>
+    <li class="self-crumb">connectRustLogging static method</li>
+  </ol>
+  <div class="self-name">connectRustLogging</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="data_app_logger&#47;AppLogger-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">connectRustLogging</span> static method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype">void</span>
+<span class="name ">connectRustLogging</span>(<wbr>)
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Connects the Rust logger to the application's Dart logger.</p>
+<p>Rust log records received through <code>createRustLogStream</code> are converted to
+their corresponding <a href="https://pub.dev/documentation/logging/1.3.0/logging/Level-class.html">Level</a> from the <code>logging</code> package and forwarded to
+<a href="../../data_app_logger/AppLogger/log.html">AppLogger.log</a>.</p>
+<p>Rust source metadata is included in the log message when available:</p>
+<ul>
+<li><code>RustLogRecord.target</code> identifies the Rust logging target.</li>
+<li><code>RustLogRecord.file</code> identifies the Rust source file.</li>
+<li><code>RustLogRecord.line</code> identifies the Rust source line.</li>
+</ul>
+<p>This allows Rust logs to follow the same logging pipeline as Dart logs,
+including the debug console and application log file configured by
+<a href="../../data_app_logger/AppLogger/init.html">AppLogger.init</a>.</p>
+<p>If Rust logging is already connected, the existing subscription is
+cancelled before creating a new one. This makes the method safe to call
+multiple times without accumulating duplicate listeners.</p>
+<p>Call this after <a href="../../data_app_logger/AppLogger/init.html">AppLogger.init</a> and after the Rust library has been
+initialized.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">static void connectRustLogging() {
+  _rustLogSubscription?.cancel();
+
+  final stream = createRustLogStream();
+  _rustLogSubscription = stream.listen((record) {
+    final level = switch (record.level) {
+      &#39;ERROR&#39; =&gt; Level.SEVERE,
+      &#39;WARN&#39; =&gt; Level.WARNING,
+      &#39;INFO&#39; =&gt; Level.INFO,
+      &#39;DEBUG&#39; =&gt; Level.FINE,
+      &#39;TRACE&#39; =&gt; Level.FINER,
+      _ =&gt; Level.INFO,
+    };
+
+    final location = StringBuffer();
+
+    &#47;*
+    if (record.target.isNotEmpty) {
+      location.write(record.target);
+    }
+    *&#47;
+    if (record.file != null) {
+      if (location.isNotEmpty) {
+        location.write(&#39; &#39;);
+      }
+
+      location.write(record.file);
+
+      if (record.line != null) {
+        location.write(&#39;:${record.line}&#39;);
+      }
+    }
+
+    final message = location.isEmpty ? &#39;[Rust] ${record.message}&#39; : &#39;[Rust][$location] ${record.message}&#39;;
+
+    AppLogger.log.log(level, message);
+  });
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">still_alive</a></li>
+    <li><a href="../../data_app_logger/">app_logger</a></li>
+    <li><a href="../../data_app_logger/AppLogger-class.html">AppLogger</a></li>
+    <li class="self-crumb">connectRustLogging static method</li>
+</ol>
+
+    <h5>AppLogger class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    still_alive
+      1.0.44+5
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

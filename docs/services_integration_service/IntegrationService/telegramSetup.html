@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the telegramSetup method from the IntegrationService class, for the Dart programming language.">
+  <title>telegramSetup method - IntegrationService class - integration_service library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">still_alive</a></li>
+    <li><a href="../../services_integration_service/">services\integration_service.dart</a></li>
+    <li><a href="../../services_integration_service/IntegrationService-class.html">IntegrationService</a></li>
+    <li class="self-crumb">telegramSetup static method</li>
+  </ol>
+  <div class="self-name">telegramSetup</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="services_integration_service&#47;IntegrationService-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">telegramSetup</span> static method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">IntegrationInfo</span>&gt;</span>?</span>&gt;</span></span>
+<span class="name ">telegramSetup</span>(<wbr>{<ol class="parameter-list"> <li><span class="parameter" id="telegramSetup-param-context"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/widgets/BuildContext-class.html">BuildContext</a></span> <span class="parameter-name">context</span>, </span></li>
+<li><span class="parameter" id="telegramSetup-param-scheme"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/material/ColorScheme-class.html">ColorScheme</a></span> <span class="parameter-name">scheme</span>, </span></li>
+<li><span class="parameter" id="telegramSetup-param-local"><span>required</span> <span class="type-annotation"><a href="../../data_app_localization/AppLocalizations-class.html">AppLocalizations</a></span> <span class="parameter-name">local</span>, </span></li>
+<li><span class="parameter" id="telegramSetup-param-integrationItems"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">IntegrationInfo</span>&gt;</span></span> <span class="parameter-name">integrationItems</span>, </span></li>
+<li><span class="parameter" id="telegramSetup-param-integrationKey"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">integrationKey</span>, </span></li>
+</ol>})
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Displays the Telegram bot setup flow.</p>
+<p>Opens a blurred bottom sheet containing instructions for obtaining
+a Telegram bot token through BotFather, a link that attempts to open
+BotFather in the Telegram app and falls back to the web version, and
+a text field for entering the bot token.</p>
+<p>When a non-empty token is submitted, it is passed to
+<a href="../../services_integration_service/IntegrationService/connectAccount.html">connectAccount</a> using <code>integrationKey</code> and the token as the
+integration credentials.</p>
+<p>Returns the updated list of <code>IntegrationInfo</code> objects when the account
+is successfully connected, or <code>null</code> when the setup is cancelled or the
+connection fails.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">static Future&lt;List&lt;IntegrationInfo&gt;?&gt; telegramSetup({
+  required BuildContext context,
+  required ColorScheme scheme,
+  required AppLocalizations local,
+  required List&lt;IntegrationInfo&gt; integrationItems,
+  required String integrationKey,
+}) async {
+  String credentialToken = &#39;&#39;;
+  return await showBlurredBottomSheet&lt;List&lt;IntegrationInfo&gt;?&gt;(
+    context: context,
+    scheme: scheme,
+    child: SingleChildScrollView(
+      reverse: true,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: Text(local.translate(&quot;integrations.setup.telegram.0&quot;), style: AppText.title(scheme).copyWith(fontWeight: FontWeight.bold)),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Text(local.translate(&quot;integrations.setup.telegram.1&quot;), style: AppText.body(scheme)),
+          const SizedBox(height: AppSpacing.xl),
+          Text(local.translate(&quot;integrations.setup.telegram.2&quot;), style: AppText.bodySm(scheme)),
+          const SizedBox(height: AppSpacing.md),
+          _InstructionStep(number: 1, text: local.translate(&quot;integrations.setup.telegram.3&quot;)),
+          _InstructionStep(number: 2, text: local.translate(&quot;integrations.setup.telegram.4&quot;)),
+          _InstructionStep(number: 3, text: local.translate(&quot;integrations.setup.telegram.5&quot;)),
+          _InstructionStep(number: 4, text: local.translate(&quot;integrations.setup.telegram.6&quot;)),
+
+          const SizedBox(height: AppSpacing.sm),
+
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton.icon(
+              onPressed: () async {
+                final telegramUri = Uri.parse(&#39;tg:&#47;&#47;resolve?domain=BotFather&#39;);
+                final webUri = Uri.parse(&#39;https:&#47;&#47;t.me&#47;BotFather&#39;);
+
+                if (await canLaunchUrl(telegramUri)) {
+                  await launchUrl(telegramUri);
+                } else {
+                  await launchUrl(webUri, mode: LaunchMode.externalApplication);
+                }
+              },
+              icon: Icon(LucideIcons.externalLink, size: 20, color: scheme.tertiary),
+              label: Text(local.translate(&quot;integrations.setup.telegram.7&quot;), style: AppText.bodySm(scheme).copyWith(color: scheme.tertiary)),
+            ),
+          ),
+
+          const SizedBox(height: AppSpacing.xl),
+
+          TextField(
+            obscureText: true,
+            autocorrect: false,
+            enableSuggestions: false,
+            textInputAction: TextInputAction.done,
+            decoration: InputDecoration(
+              labelText: local.translate(&quot;integrations.setup.telegram.8&quot;),
+              hintText: local.translate(&quot;integrations.setup.telegram.9&quot;),
+              border: OutlineInputBorder(),
+              contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxxs, vertical: AppSpacing.xxxs),
+              prefixIcon: Icon(LucideIcons.keyRound),
+              filled: false,
+              fillColor: Colors.transparent,
+            ),
+            onChanged: (text) {
+              credentialToken = text.trim();
+            },
+          ),
+
+          const SizedBox(height: AppSpacing.lg),
+
+          PrimaryButton(
+            label: local.translate(&quot;integrations.account_add&quot;),
+            onPressed: () async {
+              if (credentialToken.isEmpty) return;
+
+              final items = await connectAccount(
+                context: context,
+                integrationItems: integrationItems,
+                integrationKey: integrationKey,
+                integrationCredentials: {&quot;token&quot;: credentialToken},
+              );
+
+              if (context.mounted) {
+                if (items == null) {
+                  Navigator.pop(context, null);
+                } else {
+                  Navigator.pop(context, items);
+                }
+              }
+            },
+          ),
+
+          const SizedBox(height: AppSpacing.sm),
+
+          Center(
+            child: Text(
+              local.translate(&quot;integrations.setup.telegram.10&quot;),
+              textAlign: TextAlign.center,
+              style: AppText.micro(scheme).copyWith(color: scheme.error),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">still_alive</a></li>
+    <li><a href="../../services_integration_service/">integration_service</a></li>
+    <li><a href="../../services_integration_service/IntegrationService-class.html">IntegrationService</a></li>
+    <li class="self-crumb">telegramSetup static method</li>
+</ol>
+
+    <h5>IntegrationService class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    still_alive
+      1.0.44+5
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

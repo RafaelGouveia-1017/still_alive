@@ -29,15 +29,13 @@ class _AppThemeOption {
 /// A screen that displays all available application themes and allows
 /// the user to switch between them.
 ///
-/// The screen renders a list of [AppThemeOption] entries, each showing:
+/// The screen renders a list of [_AppThemeOption] entries, each showing:
 /// * the theme name,
 /// * a light/dark indicator,
 /// * a color preview palette,
 /// * and selection state.
 ///
 /// When a theme is tapped, it updates the global app theme via [MyApp].
-///
-/// If [tutorial] is true, the bottom navigation bar is hidden.
 class ThemesScreen extends StatefulWidget {
   const ThemesScreen({super.key});
 

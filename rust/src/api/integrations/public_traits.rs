@@ -135,7 +135,7 @@ pub fn delete_integration_account(key: String, account_id: String) -> Result<()>
 ///
 /// # Returns
 ///
-/// Returns an [`IntegrationTestResult`] containing:
+/// Returns an [DestinationTestResult] containing:
 ///
 /// * Whether the integration is connected.
 /// * A human-readable status message.
@@ -177,7 +177,7 @@ pub async fn test_integration_destination(
 ///
 /// # Returns
 ///
-/// Returns an [`IntegrationTestResult`] containing:
+/// Returns an [DestinationTestResult] containing:
 ///
 /// * Whether the integration is connected.
 /// * A human-readable status message.

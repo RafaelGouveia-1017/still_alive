@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="still_alive API docs, for the Dart programming language.">
+  <title>still_alive - Dart API docs</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="static-assets/github.css?v1">
+  <link rel="stylesheet" href="static-assets/styles.css?v1">
+  <link rel="icon" href="static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li class="self-crumb">still_alive package</li>
+  </ol>
+  <div class="self-name">still_alive</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+  <div id="dartdoc-main-content" class="main-content">
+      
+<section class="desc markdown">
+  <div align="center">
+  <picture>
+    <img alt="StillAlive" src="./lib/assets/images/logo.png" width="15%">
+  </picture>
+</div>
+<div align="center">
+<h1>StillAlive – Personal Safety Platform</h1>
+</div>
+<div align="center">
+  <a href="https://developer.android.com/develop">
+    <img src="https://img.shields.io/badge/Android-Min%3A%2010%20(API%2029)%20%7C%20Target%3A%2016%20(API%2036)-green?logo=android" alt="Android">
+  </a>
+  <br>
+  <a href="https://flutter.dev">
+    <img src="https://img.shields.io/badge/Frontend-Flutter%20(3.47.5)-%2302569B?logo=flutter" alt="Flutter">
+  </a>
+  <a href="https://dart.dev/">
+    <img src="https://img.shields.io/badge/Frontend-Dart%20(3.13.4)-%2302569B?logo=dart" alt="Dart">
+  </a>
+  <a href="https://www.rust-lang.org/">
+    <img src="https://img.shields.io/badge/BackEnd-Rust%20(1.98.1)-orange?logo=rust" alt="Rust">
+  </a>
+  <br>
+  <a href="https://opensource.org/licenses/MIT">
+    <img src="https://img.shields.io/badge/License-MIT-yellow?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1zY2FsZS1pY29uIGx1Y2lkZS1zY2FsZSI+PHBhdGggZD0iTTEyIDN2MTgiLz48cGF0aCBkPSJtMTkgOCAzIDhhNSA1IDAgMCAxLTYgMHpWNyIvPjxwYXRoIGQ9Ik0zIDdoMWExNyAxNyAwIDAgMCA4LTIgMTcgMTcgMCAwIDAgOCAyaDEiLz48cGF0aCBkPSJtNSA4IDMgOGE1IDUgMCAwIDEtNiAwelY3Ii8+PHBhdGggZD0iTTcgMjFoMTAiLz48L3N2Zz4=" alt="MIT License">
+  </a>
+</div>
+<p><strong>StillAlive</strong> is a proactive personal safety application designed to mitigate the "silent emergency" – situations where a person becomes incapacitated (due to accidents, medical emergencies, or attacks) and is unable to manually call for help.</p>
+<p>Unlike traditional "check-in" apps that require active interaction, <strong>StillAlive</strong> operates on a "fail-safe" principle: if a user does not manually deactivate a safety timer, the system automatically assumes a state of danger and triggers a pre-defined emergency protocol.</p>
+<h2 id="-the-problem">🚨 The Problem</h2>
+<p>People in vulnerable situations—such as solo hikers, travelers in unfamiliar areas, or the elderly—often face scenarios where they lose the ability to communicate. Existing solutions often require constant manual updates, which are impossible during an actual emergency.</p>
+<h2 id="-key-features">✨ Key Features</h2>
+<ul>
+<li><strong>Safety Timer (Fail-Safe Mechanism):</strong> Set a duration for your activity. If the timer expires without user interaction, the emergency protocol initiates automatically.</li>
+<li><strong>Automated Emergency Protocol:</strong> Gradual escalation of alerts via:
+<ul>
+<li>SMS, Email, and Push Notifications.</li>
+<li>Real-time location sharing with emergency contacts.</li>
+<li>Integration with <strong>Telegram</strong> and <strong>Discord</strong> via automated bots.</li>
+</ul>
+</li>
+<li><strong>Offline Resilience:</strong> In areas with no cellular coverage, the app activates local survival mechanisms, including high-intensity audio alerts and immediate local notifications.</li>
+<li><strong>Privacy by Design:</strong>
+<ul>
+<li><strong>No Account Required:</strong> Minimal data collection to protect user anonymity.</li>
+<li><strong>Permission-Based:</strong> Location and contact data are only accessed/used according to explicit user configurations.</li>
+<li><strong>Secure Storage:</strong> All sensitive data is encrypted and stored locally.</li>
+</ul>
+</li>
+<li><strong>Easy Adoption:</strong> Support for <strong>QR Code generation</strong> to allow emergency contacts to join alert groups easily.</li>
+</ul>
+<h2 id="-tech-stack">🛠 Tech Stack</h2>
+<ul>
+<li><strong>Frontend:</strong> <a href="https://flutter.dev/">Flutter</a> (Dart) for a high-performance, cross-platform mobile experience.</li>
+<li><strong>Core Engine:</strong> <a href="https://www.rust-lang.org/">Rust</a> for high-performance, memory-safe logic, integrated via <a href="https://github.com/fzyzcjy/flutter_rust_bridge"><code>flutter_rust_bridge</code></a>.</li>
+<li><strong>Local Database:</strong> <a href="https://www.sqlite.org/">SQLite</a> for robust, encrypted local data persistence.</li>
+<li><strong>CI/CD:</strong> <a href="https://github.com/features/actions">GitHub Actions</a> for automated testing pipelines.</li>
+<li><strong>Communication:</strong> REST/JSON for backend/service integration.</li>
+</ul>
+<h3 id="-dependencies">📦 Dependencies</h3>
+<p>StillAlive uses a collection of Flutter/Dart packages to provide its core functionality, user interface, device integration, mapping, communication, security, and other platform capabilities.</p>
+<h4 id="-flutter--rust-integration">🔗 Flutter &amp; Rust Integration</h4>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th align="right">Version</th>
+<th>Creator</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://pub.dev/packages/flutter_rust_bridge">flutter_rust_bridge</a></td>
+<td align="right"><code>2.13.0</code></td>
+<td><a href="https://github.com/fzyzcjy/flutter_rust_bridge">fzyzcjy</a></td>
+</tr>
+<tr>
+<td><code>rust_lib_still_alive</code></td>
+<td align="right">Local</td>
+<td><a href="https://github.com/RafaelGouveia-1017/still_alive">StillAlive Project</a></td>
+</tr>
+<tr>
+<td><a href="https://api.flutter.dev/flutter/flutter_localizations/flutter_localizations-library.html">flutter_localizations</a></td>
+<td align="right">SDK</td>
+<td><a href="https://github.com/flutter/flutter">Flutter Team</a></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Note:</strong> <code>rust_lib_still_alive</code> is a local Rust library generated for the StillAlive project and exposed to Flutter through <a href="https://pub.dev/packages/flutter_rust_bridge"><code>flutter_rust_bridge</code></a>. It is not published as a standalone package on <code>pub.dev</code>.</p>
+</blockquote>
+<h4 id="-ui-icons--visual-design">🎨 UI, Icons &amp; Visual Design</h4>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th align="right">Version</th>
+<th>Creator</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://pub.dev/packages/lucide_icons_flutter">lucide_icons_flutter</a></td>
+<td align="right"><code>^3.1.21</code></td>
+<td><a href="https://github.com/lucide-icons/lucide">Lucide Contributors</a></td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/font_awesome_flutter">font_awesome_flutter</a></td>
+<td align="right"><code>^11.0.0</code></td>
+<td><a href="https://github.com/fluttercommunity/font_awesome_flutter">Flutter Community</a></td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/animated_splash_screen">animated_splash_screen</a></td>
+<td align="right"><code>^1.3.0</code></td>
+<td><a href="https://github.com/clean-code-dev/animated_splash_screen">Clean Code</a></td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/page_transition">page_transition</a></td>
+<td align="right"><code>^2.2.2</code></td>
+<td><a href="https://github.com/kalismeras61/flutter_page_transition">kalismeras61</a></td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/flutter_native_splash">flutter_native_splash</a></td>
+<td align="right"><code>^2.4.8</code></td>
+<td><a href="https://github.com/jonbhanson/flutter_native_splash">jonbhanson</a></td>
+</tr>
+</tbody>
+</table>
+<h4 id="-state-management-data--utilities">🧩 State Management, Data &amp; Utilities</h4>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th align="right">Version</th>
+<th>Creator</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://pub.dev/packages/provider">provider</a></td>
+<td align="right"><code>^6.1.5+1</code></td>
+<td><a href="https://github.com/rrousselGit/provider">rrousselGit</a></td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/collection">collection</a></td>
+<td align="right"><code>^1.19.1</code></td>
+<td><a href="https://github.com/dart-lang/core/tree/main/pkgs/collection">Dart Team</a></td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/path">path</a></td>
+<td align="right"><code>^1.9.1</code></td>
+<td><a href="https://github.com/dart-lang/core/tree/main/pkgs/path">Dart Team</a></td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/path_provider">path_provider</a></td>
+<td align="right"><code>^2.1.6</code></td>
+<td><a href="https://github.com/flutter/packages/tree/main/packages/path_provider">Flutter Team</a></td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/freezed_annotation">freezed_annotation</a></td>
+<td align="right"><code>^3.1.0</code></td>
+<td><a href="https://github.com/rrousselGit/freezed">Freezed Contributors</a></td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/logging">logging</a></td>
+<td align="right"><code>^1.3.0</code></td>
+<td><a href="https://github.com/dart-lang/core/tree/main/pkgs/logging">Dart Team</a></td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/vector_math">vector_math</a></td>
+<td align="right"><code>^2.4.3</code></td>
+<td><a href="https://github.com/google/vector_math.dart">Dart Team</a></td>
+</tr>
+</tbody>
+</table>
+<h4 id="-device--system-integration">📱 Device &amp; System Integration</h4>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th align="right">Version</th>
+<th>Creator</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://pub.dev/packages/permission_handler">permission_handler</a></td>
+<td align="right"><code>12.0.3</code></td>
+<td><a href="https://github.com/Baseflow/flutter-permission-handler">Baseflow</a></td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/battery_optimization_permission">battery_optimization_permission</a></td>
+<td align="right"><code>^1.1.3</code></td>
+<td><a href="https://pub.dev/packages/battery_optimization_permission/publisher">H Square Apps</a></td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/package_info_plus">package_info_plus</a></td>
+<td align="right"><code>9.0.1</code></td>
+<td><a href="https://github.com/fluttercommunity/plus_plugins/tree/main/packages/package_info_plus">Flutter Community</a></td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/battery_plus">battery_plus</a></td>
+<td align="right"><code>^7.1.1</code></td>
+<td><a href="https://github.com/fluttercommunity/plus_plugins/tree/main/packages/battery_plus">Flutter Community</a></td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/connectivity_plus">connectivity_plus</a></td>
+<td align="right"><code>^7.3.1</code></td>
+<td><a href="https://github.com/fluttercommunity/plus_plugins/tree/main/packages/connectivity_plus">Flutter Community</a></td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/internet_connection_checker_plus">internet_connection_checker_plus</a></td>
+<td align="right"><code>^3.1.2</code></td>
+<td><a href="https://github.com/OutdatedGuy/internet_connection_checker_plus">OutdatedGuy</a></td>
+</tr>
+</tbody>
+</table>
+<h4 id="-maps-location--navigation">🧭 Maps, Location &amp; Navigation</h4>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th align="right">Version</th>
+<th>Creator</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://pub.dev/packages/google_polyline_algorithm">google_polyline_algorithm</a></td>
+<td align="right"><code>^3.1.0</code></td>
+<td><a href="https://github.com/marchdev-tk/google_polyline_algorithm">OlehMarch</a></td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/latlong2">latlong2</a></td>
+<td align="right"><code>^0.10.1</code></td>
+<td><a href="https://github.com/ThexXTURBOXx/dart-latlong">ThexXTURBOXx</a></td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/flutter_map">flutter_map</a></td>
+<td align="right"><code>^8.3.2</code></td>
+<td><a href="https://github.com/fleaflet/flutter_map">Fleaflet</a></td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/flutter_map_vector_tiles">flutter_map_vector_tiles</a></td>
+<td align="right"><code>^2.9.0</code></td>
+<td><a href="https://github.com/JonasGrunau/flutter-map-vector-tiles">JonasGrunau</a></td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/flutter_map_compass">flutter_map_compass</a></td>
+<td align="right"><code>^1.1.1</code></td>
+<td><a href="https://github.com/josxha/flutter_map_plugins">josxha</a></td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/geolocator">geolocator</a></td>
+<td align="right"><code>14.0.2</code></td>
+<td><a href="https://github.com/Baseflow/flutter-geolocator">Baseflow</a></td>
+</tr>
+</tbody>
+</table>
+<h4 id="-qr-codes--scanning">📷 QR Codes &amp; Scanning</h4>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th align="right">Version</th>
+<th>Creator</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://pub.dev/packages/mobile_scanner">mobile_scanner</a></td>
+<td align="right"><code>^7.4.1</code></td>
+<td><a href="https://github.com/juliansteenbakker/mobile_scanner">juliansteenbakker</a></td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/qr_flutter">qr_flutter</a></td>
+<td align="right"><code>^4.1.0</code></td>
+<td><a href="https://github.com/theyakka/qr.flutter">Yakka</a></td>
+</tr>
+</tbody>
+</table>
+<h4 id="-audio--recording">🎙️ Audio &amp; Recording</h4>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th align="right">Version</th>
+<th>Creator</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://pub.dev/packages/record">record</a></td>
+<td align="right"><code>^7.1.1</code></td>
+<td><a href="https://github.com/llfbandit/record">llfbandit</a></td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/audioplayers">audioplayers</a></td>
+<td align="right"><code>^6.8.1</code></td>
+<td><a href="https://github.com/bluefireteam/audioplayers">Blue Fire</a></td>
+</tr>
+</tbody>
+</table>
+<h4 id="-contacts--messaging">👥 Contacts &amp; Messaging</h4>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th align="right">Version</th>
+<th>Creator</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://pub.dev/packages/flutter_contacts">flutter_contacts</a></td>
+<td align="right"><code>^2.5.0</code></td>
+<td><a href="https://github.com/QuisApp/flutter_contacts">QuisApp</a></td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/send_message">send_message</a></td>
+<td align="right"><code>^1.0.2</code></td>
+<td><a href="https://github.com/DabhiNavaghan/send_message">dabhinavaghan</a></td>
+</tr>
+</tbody>
+</table>
+<h4 id="-layout-interaction--navigation">📐 Layout, Interaction &amp; Navigation</h4>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th align="right">Version</th>
+<th>Creator</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://pub.dev/packages/flutter_reorderable_grid_view">flutter_reorderable_grid_view</a></td>
+<td align="right"><code>^5.7.0</code></td>
+<td><a href="https://github.com/karvulf/flutter-reorderable-grid-view">karvulf</a></td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/fluttertoast">fluttertoast</a></td>
+<td align="right"><code>^10.0.0</code></td>
+<td><a href="https://github.com/ponnamkarthik/FlutterToast">ponnamkarthik</a></td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/scrollable_positioned_list">scrollable_positioned_list</a></td>
+<td align="right"><code>^0.3.8</code></td>
+<td><a href="https://github.com/google/flutter.widgets">Google</a></td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/restart_app">restart_app</a></td>
+<td align="right"><code>^1.10.1</code></td>
+<td><a href="https://github.com/gabrimatic/restart_app">gabrimatic</a></td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/url_launcher">url_launcher</a></td>
+<td align="right"><code>^6.3.2</code></td>
+<td><a href="https://github.com/flutter/packages/tree/main/packages/url_launcher">Flutter Team</a></td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/file_picker">file_picker</a></td>
+<td align="right"><code>11.0.3</code></td>
+<td><a href="https://github.com/vicajilau/flutter_file_picker/">miguelpruivo</a></td>
+</tr>
+</tbody>
+</table>
+<h4 id="-security--cryptography">🔐 Security &amp; Cryptography</h4>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th align="right">Version</th>
+<th>Creator</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://pub.dev/packages/bcrypt">bcrypt</a></td>
+<td align="right"><code>^1.2.0</code></td>
+<td><a href="https://github.com/astudilloalex/dart-bcrypt">astudilloalex</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="-architecture">🏗 Architecture</h2>
+<p>The project follows a hybrid architecture:</p>
+<ol>
+<li><strong>UI Layer (Flutter):</strong> Handles user interaction, maps, and visual feedback.</li>
+<li><strong>Logic Layer (Rust):</strong> Handles the heavy lifting, timer precision, and sensitive cryptographic operations, ensuring maximum reliability.</li>
+<li><strong>Integration Layer:</strong> Uses <a href="https://github.com/fzyzcjy/flutter_rust_bridge"><code>flutter_rust_bridge</code></a> to allow seamless, type-safe communication between Dart and Rust.</li>
+</ol>
+<h2 id="-privacy--security">🛡 Privacy &amp; Security</h2>
+<p>StillAlive is built on the principle of <strong>Privacy by Design</strong>. We minimize data retention and never require unnecessary personal information. All communications are encrypted, and the app is designed to function with the absolute minimum of data exposure required to ensure safety.</p>
+<h2 id="-viewing-the-docs">📖 Viewing the docs</h2>
+<p>To enable navigation and search, the <a href="https://github.com/RafaelGouveia-1017/still_alive/commits/main/docs">generated docs</a> must be served with an HTTP server.</p>
+<p>An easy way to run an HTTP server locally is to use <a href="https://pub.dev/packages/dhttpd"><code>package:dhttpd</code></a>.
+For example:</p>
+<pre class="language-bash"><code class="language-bash"># For Dart code
+&gt; dart pub global activate dhttpd
+&gt; dart pub global run dhttpd --path docs
+
+# For Rust code (no HTTP server needed)
+&gt; cargo doc --no-deps --document-private-items --open
+# or
+# Open ...\still_alive\rust\target\doc\rust_lib_still_alive\index.html
+</code></pre>
+<p>To then read the generated docs in your browser, open the link that <code>dhttpd</code> outputs, usually <code>http://localhost:8080</code>.</p>
+<h2 id="-contributors">👥 Contributors</h2>
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%">
+        <a href="https://github.com/RafaelGouveia-1017">
+          <img src="https://avatars.githubusercontent.com/u/133778965?v=4?s=100" width="100px;" alt="guy_who_started_this">
+          <br>
+          <sub><b>Rafael Gouveia</b></sub>
+        </a>
+        <br>
+        <a href="https://github.com/RafaelGouveia-1017/still_alive/commits?author=RafaelGouveia-1017" title="Code">💻</a>
+        <a href="https://github.com/RafaelGouveia-1017/still_alive/commits/main/test/?author=RafaelGouveia-1017" title="Tests">⚠️</a>
+        <a href="https://github.com/RafaelGouveia-1017/still_alive/commits/main/docs/?author=RafaelGouveia-1017" title="Documentation">📖</a>
+        <a href="https://github.com/RafaelGouveia-1017/still_alive/blob/main/README.md" title="Idea">💡</a>
+        <a href="#feedback" title="Planning &amp; Feedback">🤔</a>
+        <a href="#maintenance" title="Maintenance">🚧</a>
+      </td>
+      <td align="center" valign="top" width="14.28%">
+        <a href="https://chatgpt.com/">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/4/46/ChatGPT_Search_logo_Black_Square_-_rounded_corners.svg" width="100px;" alt="ChatGPT">
+          <br><sub><b>ChatGPT</b></sub>
+        </a>
+        <br>
+        <a href="https://github.com/RafaelGouveia-1017/still_alive/commits" title="Code">💻</a>
+        <a href="https://github.com/RafaelGouveia-1017/still_alive/commits/main/test/" title="Tests">⚠️</a>
+        <a href="https://github.com/RafaelGouveia-1017/still_alive/commits" title="Documentation">📖</a>
+      </td>
+            <td align="center" valign="top" width="14.28%">
+        <a href="https://github.com/brunomnsilva">
+          <img src="https://avatars.githubusercontent.com/u/16222114?v=4?s=100" width="100px;" alt="Bruno Silva">
+          <br><sub><b>Bruno Silva</b></sub>
+        </a>
+        <br>
+        <a href="#feedback" title="Planning &amp; Feedback">🤔</a>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</section>
+
+
+      <section class="summary">
+          <h2>Libraries</h2>
+        <dl>
+          <dt id="all">
+  <span class="name"><a href="data_all/">data\all</a></span> 
+
+</dt>
+<dd>StillAlive - Data functions barrel export.
+</dd>
+
+          <dt id="app_design">
+  <span class="name"><a href="data_app_design/">data\app_design</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="app_localization">
+  <span class="name"><a href="data_app_localization/">data\app_localization</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="app_logger">
+  <span class="name"><a href="data_app_logger/">data\app_logger</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="app_permissions">
+  <span class="name"><a href="data_app_permissions/">data\app_permissions</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="app_themes">
+  <span class="name"><a href="data_app_themes/">data\app_themes</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="custom_theme">
+  <span class="name"><a href="data_custom_theme/">data\custom_theme</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="main">
+  <span class="name"><a href="main/">main</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="contact_service">
+  <span class="name"><a href="services_contact_service/">services\contact_service</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="history_service">
+  <span class="name"><a href="services_history_service/">services\history_service</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="integration_service">
+  <span class="name"><a href="services_integration_service/">services\integration_service</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="location_service">
+  <span class="name"><a href="services_location_service/">services\location_service</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="method_channel">
+  <span class="name"><a href="services_native_method_channel/">services\native\method_channel</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="notification_service_android">
+  <span class="name"><a href="services_notification_service_android/">services\notification_service_android</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="sms_service">
+  <span class="name"><a href="services_sms_service/">services\sms_service</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="timer_service">
+  <span class="name"><a href="services_timer_service/">services\timer_service</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="contact_detail">
+  <span class="name"><a href="views_app_contacts_contact_detail/">views\app\contacts\contact_detail</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="contact_row">
+  <span class="name"><a href="views_app_contacts_contact_row/">views\app\contacts\contact_row</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="contacts">
+  <span class="name"><a href="views_app_contacts_contacts/">views\app\contacts\contacts</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="emergency_contacts">
+  <span class="name"><a href="views_app_contacts_emergency_contacts/">views\app\contacts\emergency_contacts</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="global_error">
+  <span class="name"><a href="views_app_global_error/">views\app\global_error</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="history">
+  <span class="name"><a href="views_app_history_history/">views\app\history\history</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="home">
+  <span class="name"><a href="views_app_home_home/">views\app\home\home</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="home_widgets">
+  <span class="name"><a href="views_app_home_home_widgets/">views\app\home\home_widgets</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="phone_status">
+  <span class="name"><a href="views_app_home_phone_status/">views\app\home\phone_status</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="quick_contacts">
+  <span class="name"><a href="views_app_home_quick_contacts/">views\app\home\quick_contacts</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="audio_input">
+  <span class="name"><a href="views_app_home_timer_config_audio_input/">views\app\home\timer\config\audio_input</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="config_fields">
+  <span class="name"><a href="views_app_home_timer_config_config_fields/">views\app\home\timer\config\config_fields</a></span> 
+
+</dt>
+<dd>StillAlive - Timer configuration fields barrel export.
+</dd>
+
+          <dt id="contact_selection">
+  <span class="name"><a href="views_app_home_timer_config_contact_selection/">views\app\home\timer\config\contact_selection</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="custom_destination_input">
+  <span class="name"><a href="views_app_home_timer_config_custom_destination_input/">views\app\home\timer\config\custom_destination_input</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="duration_input">
+  <span class="name"><a href="views_app_home_timer_config_duration_input/">views\app\home\timer\config\duration_input</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="grace_input">
+  <span class="name"><a href="views_app_home_timer_config_grace_input/">views\app\home\timer\config\grace_input</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="integration_selection">
+  <span class="name"><a href="views_app_home_timer_config_integration_selection/">views\app\home\timer\config\integration_selection</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="location_inputs">
+  <span class="name"><a href="views_app_home_timer_config_location_inputs/">views\app\home\timer\config\location_inputs</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="message_input">
+  <span class="name"><a href="views_app_home_timer_config_message_input/">views\app\home\timer\config\message_input</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="name_input">
+  <span class="name"><a href="views_app_home_timer_config_name_input/">views\app\home\timer\config\name_input</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="password_input">
+  <span class="name"><a href="views_app_home_timer_config_password_input/">views\app\home\timer\config\password_input</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="timer_config">
+  <span class="name"><a href="views_app_home_timer_config_timer_config/">views\app\home\timer\config\timer_config</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="emergency_active">
+  <span class="name"><a href="views_app_home_timer_emergency_emergency_active/">views\app\home\timer\emergency\emergency_active</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="emergency_helpers">
+  <span class="name"><a href="views_app_home_timer_emergency_emergency_helpers/">views\app\home\timer\emergency\emergency_helpers</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="emergency_widgets">
+  <span class="name"><a href="views_app_home_timer_emergency_emergency_widgets/">views\app\home\timer\emergency\emergency_widgets</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="full_map_screen">
+  <span class="name"><a href="views_app_home_timer_full_map_screen/">views\app\home\timer\full_map_screen</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="active_monitoring">
+  <span class="name"><a href="views_app_home_timer_monitoring_active_monitoring/">views\app\home\timer\monitoring\active_monitoring</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="monitoring_widgets">
+  <span class="name"><a href="views_app_home_timer_monitoring_monitoring_widgets/">views\app\home\timer\monitoring\monitoring_widgets</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="pre_alert_warning">
+  <span class="name"><a href="views_app_home_timer_pre-alert_pre_alert_warning/">views\app\home\timer\pre-alert\pre_alert_warning</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="pre_alert_widgets">
+  <span class="name"><a href="views_app_home_timer_pre-alert_pre_alert_widgets/">views\app\home\timer\pre-alert\pre_alert_widgets</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="timer_selection">
+  <span class="name"><a href="views_app_home_timer_selection/">views\app\home\timer_selection</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="integration_destinations">
+  <span class="name"><a href="views_app_integrations_integration_destinations/">views\app\integrations\integration_destinations</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="integration_row">
+  <span class="name"><a href="views_app_integrations_integration_row/">views\app\integrations\integration_row</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="integrations">
+  <span class="name"><a href="views_app_integrations_integrations/">views\app\integrations\integrations</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="qr_display">
+  <span class="name"><a href="views_app_integrations_qr_display/">views\app\integrations\qr_display</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="qr_scanner">
+  <span class="name"><a href="views_app_integrations_qr_scanner/">views\app\integrations\qr_scanner</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="onboarding">
+  <span class="name"><a href="views_app_onboarding_onboarding/">views\app\onboarding\onboarding</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="permissions">
+  <span class="name"><a href="views_app_onboarding_permissions/">views\app\onboarding\permissions</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="privacy">
+  <span class="name"><a href="views_app_onboarding_privacy/">views\app\onboarding\privacy</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="welcome">
+  <span class="name"><a href="views_app_onboarding_welcome/">views\app\onboarding\welcome</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="screens">
+  <span class="name"><a href="views_app_screens/">views\app\screens</a></span> 
+
+</dt>
+<dd>StillAlive - Screen barrel export.
+</dd>
+
+          <dt id="alerts_section">
+  <span class="name"><a href="views_app_settings_alerts_section/">views\app\settings\alerts_section</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="backup_section">
+  <span class="name"><a href="views_app_settings_backup_section/">views\app\settings\backup_section</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="customization_section">
+  <span class="name"><a href="views_app_settings_customization_section/">views\app\settings\customization_section</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="danger_section">
+  <span class="name"><a href="views_app_settings_danger_section/">views\app\settings\danger_section</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="privacy_section">
+  <span class="name"><a href="views_app_settings_privacy_section/">views\app\settings\privacy_section</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="settings">
+  <span class="name"><a href="views_app_settings_settings/">views\app\settings\settings</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="themes">
+  <span class="name"><a href="views_app_settings_themes/">views\app\settings\themes</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="bottom_nav">
+  <span class="name"><a href="views_widgets_bottom_nav/">views\widgets\bottom_nav</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="countdown_ring">
+  <span class="name"><a href="views_widgets_countdown_ring/">views\widgets\countdown_ring</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="custom_splash">
+  <span class="name"><a href="views_widgets_custom_splash/">views\widgets\custom_splash</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="elliptical_gradient">
+  <span class="name"><a href="views_widgets_elliptical_gradient/">views\widgets\elliptical_gradient</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="primitives">
+  <span class="name"><a href="views_widgets_primitives/">views\widgets\primitives</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="tile_map_viewer">
+  <span class="name"><a href="views_widgets_tile_map_viewer/">views\widgets\tile_map_viewer</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+        </dl>
+      </section>
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li class="self-crumb">still_alive package</li>
+</ol>
+
+    <h5 class="hidden-xs"><span class="package-name">still_alive</span> <span class="package-kind">package</span></h5>
+    <ol>
+      <li class="section-title">Libraries</li>
+      <li><a href="data_all/">data\all</a></li>
+      <li><a href="data_app_design/">data\app_design</a></li>
+      <li><a href="data_app_localization/">data\app_localization</a></li>
+      <li><a href="data_app_logger/">data\app_logger</a></li>
+      <li><a href="data_app_permissions/">data\app_permissions</a></li>
+      <li><a href="data_app_themes/">data\app_themes</a></li>
+      <li><a href="data_custom_theme/">data\custom_theme</a></li>
+      <li><a href="main/">main</a></li>
+      <li><a href="services_contact_service/">services\contact_service</a></li>
+      <li><a href="services_history_service/">services\history_service</a></li>
+      <li><a href="services_integration_service/">services\integration_service</a></li>
+      <li><a href="services_location_service/">services\location_service</a></li>
+      <li><a href="services_native_method_channel/">services\native\method_channel</a></li>
+      <li><a href="services_notification_service_android/">services\notification_service_android</a></li>
+      <li><a href="services_sms_service/">services\sms_service</a></li>
+      <li><a href="services_timer_service/">services\timer_service</a></li>
+      <li><a href="views_app_contacts_contact_detail/">views\app\contacts\contact_detail</a></li>
+      <li><a href="views_app_contacts_contact_row/">views\app\contacts\contact_row</a></li>
+      <li><a href="views_app_contacts_contacts/">views\app\contacts\contacts</a></li>
+      <li><a href="views_app_contacts_emergency_contacts/">views\app\contacts\emergency_contacts</a></li>
+      <li><a href="views_app_global_error/">views\app\global_error</a></li>
+      <li><a href="views_app_history_history/">views\app\history\history</a></li>
+      <li><a href="views_app_home_home/">views\app\home\home</a></li>
+      <li><a href="views_app_home_home_widgets/">views\app\home\home_widgets</a></li>
+      <li><a href="views_app_home_phone_status/">views\app\home\phone_status</a></li>
+      <li><a href="views_app_home_quick_contacts/">views\app\home\quick_contacts</a></li>
+      <li><a href="views_app_home_timer_config_audio_input/">views\app\home\timer\config\audio_input</a></li>
+      <li><a href="views_app_home_timer_config_config_fields/">views\app\home\timer\config\config_fields</a></li>
+      <li><a href="views_app_home_timer_config_contact_selection/">views\app\home\timer\config\contact_selection</a></li>
+      <li><a href="views_app_home_timer_config_custom_destination_input/">views\app\home\timer\config\custom_destination_input</a></li>
+      <li><a href="views_app_home_timer_config_duration_input/">views\app\home\timer\config\duration_input</a></li>
+      <li><a href="views_app_home_timer_config_grace_input/">views\app\home\timer\config\grace_input</a></li>
+      <li><a href="views_app_home_timer_config_integration_selection/">views\app\home\timer\config\integration_selection</a></li>
+      <li><a href="views_app_home_timer_config_location_inputs/">views\app\home\timer\config\location_inputs</a></li>
+      <li><a href="views_app_home_timer_config_message_input/">views\app\home\timer\config\message_input</a></li>
+      <li><a href="views_app_home_timer_config_name_input/">views\app\home\timer\config\name_input</a></li>
+      <li><a href="views_app_home_timer_config_password_input/">views\app\home\timer\config\password_input</a></li>
+      <li><a href="views_app_home_timer_config_timer_config/">views\app\home\timer\config\timer_config</a></li>
+      <li><a href="views_app_home_timer_emergency_emergency_active/">views\app\home\timer\emergency\emergency_active</a></li>
+      <li><a href="views_app_home_timer_emergency_emergency_helpers/">views\app\home\timer\emergency\emergency_helpers</a></li>
+      <li><a href="views_app_home_timer_emergency_emergency_widgets/">views\app\home\timer\emergency\emergency_widgets</a></li>
+      <li><a href="views_app_home_timer_full_map_screen/">views\app\home\timer\full_map_screen</a></li>
+      <li><a href="views_app_home_timer_monitoring_active_monitoring/">views\app\home\timer\monitoring\active_monitoring</a></li>
+      <li><a href="views_app_home_timer_monitoring_monitoring_widgets/">views\app\home\timer\monitoring\monitoring_widgets</a></li>
+      <li><a href="views_app_home_timer_pre-alert_pre_alert_warning/">views\app\home\timer\pre-alert\pre_alert_warning</a></li>
+      <li><a href="views_app_home_timer_pre-alert_pre_alert_widgets/">views\app\home\timer\pre-alert\pre_alert_widgets</a></li>
+      <li><a href="views_app_home_timer_selection/">views\app\home\timer_selection</a></li>
+      <li><a href="views_app_integrations_integration_destinations/">views\app\integrations\integration_destinations</a></li>
+      <li><a href="views_app_integrations_integration_row/">views\app\integrations\integration_row</a></li>
+      <li><a href="views_app_integrations_integrations/">views\app\integrations\integrations</a></li>
+      <li><a href="views_app_integrations_qr_display/">views\app\integrations\qr_display</a></li>
+      <li><a href="views_app_integrations_qr_scanner/">views\app\integrations\qr_scanner</a></li>
+      <li><a href="views_app_onboarding_onboarding/">views\app\onboarding\onboarding</a></li>
+      <li><a href="views_app_onboarding_permissions/">views\app\onboarding\permissions</a></li>
+      <li><a href="views_app_onboarding_privacy/">views\app\onboarding\privacy</a></li>
+      <li><a href="views_app_onboarding_welcome/">views\app\onboarding\welcome</a></li>
+      <li><a href="views_app_screens/">views\app\screens</a></li>
+      <li><a href="views_app_settings_alerts_section/">views\app\settings\alerts_section</a></li>
+      <li><a href="views_app_settings_backup_section/">views\app\settings\backup_section</a></li>
+      <li><a href="views_app_settings_customization_section/">views\app\settings\customization_section</a></li>
+      <li><a href="views_app_settings_danger_section/">views\app\settings\danger_section</a></li>
+      <li><a href="views_app_settings_privacy_section/">views\app\settings\privacy_section</a></li>
+      <li><a href="views_app_settings_settings/">views\app\settings\settings</a></li>
+      <li><a href="views_app_settings_themes/">views\app\settings\themes</a></li>
+      <li><a href="views_widgets_bottom_nav/">views\widgets\bottom_nav</a></li>
+      <li><a href="views_widgets_countdown_ring/">views\widgets\countdown_ring</a></li>
+      <li><a href="views_widgets_custom_splash/">views\widgets\custom_splash</a></li>
+      <li><a href="views_widgets_elliptical_gradient/">views\widgets\elliptical_gradient</a></li>
+      <li><a href="views_widgets_primitives/">views\widgets\primitives</a></li>
+      <li><a href="views_widgets_tile_map_viewer/">views\widgets\tile_map_viewer</a></li>
+</ol>
+
+  </div>
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div>
+</main>
+<footer>
+  <span class="no-break">
+    still_alive
+      1.0.44+5
+  </span>
+  
+</footer>
+
+
+<script src="static-assets/highlight.pack.js?v1"></script>
+<script src="static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

@@ -1,0 +1,2 @@
+createSrcSidebar('[["rust_lib_still_alive",["",[["api",[["data",[],["database.rs","db.rs","logging.rs","metadata.rs","mod.rs"]],["integrations",[],["discord.rs","mod.rs","public_traits.rs","telegram.rs","traits.rs"]],["timer",[],["active_timer.rs","config.rs","mod.rs","run.rs","state.rs","traits.rs"]]],["backup.rs","main.rs","mod.rs"]]],["frb_generated.rs","lib.rs"]]]]');
+//{"start":19,"fragment_lengths":[351]}

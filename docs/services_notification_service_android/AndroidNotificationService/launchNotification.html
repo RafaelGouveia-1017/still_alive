@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the launchNotification method from the AndroidNotificationService class, for the Dart programming language.">
+  <title>launchNotification method - AndroidNotificationService class - notification_service_android library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">still_alive</a></li>
+    <li><a href="../../services_notification_service_android/">services\notification_service_android.dart</a></li>
+    <li><a href="../../services_notification_service_android/AndroidNotificationService-class.html">AndroidNotificationService</a></li>
+    <li class="self-crumb">launchNotification static method</li>
+  </ol>
+  <div class="self-name">launchNotification</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="services_notification_service_android&#47;AndroidNotificationService-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">launchNotification</span> static method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+<span class="name ">launchNotification</span>(<wbr>{<ol class="parameter-list"> <li><span class="parameter" id="launchNotification-param-title"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">title</span>, </span></li>
+<li><span class="parameter" id="launchNotification-param-description"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">description</span> = <span class="default-value">&#39;&#39;</span>, </span></li>
+<li><span class="parameter" id="launchNotification-param-type"><span class="type-annotation"><a href="../../services_notification_service_android/NotificationType.html">NotificationType</a></span> <span class="parameter-name">type</span> = <span class="default-value">NotificationType.normal</span>, </span></li>
+<li><span class="parameter" id="launchNotification-param-notificationId"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">notificationId</span> = <span class="default-value">2000</span>, </span></li>
+<li><span class="parameter" id="launchNotification-param-autoCancel"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">autoCancel</span> = <span class="default-value">true</span>, </span></li>
+<li><span class="parameter" id="launchNotification-param-ongoing"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">ongoing</span> = <span class="default-value">false</span>, </span></li>
+<li><span class="parameter" id="launchNotification-param-priority"><span class="type-annotation"><a href="../../services_notification_service_android/NotificationPriority.html">NotificationPriority</a></span> <span class="parameter-name">priority</span> = <span class="default-value">NotificationPriority.defaultPriority</span>, </span></li>
+<li><span class="parameter" id="launchNotification-param-category"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">category</span> = <span class="default-value">&#39;status&#39;</span>, </span></li>
+<li><span class="parameter" id="launchNotification-param-playSound"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a>?</span> <span class="parameter-name">playSound</span>, </span></li>
+<li><span class="parameter" id="launchNotification-param-vibrate"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a>?</span> <span class="parameter-name">vibrate</span>, </span></li>
+<li><span class="parameter" id="launchNotification-param-alarmId"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">alarmId</span>, </span></li>
+</ol>})
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Displays an Android notification using the supplied configuration.</p>
+<p>The notification request is forwarded to the native Android
+implementation through the application's <a href="https://api.flutter.dev/flutter/services/MethodChannel-class.html">MethodChannel</a>.</p>
+<p>The <code>title</code> is required and represents the main notification title.
+<code>description</code> optionally specifies the notification body text.</p>
+<p>The <code>type</code> determines how Android should present the notification:</p>
+<ul>
+<li><a href="../../services_notification_service_android/NotificationType.html">NotificationType.normal</a> creates a regular notification.</li>
+<li><a href="../../services_notification_service_android/NotificationType.html">NotificationType.fullScreen</a> creates a notification with a
+full-screen intent.</li>
+<li><a href="../../services_notification_service_android/NotificationType.html">NotificationType.silent</a> creates a low-interruption notification.</li>
+</ul>
+<p><code>notificationId</code> identifies the notification on Android. Reusing the
+same identifier replaces the existing notification with the new one.</p>
+<p><code>autoCancel</code> determines whether Android should automatically remove
+the notification when the user interacts with it.</p>
+<p><code>ongoing</code> determines whether the notification should be treated as an
+ongoing notification. Ongoing notifications generally cannot be
+dismissed by the user with a normal swipe.</p>
+<p><code>priority</code> controls the notification priority used by the native
+Android implementation.</p>
+<p><code>category</code> specifies the Android notification category. For example,
+<code>'alarm'</code> can be used for alarm-related notifications.</p>
+<p><code>playSound</code> optionally overrides whether the notification should play
+a sound. When omitted, the native implementation chooses a default
+based on the notification type.</p>
+<p><code>vibrate</code> optionally overrides whether the notification should vibrate.
+When omitted, the native implementation chooses a default based on the
+notification type.</p>
+<p><code>alarmId</code> optionally associates the notification with a specific alarm.
+This value is passed to the native full-screen activity and is useful
+when <code>type</code> is <a href="../../services_notification_service_android/NotificationType.html">NotificationType.fullScreen</a>.</p>
+<p>Throws a <a href="https://api.flutter.dev/flutter/services/PlatformException-class.html">PlatformException</a> if the native Android implementation
+reports an error while creating or displaying the notification.</p>
+<p>Example of types of notifications:</p>
+<pre class="language-dart"><code class="language-dart">//Normal notification
+await AndroidNotificationService.launchNotification(
+  title: 'StillAlive',
+  description: 'Your timer is ready.',
+);
+
+//Full-screen notification
+await AndroidNotificationService.launchNotification(
+  title: 'Wake up!',
+  description: 'Your timer has expired.',
+  type: NotificationType.fullScreen,
+  notificationId: 1001,
+  autoCancel: false,
+  ongoing: true,
+  priority: NotificationPriority.max,
+  category: 'alarm',
+  alarmId: 42,
+);
+
+//Silent notification
+await AndroidNotificationService.launchNotification(
+  title: 'Background update',
+  description: 'Your data has been synchronized.',
+  type: NotificationType.silent,
+  notificationId: 3001,
+  autoCancel: true,
+  ongoing: false,
+);
+
+//Silent + ongoing
+await AndroidNotificationService.launchNotification(
+  title: 'StillAlive is running',
+  description: 'Monitoring your scheduled alarms.',
+  type: NotificationType.silent,
+  notificationId: 3002,
+  autoCancel: false,
+  ongoing: true,
+  playSound: false,
+  vibrate: false,
+);
+</code></pre>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">static Future&lt;void&gt; launchNotification({
+  required String title,
+  String description = &#39;&#39;,
+  NotificationType type = NotificationType.normal,
+  int notificationId = 2000,
+  bool autoCancel = true,
+  bool ongoing = false,
+  NotificationPriority priority = NotificationPriority.defaultPriority,
+  String category = &#39;status&#39;,
+  bool? playSound,
+  bool? vibrate,
+  int? alarmId,
+}) async {
+  await AppMethodChannel.instance.invokeMethod(&#39;launchNotification&#39;, {
+    &#39;title&#39;: title,
+    &#39;description&#39;: description,
+    &#39;notificationType&#39;: type.value,
+    &#39;notificationId&#39;: notificationId,
+    &#39;autoCancel&#39;: autoCancel,
+    &#39;ongoing&#39;: ongoing,
+    &#39;priority&#39;: priority.value,
+    &#39;category&#39;: category,
+    &#39;playSound&#39;: playSound,
+    &#39;vibrate&#39;: vibrate,
+    &#39;alarmId&#39;: alarmId,
+  });
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">still_alive</a></li>
+    <li><a href="../../services_notification_service_android/">notification_service_android</a></li>
+    <li><a href="../../services_notification_service_android/AndroidNotificationService-class.html">AndroidNotificationService</a></li>
+    <li class="self-crumb">launchNotification static method</li>
+</ol>
+
+    <h5>AndroidNotificationService class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    still_alive
+      1.0.44+5
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

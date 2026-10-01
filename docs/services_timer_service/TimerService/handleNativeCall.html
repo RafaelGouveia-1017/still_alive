@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the handleNativeCall method from the TimerService class, for the Dart programming language.">
+  <title>handleNativeCall method - TimerService class - timer_service library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">still_alive</a></li>
+    <li><a href="../../services_timer_service/">services\timer_service.dart</a></li>
+    <li><a href="../../services_timer_service/TimerService-class.html">TimerService</a></li>
+    <li class="self-crumb">handleNativeCall method</li>
+  </ol>
+  <div class="self-name">handleNativeCall</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="services_timer_service&#47;TimerService-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">handleNativeCall</span> method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+<span class="name ">handleNativeCall</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="handleNativeCall-param-call"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/services/MethodCall-class.html">MethodCall</a></span> <span class="parameter-name">call</span></span></li>
+</ol>)
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Handles method calls received from the native platform.</p>
+<p>When the native platform reports that a scheduled timer alarm has fired
+through the <code>alarmFired</code> method, this method delegates timer expiration
+handling to <a href="../../services_timer_service/TimerService/timerHasExpired.html">timerHasExpired</a>.</p>
+<p>If the timer service has not been initialized, the native call is ignored
+because there is no active timer available to process the alarm.</p>
+<p>The <code>call</code> contains the method name and arguments supplied by the native
+platform through the method channel. For an <code>alarmFired</code> call, the
+arguments are expected to contain an integer <code>alarmId</code> identifying the
+native alarm that fired.</p>
+<p>The alarm ID is currently logged for diagnostic purposes. Timer expiration
+is handled by the active timer rather than by matching the received alarm
+ID against the timer key.</p>
+<p>This method is intended to be registered as the callback for native
+platform method-channel calls and requires <a href="../../services_timer_service/TimerService/initialize.html">initialize</a> to have completed
+successfully before timer alarms can be processed.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">Future&lt;void&gt; handleNativeCall(MethodCall call) async {
+  AppLogger.log.info(&quot;TimerService.handleNativeCall() called...&quot;);
+
+  if (!_initialized) {
+    AppLogger.log.severe(&quot;Alarm received before TimerService initialization.&quot;);
+    return;
+  }
+
+  if (call.method == &#39;alarmFired&#39;) {
+    final args = Map&lt;String, dynamic&gt;.from(call.arguments);
+    final alarmId = args[&#39;alarmId&#39;] as int;
+    AppLogger.log.info(&quot;User has app opened and alarm has fired: $alarmId&quot;);
+
+    timerHasExpired();
+  }
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">still_alive</a></li>
+    <li><a href="../../services_timer_service/">timer_service</a></li>
+    <li><a href="../../services_timer_service/TimerService-class.html">TimerService</a></li>
+    <li class="self-crumb">handleNativeCall method</li>
+</ol>
+
+    <h5>TimerService class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    still_alive
+      1.0.44+5
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

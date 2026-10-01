@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["create_backup_metadata","create_backup_metadata_string","validate_backup_metadata"],"struct":["Metadata"]};

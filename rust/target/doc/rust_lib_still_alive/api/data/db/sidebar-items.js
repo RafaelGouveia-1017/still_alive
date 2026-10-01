@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["close_database","database_path","database_path_str","db","execute_batch_sql","execute_sql","export_database","get_database_name","import_database","init_database","open_database","purge_database","select","select_one","update_message"],"static":["DATABASE","DATABASE_NAME","DATABASE_PATH"]};

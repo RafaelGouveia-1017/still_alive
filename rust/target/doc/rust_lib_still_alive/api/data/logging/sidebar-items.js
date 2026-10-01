@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["create_rust_log_stream","dispose_rust_log_stream","init_rust_logging"],"static":["RUST_LOGGER"],"struct":["RustLogRecord","RustLogger"]};

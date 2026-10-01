@@ -6,24 +6,27 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'bottom_nav.dart';
 import '../../data/all.dart';
 
-/// A reusable base screen widget that defines the common layout structure
-/// for all screens in the application.
+/// A reusable base layout widget that provides the standard screen structure
+/// used throughout the application.
 ///
-/// `ScreenBase` ensures a consistent visual and behavioral foundation by:
-/// * Wrapping content in a [SafeArea] to avoid system intrusions
-/// * Providing a [Scaffold] with theme-based background styling
-/// * Applying consistent padding around screen content
-/// * Configuring system UI appearance (status bar, navigation bar, etc)
+/// [ScreenBase] establishes a consistent foundation for application screens
+/// by providing:
+/// * A [Scaffold] using the active theme's surface color.
+/// * [SafeArea] handling to keep content clear of system UI.
+/// * Consistent screen padding controlled by [noSpacing].
+/// * An optional [AppHeader] displayed above the screen content.
+/// * An optional [BottomNav] displayed below the content.
+/// * Automatic hiding of the bottom navigation when the keyboard is visible.
 ///
-/// This widget is intended to be used as the root layout for individual screens
-/// to enforce design consistency across the app.
+/// Use [ScreenBase] as the root widget of a screen when that screen should
+/// follow the application's standard layout conventions.
 ///
 /// Example:
 /// ```dart
 /// ScreenBase(
-///   child: Center(
-///     child: Text('Hello World'),
-///   ),
+///   header: AppHeader(title: 'Settings'),
+///   bottomNavDestination: 'settings',
+///   child: SettingsContent(),
 /// )
 /// ```
 class ScreenBase extends StatefulWidget {
@@ -38,7 +41,7 @@ class ScreenBase extends StatefulWidget {
   State<ScreenBase> createState() => _ScreenBaseState();
 }
 
-/// State class for [ScreenBase].
+/// State implementation for [ScreenBase].
 class _ScreenBaseState extends State<ScreenBase> {
   @override
   Widget build(BuildContext context) {
@@ -74,19 +77,22 @@ class _ScreenBaseState extends State<ScreenBase> {
   }
 }
 
-/// A reusable rounded container used as the base surface for grouped content.
+/// A reusable surface container for grouping related content.
 ///
-/// This widget is intended for layouts such as lists, forms and
-/// grouped UI sections.
+/// [AppCard] provides the application's standard card styling, including:
+/// * Theme-aware background and border colors.
+/// * Consistent rounded corners.
+/// * Configurable internal padding.
+/// * Optional external margin.
+/// * Optional solid background color.
+/// * Optional gradient background.
 ///
-/// It supports:
-/// * Custom padding via spacing tokens
-/// * Optional solid background color (defaults to theme surface)
-/// * Optional gradient background (overrides solid color)
-/// * Optional border override
+/// When [gradient] is provided, it takes precedence over [color].
+/// If neither [gradient] nor [color] is supplied, the card uses the theme's
+/// [ColorScheme.surfaceContainer] color.
 ///
-/// All styling is derived from the active [Theme].
-/// No raw color values should be used externally.
+/// Use this widget for grouped forms, lists, settings sections, and other
+/// content that should appear as a visually distinct surface.
 class AppCard extends StatelessWidget {
   const AppCard({
     super.key,
@@ -123,9 +129,18 @@ class AppCard extends StatelessWidget {
   }
 }
 
-/// Defines semantic color variants for [PrimaryButton].
+/// Defines the semantic visual variants available to [PrimaryButton].
 ///
-/// Used to express intent rather than raw color values.
+/// The values describe the intended meaning of an action rather than a
+/// specific color. The actual colors are resolved from the active
+/// [ColorScheme].
+///
+/// * [primary] is intended for the main action on a screen.
+/// * [secondary] is intended for an alternative or supporting action.
+/// * [tertiary] is intended for less prominent supporting actions.
+/// * [warning] is intended for destructive, dangerous, or otherwise risky
+///   actions.
+/// * [muted] is intended for neutral or low-emphasis actions.
 enum ButtonColor {
   /// Main CTA
   primary,
@@ -143,23 +158,28 @@ enum ButtonColor {
   muted,
 }
 
-/// The primary action button used throughout the application.
+/// A reusable primary action button that follows the application's design
+/// system.
 ///
-/// This button is designed to represent the most important user actions
-/// on a screen (e.g. submit, continue, confirm).
+/// [PrimaryButton] provides a consistent full-width or constrained action
+/// surface with theme-aware colors, typography, spacing, rounded corners,
+/// shadows, and optional iconography.
 ///
-/// Features:
-/// * Full-width tappable InkWell surface
-/// * Multiple semantic color variants via [ButtonColor]
-/// * Optional leading icon
-/// * Design system-driven typography, spacing, shadows, and radius
+/// The visual appearance is controlled by [color], which maps semantic
+/// button intent to the application's [ColorScheme].
 ///
-/// Behavior:
-/// * Uses Material ripple feedback
-/// * Applies elevation via theme-aware shadows
-/// * Supports disabled state when [onPressed] is null
+/// The button can contain:
+/// * An optional [label].
+/// * An optional leading [icon].
+/// * A configurable [width].
+/// * An optional [onPressed] callback.
 ///
-/// Must be used instead of raw [ElevatedButton] for consistency.
+/// When [onPressed] is `null`, the button does not respond to taps. Use this
+/// state when an action is temporarily unavailable or disabled.
+///
+/// [PrimaryButton] should generally be preferred over raw Material buttons
+/// when implementing primary application actions so that screens remain
+/// visually consistent.
 class PrimaryButton extends StatelessWidget {
   const PrimaryButton({super.key, this.label, this.icon, this.color = ButtonColor.primary, this.width = double.infinity, this.onPressed});
 
@@ -236,14 +256,23 @@ class PrimaryButton extends StatelessWidget {
   }
 }
 
-/// A widget that provides a subtle press animation for its [child] when
-/// interacted with.
+/// A lightweight interactive wrapper that provides animated press feedback.
 ///
-/// [Pressable] scales its child down while pressed, creating lightweight
-/// visual feedback similar to a button press. It supports tap, long press,
-/// and double tap gestures through the corresponding callback properties.
+/// [Pressable] scales and slightly translates its [child] while the user is
+/// pressing it, creating a subtle tactile response without displaying the
+/// default Material ripple effect.
 ///
-/// Unlike [InkWell], this widget does not display a Material ripple effect.
+/// The widget supports the standard tap lifecycle through [onTap] and
+/// internally handles press, release, and cancellation states.
+///
+/// The [borderRadius] is applied to the underlying Material interaction
+/// surface, while [factory] controls the Material ink feature used by the
+/// widget. By default, [NoSplash.splashFactory] is used so the interaction
+/// remains visually minimal.
+///
+/// Use [Pressable] for cards, tiles, icon buttons, list items, and other
+/// custom controls that need consistent press feedback without a ripple.
+
 class Pressable extends StatefulWidget {
   const Pressable({super.key, required this.onTap, required this.child, this.borderRadius = AppRadius.card, this.factory = NoSplash.splashFactory});
 
@@ -298,14 +327,19 @@ class _PressableState extends State<Pressable> {
   }
 }
 
-/// A compact uppercase label chip used for statuses, tags, or metadata.
+/// A compact pill-shaped label used to display statuses, categories, tags,
+/// and other short pieces of metadata.
 ///
-/// The pill is intentionally minimal and is designed to:
-/// * Emphasize short categorical labels
-/// * Use semantic color tinting (not solid fills)
-/// * Support an optional leading widget (e.g. icon or avatar)
+/// [Pill] uses a tinted version of [backColor] for its background and the same
+/// semantic color for its label, creating a lightweight visual treatment
+/// rather than a solid-filled badge.
 ///
-/// All text is automatically transformed to uppercase for visual consistency.
+/// The supplied [label] is automatically converted to uppercase to maintain
+/// consistent visual hierarchy throughout the application.
+///
+/// An optional [leading] widget can be displayed before the label, making the
+/// component suitable for small icons, avatars, indicators, or other
+/// contextual visuals.
 class Pill extends StatelessWidget {
   const Pill({super.key, required this.label, required this.backColor, this.leading});
 
@@ -329,18 +363,22 @@ class Pill extends StatelessWidget {
   }
 }
 
-/// A flexible row layout used for list items, settings rows, and menu entries.
+/// A flexible horizontal row component for common application list layouts.
 ///
-/// Structure:
-/// * Optional leading icon container
-/// * Icon container settings (background, foreground)
-/// * Title (required)
-/// * Optional subtitle
-/// * Optional trailing widget (switch, chevron, button, etc.)
+/// [AppRow] provides a consistent structure for settings rows, menu entries,
+/// list items, and other two-column content:
+/// * An optional leading icon inside a themed container.
+/// * A required title.
+/// * An optional subtitle below the title.
+/// * An optional trailing widget such as a switch, button, or chevron.
 ///
-/// The [danger] flag visually highlights destructive or sensitive actions
-/// by tinting the leading icon background and icon color with the error
-/// color from the theme.
+/// The leading icon can be customized through its size, rotation, foreground
+/// color, and background color. The [colorScheme] parameter can be supplied
+/// when the row needs to use a color scheme different from the surrounding
+/// [BuildContext].
+///
+/// The title area expands to consume the available horizontal space, while
+/// the trailing widget remains constrained to its intrinsic size.
 class AppRow extends StatelessWidget {
   const AppRow({
     super.key,
@@ -406,14 +444,18 @@ class AppRow extends StatelessWidget {
   }
 }
 
-/// A section header label used to separate content groups.
+/// A section heading used to visually separate related groups of content.
 ///
-/// Typically used above lists or grouped UI sections.
+/// [SectionTitle] displays an uppercase label using the application's
+/// section-label typography and can optionally display an [action] widget on
+/// the trailing side.
 ///
-/// Features:
-/// * Uppercase tracking style for visual hierarchy
-/// * Optional trailing action widget (e.g. “See all” button)
-/// * Theme-aware typography
+/// Typical actions include buttons such as "See all", "Edit", or other
+/// contextual controls.
+///
+/// The optional [colorScheme] allows the section to be rendered using a
+/// specific theme color scheme rather than the one inherited from the
+/// current context.
 class SectionTitle extends StatelessWidget {
   const SectionTitle(this.label, {super.key, this.action, this.colorScheme});
 
@@ -437,16 +479,20 @@ class SectionTitle extends StatelessWidget {
   }
 }
 
-/// A lightweight visual toggle switch.
+/// A lightweight, externally controlled boolean toggle.
 ///
-/// This widget is a purely UI-driven representation of a boolean state.
-/// It does not manage state internally; instead it relies on [onChanged]
-/// callback for external state management.
+/// [AppToggle] represents an on/off state without maintaining that state
+/// internally. The current value is supplied through [on], while [onChanged]
+/// is responsible for updating the state in the parent widget.
 ///
-/// Behavior:
-/// * Animated thumb transition
-/// * Tap toggles state if [onChanged] is provided
-/// * Uses theme colors for active/inactive states
+/// The toggle provides animated thumb movement and theme-aware active and
+/// inactive colors.
+///
+/// When [onChanged] is `null`, the toggle does not respond to user input and
+/// effectively behaves as a non-interactive visual indicator.
+///
+/// This widget is useful when an application's design requires a custom
+/// toggle appearance instead of the platform-standard [Switch].
 class AppToggle extends StatelessWidget {
   const AppToggle({super.key, required this.on, this.onChanged, this.colorScheme});
 
@@ -486,28 +532,28 @@ class AppToggle extends StatelessWidget {
   }
 }
 
-/// A screen header with a centered title and optional navigation,
-/// actions, search, and filtering.
+/// A reusable screen header with support for navigation, actions, search,
+/// filtering, and animated route transitions.
 ///
-/// Commonly used at the top of screens to display:
-/// * Page title (required)
-/// * Optional subtitle
-/// * Navigation or action buttons (left/right)
-/// * Optional search bar
-/// * Optional filter bar
+/// [AppHeader] provides a consistent top-level header structure consisting of:
+/// * A centered [title].
+/// * An optional [subtitle].
+/// * An optional [left] navigation or action widget.
+/// * An optional [right] action widget.
+/// * An optional [searchBar].
+/// * An optional [filterBar].
+/// * An optional bottom divider controlled by [bottomLine].
 ///
-/// Layout:
-/// * Left slot: fixed width (typically a back button)
-/// * Center: title and optional subtitle
-/// * Right slot: contextual actions
+/// The left and right areas reserve fixed-width slots so that the centered
+/// title remains visually aligned regardless of the presence or size of
+/// surrounding actions.
 ///
-/// Uses Hero animations to smoothly transition the title, subtitle,
-/// and action slots between routes.
+/// Header elements use [Hero] transitions to provide smooth visual movement
+/// between routes. The static [flight] method defines the shared cross-fade
+/// behavior used during these transitions.
 ///
-/// An optional bottom divider can be displayed to separate the header
-/// from the page content.
-///
-/// Ensures consistent alignment across all screens.
+/// When [searchBar] or [filterBar] is provided, those elements are rendered
+/// below the main header row while remaining part of the header structure.
 class AppHeader extends StatelessWidget {
   const AppHeader({
     super.key,
@@ -682,14 +728,17 @@ class AppHeader extends StatelessWidget {
   }
 }
 
-/// A pagination indicator used primarily in onboarding flows.
+/// A compact progress indicator consisting of a row of animated-style dots.
 ///
-/// Displays a row of dots where the active step is visually expanded.
+/// [ProgressDots] represents progress through a finite sequence, such as an
+/// onboarding flow, setup wizard, or multi-step form.
 ///
-/// Behavior:
-/// * Active dot expands in width
-/// * Inactive dots remain small and subtle
-/// * Fully theme-aware
+/// The item at [active] is displayed as a wider highlighted indicator, while
+/// the remaining items use a smaller, muted appearance.
+///
+/// [count] determines the total number of indicators and defaults to three.
+/// The optional [colorScheme] allows the indicator to use a specific theme
+/// instead of the surrounding context's color scheme.
 class ProgressDots extends StatelessWidget {
   const ProgressDots({super.key, required this.active, this.count = 3, this.colorScheme});
 
@@ -715,19 +764,24 @@ class ProgressDots extends StatelessWidget {
   }
 }
 
-/// A compact circular icon button used in headers and toolbars.
+/// A compact circular icon button intended for headers and toolbars.
 ///
-/// Designed for:
-/// * Back buttons
-/// * Close buttons
-/// * Quick actions in constrained spaces
+/// [CircleIconButton] provides a consistent circular touch target with
+/// theme-aware background and foreground colors.
 ///
-/// Features:
-/// * Circular touch target
-/// * Theme-aware background and foreground colors
-/// * Gesture-based tap handling
+/// It is suitable for common compact actions such as:
+/// * Navigating back.
+/// * Closing a screen or dialog.
+/// * Opening contextual actions.
+/// * Triggering other toolbar operations.
 ///
-/// Does not include built-in ripple; uses GestureDetector for minimal UI.
+/// When [onTap] is `null`, the widget is rendered as a non-interactive visual
+/// element. When provided, [Pressable] is used to provide the application's
+/// standard press animation.
+///
+/// The button's colors can be overridden through [background] and
+/// [foreground], while [colorScheme] can be supplied for explicit theme
+/// control.
 class CircleIconButton extends StatelessWidget {
   const CircleIconButton({super.key, required this.icon, this.onTap, this.background, this.foreground, this.colorScheme});
 
@@ -890,12 +944,22 @@ void showToast({
   );
 }
 
-/// Displays a custom generic error toast.
+/// Displays a standard application-level error message as a toast.
 ///
-/// Mainly used to inform the user that something went wrong.
+/// [showGenericErrorMessage] is intended for non-specific failures where the
+/// application cannot or should not expose the underlying error details to
+/// the user.
 ///
-/// [bottom] is the distance that the toast's bottom edge is inset from the
-/// bottom of the screen.
+/// The message is localized through [AppLocalizations] using the
+/// `generic_error` translation key and is styled according to the active
+/// theme.
+///
+/// [bottom] optionally controls the distance between the bottom of the toast
+/// and the bottom edge of the screen. When omitted, a default inset is used.
+///
+/// This helper provides a consistent presentation for generic errors across
+/// screens and avoids duplicating toast configuration at individual call
+/// sites.
 void showGenericErrorMessage(BuildContext context, double? bottom) {
   bottom ??= 170;
   ColorScheme scheme = Theme.of(context).colorScheme;
@@ -910,16 +974,19 @@ void showGenericErrorMessage(BuildContext context, double? bottom) {
   );
 }
 
-/// A reusable search bar widget with a styled input field.
+/// A reusable search input styled according to the application's design
+/// system.
 ///
-/// The [AppSearchBar] provides a consistent search input UI across the app,
-/// including an icon, hint text, input formatting, and focus handling.
+/// [AppSearchBar] combines a search icon and a [TextField] inside a custom
+/// themed container. Tapping anywhere on the search bar requests focus for
+/// the underlying text field and opens the keyboard.
 ///
-/// The entire search bar container is tappable and will request focus for the
-/// underlying text field, opening the keyboard.
-///
-/// The [hint] text is displayed when the search field is empty.
-/// The optional [onChanged] callback is called whenever the input changes.
+/// The widget supports:
+/// * A required [hint] displayed when the field is empty.
+/// * An optional [onChanged] callback for reacting to query changes.
+/// * Automatic focus management.
+/// * Theme-aware typography and colors.
+/// * Input filtering that permits letters, numbers, and spaces.
 ///
 /// Example:
 /// ```dart
@@ -999,11 +1066,17 @@ class _AppSearchBarState extends State<AppSearchBar> {
   }
 }
 
-/// Represents a single filter option displayed by an [AppFilterBar].
+/// Describes a single selectable filter option displayed by [AppFilterBar].
 ///
-/// Each option consists of a text [label], an [active] state that determines
-/// whether the filter is visually highlighted, and an optional [onPressed]
-/// callback that is invoked when the filter is selected.
+/// Each option has a stable [id], a visible [label], and an [active] state
+/// that determines its visual treatment.
+///
+/// [onPressed] is invoked when the option is selected. The callback is
+/// optional, allowing an option to be displayed without being interactive.
+///
+/// [copyWith] creates a new option while preserving any values that are not
+/// explicitly overridden. This is useful when constructing updated filter
+/// collections without mutating the original option.
 class AppFilterBarOption {
   const AppFilterBarOption({required this.id, required this.label, required this.active, this.onPressed});
 
@@ -1017,13 +1090,19 @@ class AppFilterBarOption {
   }
 }
 
-/// A horizontally scrollable filter bar.
+/// A horizontally scrollable collection of filter controls.
 ///
-/// Displays a collection of [AppFilterBarOption] chips that indicate the
-/// available filters and their active states.
+/// [AppFilterBar] displays [AppFilterBarOption] instances as compact
+/// selectable chips. Active filters use the theme's primary color, while
+/// inactive filters use a neutral surface color.
 ///
-/// When [searchBarAbove] is `true`, the filter bar is rendered immediately
-/// below an external search bar. Otherwise, additional top spacing is applied.
+/// The filter list is horizontally scrollable when its contents exceed the
+/// available width. Additional horizontal spacing is included at both ends
+/// of the list to align the filters with surrounding screen content.
+///
+/// When [searchBarAbove] is `true`, the bar assumes it is positioned directly
+/// below a search bar and removes additional top spacing. Otherwise, it adds
+/// vertical spacing above the filter controls.
 class AppFilterBar extends StatefulWidget {
   const AppFilterBar({super.key, required this.filters, this.searchBarAbove = true});
 
@@ -1086,17 +1165,21 @@ class _AppFilterBarState extends State<AppFilterBar> {
   }
 }
 
-/// A controller widget that manages a group of expandable sections.
+/// A controller widget that provides accordion behavior for expandable
+/// sections.
 ///
-/// This widget provides accordion behavior by ensuring that at most one
-/// expandable item is open at any given time.
+/// [AppExpandableGroup] manages the expansion state of a collection of
+/// [AppExpandableItem] instances and ensures that no more than one item is
+/// expanded at the same time.
 ///
-/// Tapping an already expanded item collapses it, while tapping another
-/// item automatically closes the previously expanded one before opening
-/// the selected item.
+/// Tapping the currently expanded item collapses it. Tapping a different
+/// item collapses the previous item and expands the selected item.
 ///
-/// Expandable sections are provided through [AppExpandableItem]
-/// implementations.
+/// The group itself owns the expansion state, while individual expandable
+/// items remain responsible for rendering their visual representation.
+///
+/// [spacing] controls the vertical gap inserted between consecutive
+/// expandable items.
 class AppExpandableGroup extends StatefulWidget {
   const AppExpandableGroup({super.key, required this.children, this.spacing = AppSpacing.md});
 
@@ -1133,14 +1216,18 @@ class _AppExpandableGroupState extends State<AppExpandableGroup> {
   }
 }
 
-/// Defines a section that can be managed by [AppExpandableGroup].
+/// Defines the contract for an item that can be controlled by an
+/// [AppExpandableGroup].
 ///
-/// Implementations are responsible for creating their own expandable UI
-/// while receiving the current expansion state and interaction callback
-/// from the parent group.
+/// [AppExpandableItem] separates expansion-state management from the visual
+/// implementation of an expandable component. Implementations receive:
+/// * [expanded], indicating whether the item should currently be open.
+/// * [onPressed], which should be invoked by the item's trigger when the user
+///   requests an expansion-state change.
 ///
-/// This allows multiple expandable widget types to coexist in the same
-/// group while keeping expansion logic centralized.
+/// This abstraction allows different expandable components to participate in
+/// the same accordion group while retaining complete control over their own
+/// layout and animations.
 sealed class AppExpandableItem {
   const AppExpandableItem();
 
@@ -1152,20 +1239,26 @@ sealed class AppExpandableItem {
   Widget build({required bool expanded, required VoidCallback onPressed});
 }
 
-/// A reusable expandable card that behaves like a dropdown section.
+/// A configurable expandable card designed for use with
+/// [AppExpandableGroup].
 ///
-/// The widget displays a tappable header and reveals its child with a
-/// smooth animated expansion.
+/// [AppExpandableCard] displays a themed card with a tappable header and
+/// animated content that can be expanded or collapsed.
 ///
-/// Features:
-/// * Smooth height animation
-/// * Fade animation for expanded content
-/// * Rotating chevron indicating expanded/collapsed state
-/// * Supports optional leading icon and subtitle
-/// * Uses [AppCard] styling for visual consistency
+/// The header supports:
+/// * A required [title].
+/// * An optional [subtitle].
+/// * An optional leading icon or custom widget.
+/// * An optional Hero animation identifier.
+/// * An optional trailing widget.
+/// * Custom icon size, rotation, colors, background, and gradient.
 ///
-/// This widget is intended to be used inside [AppExpandableGroup], where
-/// expansion state is controlled externally.
+/// The card content is supplied through [child] and is revealed using a
+/// height transition combined with a fade animation.
+///
+/// [AppExpandableCard] itself stores only the configuration for the item;
+/// the internal [_AppExpandableCardView] handles the stateful animation
+/// lifecycle required to render expansion and collapse transitions.
 class AppExpandableCard extends AppExpandableItem {
   const AppExpandableCard({
     required this.title,
@@ -1231,16 +1324,20 @@ class AppExpandableCard extends AppExpandableItem {
   }
 }
 
-/// Internal stateful implementation of [AppExpandableCard].
+/// Internal stateful view responsible for rendering and animating an
+/// [AppExpandableCard].
 ///
-/// This widget is responsible for rendering the expandable card UI and
-/// managing the animation lifecycle required for expanding and collapsing
-/// the content section.
+/// This widget separates the visual and animation implementation from the
+/// configuration object represented by [AppExpandableCard].
 ///
-/// The parent [AppExpandableCard] provides the current expansion state and
-/// rebuilds this widget whenever the state changes. This separation allows
-/// [AppExpandableCard] to remain a lightweight configuration object while
-/// keeping animation state inside a stateful widget.
+/// [_AppExpandableCardView] maintains an [AnimationController] that drives
+/// both the content [SizeTransition] and [FadeTransition]. Whenever the
+/// externally supplied [expanded] value changes, the controller animates
+/// forward or backward accordingly.
+///
+/// This class is intentionally private because callers should configure
+/// expandable cards through [AppExpandableCard] rather than constructing the
+/// internal view directly.
 class _AppExpandableCardView extends StatefulWidget {
   const _AppExpandableCardView({
     required this.title,
@@ -1299,6 +1396,9 @@ class _AppExpandableCardView extends StatefulWidget {
 ///
 /// The animation direction is updated whenever the parent's [expanded]
 /// value changes.
+///
+/// The controller and its derived animations are disposed when the widget is
+/// removed from the widget tree.
 class _AppExpandableCardViewState extends State<_AppExpandableCardView> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _size;
@@ -1439,15 +1539,25 @@ class _AppExpandableCardViewState extends State<_AppExpandableCardView> with Sin
   }
 }
 
-/// A compact action tile with a translucent, blurred background.
+/// A compact action tile with a frosted-glass visual treatment.
 ///
-/// [BlurActionTile] displays an [icon] and/or [label] centered within a
-/// rounded container. The container uses [BackdropFilter] to create a
-/// frosted-glass effect over the content behind it.
+/// [BlurActionTile] displays an optional [icon] and/or [label] inside a
+/// rounded, translucent surface. A [BackdropFilter] applies a blur to the
+/// content visible behind the tile, creating a lightweight glass-like
+/// appearance.
 ///
-/// The tile's appearance is controlled through [background], [border], and
-/// [foreground] colors. When [onTap] is provided, the tile responds to user
-/// interaction; otherwise, the callback is passed through as `null`.
+/// The tile's appearance is controlled by:
+/// * [background], which defines the translucent surface color.
+/// * [border], which defines the translucent border color.
+/// * [foreground], which controls icon and text colors.
+/// * [icon] and [label], which define the displayed content.
+///
+/// When [onTap] is provided, the tile becomes interactive and uses
+/// [Pressable] for consistent application-wide touch feedback. If [onTap] is
+/// `null`, it remains visually present but does not respond to taps.
+///
+/// This widget is useful for compact actions such as toolbar commands,
+/// contextual actions, shortcuts, and overlay controls.
 ///
 /// Example:
 /// ```dart

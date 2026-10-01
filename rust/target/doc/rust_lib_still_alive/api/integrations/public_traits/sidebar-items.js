@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["connect_integration_account","delete_integration_account","discover_integration_destinations","load_all_integrations","send_integration_message","test_integration_account","test_integration_destination"]};

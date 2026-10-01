@@ -181,6 +181,27 @@ The project follows a hybrid architecture:
 
 StillAlive is built on the principle of **Privacy by Design**. We minimize data retention and never require unnecessary personal information. All communications are encrypted, and the app is designed to function with the absolute minimum of data exposure required to ensure safety.
 
+## 📖 Viewing the docs
+
+To enable navigation and search, the [generated docs](https://github.com/RafaelGouveia-1017/still_alive/commits/main/docs) must be served with an HTTP server.
+
+An easy way to run an HTTP server locally is to use [`package:dhttpd`](https://pub.dev/packages/dhttpd).
+For example:
+
+```bash
+# For Dart code
+> dart pub global activate dhttpd
+> dart pub global run dhttpd --path docs
+
+# For Rust code (no HTTP server needed)
+> cd rust
+> cargo doc --no-deps --document-private-items --open
+# or
+# Open ...\still_alive\rust\target\doc\rust_lib_still_alive\index.html
+```
+
+To then read the generated docs in your browser, open the link that `dhttpd` outputs, usually `http://localhost:8080`.
+
 ## 👥 Contributors
 
 <table>
@@ -199,7 +220,7 @@ StillAlive is built on the principle of **Privacy by Design**. We minimize data 
         <br>
         <a href="https://github.com/RafaelGouveia-1017/still_alive/commits?author=RafaelGouveia-1017" title="Code">💻</a>
         <a href="https://github.com/RafaelGouveia-1017/still_alive/commits/main/test/?author=RafaelGouveia-1017" title="Tests">⚠️</a>
-        <a href="https://github.com/RafaelGouveia-1017/still_alive/commits?author=RafaelGouveia-1017" title="Documentation">📖</a>
+        <a href="https://github.com/RafaelGouveia-1017/still_alive/commits/main/docs/?author=RafaelGouveia-1017" title="Documentation">📖</a>
         <a href="https://github.com/RafaelGouveia-1017/still_alive/blob/main/README.md" title="Idea">💡</a>
         <a href="#feedback" title="Planning & Feedback">🤔</a>
         <a href="#maintenance" title="Maintenance">🚧</a>
@@ -217,7 +238,7 @@ StillAlive is built on the principle of **Privacy by Design**. We minimize data 
         <br>
         <a href="https://github.com/RafaelGouveia-1017/still_alive/commits" title="Code">💻</a>
         <a href="https://github.com/RafaelGouveia-1017/still_alive/commits/main/test/" title="Tests">⚠️</a>
-        <a href="https://github.com/RafaelGouveia-1017/still_alive/commits/main/test/" title="Documentation">📖</a>
+        <a href="https://github.com/RafaelGouveia-1017/still_alive/commits" title="Documentation">📖</a>
       </td>
             <td align="center" valign="top" width="14.28%">
         <a href="https://github.com/brunomnsilva"

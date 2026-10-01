@@ -137,7 +137,7 @@ class IntegrationService {
   /// Discovers destinations available to an integration account.
   ///
   /// Discovery does not persist any changes. The returned destinations can be
-  /// presented to the user for selection before calling [selectDestination].
+  /// presented to the user for selection.
   ///
   /// [integrationKey] identifies the integration provider.
   /// [accountId] identifies the account whose destinations should be

@@ -121,7 +121,7 @@ class _MonitoringCountdownRingState extends State<MonitoringCountdownRing> {
 /// - A [StreamSubscription] for location route updates.
 /// - A periodic [Timer] for updating the elapsed-time counter.
 ///
-/// All three resources are released in [dispose].
+/// All three resources are released in [_MonitoringTileMapState.dispose].
 class MonitoringTileMap extends StatefulWidget {
   const MonitoringTileMap({super.key});
 

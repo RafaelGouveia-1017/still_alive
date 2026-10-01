@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the timerHasExpired method from the TimerService class, for the Dart programming language.">
+  <title>timerHasExpired method - TimerService class - timer_service library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">still_alive</a></li>
+    <li><a href="../../services_timer_service/">services\timer_service.dart</a></li>
+    <li><a href="../../services_timer_service/TimerService-class.html">TimerService</a></li>
+    <li class="self-crumb">timerHasExpired method</li>
+  </ol>
+  <div class="self-name">timerHasExpired</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="services_timer_service&#47;TimerService-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">timerHasExpired</span> method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+<span class="name ">timerHasExpired</span>(<wbr>)
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Handles expiration of the active timer after its native alarm fires.</p>
+<p>The method first ignores the request when the active timer has already
+reached <code>TimerState.expired</code>, preventing the expiration flow from being
+processed more than once.</p>
+<p>The application's navigator must be available because the expiration flow
+may replace the current navigation stack with either the pre-alert warning
+screen or the emergency screen. If no navigator is currently available,
+expiration handling is aborted and an error is logged.</p>
+<p>The timer identified by the special <code>timer0</code> key is handled separately by
+<code>_handleExampleTimer</code>. This timer is an example/demo timer and does not
+enter the normal warning or emergency flow.</p>
+<p>For normal timers, the current UTC timestamp is used to recalculate the
+active run state. A notification reflecting the resulting state is then
+launched.</p>
+<p>When the resulting state is <code>TimerState.warning</code>, the warning run is
+started, a <a href="../../services_history_service/TimerWarningEvent-class.html">TimerWarningEvent</a> is recorded in history, a new native alarm
+is scheduled for the end of the warning period, and
+<a href="../../views_app_home_timer_pre-alert_pre_alert_warning/PreAlertWarningScreen-class.html">PreAlertWarningScreen</a> replaces the current navigation stack.</p>
+<p>When the resulting state is <code>TimerState.expired</code>,
+<a href="../../views_app_home_timer_emergency_emergency_active/EmergencyActiveScreen-class.html">EmergencyActiveScreen</a> replaces the current navigation stack. The
+emergency screen is responsible for continuing the emergency flow.</p>
+<p>Any other resulting timer state does not trigger navigation.</p>
+<p>This method is normally called after the native platform reports that the
+scheduled timer alarm has fired, but it may also be called by other parts
+of the application that need to process the active timer's current
+expiration state.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">Future&lt;void&gt; timerHasExpired() async {
+  if (_activeTimer.run.state == TimerState.expired) {
+    AppLogger.log.info(&#39;timerHasExpired() called, but timer is already expired.&#39;);
+    return;
+  }
+
+  NavigatorState? navigator = PermissionManager.instance.navigatorKey.currentState;
+  if (navigator == null) {
+    AppLogger.log.severe(&quot;Could not handle timer expiration because navigator was not ready.\nLiterally unplayable...&quot;);
+    return;
+  }
+
+  if (_activeTimer.key == &quot;timer0&quot;) {
+    _handleExampleTimer();
+    return;
+  }
+
+  final now = DateTime.now().toUtc().millisecondsSinceEpoch;
+  _activeTimer.updateRunState(nowMs: now);
+
+  launchTimerNotification();
+
+  switch (_activeTimer.run.state) {
+    case TimerState.warning:
+      AppLogger.log.info(&quot;\n\ntimer state change: running -&gt; warning\n&quot;);
+
+      final now = DateTime.now().toUtc().millisecondsSinceEpoch;
+      await _activeTimer.startWarningRun(nowMs: now);
+
+      await HistoryService.insertHistoryRecord(
+        TimerWarningEvent(
+          timerName: _activeTimer.config.name,
+          startedAt: DateTime.fromMillisecondsSinceEpoch(_activeTimer.run.startedAtMs),
+          endedAt: DateTime.fromMillisecondsSinceEpoch(_activeTimer.run.expiresAtMs),
+          remainingSeconds: _activeTimer.config.gracePeriodSecs!,
+        ),
+      );
+
+      await _scheduleAlarm(alarmId: _activeTimer.key, triggerAt: _activeTimer.run.expiresAtMs);
+
+      navigator.pushAndRemoveUntil(AppRoute(page: PreAlertWarningScreen(), transition: AppRouteTransitionType.slideLeft), (route) =&gt; false);
+
+      break;
+
+    case TimerState.expired:
+      AppLogger.log.info(&quot;\n\ntimer state change: running (or warning) -&gt; expired\n&quot;);
+
+      navigator.pushAndRemoveUntil(AppRoute(page: EmergencyActiveScreen(), transition: AppRouteTransitionType.slideLeft), (route) =&gt; false);
+      break;
+
+    default:
+      &#47;&#47; Nothing to do.
+      break;
+  }
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">still_alive</a></li>
+    <li><a href="../../services_timer_service/">timer_service</a></li>
+    <li><a href="../../services_timer_service/TimerService-class.html">TimerService</a></li>
+    <li class="self-crumb">timerHasExpired method</li>
+</ol>
+
+    <h5>TimerService class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    still_alive
+      1.0.44+5
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

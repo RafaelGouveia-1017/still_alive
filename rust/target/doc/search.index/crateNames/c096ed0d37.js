@@ -1,0 +1,1 @@
+rd_("Adrust_lib_still_alive")

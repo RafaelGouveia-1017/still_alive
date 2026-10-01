@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["discord_url"],"struct":["DiscordAccount","DiscordChannel","DiscordConfig","DiscordCreateMessage","DiscordGuild","DiscordIntegration","DiscordMessage","DiscordUser"]};

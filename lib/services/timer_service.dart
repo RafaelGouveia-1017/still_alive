@@ -15,6 +15,7 @@ import 'package:still_alive/services/notification_service_android.dart';
 import 'package:still_alive/src/rust/api/data/db.dart';
 import 'package:still_alive/src/rust/api/timer/active_timer.dart';
 import 'package:still_alive/src/rust/api/timer/state.dart';
+import 'package:still_alive/src/rust/api/timer/config.dart';
 import 'package:still_alive/views/app/screens.dart';
 import 'package:still_alive/views/widgets/primitives.dart';
 
@@ -761,16 +762,16 @@ class TimerService extends ChangeNotifier {
   /// emergency flow.
   ///
   /// The returned record contains:
-  /// - [currentLocation], which represents the most recent location available
+  /// - `currentLocation`, which represents the most recent location available
   ///   for the emergency.
-  /// - [polyline], which contains the encoded route recorded during the timer
+  /// - `polyline`, which contains the encoded route recorded during the timer
   ///   run, or an empty string when no route is available or route sharing is
   ///   disabled.
   ///
   /// When [TimerConfig.routeSharingEnabled] is enabled, the method uses the
   /// currently recorded route to determine the latest location and loads the
   /// persisted encoded route from [LocationService]. The last point in the
-  /// current route is used as [currentLocation]. This avoids requesting a new
+  /// current route is used as `currentLocation`. This avoids requesting a new
   /// GPS location because continuous route recording is already providing the
   /// location data.
   ///
@@ -784,8 +785,8 @@ class TimerService extends ChangeNotifier {
   /// from returning any other location data that is available.
   ///
   /// When location sharing is disabled entirely, no location service is
-  /// accessed and the method returns `null` for [currentLocation] and an empty
-  /// string for [polyline].
+  /// accessed and the method returns `null` for `currentLocation` and an empty
+  /// string for `polyline`.
   ///
   /// Returns a record containing the current emergency location and, when
   /// route sharing is enabled, the encoded route associated with the active

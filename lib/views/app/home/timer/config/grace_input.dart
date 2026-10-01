@@ -8,7 +8,7 @@ import '../../../../widgets/primitives.dart';
 /// The grace period determines how long the timer waits after reaching its
 /// duration before the configured warning or alert is triggered.
 ///
-/// The slider supports values from `0` to [maxSeconds] seconds in one-second
+/// The slider supports values from `0` to `300` seconds (5 minutes) in one-second
 /// increments. Several major points are visually marked on the slider to make
 /// commonly useful durations easier to identify.
 ///
