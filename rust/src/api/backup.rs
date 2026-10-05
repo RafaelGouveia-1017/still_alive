@@ -1,9 +1,11 @@
 use crate::api::data::db::*;
 use crate::api::data::metadata::*;
+
 use anyhow::{anyhow, Result};
 use std::{
     fs::{self, File},
     io::{Cursor, Read, Write},
+    path::PathBuf,
 };
 use zip::{write::SimpleFileOptions, ZipArchive, ZipWriter};
 
@@ -13,6 +15,7 @@ use zip::{write::SimpleFileOptions, ZipArchive, ZipWriter};
 ///
 /// - the SQLite database
 /// - a metadata file
+/// - the application log file
 ///
 /// The ZIP archive is returned as raw bytes (`Vec<u8>`), making it
 /// platform-independent.
@@ -22,14 +25,19 @@ use zip::{write::SimpleFileOptions, ZipArchive, ZipWriter};
 /// 1. Perform WAL checkpoint to ensure DB consistency.
 /// 2. Read database file into memory.
 /// 3. Generate metadata JSON in memory.
-/// 4. Create ZIP archive in memory.
-/// 5. Return ZIP as `Vec<u8>`.
+/// 4. Resolve the application log path, using the provided path or
+///    falling back to `app.log` in the database directory.
+/// 5. Read the application log into memory.
+/// 6. Create ZIP archive in memory.
+/// 7. Return ZIP as `Vec<u8>`.
 ///
 /// The database connection remains open throughout the export.
 ///
 /// # Arguments
 ///
 /// * `app_version` - Application version.
+/// * `log_path` - Optional path to the application log file. If `None`,
+///   the log is read from `app.log` in the same directory as the database.
 ///
 /// # Returns
 ///
@@ -42,13 +50,16 @@ use zip::{write::SimpleFileOptions, ZipArchive, ZipWriter};
 /// - WAL checkpoint fails
 /// - database file cannot be read
 /// - metadata cannot be generated
+/// - log file cannot be read
+/// - the database directory cannot be determined when `log_path` is `None`
 /// - ZIP creation fails
 ///
 /// # Notes
 ///
 /// - No files are written to storage.
-/// - Entire ZIP is held in memory.
-pub fn export_backup(app_version: &str) -> Result<Vec<u8>> {
+/// - The database and log are read entirely into memory.
+/// - The entire ZIP archive is held in memory.
+pub fn export_backup(app_version: &str, log_path: Option<String>) -> Result<Vec<u8>> {
     let db = db();
 
     let database = db
@@ -73,11 +84,16 @@ pub fn export_backup(app_version: &str) -> Result<Vec<u8>> {
     zip.start_file("metadata.json", options)?;
     zip.write_all(metadata_json.as_bytes())?;
 
-    let log_path = database_path_str()
-        .split(&get_database_name())
-        .next()
-        .unwrap();
-    let log_bytes = fs::read(log_path.to_owned() + "app.log")?;
+    // Use the explicitly provided log path, or fall back to
+    // <database directory>/app.log.
+    let log_path = match log_path {
+        Some(path) => PathBuf::from(path),
+        None => database_path()
+            .parent()
+            .ok_or_else(|| anyhow!("database has no parent directory"))?
+            .join("app.log"),
+    };
+    let log_bytes = fs::read(&log_path)?;
 
     zip.start_file("app.log", options)?;
     zip.write_all(&log_bytes)?;

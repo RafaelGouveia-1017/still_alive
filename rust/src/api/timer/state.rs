@@ -52,3 +52,114 @@ impl TimerState {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::TimerState;
+
+    #[test]
+    fn test_as_str_running() {
+        assert_eq!(TimerState::Running.as_str(), "running");
+    }
+
+    #[test]
+    fn test_as_str_paused() {
+        assert_eq!(TimerState::Paused.as_str(), "paused");
+    }
+
+    #[test]
+    fn test_as_str_cancelled() {
+        assert_eq!(TimerState::Cancelled.as_str(), "cancelled");
+    }
+
+    #[test]
+    fn test_as_str_expired() {
+        assert_eq!(TimerState::Expired.as_str(), "expired");
+    }
+
+    #[test]
+    fn test_as_str_warning() {
+        assert_eq!(TimerState::Warning.as_str(), "warning");
+    }
+
+    #[test]
+    fn test_as_str_completed() {
+        assert_eq!(TimerState::Completed.as_str(), "completed");
+    }
+
+    #[test]
+    fn test_state_from_str_running() {
+        assert_eq!(
+            TimerState::state_from_str("running"),
+            Ok(TimerState::Running)
+        );
+    }
+
+    #[test]
+    fn test_state_from_str_paused() {
+        assert_eq!(TimerState::state_from_str("paused"), Ok(TimerState::Paused));
+    }
+
+    #[test]
+    fn test_state_from_str_cancelled() {
+        assert_eq!(
+            TimerState::state_from_str("cancelled"),
+            Ok(TimerState::Cancelled)
+        );
+    }
+
+    #[test]
+    fn test_state_from_str_expired() {
+        assert_eq!(
+            TimerState::state_from_str("expired"),
+            Ok(TimerState::Expired)
+        );
+    }
+
+    #[test]
+    fn test_state_from_str_warning() {
+        assert_eq!(
+            TimerState::state_from_str("warning"),
+            Ok(TimerState::Warning)
+        );
+    }
+
+    #[test]
+    fn test_state_from_str_completed() {
+        assert_eq!(
+            TimerState::state_from_str("completed"),
+            Ok(TimerState::Completed)
+        );
+    }
+
+    #[test]
+    fn test_state_from_str_invalid() {
+        assert!(TimerState::state_from_str("invalid").is_err());
+    }
+
+    #[test]
+    fn test_state_from_str_empty() {
+        assert!(TimerState::state_from_str("").is_err());
+    }
+
+    #[test]
+    fn test_state_from_str_case_sensitive() {
+        assert!(TimerState::state_from_str("RUNNING").is_err());
+        assert!(TimerState::state_from_str("Running").is_err());
+    }
+
+    #[test]
+    fn test_state_from_str_round_trip() {
+        let states = [
+            TimerState::Running,
+            TimerState::Paused,
+            TimerState::Cancelled,
+            TimerState::Expired,
+            TimerState::Warning,
+            TimerState::Completed,
+        ];
+        for state in states {
+            assert_eq!(TimerState::state_from_str(state.as_str()), Ok(state));
+        }
+    }
+}

@@ -21,9 +21,10 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 /// `set_logger` simply fails and this function leaves the existing logger
 /// untouched rather than panicking.
 ///
-/// When installation succeeds, the maximum log level is set to [`Trace`], which
-/// allows all `log` levels to reach [`RustLogger`]. Dart-side logging can then
-/// decide how verbose the application's final output should be.
+/// When installation succeeds, the maximum log level is set to
+/// [LevelFilter::Info], which allows all `log` levels to reach [`RustLogger`].
+/// Dart-side logging can then decide how verbose the application's final output
+/// should be.
 ///
 /// # Initialization
 ///

@@ -358,7 +358,10 @@ abstract class RustLibApi extends BaseApi {
 
   Future<BigInt> crateApiDataDbExecuteSql({required String sql});
 
-  Future<Uint8List> crateApiBackupExportBackup({required String appVersion});
+  Future<Uint8List> crateApiBackupExportBackup({
+    required String appVersion,
+    String? logPath,
+  });
 
   Future<void> crateApiDataDbExportDatabase({required String path});
 
@@ -2509,12 +2512,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "execute_sql", argNames: ["sql"]);
 
   @override
-  Future<Uint8List> crateApiBackupExportBackup({required String appVersion}) {
+  Future<Uint8List> crateApiBackupExportBackup({
+    required String appVersion,
+    String? logPath,
+  }) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_String(appVersion, serializer);
+          sse_encode_opt_String(logPath, serializer);
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
@@ -2527,14 +2534,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           decodeErrorData: sse_decode_AnyhowException,
         ),
         constMeta: kCrateApiBackupExportBackupConstMeta,
-        argValues: [appVersion],
+        argValues: [appVersion, logPath],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiBackupExportBackupConstMeta =>
-      const TaskConstMeta(debugName: "export_backup", argNames: ["appVersion"]);
+  TaskConstMeta get kCrateApiBackupExportBackupConstMeta => const TaskConstMeta(
+    debugName: "export_backup",
+    argNames: ["appVersion", "logPath"],
+  );
 
   @override
   Future<void> crateApiDataDbExportDatabase({required String path}) {

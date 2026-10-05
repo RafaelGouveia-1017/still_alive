@@ -2807,11 +2807,13 @@ fn wire__crate__api__backup__export_backup_impl(
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_app_version = <String>::sse_decode(&mut deserializer);
+            let api_log_path = <Option<String>>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
                     (move || {
-                        let output_ok = crate::api::backup::export_backup(&api_app_version)?;
+                        let output_ok =
+                            crate::api::backup::export_backup(&api_app_version, api_log_path)?;
                         std::result::Result::Ok(output_ok)
                     })(),
                 )

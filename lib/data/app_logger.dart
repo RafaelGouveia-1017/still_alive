@@ -159,11 +159,6 @@ class AppLogger {
 
       final location = StringBuffer();
 
-      /*
-      if (record.target.isNotEmpty) {
-        location.write(record.target);
-      }
-      */
       if (record.file != null) {
         if (location.isNotEmpty) {
           location.write(' ');

@@ -25,6 +25,43 @@ class QRScannerScreen extends StatefulWidget {
 
   @override
   State<QRScannerScreen> createState() => _QRScannerScreenState();
+
+  /// Decodes a Base64URL-encoded value into a JSON string.
+  ///
+  /// The input may use unpadded Base64URL encoding. The encoded value is
+  /// normalized to standard Base64 before decoding.
+  ///
+  /// The decoded value must be valid JSON.
+  ///
+  /// Returns the decoded JSON string when validation succeeds.
+  ///
+  /// Throws an [Exception] when the value cannot be decoded or the decoded
+  /// value is not valid JSON.
+  static String decodeBase64Url(String value) {
+    // Base64URL -> standard Base64
+    String normalized = value.replaceAll('-', '+').replaceAll('_', '/');
+
+    // Restore padding if omitted.
+    normalized += '=' * ((4 - normalized.length % 4) % 4);
+
+    String decoded = '';
+
+    try {
+      // Decode as UTF-8.
+      decoded = utf8.decode(base64Decode(normalized));
+    } catch (e) {
+      throw Exception('QR value is not a valid base64 string.\noriginal:\t$value');
+    }
+
+    try {
+      jsonDecode(decoded);
+      return decoded;
+    } catch (e) {
+      throw Exception(
+        'QR value is a base64 string but not valid JSON.\noriginal:\t$value\ndecoded:\t$decoded',
+      );
+    }
+  }
 }
 
 /// State for [QRScannerScreen].
@@ -106,27 +143,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
   /// Throws an [Exception] when the value cannot be decoded or the decoded
   /// value is not valid JSON.
   String decodeBase64Url(String value) {
-    // Base64URL -> standard Base64
-    String normalized = value.replaceAll('-', '+').replaceAll('_', '/');
-
-    // Restore padding if omitted.
-    normalized += '=' * ((4 - normalized.length % 4) % 4);
-
-    String decoded = '';
-
-    try {
-      // Decode as UTF-8.
-      decoded = utf8.decode(base64Decode(normalized));
-    } catch (e) {
-      throw Exception('QR value is not a valid base64 string.\noriginal:\t$value');
-    }
-
-    try {
-      jsonDecode(decoded);
-      return decoded;
-    } catch (e) {
-      throw Exception('QR value is a base64 string but not valid JSON.\noriginal:\t$value\ndecoded:\t$decoded');
-    }
+    return QRScannerScreen.decodeBase64Url(value);
   }
 
   @override

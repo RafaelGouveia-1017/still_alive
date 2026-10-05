@@ -787,3 +787,32 @@ struct TelegramGetChatRequest<'a> {
     /// Identifier of the Telegram chat to retrieve.
     chat_id: &'a str,
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn telegram_url_builds_correct_url_for_get_me() {
+        assert_eq!(
+            telegram_url("123456:ABC", "getMe"),
+            "https://api.telegram.org/bot123456:ABC/getMe"
+        );
+    }
+
+    #[test]
+    fn telegram_url_builds_correct_url_for_send_message() {
+        assert_eq!(
+            telegram_url("TOKEN", "sendMessage"),
+            "https://api.telegram.org/botTOKEN/sendMessage"
+        );
+    }
+
+    #[test]
+    fn telegram_url_builds_correct_url_for_chat_list() {
+        assert_eq!(
+            telegram_url("token", "getChat"),
+            "https://api.telegram.org/bottoken/getChat"
+        );
+    }
+}

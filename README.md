@@ -1,7 +1,7 @@
 <div align="center">
   <picture>
     <img alt="StillAlive"
-         src="./lib/assets/images/logo.png"
+         src="https://lh3.googleusercontent.com/kewa78VhdxECe_P9m5CenxAQ29ElE5SkF2WDqRsOFWH9SKK6pP4gCRk4FeMsjvyQEN8LREGJ_so20ZcT0lbrjlk=s0?imgmax=0"
          width="15%">
   </picture>
 </div>
@@ -91,7 +91,7 @@ StillAlive uses a collection of Flutter/Dart packages to provide its core functi
 
 | Package                                                                   |   Version | Creator                                                                       |
 | ------------------------------------------------------------------------- | --------: | ----------------------------------------------------------------------------- |
-| [lucide_icons_flutter](https://pub.dev/packages/lucide_icons_flutter)     | `^3.1.21` | [Lucide Contributors](https://github.com/lucide-icons/lucide)                 |
+| [lucide_icons_flutter](https://pub.dev/packages/lucide_icons_flutter)     | `^3.1.22` | [Lucide Contributors](https://github.com/lucide-icons/lucide)                 |
 | [font_awesome_flutter](https://pub.dev/packages/font_awesome_flutter)     | `^11.0.0` | [Flutter Community](https://github.com/fluttercommunity/font_awesome_flutter) |
 | [animated_splash_screen](https://pub.dev/packages/animated_splash_screen) |  `^1.3.0` | [Clean Code](https://github.com/clean-code-dev/animated_splash_screen)        |
 | [page_transition](https://pub.dev/packages/page_transition)               |  `^2.2.2` | [kalismeras61](https://github.com/kalismeras61/flutter_page_transition)       |
@@ -116,8 +116,8 @@ StillAlive uses a collection of Flutter/Dart packages to provide its core functi
 | [permission_handler](https://pub.dev/packages/permission_handler)                             | `12.0.3` | [Baseflow](https://github.com/Baseflow/flutter-permission-handler)                                         |
 | [battery_optimization_permission](https://pub.dev/packages/battery_optimization_permission)   | `^1.1.3` | [H Square Apps](https://pub.dev/packages/battery_optimization_permission/publisher)                        |
 | [package_info_plus](https://pub.dev/packages/package_info_plus)                               |  `9.0.1` | [Flutter Community](https://github.com/fluttercommunity/plus_plugins/tree/main/packages/package_info_plus) |
-| [battery_plus](https://pub.dev/packages/battery_plus)                                         | `^7.1.1` | [Flutter Community](https://github.com/fluttercommunity/plus_plugins/tree/main/packages/battery_plus)      |
-| [connectivity_plus](https://pub.dev/packages/connectivity_plus)                               | `^7.3.1` | [Flutter Community](https://github.com/fluttercommunity/plus_plugins/tree/main/packages/connectivity_plus) |
+| [battery_plus](https://pub.dev/packages/battery_plus)                                         | `^7.1.2` | [Flutter Community](https://github.com/fluttercommunity/plus_plugins/tree/main/packages/battery_plus)      |
+| [connectivity_plus](https://pub.dev/packages/connectivity_plus)                               |  `7.3.1` | [Flutter Community](https://github.com/fluttercommunity/plus_plugins/tree/main/packages/connectivity_plus) |
 | [internet_connection_checker_plus](https://pub.dev/packages/internet_connection_checker_plus) | `^3.1.2` | [OutdatedGuy](https://github.com/OutdatedGuy/internet_connection_checker_plus)                             |
 
 #### 🧭 Maps, Location & Navigation
@@ -149,7 +149,7 @@ StillAlive uses a collection of Flutter/Dart packages to provide its core functi
 
 | Package                                                       |  Version | Creator                                                        |
 | ------------------------------------------------------------- | -------: | -------------------------------------------------------------- |
-| [flutter_contacts](https://pub.dev/packages/flutter_contacts) | `^2.5.0` | [QuisApp](https://github.com/QuisApp/flutter_contacts)         |
+| [flutter_contacts](https://pub.dev/packages/flutter_contacts) | `^2.6.0` | [QuisApp](https://github.com/QuisApp/flutter_contacts)         |
 | [send_message](https://pub.dev/packages/send_message)         | `^1.0.2` | [dabhinavaghan](https://github.com/DabhiNavaghan/send_message) |
 
 #### 📐 Layout, Interaction & Navigation
@@ -157,10 +157,10 @@ StillAlive uses a collection of Flutter/Dart packages to provide its core functi
 | Package                                                                                 |   Version | Creator                                                                             |
 | --------------------------------------------------------------------------------------- | --------: | ----------------------------------------------------------------------------------- |
 | [flutter_reorderable_grid_view](https://pub.dev/packages/flutter_reorderable_grid_view) |  `^5.7.0` | [karvulf](https://github.com/karvulf/flutter-reorderable-grid-view)                 |
-| [fluttertoast](https://pub.dev/packages/fluttertoast)                                   | `^10.0.0` | [ponnamkarthik](https://github.com/ponnamkarthik/FlutterToast)                      |
+| [fluttertoast](https://pub.dev/packages/fluttertoast)                                   | `^10.0.2` | [ponnamkarthik](https://github.com/ponnamkarthik/FlutterToast)                      |
 | [scrollable_positioned_list](https://pub.dev/packages/scrollable_positioned_list)       |  `^0.3.8` | [Google](https://github.com/google/flutter.widgets)                                 |
 | [restart_app](https://pub.dev/packages/restart_app)                                     | `^1.10.1` | [gabrimatic](https://github.com/gabrimatic/restart_app)                             |
-| [url_launcher](https://pub.dev/packages/url_launcher)                                   |  `^6.3.2` | [Flutter Team](https://github.com/flutter/packages/tree/main/packages/url_launcher) |
+| [url_launcher](https://pub.dev/packages/url_launcher)                                   |  `^6.3.3` | [Flutter Team](https://github.com/flutter/packages/tree/main/packages/url_launcher) |
 | [file_picker](https://pub.dev/packages/file_picker)                                     |  `11.0.3` | [miguelpruivo](https://github.com/vicajilau/flutter_file_picker/)                   |
 
 #### 🔐 Security & Cryptography

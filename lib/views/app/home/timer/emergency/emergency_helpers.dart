@@ -405,7 +405,7 @@ class EmergencyDispatchService {
     if (target.allowLocation) {
       final buffer = StringBuffer(local.translate("emergency_active.dispatch.location.update"));
       _appendLocation(buffer, payload);
-      return buffer.toString().trim();
+      return buffer.toString();
     }
     return null;
   }
@@ -414,6 +414,7 @@ class EmergencyDispatchService {
     final point = payload.currentLocation;
     if (point != null) {
       buffer
+        ..writeln()
         ..writeln()
         ..writeln(
           '${local.translate("emergency_active.dispatch.location.position")} '

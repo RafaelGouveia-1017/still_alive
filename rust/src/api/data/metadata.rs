@@ -25,8 +25,9 @@ pub struct Metadata {
 ///
 /// ```json
 /// {
-///   "appVersion": "1.0.0",
-///   "created": "2026-07-06T18:51:03Z"
+///   "app_version": "1.0.0",
+///   "created": "2026-07-06T18:51:03Z",
+///   "format_version": 1
 /// }
 /// ```
 ///
@@ -92,4 +93,91 @@ pub fn create_backup_metadata_string(app_version: &str) -> Result<String> {
 #[frb(ignore)]
 pub fn validate_backup_metadata(json: &str) -> Result<Metadata> {
     Ok(serde_json::from_str(&json)?)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn validate_backup_metadata_parses_valid_json() {
+        let json = r#"{
+            "app_version": "1.0.0",
+            "created": "2026-07-06T18:51:03Z",
+            "format_version": 1
+        }"#;
+
+        let metadata = validate_backup_metadata(json).expect("valid JSON should parse");
+
+        assert_eq!(metadata.app_version, "1.0.0");
+        assert_eq!(metadata.created, "2026-07-06T18:51:03Z");
+        assert_eq!(metadata.format_version, 1);
+    }
+
+    #[test]
+    fn validate_backup_metadata_rejects_invalid_json() {
+        let result = validate_backup_metadata("{ this is not valid json !!!");
+
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn validate_backup_metadata_rejects_missing_required_field() {
+        let json = r#"{
+            "app_version": "1.0.0",
+            "created": "2026-07-06T18:51:03Z"
+        }"#;
+
+        let result = validate_backup_metadata(json);
+
+        assert!(
+            result.is_err(),
+            "metadata missing format_version must fail validation"
+        );
+    }
+
+    #[test]
+    fn validate_backup_metadata_rejects_wrong_format_version_type() {
+        let json = r#"{
+            "app_version": "1.0.0",
+            "created": "2026-07-06T18:51:03Z",
+            "format_version": "not_a_number"
+        }"#;
+
+        let result = validate_backup_metadata(json);
+
+        assert!(result.is_err(), "format_version must be a number");
+    }
+
+    #[test]
+    fn create_backup_metadata_string_produces_valid_json() {
+        let version = "2.5.3";
+        let json = create_backup_metadata_string(version).expect("serialization must succeed");
+
+        let metadata = validate_backup_metadata(&json).expect("output must round-trip");
+
+        assert_eq!(metadata.app_version, version);
+        assert_eq!(metadata.format_version, 1);
+        assert!(
+            !metadata.created.is_empty(),
+            "creation timestamp should be populated"
+        );
+    }
+
+    #[test]
+    fn metadata_serialization_round_trip() {
+        let original = Metadata {
+            app_version: "9.9.9".to_owned(),
+            created: "2026-10-05T00:00:00Z".to_owned(),
+            format_version: 42,
+        };
+
+        let serialized = serde_json::to_string(&original).expect("serialization must succeed");
+        let deserialized: Metadata =
+            serde_json::from_str(&serialized).expect("deserialization must succeed");
+
+        assert_eq!(deserialized.app_version, original.app_version);
+        assert_eq!(deserialized.created, original.created);
+        assert_eq!(deserialized.format_version, original.format_version);
+    }
 }

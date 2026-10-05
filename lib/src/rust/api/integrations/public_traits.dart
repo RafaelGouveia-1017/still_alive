@@ -99,7 +99,7 @@ Future<void> deleteIntegrationAccount({
 ///
 /// # Returns
 ///
-/// Returns an [`IntegrationTestResult`] containing:
+/// Returns an [DestinationTestResult] containing:
 ///
 /// * Whether the integration is connected.
 /// * A human-readable status message.
@@ -132,7 +132,7 @@ Future<DestinationTestResult> testIntegrationDestination({
 ///
 /// # Returns
 ///
-/// Returns an [`IntegrationTestResult`] containing:
+/// Returns an [DestinationTestResult] containing:
 ///
 /// * Whether the integration is connected.
 /// * A human-readable status message.

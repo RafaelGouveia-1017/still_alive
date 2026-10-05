@@ -12,6 +12,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 ///
 /// - the SQLite database
 /// - a metadata file
+/// - the application log file
 ///
 /// The ZIP archive is returned as raw bytes (`Vec<u8>`), making it
 /// platform-independent.
@@ -21,14 +22,19 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 /// 1. Perform WAL checkpoint to ensure DB consistency.
 /// 2. Read database file into memory.
 /// 3. Generate metadata JSON in memory.
-/// 4. Create ZIP archive in memory.
-/// 5. Return ZIP as `Vec<u8>`.
+/// 4. Resolve the application log path, using the provided path or
+///    falling back to `app.log` in the database directory.
+/// 5. Read the application log into memory.
+/// 6. Create ZIP archive in memory.
+/// 7. Return ZIP as `Vec<u8>`.
 ///
 /// The database connection remains open throughout the export.
 ///
 /// # Arguments
 ///
 /// * `app_version` - Application version.
+/// * `log_path` - Optional path to the application log file. If `None`,
+///   the log is read from `app.log` in the same directory as the database.
 ///
 /// # Returns
 ///
@@ -41,14 +47,20 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 /// - WAL checkpoint fails
 /// - database file cannot be read
 /// - metadata cannot be generated
+/// - log file cannot be read
+/// - the database directory cannot be determined when `log_path` is `None`
 /// - ZIP creation fails
 ///
 /// # Notes
 ///
 /// - No files are written to storage.
-/// - Entire ZIP is held in memory.
-Future<Uint8List> exportBackup({required String appVersion}) =>
-    RustLib.instance.api.crateApiBackupExportBackup(appVersion: appVersion);
+/// - The database and log are read entirely into memory.
+/// - The entire ZIP archive is held in memory.
+Future<Uint8List> exportBackup({required String appVersion, String? logPath}) =>
+    RustLib.instance.api.crateApiBackupExportBackup(
+      appVersion: appVersion,
+      logPath: logPath,
+    );
 
 /// Import an application backup from a ZIP archive.
 ///

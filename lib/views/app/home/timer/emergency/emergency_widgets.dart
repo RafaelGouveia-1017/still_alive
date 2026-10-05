@@ -129,7 +129,7 @@ class _EmergencyRouteTileState extends State<EmergencyRouteTile> with SingleTick
                     '${local.translate("active_monitoring.location.ago")}'
                     ' ${TimerService.formatDuration(Duration(seconds: timer.config.locationCollectionIntervalSecs?.toInt() ?? 10))} '
                     '${local.translate("active_monitoring.location.interval")}',
-                icon: LucideIcons.route,
+                icon: (widget.route.isEmpty || widget.route.length == 1) ? LucideIcons.mapPin : LucideIcons.route,
                 iconSize: 20,
                 iconColor: scheme.tertiary,
                 iconBackground: scheme.tertiary.withAlpha(38),

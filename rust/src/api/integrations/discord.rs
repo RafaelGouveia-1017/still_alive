@@ -518,3 +518,29 @@ struct DiscordCreateMessage<'a> {
     /// Message content to send to the Discord channel.
     content: &'a str,
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn discord_url_builds_correct_url_for_users_me() {
+        assert_eq!(
+            discord_url("users/@me"),
+            "https://discord.com/api/v10/users/@me"
+        );
+    }
+
+    #[test]
+    fn discord_url_builds_correct_url_for_guilds() {
+        assert_eq!(discord_url("guilds"), "https://discord.com/api/v10/guilds");
+    }
+
+    #[test]
+    fn discord_url_builds_correct_url_for_channels() {
+        assert_eq!(
+            discord_url("channels/123456/messages"),
+            "https://discord.com/api/v10/channels/123456/messages"
+        );
+    }
+}

@@ -241,3 +241,69 @@ pub async fn send_integration_message(
         _ => Err(anyhow!("unknown integration: {}", key)),
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::collections::HashMap;
+
+    #[tokio::test]
+    async fn connect_integration_account_rejects_missing_token() {
+        let credentials: HashMap<String, String> = HashMap::new();
+        let result = connect_integration_account("discord".to_string(), credentials).await;
+        assert!(result.is_err());
+        let err = result.unwrap_err().to_string();
+        assert!(
+            err.contains("integration token cannot be empty"),
+            "Expected 'integration token cannot be empty', got: {}",
+            err
+        );
+    }
+
+    #[tokio::test]
+    async fn connect_integration_account_rejects_empty_token() {
+        let mut credentials = HashMap::new();
+        credentials.insert("token".to_string(), "".to_string());
+        let result = connect_integration_account("discord".to_string(), credentials).await;
+        assert!(result.is_err());
+        let err = result.unwrap_err().to_string();
+        assert!(
+            err.contains("integration token cannot be empty"),
+            "Expected 'integration token cannot be empty', got: {}",
+            err
+        );
+    }
+
+    #[tokio::test]
+    async fn connect_integration_account_rejects_whitespace_token() {
+        let mut credentials = HashMap::new();
+        credentials.insert("token".to_string(), "   ".to_string());
+        let result = connect_integration_account("discord".to_string(), credentials).await;
+        assert!(result.is_err());
+        let err = result.unwrap_err().to_string();
+        assert!(
+            err.contains("integration token cannot be empty"),
+            "Expected 'integration token cannot be empty', got: {}",
+            err
+        );
+    }
+
+    #[tokio::test]
+    async fn connect_integration_account_rejects_unknown_integration() {
+        let mut credentials = HashMap::new();
+        credentials.insert("token".to_string(), "valid-token".to_string());
+        let result = connect_integration_account("unknown_service".to_string(), credentials).await;
+        assert!(result.is_err());
+        let err = result.unwrap_err().to_string();
+        assert!(
+            err.contains("unknown integration"),
+            "Expected 'unknown integration', got: {}",
+            err
+        );
+        assert!(
+            err.contains("unknown_service"),
+            "Expected error to name the offending key, got: {}",
+            err
+        );
+    }
+}
