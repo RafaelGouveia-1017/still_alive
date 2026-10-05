@@ -57,9 +57,7 @@ class QRScannerScreen extends StatefulWidget {
       jsonDecode(decoded);
       return decoded;
     } catch (e) {
-      throw Exception(
-        'QR value is a base64 string but not valid JSON.\noriginal:\t$value\ndecoded:\t$decoded',
-      );
+      throw Exception('QR value is a base64 string but not valid JSON.\noriginal:\t$value\ndecoded:\t$decoded');
     }
   }
 }
