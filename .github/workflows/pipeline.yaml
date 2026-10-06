@@ -525,5 +525,4 @@ jobs:
             $tag `
             "build/app/outputs/flutter-apk/app-release.apk#StillAlive.apk" `
             --title $tag `
-            --notes $notes `
-            --prerelease
+            --notes $notes

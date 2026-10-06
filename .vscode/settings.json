@@ -5,20 +5,5 @@
   "java.import.gradle.version": "8.14",
   "java.import.gradle.wrapper.enabled": true,
   "java.import.gradle.enabled": true,
-  "yaml.schemas": {
-    "file:///c%3A/Users/PC/.vscode/extensions/continue.continue-1.2.17-win32-x64/config-yaml-schema.json": [
-      ".continue/**/*.yaml"
-    ],
-    "file:///c%3A/Users/PC/.vscode/extensions/continue.continue-1.2.19-win32-x64/config-yaml-schema.json": [
-      ".continue/**/*.yaml"
-    ],
-    "file:///c%3A/Users/PC/.vscode/extensions/continue.continue-1.2.22-win32-x64/config-yaml-schema.json": [
-      ".continue/**/*.yaml"
-    ],
-    "file:///c%3A/Users/PC/.vscode/extensions/continue.continue-2.0.0-win32-x64/config-yaml-schema.json": [
-      ".continue/**/*.yaml"
-    ],
-    "file:///c:/Users/PC/.vscode/extensions/continue.continue-2.0.0-win32-x64/config-yaml-schema.json": "file:///c%3A/Users/PC/.continue/config.yaml"
-  },
   "java.import.gradle.offline.enabled": true
 }
