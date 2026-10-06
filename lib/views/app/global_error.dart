@@ -125,8 +125,10 @@ class GlobalErrorDialog {
                   children: [
                     Expanded(child: Text(local.translate("unexpected_error.saved"), style: AppText.body(scheme))),
                     Pressable(
-                      onTap: () =>
-                          launchUrl(Uri.parse("https://github.com/RafaelGouveia-1017/still_alive/issues"), mode: LaunchMode.externalApplication),
+                      onTap: () => launchUrl(
+                        Uri.parse("https://github.com/RafaelGouveia-1017/still_alive/issues/new/choose"),
+                        mode: LaunchMode.externalApplication,
+                      ),
                       child: Container(
                         width: 48,
                         height: 48,

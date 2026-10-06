@@ -1,41 +1,43 @@
 <div align="center">
   <picture>
-    <img alt="StillAlive"
+    <a href="https://play.google.com/store/apps/details?id=com.appsbyrafa.stillalive" target="_blank">
+      <img alt="StillAlive"
          src="https://lh3.googleusercontent.com/kewa78VhdxECe_P9m5CenxAQ29ElE5SkF2WDqRsOFWH9SKK6pP4gCRk4FeMsjvyQEN8LREGJ_so20ZcT0lbrjlk=s0?imgmax=0"
          width="15%">
+    </a>
   </picture>
 </div>
 <div align="center">
 <h1>StillAlive – Personal Safety Platform</h1>
 </div>
 <div align="center">
-  <a href="https://developer.android.com/develop">
+  <a href="https://play.google.com/store/apps/details?id=com.appsbyrafa.stillalive" target="_blank">
     <img
       src="https://img.shields.io/badge/Android-Min%3A%2010%20(API%2029)%20%7C%20Target%3A%2016%20(API%2036)-green?logo=android"
       alt="Android"
     />
   </a>
   <br>
-  <a href="https://flutter.dev">
+  <a href="https://flutter.dev" target="_blank">
     <img
       src="https://img.shields.io/badge/Frontend-Flutter%20(3.47.5)-%2302569B?logo=flutter"
       alt="Flutter"
     />
   </a>
-  <a href="https://dart.dev/">
+  <a href="https://dart.dev/" target="_blank">
     <img
       src="https://img.shields.io/badge/Frontend-Dart%20(3.13.4)-%2302569B?logo=dart"
       alt="Dart"
     />
   </a>
-  <a href="https://www.rust-lang.org/">
+  <a href="https://www.rust-lang.org/" target="_blank">
     <img
       src="https://img.shields.io/badge/BackEnd-Rust%20(1.98.1)-orange?logo=rust"
       alt="Rust"
     />
   </a>
   <br>
-  <a href="https://opensource.org/licenses/MIT">
+  <a href="https://opensource.org/licenses/MIT" target="_blank">
     <img
       src="https://img.shields.io/badge/License-MIT-yellow?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1zY2FsZS1pY29uIGx1Y2lkZS1zY2FsZSI+PHBhdGggZD0iTTEyIDN2MTgiLz48cGF0aCBkPSJtMTkgOCAzIDhhNSA1IDAgMCAxLTYgMHpWNyIvPjxwYXRoIGQ9Ik0zIDdoMWExNyAxNyAwIDAgMCA4LTIgMTcgMTcgMCAwIDAgOCAyaDEiLz48cGF0aCBkPSJtNSA4IDMgOGE1IDUgMCAwIDEtNiAwelY3Ii8+PHBhdGggZD0iTTcgMjFoMTAiLz48L3N2Zz4="
       alt="MIT License"
@@ -208,7 +210,7 @@ To then read the generated docs in your browser, open the link that `dhttpd` out
   <tbody>
     <tr>
       <td align="center" valign="top" width="14.28%">
-        <a href="https://github.com/RafaelGouveia-1017">
+        <a href="https://github.com/RafaelGouveia-1017" target="_blank">
           <img
             src="https://avatars.githubusercontent.com/u/133778965?v=4?s=100"
             width="100px;"
@@ -226,8 +228,7 @@ To then read the generated docs in your browser, open the link that `dhttpd` out
         <a href="#maintenance" title="Maintenance">🚧</a>
       </td>
       <td align="center" valign="top" width="14.28%">
-        <a href="https://chatgpt.com/"
-          >
+        <a href="https://chatgpt.com/" target="_blank">
           <img
             src="https://upload.wikimedia.org/wikipedia/commons/4/46/ChatGPT_Search_logo_Black_Square_-_rounded_corners.svg"
             width="100px;"
@@ -241,8 +242,7 @@ To then read the generated docs in your browser, open the link that `dhttpd` out
         <a href="https://github.com/RafaelGouveia-1017/still_alive/commits" title="Documentation">📖</a>
       </td>
             <td align="center" valign="top" width="14.28%">
-        <a href="https://github.com/brunomnsilva"
-          >
+        <a href="https://github.com/brunomnsilva" target="_blank">
           <img
             src="https://avatars.githubusercontent.com/u/16222114?v=4?s=100"
             width="100px;"

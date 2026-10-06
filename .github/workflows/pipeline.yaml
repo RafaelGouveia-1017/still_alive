@@ -474,40 +474,42 @@ jobs:
           $notes = @"
           <div align="center">
             <picture>
-              <img alt="StillAlive" src="$logo" width="15%">
+              <a href="https://play.google.com/store/apps/details?id=com.appsbyrafa.stillalive" target="_blank">
+                <img alt="StillAlive" src="$logo" width="15%" />
+              </a>
             </picture>
           </div>
           <div align="center">
           <h1>StillAlive - Personal Safety Platform</h1>
           </div>
           <div align="center">
-            <a href="https://developer.android.com/develop">
+            <a href="https://play.google.com/store/apps/details?id=com.appsbyrafa.stillalive" target="_blank">
               <img
                 src="https://img.shields.io/badge/Android-Min%3A%2010%20(API%2029)%20%7C%20Target%3A%2016%20(API%2036)-green?logo=android"
                 alt="Android"
               />
             </a>
             <br>
-            <a href="https://flutter.dev">
+            <a href="https://flutter.dev" target="_blank">
               <img
                 src="https://img.shields.io/badge/Frontend-Flutter-%2302569B?logo=flutter"
                 alt="Flutter"
               />
             </a>
-            <a href="https://dart.dev/">
+            <a href="https://dart.dev/" target="_blank">
               <img
                 src="https://img.shields.io/badge/Frontend-Dart-%2302569B?logo=dart"
                 alt="Dart"
               />
             </a>
-            <a href="https://www.rust-lang.org/">
+            <a href="https://www.rust-lang.org/" target="_blank">
               <img
                 src="https://img.shields.io/badge/BackEnd-Rust-orange?logo=rust"
                 alt="Rust"
               />
             </a>
             <br>
-            <a href="https://opensource.org/licenses/MIT">
+            <a href="https://opensource.org/licenses/MIT" target="_blank">
               <img
                 src="https://img.shields.io/badge/License-MIT-yellow?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1zY2FsZS1pY29uIGx1Y2lkZS1zY2FsZSI+PHBhdGggZD0iTTEyIDN2MTgiLz48cGF0aCBkPSJtMTkgOCAzIDhhNSA1IDAgMCAxLTYgMHpWNyIvPjxwYXRoIGQ9Ik0zIDdoMWExNyAxNyAwIDAgMCA4LTIgMTcgMTcgMCAwIDAgOCAyaDEiLz48cGF0aCBkPSJtNSA4IDMgOGE1IDUgMCAwIDEtNiAwelY3Ii8+PHBhdGggZD0iTTcgMjFoMTAiLz48L3N2Zz4="
                 alt="MIT License"
