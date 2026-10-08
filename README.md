@@ -13,7 +13,7 @@
 <div align="center">
   <a href="https://play.google.com/store/apps/details?id=com.appsbyrafa.stillalive" target="_blank">
     <img
-      src="https://img.shields.io/badge/Android-Min%3A%2010%20(API%2029)%20%7C%20Target%3A%2016%20(API%2036)-green?logo=android"
+      src="https://img.shields.io/badge/Android-Min%3A%2010%20(API%2024)%20%7C%20Target%3A%2016%20(API%2036)-green?logo=android"
       alt="Android"
     />
   </a>
