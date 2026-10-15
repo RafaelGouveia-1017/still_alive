@@ -130,8 +130,10 @@ the current <a href="../../views_app_global_error/GlobalErrorDialogState.html">G
                 children: [
                   Expanded(child: Text(local.translate(&quot;unexpected_error.saved&quot;), style: AppText.body(scheme))),
                   Pressable(
-                    onTap: () =&gt;
-                        launchUrl(Uri.parse(&quot;https:&#47;&#47;github.com&#47;RafaelGouveia-1017&#47;still_alive&#47;issues&quot;), mode: LaunchMode.externalApplication),
+                    onTap: () =&gt; launchUrl(
+                      Uri.parse(&quot;https:&#47;&#47;github.com&#47;RafaelGouveia-1017&#47;still_alive&#47;issues&#47;new&#47;choose&quot;),
+                      mode: LaunchMode.externalApplication,
+                    ),
                     child: Container(
                       width: 48,
                       height: 48,
@@ -235,7 +237,7 @@ the current <a href="../../views_app_global_error/GlobalErrorDialogState.html">G
 <footer>
   <span class="no-break">
     still_alive
-      1.1.0+6
+      1.1.3+9
   </span>
   
 </footer>

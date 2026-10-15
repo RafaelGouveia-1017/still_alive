@@ -13,7 +13,7 @@
 <div align="center">
   <a href="https://play.google.com/store/apps/details?id=com.appsbyrafa.stillalive" target="_blank">
     <img
-      src="https://img.shields.io/badge/Android-Min%3A%2010%20(API%2024)%20%7C%20Target%3A%2016%20(API%2036)-green?logo=android"
+      src="https://img.shields.io/badge/Android-Min%3A%207%20(API%2024)%20%7C%20Target%3A%2016%20(API%2036)-green?logo=android"
       alt="Android"
     />
   </a>
@@ -93,7 +93,7 @@ StillAlive uses a collection of Flutter/Dart packages to provide its core functi
 
 | Package                                                                   |   Version | Creator                                                                       |
 | ------------------------------------------------------------------------- | --------: | ----------------------------------------------------------------------------- |
-| [lucide_icons_flutter](https://pub.dev/packages/lucide_icons_flutter)     | `^3.1.22` | [Lucide Contributors](https://github.com/lucide-icons/lucide)                 |
+| [lucide_icons_flutter](https://pub.dev/packages/lucide_icons_flutter)     | `^3.1.25` | [Lucide Contributors](https://github.com/lucide-icons/lucide)                 |
 | [font_awesome_flutter](https://pub.dev/packages/font_awesome_flutter)     | `^11.0.0` | [Flutter Community](https://github.com/fluttercommunity/font_awesome_flutter) |
 | [animated_splash_screen](https://pub.dev/packages/animated_splash_screen) |  `^1.3.0` | [Clean Code](https://github.com/clean-code-dev/animated_splash_screen)        |
 | [page_transition](https://pub.dev/packages/page_transition)               |  `^2.2.2` | [kalismeras61](https://github.com/kalismeras61/flutter_page_transition)       |
@@ -129,7 +129,7 @@ StillAlive uses a collection of Flutter/Dart packages to provide its core functi
 | [google_polyline_algorithm](https://pub.dev/packages/google_polyline_algorithm) |  `^3.1.0` | [OlehMarch](https://github.com/marchdev-tk/google_polyline_algorithm)  |
 | [latlong2](https://pub.dev/packages/latlong2)                                   | `^0.10.1` | [ThexXTURBOXx](https://github.com/ThexXTURBOXx/dart-latlong)           |
 | [flutter_map](https://pub.dev/packages/flutter_map)                             |  `^8.3.2` | [Fleaflet](https://github.com/fleaflet/flutter_map)                    |
-| [flutter_map_vector_tiles](https://pub.dev/packages/flutter_map_vector_tiles)   |  `^2.9.0` | [JonasGrunau](https://github.com/JonasGrunau/flutter-map-vector-tiles) |
+| [flutter_map_vector_tiles](https://pub.dev/packages/flutter_map_vector_tiles)   |  `^2.9.1` | [JonasGrunau](https://github.com/JonasGrunau/flutter-map-vector-tiles) |
 | [flutter_map_compass](https://pub.dev/packages/flutter_map_compass)             |  `^1.1.1` | [josxha](https://github.com/josxha/flutter_map_plugins)                |
 | [geolocator](https://pub.dev/packages/geolocator)                               |  `14.0.2` | [Baseflow](https://github.com/Baseflow/flutter-geolocator)             |
 
@@ -144,7 +144,7 @@ StillAlive uses a collection of Flutter/Dart packages to provide its core functi
 
 | Package                                               |  Version | Creator                                                   |
 | ----------------------------------------------------- | -------: | --------------------------------------------------------- |
-| [record](https://pub.dev/packages/record)             | `^7.1.1` | [llfbandit](https://github.com/llfbandit/record)          |
+| [record](https://pub.dev/packages/record)             | `^7.1.2` | [llfbandit](https://github.com/llfbandit/record)          |
 | [audioplayers](https://pub.dev/packages/audioplayers) | `^6.8.1` | [Blue Fire](https://github.com/bluefireteam/audioplayers) |
 
 #### 👥 Contacts & Messaging
@@ -161,7 +161,7 @@ StillAlive uses a collection of Flutter/Dart packages to provide its core functi
 | [flutter_reorderable_grid_view](https://pub.dev/packages/flutter_reorderable_grid_view) |  `^5.7.0` | [karvulf](https://github.com/karvulf/flutter-reorderable-grid-view)                 |
 | [fluttertoast](https://pub.dev/packages/fluttertoast)                                   | `^10.0.2` | [ponnamkarthik](https://github.com/ponnamkarthik/FlutterToast)                      |
 | [scrollable_positioned_list](https://pub.dev/packages/scrollable_positioned_list)       |  `^0.3.8` | [Google](https://github.com/google/flutter.widgets)                                 |
-| [restart_app](https://pub.dev/packages/restart_app)                                     | `^1.10.1` | [gabrimatic](https://github.com/gabrimatic/restart_app)                             |
+| [restart_app](https://pub.dev/packages/restart_app)                                     | `^1.10.2` | [gabrimatic](https://github.com/gabrimatic/restart_app)                             |
 | [url_launcher](https://pub.dev/packages/url_launcher)                                   |  `^6.3.3` | [Flutter Team](https://github.com/flutter/packages/tree/main/packages/url_launcher) |
 | [file_picker](https://pub.dev/packages/file_picker)                                     |  `11.0.3` | [miguelpruivo](https://github.com/vicajilau/flutter_file_picker/)                   |
 

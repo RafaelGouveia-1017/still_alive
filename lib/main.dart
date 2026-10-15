@@ -51,7 +51,7 @@ void main() async {
       AppLogger.connectRustLogging();
       AppLogger.log.info("Connected Rust logger to AppLogger.");
 
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+      await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
       await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
       AppLogger.log.info("SystemChrome setup finish.");
 
@@ -227,12 +227,14 @@ class MyAppState extends State<MyApp> {
   /// This method ensures the status bar color and icon brightness match
   /// the active [ColorScheme].
   SystemUiOverlayStyle _buildSystemUiStyle(BuildContext context) {
-    ColorScheme scheme = Theme.of(context).colorScheme;
+    final scheme = Theme.of(context).colorScheme;
+    final iconBrightness = scheme.brightness == Brightness.dark ? Brightness.light : Brightness.dark;
 
     return SystemUiOverlayStyle(
-      statusBarIconBrightness: scheme.brightness,
-      systemNavigationBarIconBrightness: scheme.brightness,
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: iconBrightness,
       systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarIconBrightness: iconBrightness,
       systemNavigationBarContrastEnforced: false,
     );
   }
