@@ -129,7 +129,7 @@ StillAlive uses a collection of Flutter/Dart packages to provide its core functi
 | [google_polyline_algorithm](https://pub.dev/packages/google_polyline_algorithm) |  `^3.1.0` | [OlehMarch](https://github.com/marchdev-tk/google_polyline_algorithm)  |
 | [latlong2](https://pub.dev/packages/latlong2)                                   | `^0.10.1` | [ThexXTURBOXx](https://github.com/ThexXTURBOXx/dart-latlong)           |
 | [flutter_map](https://pub.dev/packages/flutter_map)                             |  `^8.3.2` | [Fleaflet](https://github.com/fleaflet/flutter_map)                    |
-| [flutter_map_vector_tiles](https://pub.dev/packages/flutter_map_vector_tiles)   |  `^2.9.1` | [JonasGrunau](https://github.com/JonasGrunau/flutter-map-vector-tiles) |
+| [flutter_map_vector_tiles](https://pub.dev/packages/flutter_map_vector_tiles)   | `^2.10.1` | [JonasGrunau](https://github.com/JonasGrunau/flutter-map-vector-tiles) |
 | [flutter_map_compass](https://pub.dev/packages/flutter_map_compass)             |  `^1.1.1` | [josxha](https://github.com/josxha/flutter_map_plugins)                |
 | [geolocator](https://pub.dev/packages/geolocator)                               |  `14.0.2` | [Baseflow](https://github.com/Baseflow/flutter-geolocator)             |
 

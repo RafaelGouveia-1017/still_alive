@@ -147,6 +147,13 @@ class FullScreenIntentHandler(
      * is cleared.
      */
     fun sendPendingAlarmToFlutter() {
+        android.util.Log.i(
+            "StillAliveAlarm",
+            "sendPendingAlarmToFlutter: ready=$flutterReady, " +
+                "pendingAlarmId=$pendingAlarmId, " +
+                "engineAvailable=${flutterEngine != null}"
+        )
+        
         if (!flutterReady) {
             return
         }

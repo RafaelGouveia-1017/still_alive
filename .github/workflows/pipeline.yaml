@@ -388,7 +388,18 @@ jobs:
       # If this fails, no version commit or Release is created.
       # =======================================================
       - name: Build APK
-        run: flutter build apk --release --android-skip-build-dependency-validation
+        run: flutter build apk --release --obfuscate --split-debug-info=build/symbols/android/apk --android-skip-build-dependency-validation
+
+      # =======================================================
+      # Package APK obfuscation symbols.
+      # =======================================================
+      - name: Package APK Symbols
+        shell: pwsh
+        run: |
+          Compress-Archive `
+            -Path "build/symbols/android/apk/*" `
+            -DestinationPath "build/symbols/android/apk-symbols.zip" `
+            -Force
 
       # ======================================================
       # Build Android App Bundle (required for Play Store)
@@ -396,7 +407,7 @@ jobs:
       # If this fails, no version commit or Release is created.
       # ======================================================
       - name: Build AAB
-        run: flutter build appbundle --release --android-skip-build-dependency-validation
+        run: flutter build appbundle --release --obfuscate --split-debug-info=build/symbols/android/aab --android-skip-build-dependency-validation
 
       # =======================================================
       # Commit the updated pubspec.yaml.
@@ -454,11 +465,21 @@ jobs:
             -FilePath service_account.json `
             -Encoding utf8
 
-          fastlane supply `
+          $tracks = @("internal", "alpha")
+
+          foreach ($track in $tracks) {
+            Write-Host "Uploading to Google Play track: $track"
+
+            fastlane supply `
               --aab build/app/outputs/bundle/release/app-release.aab `
-              --track alpha `
+              --track $track `
               --json_key service_account.json `
               --package_name com.appsbyrafa.stillalive
+
+            if ($LASTEXITCODE -ne 0) {
+              throw "Upload failed for track: $track"
+            }
+          }
 
       # =======================================================
       # Create the GitHub Release and upload the APK.
@@ -526,5 +547,6 @@ jobs:
           gh release create `
             $tag `
             "build/app/outputs/flutter-apk/app-release.apk#StillAlive.apk" `
+            "build/symbols/android/apk-symbols.zip#StillAlive-APK-Symbols.zip" `
             --title $tag `
             --notes $notes

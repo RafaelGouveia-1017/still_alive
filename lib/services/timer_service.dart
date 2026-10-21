@@ -269,7 +269,7 @@ class TimerService extends ChangeNotifier {
   /// platform method-channel calls and requires [initialize] to have completed
   /// successfully before timer alarms can be processed.
   Future<void> handleNativeCall(MethodCall call) async {
-    AppLogger.log.info("TimerService.handleNativeCall() called...");
+    AppLogger.log.info('TimerService.handleNativeCall() received: ${call.method}, arguments: ${call.arguments}');
 
     if (!_initialized) {
       AppLogger.log.severe("Alarm received before TimerService initialization.");
@@ -337,7 +337,7 @@ class TimerService extends ChangeNotifier {
     }
 
     final now = DateTime.now().toUtc().millisecondsSinceEpoch;
-    _activeTimer.updateRunState(nowMs: now);
+    await _activeTimer.updateRunState(nowMs: now);
 
     launchTimerNotification();
 

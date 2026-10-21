@@ -75,7 +75,7 @@ dependencies:
   google_polyline_algorithm: ^3.1.0
   latlong2: ^0.10.1
   flutter_map: ^8.3.2
-  flutter_map_vector_tiles: ^2.9.1
+  flutter_map_vector_tiles: ^2.10.1
   flutter_map_compass: ^1.1.1
   geolocator: 14.0.2
 

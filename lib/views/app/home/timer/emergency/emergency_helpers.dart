@@ -497,7 +497,7 @@ class EmergencyAudioService {
   Future<bool> start() async {
     if (_recording) return true;
 
-    if (!await _recorder.hasPermission()) {
+    if (!await _recorder.hasPermission(request: false)) {
       return false;
     }
 
