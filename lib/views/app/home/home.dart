@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:still_alive/services/timer_service.dart';
-import 'package:still_alive/src/rust/api/timer/config.dart';
 import 'package:still_alive/src/rust/api/timer/state.dart';
 import 'package:still_alive/views/app/home/timer_selection.dart';
 
@@ -62,20 +61,6 @@ class _HomeScreenState extends State<HomeScreen> {
     ColorScheme scheme = Theme.of(context).colorScheme;
     AppLocalizations local = AppLocalizations.of(context)!;
 
-    final timer = TimerService.instance.activeTimer;
-    final timerData = timer.config;
-
-    int contacts = timerData.contacts.length;
-    int integrations = 0;
-    TimerIntegration discord = timerData.integrations.discord;
-    TimerIntegration telegram = timerData.integrations.telegram;
-    if (discord.accounts.isNotEmpty) {
-      integrations += discord.accounts.length;
-    }
-    if (telegram.accounts.isNotEmpty) {
-      integrations += telegram.accounts.length;
-    }
-
     return PopScope(
       canPop: false,
       child: ScreenBase(
@@ -118,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(height: AppSpacing.lg),
                     TimerCountdownRing(),
                     const SizedBox(height: AppSpacing.xxl),
-                    PhoneStatus(contacts: contacts, integrations: integrations),
+                    PhoneStatus(),
                     const SizedBox(height: AppSpacing.xl),
                     TimerControls(),
                     const SizedBox(height: AppSpacing.xl),

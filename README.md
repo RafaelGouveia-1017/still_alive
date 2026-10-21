@@ -93,7 +93,7 @@ StillAlive uses a collection of Flutter/Dart packages to provide its core functi
 
 | Package                                                                   |   Version | Creator                                                                       |
 | ------------------------------------------------------------------------- | --------: | ----------------------------------------------------------------------------- |
-| [lucide_icons_flutter](https://pub.dev/packages/lucide_icons_flutter)     | `^3.1.25` | [Lucide Contributors](https://github.com/lucide-icons/lucide)                 |
+| [lucide_icons_flutter](https://pub.dev/packages/lucide_icons_flutter)     |  `^4.0.1` | [Lucide Contributors](https://github.com/lucide-icons/lucide)                 |
 | [font_awesome_flutter](https://pub.dev/packages/font_awesome_flutter)     | `^11.0.0` | [Flutter Community](https://github.com/fluttercommunity/font_awesome_flutter) |
 | [animated_splash_screen](https://pub.dev/packages/animated_splash_screen) |  `^1.3.0` | [Clean Code](https://github.com/clean-code-dev/animated_splash_screen)        |
 | [page_transition](https://pub.dev/packages/page_transition)               |  `^2.2.2` | [kalismeras61](https://github.com/kalismeras61/flutter_page_transition)       |

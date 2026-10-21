@@ -5,6 +5,9 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:battery_plus/battery_plus.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+import 'package:still_alive/main.dart';
+import 'package:still_alive/services/timer_service.dart';
+import 'package:still_alive/src/rust/api/timer/config.dart';
 import 'package:still_alive/views/app/contacts/emergency_contacts.dart';
 
 import '../integrations/integrations.dart';
@@ -17,17 +20,14 @@ import '../../widgets/primitives.dart';
 /// and internet availability in real time. It also displays the number of
 /// configured emergency contacts and integrations.
 class PhoneStatus extends StatefulWidget {
-  const PhoneStatus({super.key, this.contacts = 0, this.integrations = 0});
-
-  final int contacts;
-  final int integrations;
+  const PhoneStatus({super.key});
 
   @override
   State<PhoneStatus> createState() => _PhoneStatusState();
 }
 
 /// State implementation for [PhoneStatus].
-class _PhoneStatusState extends State<PhoneStatus> {
+class _PhoneStatusState extends State<PhoneStatus> with RouteAware {
   final Battery _battery = Battery();
   final Connectivity _connectivity = Connectivity();
 
@@ -40,6 +40,11 @@ class _PhoneStatusState extends State<PhoneStatus> {
 
   StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
   StreamSubscription<InternetStatus>? _internetSubscription;
+
+  int contacts = 0;
+  int integrations = 0;
+
+  late final AppLifecycleListener _lifecycleListener;
 
   @override
   void initState() {
@@ -62,6 +67,10 @@ class _PhoneStatusState extends State<PhoneStatus> {
         });
       }
     });
+
+    _loadStatus();
+
+    _lifecycleListener = AppLifecycleListener(onResume: () => didPopNext());
   }
 
   void _updateBatteryState(BatteryState state) {
@@ -102,8 +111,47 @@ class _PhoneStatusState extends State<PhoneStatus> {
     });
   }
 
+  void _loadStatus() {
+    final timer = TimerService.instance.activeTimer;
+    final timerData = timer.config;
+
+    int contactsNew = timerData.contacts.length;
+    int integrationsNew = 0;
+    TimerIntegration discord = timerData.integrations.discord;
+    TimerIntegration telegram = timerData.integrations.telegram;
+    if (discord.accounts.isNotEmpty) {
+      integrationsNew += discord.accounts.length;
+    }
+    if (telegram.accounts.isNotEmpty) {
+      integrationsNew += telegram.accounts.length;
+    }
+
+    setState(() {
+      contacts = contactsNew;
+      integrations = integrationsNew;
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final route = ModalRoute.of(context);
+    if (route is PageRoute) {
+      routeObserver.subscribe(this, route);
+    }
+  }
+
+  @override
+  void didPopNext() {
+    _loadStatus();
+    super.didPopNext();
+  }
+
   @override
   void dispose() {
+    _lifecycleListener.dispose();
+    routeObserver.unsubscribe(this);
     _batteryStateSubscription?.cancel();
     _connectivitySubscription?.cancel();
     _internetSubscription?.cancel();
@@ -179,7 +227,7 @@ class _PhoneStatusState extends State<PhoneStatus> {
             onTap: () => Navigator.of(context).push(AppRoute(page: EmergencyContactsScreen(), transition: AppRouteTransitionType.slideLeft)),
             child: _StatCard(
               icon: LucideIcons.userStar,
-              label: '${widget.contacts} ${(widget.contacts == 1) ? local.translate('home.contacts.0') : local.translate('home.contacts.1')}',
+              label: '$contacts ${(contacts == 1) ? local.translate('home.contacts.0') : local.translate('home.contacts.1')}',
               color: scheme.secondary,
             ),
           ),
@@ -191,7 +239,7 @@ class _PhoneStatusState extends State<PhoneStatus> {
             child: _StatCard(
               icon: LucideIcons.plug,
               rotateAngle: math.pi / 4,
-              label: '${widget.integrations} ${(widget.integrations == 1) ? local.translate('home.plugins.0') : local.translate('home.plugins.1')}',
+              label: '$integrations ${(integrations == 1) ? local.translate('home.plugins.0') : local.translate('home.plugins.1')}',
               color: scheme.secondary,
             ),
           ),
