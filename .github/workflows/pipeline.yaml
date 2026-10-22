@@ -465,21 +465,11 @@ jobs:
             -FilePath service_account.json `
             -Encoding utf8
 
-          $tracks = @("internal", "alpha")
-
-          foreach ($track in $tracks) {
-            Write-Host "Uploading to Google Play track: $track"
-
-            fastlane supply `
-              --aab build/app/outputs/bundle/release/app-release.aab `
-              --track $track `
-              --json_key service_account.json `
-              --package_name com.appsbyrafa.stillalive
-
-            if ($LASTEXITCODE -ne 0) {
-              throw "Upload failed for track: $track"
-            }
-          }
+          fastlane supply `
+            --aab build/app/outputs/bundle/release/app-release.aab `
+            --track alpha `
+            --json_key service_account.json `
+            --package_name com.appsbyrafa.stillalive
 
       # =======================================================
       # Create the GitHub Release and upload the APK.
