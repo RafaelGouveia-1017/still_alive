@@ -467,7 +467,7 @@ jobs:
 
           fastlane supply `
             --aab build/app/outputs/bundle/release/app-release.aab `
-            --track alpha `
+            --track production `
             --json_key service_account.json `
             --package_name com.appsbyrafa.stillalive
 
