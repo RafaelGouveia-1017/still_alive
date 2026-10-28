@@ -89,15 +89,18 @@
       "items": [
         {
           "name": "Location",
-          "detail": "Shared only during emergencies"
+          "detail": "Shared only during emergencies",
+          "description": "StillAlive accesses your device's location when your timer ends to help provide your location for YOUR chosen emergency contacts and integrations.\n\nStillAlive does not access or collect your location data for anything other that sharing it with YOUR contacts and integrations."
         },
         {
           "name": "Route",
-          "detail": "Record path travelled during active timer"
+          "detail": "Record path travelled during active timer",
+          "description": "StillAlive collects your device's location to record your route while your timer is active.\n\nThis route can be shared with YOUR chosen emergency contacts and integrations.\n\nRoute tracing can continue when the app is in the background or when your screen is locked.\n\nStillAlive does not access or collect your location data for anything other that sharing it with YOUR contacts and integrations."
         },
         {
           "name": "Microfone",
-          "detail": "Record sound during emergencies"
+          "detail": "Record sound during emergencies",
+          "description": "StillAlive records your surroundings during an active emergency.\n\nRecording is NOT shared with emergency contacts and integrations, but stored in your device so only YOU have access to it.\n\nStillAlive does not share your recordings with any third party."
         }
       ]
     },

@@ -55,14 +55,87 @@ class _PrivacySectionState extends State<PrivacySection> {
             Permission.locationAlways => AppToggle(on: widget.routeFeature),
             _ => AppToggle(on: widget.microphoneFeature),
           }
-        : Container(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
-            decoration: BoxDecoration(color: widget.scheme.primary, borderRadius: AppRadius.chip),
-            child: Text(switch (status) {
-              PermissionStatus.denied => widget.local.translate("permissions.allow"),
-              _ => widget.local.translate("settings.title"),
-            }, style: AppText.caption(widget.scheme).copyWith(color: widget.scheme.onPrimary)),
-          );
+        : Icon(LucideIcons.chevronRight, size: 18, color: widget.scheme.onSurfaceVariant);
+  }
+
+  void showDisclosure(BuildContext context, Permission permission, PermissionStatus status) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              backgroundColor: widget.scheme.surface,
+
+              title: switch (permission) {
+                Permission.locationWhenInUse => Row(
+                  children: [
+                    Icon(LucideIcons.mapPin, size: 24, color: widget.scheme.onSurface),
+                    SizedBox(width: AppSpacing.md),
+                    Text(widget.local.translate("permissions.optional.items.0.name"), style: AppText.h2(widget.scheme)),
+                  ],
+                ),
+                Permission.locationAlways => Row(
+                  children: [
+                    Icon(LucideIcons.route, size: 24, color: widget.scheme.onSurface),
+                    SizedBox(width: AppSpacing.md),
+                    Text(widget.local.translate("permissions.optional.items.1.name"), style: AppText.h2(widget.scheme)),
+                  ],
+                ),
+                _ => Row(
+                  children: [
+                    Icon(LucideIcons.mic, size: 24, color: widget.scheme.onSurface),
+                    SizedBox(width: AppSpacing.md),
+                    Text(widget.local.translate("permissions.optional.items.2.name"), style: AppText.h2(widget.scheme)),
+                  ],
+                ),
+              },
+
+              content: switch (permission) {
+                Permission.locationWhenInUse => Text(
+                  widget.local.translate("permissions.optional.items.0.description"),
+                  style: AppText.body(widget.scheme),
+                ),
+                Permission.locationAlways => Text(
+                  widget.local.translate("permissions.optional.items.1.description"),
+                  style: AppText.body(widget.scheme),
+                ),
+                _ => Text(widget.local.translate("permissions.optional.items.2.description"), style: AppText.body(widget.scheme)),
+              },
+
+              contentPadding: EdgeInsets.symmetric(horizontal: AppSpacing.xxl, vertical: AppSpacing.lg),
+
+              actions: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: TextButton.styleFrom(backgroundColor: widget.scheme.surfaceContainer),
+                      child: Icon(LucideIcons.arrowLeft, size: 18, color: widget.scheme.onSurface),
+                    ),
+                    SizedBox(width: AppSpacing.sm),
+                    Expanded(
+                      child: FilledButton(
+                        onPressed: () {
+                          widget.onRequestPermission(permission);
+                          Navigator.pop(context);
+                        },
+                        child: Text(switch (status) {
+                          PermissionStatus.denied => widget.local.translate("permissions.allow"),
+                          _ => widget.local.translate("settings.title"),
+                        }, style: AppText.bodySm(widget.scheme)),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -79,7 +152,7 @@ class _PrivacySectionState extends State<PrivacySection> {
                 behavior: HitTestBehavior.opaque,
                 onTap: () async {
                   if (!widget.locationWhenInUsePermissionStatus.isGranted) {
-                    widget.onRequestPermission(Permission.locationWhenInUse);
+                    showDisclosure(context, Permission.locationWhenInUse, widget.locationWhenInUsePermissionStatus);
                   } else {
                     await executeSql(sql: "UPDATE settings SET value = '${!widget.locationFeature}' WHERE key = 'location'");
                     widget.onLocationUpdate(!widget.locationFeature);
@@ -101,7 +174,7 @@ class _PrivacySectionState extends State<PrivacySection> {
                       behavior: HitTestBehavior.opaque,
                       onTap: () async {
                         if (!widget.locationAlwaysPermissionStatus.isGranted) {
-                          widget.onRequestPermission(Permission.locationAlways);
+                          showDisclosure(context, Permission.locationAlways, widget.locationAlwaysPermissionStatus);
                         } else {
                           await executeSql(sql: "UPDATE settings SET value = '${!widget.routeFeature}' WHERE key = 'route'");
                           widget.onRouteUpdate(!widget.routeFeature);
@@ -126,7 +199,7 @@ class _PrivacySectionState extends State<PrivacySection> {
                 behavior: HitTestBehavior.opaque,
                 onTap: () async {
                   if (!widget.microphonePermissionStatus.isGranted) {
-                    widget.onRequestPermission(Permission.microphone);
+                    showDisclosure(context, Permission.microphone, widget.microphonePermissionStatus);
                   } else {
                     await executeSql(sql: "UPDATE settings SET value = '${!widget.microphoneFeature}' WHERE key = 'microphone'");
                     widget.onMicrophoneUpdate(!widget.microphoneFeature);

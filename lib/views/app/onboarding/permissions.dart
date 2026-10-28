@@ -95,7 +95,94 @@ class _PermBuilderState extends State<_PermBuilder> {
           absorbing: (widget.item.permission == Permission.locationAlways) ? !_locationWhenInUsePermissionGranted : false,
           child: Pressable(
             onTap: () {
-              if (!_permissionStatus.isGranted) _requestStatus();
+              if (!_permissionStatus.isGranted) {
+                switch (widget.item.permission) {
+                  case Permission.locationWhenInUse:
+                  case Permission.locationAlways:
+                  case Permission.microphone:
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (dialogContext) {
+                        return StatefulBuilder(
+                          builder: (context, setState) {
+                            return AlertDialog(
+                              backgroundColor: scheme.surface,
+
+                              title: switch (widget.item.permission) {
+                                Permission.locationWhenInUse => Row(
+                                  children: [
+                                    Icon(LucideIcons.mapPin, size: 24, color: scheme.onSurface),
+                                    SizedBox(width: AppSpacing.md),
+                                    Text(local.translate("permissions.optional.items.0.name"), style: AppText.h2(scheme)),
+                                  ],
+                                ),
+                                Permission.locationAlways => Row(
+                                  children: [
+                                    Icon(LucideIcons.route, size: 24, color: scheme.onSurface),
+                                    SizedBox(width: AppSpacing.md),
+                                    Text(local.translate("permissions.optional.items.1.name"), style: AppText.h2(scheme)),
+                                  ],
+                                ),
+                                _ => Row(
+                                  children: [
+                                    Icon(LucideIcons.mic, size: 24, color: scheme.onSurface),
+                                    SizedBox(width: AppSpacing.md),
+                                    Text(local.translate("permissions.optional.items.2.name"), style: AppText.h2(scheme)),
+                                  ],
+                                ),
+                              },
+
+                              content: switch (widget.item.permission) {
+                                Permission.locationWhenInUse => Text(
+                                  local.translate("permissions.optional.items.0.description"),
+                                  style: AppText.body(scheme),
+                                ),
+                                Permission.locationAlways => Text(
+                                  local.translate("permissions.optional.items.1.description"),
+                                  style: AppText.body(scheme),
+                                ),
+                                _ => Text(local.translate("permissions.optional.items.2.description"), style: AppText.body(scheme)),
+                              },
+
+                              contentPadding: EdgeInsets.symmetric(horizontal: AppSpacing.xxl, vertical: AppSpacing.lg),
+
+                              actions: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      style: TextButton.styleFrom(backgroundColor: scheme.surfaceContainer),
+                                      child: Icon(LucideIcons.arrowLeft, size: 18, color: scheme.onSurface),
+                                    ),
+                                    SizedBox(width: AppSpacing.sm),
+                                    Expanded(
+                                      child: FilledButton(
+                                        onPressed: () {
+                                          _requestStatus();
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text(switch (_permissionStatus) {
+                                          PermissionStatus.denied => local.translate("permissions.allow"),
+                                          _ => local.translate("settings.title"),
+                                        }, style: AppText.bodySm(scheme)),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                    );
+                    break;
+                  default:
+                    _requestStatus();
+                    break;
+                }
+              }
             },
             child: AppCard(
               child: Row(
@@ -127,19 +214,26 @@ class _PermBuilderState extends State<_PermBuilder> {
                     Container(
                       width: 32,
                       height: 32,
-                      margin: const EdgeInsets.only(top: AppSpacing.xxxs),
                       decoration: BoxDecoration(color: scheme.tertiary.withAlpha(38), shape: BoxShape.circle),
                       child: Icon(LucideIcons.check, size: 16, color: scheme.tertiary),
                     )
-                  else
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
-                      decoration: BoxDecoration(color: scheme.primary, borderRadius: AppRadius.chip),
-                      child: Text(switch (_permissionStatus) {
-                        PermissionStatus.denied => local.translate("permissions.allow"),
-                        _ => local.translate("settings.title"),
-                      }, style: AppText.caption(scheme).copyWith(color: scheme.onPrimary)),
-                    ),
+                  else ...[
+                    switch (widget.item.permission) {
+                      Permission.locationWhenInUse || Permission.locationAlways || Permission.microphone => Padding(
+                        padding: const EdgeInsets.only(right: AppSpacing.xs),
+                        child: Icon(LucideIcons.chevronRight, color: scheme.onSurface, size: 20),
+                      ),
+
+                      _ => Container(
+                        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
+                        decoration: BoxDecoration(color: scheme.primary, borderRadius: AppRadius.chip),
+                        child: Text(switch (_permissionStatus) {
+                          PermissionStatus.denied => local.translate("permissions.allow"),
+                          _ => local.translate("settings.title"),
+                        }, style: AppText.caption(scheme).copyWith(color: scheme.onPrimary)),
+                      ),
+                    },
+                  ],
                 ],
               ),
             ),

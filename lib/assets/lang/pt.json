@@ -89,15 +89,18 @@
       "items": [
         {
           "name": "Localização",
-          "detail": "Partilhada apenas em emergências"
+          "detail": "Partilhada apenas em emergências",
+          "description": "A StillAlive acede à localização do teu dispositivo quando o temporizador termina, com o objetivo de fornecer a tua localização aos contactos de emergência e integrações que TU escolhes.\n\nA StillAlive não acede nem recolhe os teus dados de localização para qualquer outra finalidade que não seja a partilha com os TEUS contactos e integrações."
         },
         {
           "name": "Percurso",
-          "detail": "Gravar caminho percorrido durante temporizador ativo"
+          "detail": "Gravar caminho percorrido durante temporizador ativo",
+          "description": "A StillAlive recolhe a localização do teu dispositivo para registar o teu trajeto enquanto um temporizador estiver ativo.\n\nEsse percurso pode ser partilhado com os contactos de emergência e as integrações que TU escolhes.\n\nO rastreio do trajeto pode continuar mesmo com a aplicação fechada ou com o ecrã do dispositivo bloqueado.\n\nA StillAlive não acede nem recolhe os teus dados de localização para qualquer outra finalidade que não seja a partilha com os TEUS contactos e integrações."
         },
         {
           "name": "Microfone",
-          "detail": "Gravar som apenas em emergências"
+          "detail": "Gravar som apenas em emergências",
+          "description": "A StillAlive grava os sons à tua volta durante uma emergência ativa.\n\nA gravação NÃO É partilhada com contactos de emergência ou integrações; fica armazenada no teu dispositivo, de modo a que TU apenas tenhas acesso a ela.\n\nA StillAlive não partilha as tuas gravações com terceiros."
         }
       ]
     },
