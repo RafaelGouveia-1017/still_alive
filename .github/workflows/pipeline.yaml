@@ -246,6 +246,7 @@ jobs:
 
   format_and_test:
     needs: check_tools
+    if: ${{ !cancelled() && needs.check_tools.result == 'success' }}
     runs-on: [self-hosted, Windows]
 
     steps:
@@ -362,6 +363,7 @@ jobs:
 
   build_and_publish:
     needs: format_and_test
+    if: ${{ !cancelled() && needs.format_and_test.result == 'success' }}
     runs-on: [self-hosted, Windows]
 
     steps:
