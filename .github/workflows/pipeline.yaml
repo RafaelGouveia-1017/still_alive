@@ -517,7 +517,8 @@ jobs:
             --aab build/app/outputs/bundle/release/app-release.aab `
             --track production `
             --json_key service_account.json `
-            --package_name com.appsbyrafa.stillalive
+            --package_name com.appsbyrafa.stillalive `
+            --verbose
 
       # =======================================================
       # Create the GitHub Release and upload the APK.
