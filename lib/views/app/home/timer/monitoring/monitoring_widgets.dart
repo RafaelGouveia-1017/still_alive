@@ -2,9 +2,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:still_alive/services/location_service.dart';
 import 'package:still_alive/services/timer_service.dart';
 import 'package:still_alive/src/rust/api/timer/active_timer.dart';
+import 'package:still_alive/views/app/prominent_disclosure.dart';
 import 'package:still_alive/views/widgets/tile_map_viewer.dart';
 
 import '../../../../../data/all.dart';
@@ -182,32 +184,36 @@ class _MonitoringTileMapState extends State<MonitoringTileMap> with SingleTicker
     return AppCard(
       child: Column(
         children: [
-          ValueListenableBuilder<int>(
-            valueListenable: _counter,
-            builder: (context, counter, child) {
-              return AppRow(
-                padding: EdgeInsets.zero,
-                title: local.translate("active_monitoring.location.location_tracking"),
-                subtitle:
-                    '${local.translate("active_monitoring.location.updated")}'
-                    ' ${TimerService.formatDuration(Duration(seconds: counter))} '
-                    '${local.translate("active_monitoring.location.ago")}'
-                    ' ${TimerService.formatDuration(Duration(seconds: timer.config.locationCollectionIntervalSecs!))} '
-                    '${local.translate("active_monitoring.location.interval")}',
-                icon: LucideIcons.route,
-                iconSize: 20,
-                iconColor: scheme.tertiary,
-                iconBackground: scheme.tertiary.withAlpha(38),
-                trailing: Pill(
-                  leading: FadeTransition(
-                    opacity: _pulseAnimation,
-                    child: CircleAvatar(radius: 3, backgroundColor: scheme.tertiary),
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () async => await ProminentDisclosure(mode: DisclosureDialogActions.acknowledge).show(context, Permission.locationAlways),
+            child: ValueListenableBuilder<int>(
+              valueListenable: _counter,
+              builder: (context, counter, child) {
+                return AppRow(
+                  padding: EdgeInsets.zero,
+                  title: local.translate("active_monitoring.location.location_tracking"),
+                  subtitle:
+                      '${local.translate("active_monitoring.location.updated")}'
+                      ' ${TimerService.formatDuration(Duration(seconds: counter))} '
+                      '${local.translate("active_monitoring.location.ago")}'
+                      ' ${TimerService.formatDuration(Duration(seconds: timer.config.locationCollectionIntervalSecs!))} '
+                      '${local.translate("active_monitoring.location.interval")}',
+                  icon: LucideIcons.route,
+                  iconSize: 20,
+                  iconColor: scheme.tertiary,
+                  iconBackground: scheme.tertiary.withAlpha(38),
+                  trailing: Pill(
+                    leading: FadeTransition(
+                      opacity: _pulseAnimation,
+                      child: CircleAvatar(radius: 3, backgroundColor: scheme.tertiary),
+                    ),
+                    label: local.translate("active_monitoring.location.live"),
+                    backColor: scheme.tertiary,
                   ),
-                  label: local.translate("active_monitoring.location.live"),
-                  backColor: scheme.tertiary,
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
           const SizedBox(height: AppSpacing.md),
           AppCard(

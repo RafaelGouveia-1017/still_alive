@@ -69,7 +69,7 @@
   <pre class="language-dart"><code class="language-dart">Future&lt;bool&gt; start() async {
   if (_recording) return true;
 
-  if (!await _recorder.hasPermission()) {
+  if (!await _recorder.hasPermission(request: false)) {
     return false;
   }
 
@@ -128,7 +128,7 @@
 <footer>
   <span class="no-break">
     still_alive
-      1.1.3+9
+      1.1.9+16
   </span>
   
 </footer>

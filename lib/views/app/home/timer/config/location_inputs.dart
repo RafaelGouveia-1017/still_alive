@@ -4,6 +4,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:still_alive/src/rust/api/data/db.dart';
 import 'package:still_alive/views/app/home/timer/config/grace_input.dart';
+import 'package:still_alive/views/app/prominent_disclosure.dart';
 
 import '../../../../../data/all.dart';
 import '../../../../widgets/primitives.dart';
@@ -177,6 +178,26 @@ class _LocationInputsState extends State<LocationInputs> {
     widget.onCollectionIntervalChanged(value.inSeconds);
   }
 
+  Future<void> showDisclosure(BuildContext context, Permission permission) async {
+    await ProminentDisclosure(
+      mode: DisclosureDialogActions.enable,
+      enabled: switch (permission) {
+        Permission.locationWhenInUse => _locationEnabled,
+        _ => _routeEnabled,
+      },
+      onToggle: (_) async {
+        switch (permission) {
+          case Permission.locationWhenInUse:
+            _setLocationEnabled(!_locationEnabled);
+            break;
+          default:
+            _setRouteEnabled(!_routeEnabled);
+            break;
+        }
+      },
+    ).show(context, permission);
+  }
+
   @override
   void didUpdateWidget(covariant LocationInputs oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -218,9 +239,7 @@ class _LocationInputsState extends State<LocationInputs> {
                       ignoring: !_locationGranted,
                       child: GestureDetector(
                         behavior: HitTestBehavior.opaque,
-                        onTap: () {
-                          _setLocationEnabled(!_locationEnabled);
-                        },
+                        onTap: () => showDisclosure(context, Permission.locationWhenInUse),
                         child: AppRow(
                           padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxxs, horizontal: AppSpacing.sm),
                           title: local.translate("timer_configuration.security.location.when_in_use.title"),
@@ -229,7 +248,7 @@ class _LocationInputsState extends State<LocationInputs> {
                               : local.translate("timer_configuration.security.location.when_in_use.enabled.off"),
                           icon: (_locationGranted && _locationEnabled) ? LucideIcons.mapPin : LucideIcons.mapPinOff,
                           iconColor: scheme.secondary,
-                          trailing: AppToggle(on: _locationEnabled),
+                          trailing: Icon(LucideIcons.chevronRight, size: 18, color: scheme.onSurfaceVariant),
                         ),
                       ),
                     ),
@@ -261,9 +280,7 @@ class _LocationInputsState extends State<LocationInputs> {
                       ignoring: !_routeGranted,
                       child: GestureDetector(
                         behavior: HitTestBehavior.opaque,
-                        onTap: () {
-                          _setRouteEnabled(!_routeEnabled);
-                        },
+                        onTap: () => showDisclosure(context, Permission.locationAlways),
                         child: AppRow(
                           padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxxs, horizontal: AppSpacing.sm),
                           title: local.translate("timer_configuration.security.location.always.title"),
@@ -272,7 +289,7 @@ class _LocationInputsState extends State<LocationInputs> {
                               : local.translate("timer_configuration.security.location.always.enabled.off"),
                           icon: (_routeGranted && _routeEnabled) ? LucideIcons.route : LucideIcons.routeOff,
                           iconColor: scheme.secondary,
-                          trailing: AppToggle(on: _routeEnabled),
+                          trailing: Icon(LucideIcons.chevronRight, size: 18, color: scheme.onSurfaceVariant),
                         ),
                       ),
                     ),

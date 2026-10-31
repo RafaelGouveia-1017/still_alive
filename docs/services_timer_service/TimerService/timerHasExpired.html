@@ -112,7 +112,7 @@ expiration state.</p>
   }
 
   final now = DateTime.now().toUtc().millisecondsSinceEpoch;
-  _activeTimer.updateRunState(nowMs: now);
+  await _activeTimer.updateRunState(nowMs: now);
 
   launchTimerNotification();
 
@@ -176,7 +176,7 @@ expiration state.</p>
 <footer>
   <span class="no-break">
     still_alive
-      1.1.3+9
+      1.1.9+16
   </span>
   
 </footer>

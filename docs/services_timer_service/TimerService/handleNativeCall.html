@@ -86,7 +86,7 @@ successfully before timer alarms can be processed.</p>
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">Future&lt;void&gt; handleNativeCall(MethodCall call) async {
-  AppLogger.log.info(&quot;TimerService.handleNativeCall() called...&quot;);
+  AppLogger.log.info(&#39;TimerService.handleNativeCall() received: ${call.method}, arguments: ${call.arguments}&#39;);
 
   if (!_initialized) {
     AppLogger.log.severe(&quot;Alarm received before TimerService initialization.&quot;);
@@ -128,7 +128,7 @@ successfully before timer alarms can be processed.</p>
 <footer>
   <span class="no-break">
     still_alive
-      1.1.3+9
+      1.1.9+16
   </span>
   
 </footer>

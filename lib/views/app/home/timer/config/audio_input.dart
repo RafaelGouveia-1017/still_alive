@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:still_alive/src/rust/api/data/db.dart';
+import 'package:still_alive/views/app/prominent_disclosure.dart';
 
 import '../../../../../data/all.dart';
 import '../../../../widgets/primitives.dart';
@@ -83,9 +84,11 @@ class _AudioInputState extends State<AudioInput> {
                   ignoring: !_permissionGranted,
                   child: GestureDetector(
                     behavior: HitTestBehavior.opaque,
-                    onTap: () {
-                      _setEnabled(!_enabled);
-                    },
+                    onTap: () async => await ProminentDisclosure(
+                      mode: DisclosureDialogActions.enable,
+                      enabled: _enabled,
+                      onToggle: (enabled) async => _setEnabled(enabled),
+                    ).show(context, Permission.microphone),
                     child: AppRow(
                       padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxxs, horizontal: AppSpacing.sm),
                       title: local.translate("timer_configuration.security.audio.title"),
@@ -94,7 +97,7 @@ class _AudioInputState extends State<AudioInput> {
                           : local.translate("timer_configuration.security.audio.enabled.off"),
                       icon: (_permissionGranted && _enabled) ? LucideIcons.mic : LucideIcons.micOff,
                       iconColor: scheme.secondary,
-                      trailing: AppToggle(on: _enabled),
+                      trailing: Icon(LucideIcons.chevronRight, size: 18, color: scheme.onSurfaceVariant),
                     ),
                   ),
                 ),

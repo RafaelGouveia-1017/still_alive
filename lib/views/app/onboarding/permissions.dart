@@ -3,6 +3,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:battery_optimization_permission/battery_optimization_permission.dart';
 import 'package:still_alive/services/native/method_channel.dart';
+import 'package:still_alive/views/app/prominent_disclosure.dart';
 
 import '../../../data/all.dart';
 import '../../widgets/primitives.dart';
@@ -94,89 +95,17 @@ class _PermBuilderState extends State<_PermBuilder> {
         AbsorbPointer(
           absorbing: (widget.item.permission == Permission.locationAlways) ? !_locationWhenInUsePermissionGranted : false,
           child: Pressable(
-            onTap: () {
+            onTap: () async {
               if (!_permissionStatus.isGranted) {
                 switch (widget.item.permission) {
                   case Permission.locationWhenInUse:
                   case Permission.locationAlways:
                   case Permission.microphone:
-                    showDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (dialogContext) {
-                        return StatefulBuilder(
-                          builder: (context, setState) {
-                            return AlertDialog(
-                              backgroundColor: scheme.surface,
-
-                              title: switch (widget.item.permission) {
-                                Permission.locationWhenInUse => Row(
-                                  children: [
-                                    Icon(LucideIcons.mapPin, size: 24, color: scheme.onSurface),
-                                    SizedBox(width: AppSpacing.md),
-                                    Text(local.translate("permissions.optional.items.0.name"), style: AppText.h2(scheme)),
-                                  ],
-                                ),
-                                Permission.locationAlways => Row(
-                                  children: [
-                                    Icon(LucideIcons.route, size: 24, color: scheme.onSurface),
-                                    SizedBox(width: AppSpacing.md),
-                                    Text(local.translate("permissions.optional.items.1.name"), style: AppText.h2(scheme)),
-                                  ],
-                                ),
-                                _ => Row(
-                                  children: [
-                                    Icon(LucideIcons.mic, size: 24, color: scheme.onSurface),
-                                    SizedBox(width: AppSpacing.md),
-                                    Text(local.translate("permissions.optional.items.2.name"), style: AppText.h2(scheme)),
-                                  ],
-                                ),
-                              },
-
-                              content: switch (widget.item.permission) {
-                                Permission.locationWhenInUse => Text(
-                                  local.translate("permissions.optional.items.0.description"),
-                                  style: AppText.body(scheme),
-                                ),
-                                Permission.locationAlways => Text(
-                                  local.translate("permissions.optional.items.1.description"),
-                                  style: AppText.body(scheme),
-                                ),
-                                _ => Text(local.translate("permissions.optional.items.2.description"), style: AppText.body(scheme)),
-                              },
-
-                              contentPadding: EdgeInsets.symmetric(horizontal: AppSpacing.xxl, vertical: AppSpacing.lg),
-
-                              actions: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  children: [
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      style: TextButton.styleFrom(backgroundColor: scheme.surfaceContainer),
-                                      child: Icon(LucideIcons.arrowLeft, size: 18, color: scheme.onSurface),
-                                    ),
-                                    SizedBox(width: AppSpacing.sm),
-                                    Expanded(
-                                      child: FilledButton(
-                                        onPressed: () {
-                                          _requestStatus();
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text(switch (_permissionStatus) {
-                                          PermissionStatus.denied => local.translate("permissions.allow"),
-                                          _ => local.translate("settings.title"),
-                                        }, style: AppText.bodySm(scheme)),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                    );
+                    await ProminentDisclosure(
+                      mode: DisclosureDialogActions.grantPermission,
+                      status: _permissionStatus,
+                      onGrantPermission: (_) async => await _requestStatus(),
+                    ).show(context, widget.item.permission);
                     break;
                   default:
                     _requestStatus();

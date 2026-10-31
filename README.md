@@ -109,7 +109,7 @@ StillAlive uses a collection of Flutter/Dart packages to provide its core functi
 | [path_provider](https://pub.dev/packages/path_provider)           |   `^2.1.6` | [Flutter Team](https://github.com/flutter/packages/tree/main/packages/path_provider) |
 | [freezed_annotation](https://pub.dev/packages/freezed_annotation) |   `^3.1.0` | [Freezed Contributors](https://github.com/rrousselGit/freezed)                       |
 | [logging](https://pub.dev/packages/logging)                       |   `^1.3.0` | [Dart Team](https://github.com/dart-lang/core/tree/main/pkgs/logging)                |
-| [vector_math](https://pub.dev/packages/vector_math)               |   `^2.4.3` | [Dart Team](https://github.com/google/vector_math.dart)                              |
+| [vector_math](https://pub.dev/packages/vector_math)               |   `^2.4.4` | [Dart Team](https://github.com/google/vector_math.dart)                              |
 
 #### 📱 Device & System Integration
 
@@ -130,14 +130,14 @@ StillAlive uses a collection of Flutter/Dart packages to provide its core functi
 | [latlong2](https://pub.dev/packages/latlong2)                                   | `^0.10.1` | [ThexXTURBOXx](https://github.com/ThexXTURBOXx/dart-latlong)           |
 | [flutter_map](https://pub.dev/packages/flutter_map)                             |  `^8.3.2` | [Fleaflet](https://github.com/fleaflet/flutter_map)                    |
 | [flutter_map_vector_tiles](https://pub.dev/packages/flutter_map_vector_tiles)   | `^2.10.1` | [JonasGrunau](https://github.com/JonasGrunau/flutter-map-vector-tiles) |
-| [flutter_map_compass](https://pub.dev/packages/flutter_map_compass)             |  `^1.1.1` | [josxha](https://github.com/josxha/flutter_map_plugins)                |
+| [flutter_map_compass](https://pub.dev/packages/flutter_map_compass)             |  `^1.1.2` | [josxha](https://github.com/josxha/flutter_map_plugins)                |
 | [geolocator](https://pub.dev/packages/geolocator)                               |  `14.0.2` | [Baseflow](https://github.com/Baseflow/flutter-geolocator)             |
 
 #### 📷 QR Codes & Scanning
 
 | Package                                                   |  Version | Creator                                                                  |
 | --------------------------------------------------------- | -------: | ------------------------------------------------------------------------ |
-| [mobile_scanner](https://pub.dev/packages/mobile_scanner) | `^7.4.1` | [juliansteenbakker](https://github.com/juliansteenbakker/mobile_scanner) |
+| [mobile_scanner](https://pub.dev/packages/mobile_scanner) | `^7.4.3` | [juliansteenbakker](https://github.com/juliansteenbakker/mobile_scanner) |
 | [qr_flutter](https://pub.dev/packages/qr_flutter)         | `^4.1.0` | [Yakka](https://github.com/theyakka/qr.flutter)                          |
 
 #### 🎙️ Audio & Recording
@@ -158,7 +158,7 @@ StillAlive uses a collection of Flutter/Dart packages to provide its core functi
 
 | Package                                                                                 |   Version | Creator                                                                             |
 | --------------------------------------------------------------------------------------- | --------: | ----------------------------------------------------------------------------------- |
-| [flutter_reorderable_grid_view](https://pub.dev/packages/flutter_reorderable_grid_view) |  `^5.7.0` | [karvulf](https://github.com/karvulf/flutter-reorderable-grid-view)                 |
+| [flutter_reorderable_grid_view](https://pub.dev/packages/flutter_reorderable_grid_view) |   `5.8.0` | [karvulf](https://github.com/karvulf/flutter-reorderable-grid-view)                 |
 | [fluttertoast](https://pub.dev/packages/fluttertoast)                                   | `^10.0.2` | [ponnamkarthik](https://github.com/ponnamkarthik/FlutterToast)                      |
 | [scrollable_positioned_list](https://pub.dev/packages/scrollable_positioned_list)       |  `^0.3.8` | [Google](https://github.com/google/flutter.widgets)                                 |
 | [restart_app](https://pub.dev/packages/restart_app)                                     | `^1.10.2` | [gabrimatic](https://github.com/gabrimatic/restart_app)                             |

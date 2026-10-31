@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the show method from the ProminentDisclosure class, for the Dart programming language.">
+  <title>show method - ProminentDisclosure class - prominent_disclosure library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">still_alive</a></li>
+    <li><a href="../../views_app_prominent_disclosure/">views\app\prominent_disclosure.dart</a></li>
+    <li><a href="../../views_app_prominent_disclosure/ProminentDisclosure-class.html">ProminentDisclosure</a></li>
+    <li class="self-crumb">show method</li>
+  </ol>
+  <div class="self-name">show</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="views_app_prominent_disclosure&#47;ProminentDisclosure-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">show</span> method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+<span class="name ">show</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="show-param-context"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/widgets/BuildContext-class.html">BuildContext</a></span> <span class="parameter-name">context</span>, </span></li>
+<li><span class="parameter" id="show-param-permission"><span class="type-annotation"><a href="https://pub.dev/documentation/permission_handler_platform_interface/4.4.1/permission_handler_platform_interface/Permission-class.html">Permission</a></span> <span class="parameter-name">permission</span></span></li>
+</ol>)
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Displays the disclosure dialog for the requested permission.</p>
+<p>The permission determines the title, description and icon.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">Future&lt;void&gt; show(BuildContext context, Permission permission) async {
+  ColorScheme scheme = Theme.of(context).colorScheme;
+  AppLocalizations local = AppLocalizations.of(context)!;
+
+  final int index = switch (permission) {
+    Permission.locationWhenInUse =&gt; 0,
+    Permission.locationAlways =&gt; 1,
+    _ =&gt; 2,
+  };
+
+  final IconData icon = switch (permission) {
+    Permission.locationWhenInUse =&gt; LucideIcons.mapPin,
+    Permission.locationAlways =&gt; LucideIcons.route,
+    _ =&gt; LucideIcons.mic,
+  };
+
+  &#47;&#47;&#47; Builds the back button used by permission and feature management modes.
+  &#47;&#47;&#47;
+  &#47;&#47;&#47; Closes the dialog without changing the current feature configuration.
+  Widget backButton(BuildContext context, ColorScheme scheme) {
+    return TextButton(
+      onPressed: () =&gt; Navigator.pop(context),
+      style: TextButton.styleFrom(backgroundColor: scheme.surfaceContainer),
+      child: Icon(LucideIcons.arrowLeft, size: 18, color: scheme.onSurface),
+    );
+  }
+
+  &#47;&#47;&#47; Builds the permission request button.
+  &#47;&#47;&#47;
+  &#47;&#47;&#47; Invokes [onGrantPermission] with the new permission&#39;s status and
+  &#47;&#47;&#47; closes the dialog afterwards.
+  Widget grantPermissionButton(BuildContext context, Permission permission, ColorScheme scheme, AppLocalizations local) {
+    return FilledButton(
+      onPressed: onGrantPermission == null
+          ? null
+          : () async {
+              await onGrantPermission!(permission);
+
+              if (context.mounted) {
+                Navigator.pop(context);
+              }
+            },
+      child: Text(switch (status) {
+        PermissionStatus.denied =&gt; local.translate(&quot;permissions.allow&quot;),
+        _ =&gt; local.translate(&quot;settings.title&quot;),
+      }, style: AppText.bodySm(scheme)),
+    );
+  }
+
+  &#47;&#47;&#47; Builds the feature toggle associated with the selected permission.
+  &#47;&#47;&#47;
+  &#47;&#47;&#47; Invokes [onToggle] with the new enabled state when the user interacts
+  &#47;&#47;&#47; with the toggle.
+  Widget featureToggle(BuildContext context, ColorScheme scheme) {
+    return SizedBox(
+      width: 64,
+      height: 38,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onToggle == null
+            ? null
+            : () async {
+                await onToggle!(!enabled);
+
+                if (context.mounted) {
+                  Navigator.pop(context);
+                }
+              },
+        child: AppToggle(on: enabled),
+      ),
+    );
+  }
+
+  final List&lt;Widget&gt; children = switch (mode) {
+    DisclosureDialogActions.grantPermission =&gt; [
+      backButton(context, scheme),
+      SizedBox(width: AppSpacing.sm),
+      Expanded(child: grantPermissionButton(context, permission, scheme, local)),
+    ],
+
+    DisclosureDialogActions.enable =&gt; [backButton(context, scheme), featureToggle(context, scheme)],
+
+    _ =&gt; [
+      FilledButton.icon(
+        onPressed: () =&gt; Navigator.pop(context),
+        icon: Icon(LucideIcons.thumbsUp, size: 18, color: scheme.onSurface),
+        label: Text(local.translate(&quot;permissions.got_it&quot;), style: AppText.bodySm(scheme)),
+      ),
+    ],
+  };
+
+  await showDialog&lt;void&gt;(
+    context: context,
+    barrierDismissible: barrierDismissible,
+    builder: (dialogContext) {
+      return AlertDialog(
+        backgroundColor: scheme.surface,
+
+        title: Row(
+          children: [
+            Icon(icon, size: 24, color: scheme.onSurface),
+            SizedBox(width: AppSpacing.md),
+            Text(local.translate(&quot;permissions.optional.items.$index.name&quot;), style: AppText.h2(scheme)),
+          ],
+        ),
+
+        content: Text(local.translate(&quot;permissions.optional.items.$index.description&quot;), style: AppText.body(scheme)),
+
+        contentPadding: EdgeInsets.symmetric(horizontal: AppSpacing.xxl, vertical: AppSpacing.lg),
+
+        actions: [Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: children)],
+      );
+    },
+  );
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">still_alive</a></li>
+    <li><a href="../../views_app_prominent_disclosure/">prominent_disclosure</a></li>
+    <li><a href="../../views_app_prominent_disclosure/ProminentDisclosure-class.html">ProminentDisclosure</a></li>
+    <li class="self-crumb">show method</li>
+</ol>
+
+    <h5>ProminentDisclosure class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    still_alive
+      1.1.9+16
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

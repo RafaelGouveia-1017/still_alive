@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:still_alive/views/app/prominent_disclosure.dart';
 import '../../../src/rust/api/data/db.dart';
 
 import '../../../data/all.dart';
@@ -48,120 +49,53 @@ class PrivacySection extends StatefulWidget {
 
 /// State implementation for [PrivacySection].
 class _PrivacySectionState extends State<PrivacySection> {
-  void showDisclosure(BuildContext context, Permission permission, PermissionStatus status) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogContext) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              backgroundColor: widget.scheme.surface,
-
-              title: switch (permission) {
-                Permission.locationWhenInUse => Row(
-                  children: [
-                    Icon(LucideIcons.mapPin, size: 24, color: widget.scheme.onSurface),
-                    SizedBox(width: AppSpacing.md),
-                    Text(widget.local.translate("permissions.optional.items.0.name"), style: AppText.h2(widget.scheme)),
-                  ],
-                ),
-                Permission.locationAlways => Row(
-                  children: [
-                    Icon(LucideIcons.route, size: 24, color: widget.scheme.onSurface),
-                    SizedBox(width: AppSpacing.md),
-                    Text(widget.local.translate("permissions.optional.items.1.name"), style: AppText.h2(widget.scheme)),
-                  ],
-                ),
-                _ => Row(
-                  children: [
-                    Icon(LucideIcons.mic, size: 24, color: widget.scheme.onSurface),
-                    SizedBox(width: AppSpacing.md),
-                    Text(widget.local.translate("permissions.optional.items.2.name"), style: AppText.h2(widget.scheme)),
-                  ],
-                ),
-              },
-
-              content: switch (permission) {
-                Permission.locationWhenInUse => Text(
-                  widget.local.translate("permissions.optional.items.0.description"),
-                  style: AppText.body(widget.scheme),
-                ),
-                Permission.locationAlways => Text(
-                  widget.local.translate("permissions.optional.items.1.description"),
-                  style: AppText.body(widget.scheme),
-                ),
-                _ => Text(widget.local.translate("permissions.optional.items.2.description"), style: AppText.body(widget.scheme)),
-              },
-
-              contentPadding: EdgeInsets.symmetric(horizontal: AppSpacing.xxl, vertical: AppSpacing.lg),
-
-              actions: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      style: TextButton.styleFrom(backgroundColor: widget.scheme.surfaceContainer),
-                      child: Icon(LucideIcons.arrowLeft, size: 18, color: widget.scheme.onSurface),
-                    ),
-                    if (status.isGranted) ...[
-                      SizedBox(
-                        width: 64,
-                        height: 38,
-                        child: GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onTap: () async {
-                            switch (permission) {
-                              case Permission.locationWhenInUse:
-                                await executeSql(sql: "UPDATE settings SET value = '${!widget.locationFeature}' WHERE key = 'location'");
-                                if (!widget.locationFeature == false) {
-                                  await executeSql(sql: "UPDATE settings SET value = 'false' WHERE key = 'route'");
-                                  widget.onRouteUpdate(false);
-                                }
-                                widget.onLocationUpdate(!widget.locationFeature);
-                                break;
-                              case Permission.locationAlways:
-                                await executeSql(sql: "UPDATE settings SET value = '${!widget.routeFeature}' WHERE key = 'route'");
-                                widget.onRouteUpdate(!widget.routeFeature);
-                                break;
-                              default:
-                                await executeSql(sql: "UPDATE settings SET value = '${!widget.microphoneFeature}' WHERE key = 'microphone'");
-                                widget.onMicrophoneUpdate(!widget.microphoneFeature);
-                                break;
-                            }
-                            if (context.mounted) Navigator.pop(context);
-                          },
-                          child: switch (permission) {
-                            Permission.locationWhenInUse => AppToggle(on: widget.locationFeature),
-                            Permission.locationAlways => AppToggle(on: widget.routeFeature),
-                            _ => AppToggle(on: widget.microphoneFeature),
-                          },
-                        ),
-                      ),
-                    ] else ...[
-                      SizedBox(width: AppSpacing.sm),
-                      Expanded(
-                        child: FilledButton(
-                          onPressed: () {
-                            widget.onRequestPermission(permission);
-                            Navigator.pop(context);
-                          },
-                          child: Text(switch (status) {
-                            PermissionStatus.denied => widget.local.translate("permissions.allow"),
-                            _ => widget.local.translate("settings.title"),
-                          }, style: AppText.bodySm(widget.scheme)),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
+  Future<void> showDisclosure(BuildContext context, Permission permission, PermissionStatus status) async {
+    if (status.isGranted) {
+      await ProminentDisclosure(
+        mode: DisclosureDialogActions.enable,
+        enabled: switch (permission) {
+          Permission.locationWhenInUse => widget.locationFeature,
+          Permission.locationAlways => widget.routeFeature,
+          _ => widget.microphoneFeature,
+        },
+        onToggle: (_) async {
+          switch (permission) {
+            case Permission.locationWhenInUse:
+              await executeSql(sql: "UPDATE settings SET value = '${!widget.locationFeature}' WHERE key = 'location'");
+              if (!widget.locationFeature == false) {
+                await executeSql(sql: "UPDATE settings SET value = 'false' WHERE key = 'route'");
+                widget.onRouteUpdate(false);
+              }
+              widget.onLocationUpdate(!widget.locationFeature);
+              break;
+            case Permission.locationAlways:
+              await executeSql(sql: "UPDATE settings SET value = '${!widget.routeFeature}' WHERE key = 'route'");
+              if (widget.locationFeature == false && !widget.routeFeature == true) {
+                await executeSql(sql: "UPDATE settings SET value = 'true' WHERE key = 'location'");
+                widget.onLocationUpdate(true);
+              }
+              widget.onRouteUpdate(!widget.routeFeature);
+              break;
+            default:
+              await executeSql(sql: "UPDATE settings SET value = '${!widget.microphoneFeature}' WHERE key = 'microphone'");
+              widget.onMicrophoneUpdate(!widget.microphoneFeature);
+              break;
+          }
+        },
+      ).show(context, permission);
+    } else {
+      await ProminentDisclosure(
+        mode: DisclosureDialogActions.grantPermission,
+        status: switch (permission) {
+          Permission.locationWhenInUse => widget.locationWhenInUsePermissionStatus,
+          Permission.locationAlways => widget.locationAlwaysPermissionStatus,
+          _ => widget.microphonePermissionStatus,
+        },
+        onGrantPermission: (permission) async {
+          await widget.onRequestPermission(permission);
+        },
+      ).show(context, permission);
+    }
   }
 
   @override

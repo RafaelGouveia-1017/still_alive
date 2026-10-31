@@ -105,6 +105,7 @@
       ]
     },
     "allow": "Allow",
+    "got_it": "Got it",
     "error": "Not all required permissions were granted.",
     "cta": "Finish"
   },
