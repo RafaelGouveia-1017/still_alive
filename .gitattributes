@@ -1,0 +1,13 @@
+# Exclude folders from GitHub language statistics
+docs/** linguist-documentation
+rust/target/** linguist-documentation
+
+generated/** linguist-generated
+rust_builder/** linguist-generated
+test_driver/** linguist-generated
+lib/src/rust/** linguist-generated
+
+linux/** linguist-vendored
+macos/** linguist-vendored
+web/** linguist-vendored
+windows/** linguist-vendored
