@@ -518,6 +518,7 @@ jobs:
             --track production `
             --json_key service_account.json `
             --package_name com.appsbyrafa.stillalive `
+            --skip_upload_metadata `
             --verbose
 
       # =======================================================
