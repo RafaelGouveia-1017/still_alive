@@ -152,7 +152,7 @@ class ProminentDisclosure {
             ],
           ),
 
-          content: Text(local.translate("permissions.optional.items.$index.description"), style: AppText.body(scheme)),
+          content: Text(local.translate("permissions.optional.items.$index.description"), style: AppText.bodySm(scheme)),
 
           contentPadding: EdgeInsets.symmetric(horizontal: AppSpacing.xxl, vertical: AppSpacing.lg),
 

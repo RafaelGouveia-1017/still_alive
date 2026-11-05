@@ -95,7 +95,7 @@
         {
           "name": "Route",
           "detail": "Record path travelled during active timer",
-          "description": "StillAlive collects your device's location to record your route while your timer is active.\n\nThis route can be shared with YOUR chosen emergency contacts and integrations.\n\nRoute tracing can continue when the app is in the background or when your screen is locked.\n\nStillAlive does not access or collect your location data for anything other that sharing it with YOUR contacts and integrations."
+          "description": "StillAlive collects your device's location to enable route recording, even when the app is closed or not in use. Your location is recorded at your chosen interval while your safety timer is active, including when your screen is locked.\n\nIf your safety timer expires without your interaction, route recording continues throughout the emergency protocol.\n\nYour recorded route and location updates can be shared with YOUR chosen emergency contacts and integrations to help them locate you and provide assistance.\n\nYour location data is used exclusively for these safety features and is not collected for advertising or analytics purposes."
         },
         {
           "name": "Microfone",

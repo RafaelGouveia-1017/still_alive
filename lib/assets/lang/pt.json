@@ -95,7 +95,7 @@
         {
           "name": "Percurso",
           "detail": "Gravar caminho percorrido durante temporizador ativo",
-          "description": "A StillAlive recolhe a localização do teu dispositivo para registar o teu trajeto enquanto um temporizador estiver ativo.\n\nEsse percurso pode ser partilhado com os contactos de emergência e as integrações que TU escolhes.\n\nO rastreio do trajeto pode continuar mesmo com a aplicação fechada ou com o ecrã do dispositivo bloqueado.\n\nA StillAlive não acede nem recolhe os teus dados de localização para qualquer outra finalidade que não seja a partilha com os TEUS contactos e integrações."
+          "description": "A StillAlive recolhe a localização do teu dispositivo para permitir o registo do trajeto, mesmo quando a aplicação está fechada ou não está a ser utilizada. A tua localização é registada no intervalo definido por ti enquanto o temporizador estiver ativo, incluindo com o ecrã bloqueado.\n\nCaso o temporizador expire sem que haja uma interação da tua parte, o registo do trajeto continuará durante todo o protocolo de emergência.\n\nO percurso registado e as atualizações de localização podem ser partilhadas com os contactos de emergência e as integrações que TU escolhes, para ajudar a localizar-te e a prestar assistência.\n\nOs dados da tua localização são utilizados exclusivamente para estas características de segurança e não são recolhidos para fins publicitários ou de análise."
         },
         {
           "name": "Microfone",
