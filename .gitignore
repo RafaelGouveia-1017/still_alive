@@ -703,6 +703,11 @@ temp_ai_result.txt
 commit_message.txt
 /lib/views/flutter
 
-USABILITY*.md
-USABILITY*.pdf
+*/USABILITY*.md
+*/USABILITY*.pdf
+!test_usability/**/USABILITY*.md
+!test_usability/USABILITY*.md
+!test_usability/**/USABILITY*.pdf
+!test_usability/USABILITY*.pdf
+
 CODEBASE*.md
